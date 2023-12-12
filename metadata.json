@@ -1,0 +1,15 @@
+{
+    "name": "bao-dev",
+    "entry": "index.js",
+    "author": "oBiscuit",
+    "description": "fishing pings and qol",
+    "version": "1.0.2", 
+    "requires": [
+        "PogData", 
+        "Vigilance", 
+        "RenderLib", 
+        "RenderLibV2",
+        "Elementa", 
+        "BloomCore"
+    ]
+}

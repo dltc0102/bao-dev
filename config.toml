@@ -1,0 +1,287 @@
+
+[timers]
+	caducous_feeder_timer = true
+	cake_timer = true
+	kings_scent_timer = true
+	flux_countdown_timer = true
+
+[slayer]
+	eman_melee_qol = false
+	detects_and_shows_info_for_slayer = false
+
+	[slayer.aqol]
+		eman_melee_qol = false
+		detects_and_shows_info_for_slayer = false
+
+	[slayer.rev_slayer]
+		scythe_blade_ping = true
+		warden_heart_ping = true
+		rev_slayer_rng_drops = true
+		shard_of_the_shredded_ping = true
+
+	[slayer.eman_slayer]
+		enderslayer_7_book_ping = true
+		ender_slayer_7_book_ping = true
+		judgement_core_ping = true
+		eman_slayer_rng_drops = true
+		enchant_rune_i_ping = true
+
+	[slayer.sven_slayer]
+		wolf_talisman_ping = true
+		overcapacitor_ping = true
+		sven_slayer_rng_drops = true
+
+	[slayer.blaze_slayer]
+		scorched_crystal_ping = true
+		duplex_1_book_ping = true
+		fiery_burst_rune_ping = true
+		fire_aspect_3_book_ping = true
+		subzero_inverter_ping = true
+		high_class_dice_ping = true
+		lava_tears_rune_ping = true
+		high_class_archfiend_dice_ping = true
+		blaze_slayer_rng_drops = true
+		wilsons_plans_ping = true
+
+	[slayer.tara_slayer]
+		digested_mosquito_ping = true
+		tarantula_talisman_ping = true
+		fly_swatter_ping = true
+		tara_slayer_rng_drops = true
+
+	[slayer.qol]
+		auto_warp_void = false
+		eman_melee_qol = false
+		detects_and_shows_info_for_slayer = false
+
+[debug]
+	debug_mode = false
+
+[fishing]
+
+	[fishing.crimson_isles]
+		vanquisher_ping = true
+		radioactive_vial_ping = true
+		phlegblast_ping = true
+		flash_i_ping = true
+		jawbus_ping = true
+		thunder_ping = true
+
+	[fishing.hub_shark]
+		legendary_meg_pet_drop_ping = true
+		epic_meg_pet_drop_ping = true
+		grim_reaper_ping = false
+		meg_pet_drop_ping = true
+		phantom_fisher_ping = false
+		deep_sea_orb_ping = false
+		great_white_shark_ping = false
+		water_hydra_ping = false
+
+	[fishing.hub]
+		sea_emperor_ping = false
+		carrot_king_ping = false
+		lucky_clover_core_ping = true
+		flying_fish_pet_drop_ping = false
+
+	[fishing.winter_island]
+		nutcracker_ping = false
+		epic_yeti_pet_drop_ping = true
+		legendary_yeti_pet_drop_ping = true
+		reindrake_ping = false
+		yeti_ping = false
+		yeti_pet_drop_ping = true
+
+	[fishing.crystal_hollows]
+		zombie_miner_ping = false
+
+	[fishing.others]
+		fawe_default_pings = true
+
+	[fishing.qol]
+		show_thunder_info = true
+		bobber_count = true
+		detect_double_jawbus = true
+		players_nearby_count = false
+		show_vanquisher_hp = false
+		woot_woot = true
+		show_jawbus_info = true
+		show_yeti_hp = false
+		rekindle_cd_timer = true
+		detect_double_thunder = true
+		show_reindrake_hp = false
+
+[dungeons]
+	"display_secrets_per_run_(per_session)" = false
+	wish_command = true
+	melody_terminal_alert = true
+	bonzo_mask_cd_timer = true
+
+[sound]
+	rng_sounds = 3
+
+[fishing_qol]
+	show_thunder_info = false
+	hide_sc_messages = true
+	hide_autopet_messages = false
+	full_thunder_bottle_ping = true
+	mushy_tonic_timer = true
+	detect_double_thunder = false
+	spirit_mask_cd_timer = true
+	bobber_count = true
+	detect_double_jawbus = false
+	players_nearby_count = true
+	phoenix_rekindle_cd_timer = true
+	show_jawbus_info = false
+	hide_scc_messages = true
+
+	[fishing_qol.detections]
+		no_ping_jawbus_pings = false
+		no_ping_yeti_pings = true
+		no_ping_thunder_pings = false
+		no_ping_headless_horseman_pings = true
+		no_ping_sea_emperor_pings = true
+		no_ping_grim_reaper_pings = true
+		no_ping_vanq_pings = false
+		no_ping_rein_pings = true
+		no_ping_nutcracker_pings = false
+		no_ping_carrot_king_pings = true
+		no_ping_gw_pings = true
+		no_ping_phantom_pings = true
+		no_ping_phleg_pings = false
+		no_ping_water_hydra_pings = true
+
+[counter]
+	fishing_counter = true
+	easy_get_baker_cake = true
+
+[general_qol]
+
+	[general_qol.commands]
+		swap_lobby_command = true
+		auto_warp_command = true
+		warpexc_command = true
+		auto_notify_new_party_joiners = true
+		party_kickoffline_shortcut = true
+		party_allinvite_shortcut = true
+
+	[general_qol.qol]
+		not_on_skyblock_notifier = true
+		inquisitor_auto_sendcoords = true
+		kicked_notifier = true
+		boop_notifier = true
+		flux_countdown_timer = true
+
+[sounds]
+	debug_mode = 0
+	copy_text = "RARE DROP! Radioactive Vial (+420% ✯ Magic Find)"
+	rng_sounds = 3
+
+[dev]
+	reset_settings = 0
+
+[gui]
+	reset_settings = 0
+
+	[gui.overlay_toggles]
+		bobber_count = true
+		detect_double_jawbus = true
+		players_nearby_count = true
+		detect_charge_counter = true
+		detect_double_thunder = true
+		reset_settings = 0
+
+[fishing_pings]
+
+	[fishing_pings.crimson_isles]
+		vanquisher_ping = true
+		radioactive_vial_ping = true
+		phlegblast_ping = true
+		flash_i_ping = true
+		jawbus_ping = true
+		thunder_ping = true
+
+	[fishing_pings.hub_shark]
+		meg_pet_drop_ping = true
+		grim_reaper_ping = false
+		phantom_fisher_ping = false
+		deep_sea_orb_ping = false
+		great_white_shark_ping = true
+
+	[fishing_pings.hub]
+		sea_emperor_ping = true
+		squid_pet_drop_ping = true
+		dolphin_milestone_pet_drop_ping = true
+		carrot_king_ping = true
+		lucky_clover_core_ping = true
+		water_hydra_ping = true
+		guardian_pet_drop_ping = true
+		flying_fish_pet_drop_ping = true
+
+	[fishing_pings.winter_island]
+		nutcracker_ping = true
+		baby_yeti_pet_drop_ping = true
+		reindrake_ping = true
+		yeti_ping = true
+		yeti_pet_drop_ping = true
+
+	[fishing_pings.crystal_hollows]
+		zombie_miner_ping = false
+
+	[fishing_pings.zothers]
+		zombie_miner_ping = true
+		fawe_default_pings = true
+
+	[fishing_pings.others]
+		fawe_default_pings = true
+
+	[fishing_pings.hub_spooky]
+		grim_reaper_ping = true
+		phantom_fisher_ping = true
+		deep_sea_orb_ping = true
+		phantom_rod_ping = true
+		lucky_hoof_ping = true
+
+[others]
+	rng_sounds = 0
+
+	[others.debug]
+		debug_mode = 0.0
+
+[misc]
+	caducous_feeder_timer = true
+	cake_timer = true
+	mute_the_sheep = true
+	grandma_hider = true
+
+	[misc.spooky]
+		trick_or_treat_mobs_ping = false
+		primal_fear_ping = false
+		hide_fear_messages = true
+		primal_fear_main_toggle = false
+		headless_horseman_ping = false
+		solver_for_karen_fear = true
+		solver_for_mathematician_fear = true
+
+	[misc.end]
+		end_protector_ping = true
+
+	[misc.jerry]
+		hidden_jerry_ping = true
+
+	[misc.mythos]
+		mythos_counter = false
+		mythos_mob_averages_info = true
+		mythos_mob_trackers_info = true
+		general_mythos_info = true
+		mythos_mob_drops_info = true
+		mythos_mob_kills_info = true
+
+	[misc.mining]
+		scatha_pet_drop_alert = true
+		golden_goblin_alert = true
+		kings_scent_timer = true
+
+	[misc.dyes]
+		dye_pings = true
+		announce_dye_pings_in_guild = true
+
