@@ -11,7 +11,7 @@ yDiff = Math.pow(y2 - y1, 2);
 zDiff = Math.pow(z2 - z1, 2);
 let dist = Math.sqrt(xDiff + yDiff + zDiff);
 
-console.log(sample1.x, sample1.y, sample1.z);
-console.log(Player.getX().toFixed(2), Player.getY().toFixed(2), Player.getZ().toFixed(2))
-console.log(dist)
+// console.log(sample1.x, sample1.y, sample1.z);
+// console.log(Player.getX().toFixed(2), Player.getY().toFixed(2), Player.getZ().toFixed(2))
+// console.log(dist)
 

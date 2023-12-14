@@ -79,7 +79,12 @@ let playerMF = 0;
 
 
 
-
+// Fishing QOL:
+register('chat', (event) => {
+    if (!data.inSkyblock) return;
+    if (!Settings.hide_blessing_messages) return;
+    cancel(event);
+}).setCriteria('Your Blessing enchant got you double drops!');
 
 ////////////////////////////////////////////////////////////////////////////
 // LAVA SEA CREATURE SPECIAL MESSAGES --------------------------------------

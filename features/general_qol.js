@@ -1,4 +1,3 @@
-import RenderLib from 'RenderLib/index.js';
 import Settings from '../settings.js';
 import Audio from '../utils/audio.js';
 import { data } from '../utils/data.js';
@@ -115,13 +114,14 @@ register('chat', (rank, ign, event) => {
 }).setCriteria('Party > ${rank} ${ign}: #transfer')
 
 ///////////////////////////////////////////////////////////////////////////////
-// Not on SB notifier ---------------------------------------------------------
+// Kicked from SB Alert -------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
+// kicked from sb alert
 register('chat', (event) => {
     if (!data.inSkyblock) return;
-    if (!Settings.not_on_sb_notifier) return
-    delayMessage('auto', 'Not on skyblock, please warp', 100);
-}).setCriteria("Oops! You are not on SkyBlock so we couldn't warp you!")
+    if (!Settings.kicked_notifier) return;
+    sendMessage('You were kicked while joining that server! 1 minute cooldown.')
+}).setCriteria('You were kicked while joining that server!')
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -164,14 +164,6 @@ register("command", (...args) => {
         executeCommands(allCommands, 1000);
     }, 1000);
 }).setName('warpexc');
-
-
-// kicked from sb alert
-register('chat', (event) => {
-    if (!data.inSkyblock) return;
-    if (!Settings.kicked_notifier) return;
-    sendMessage('You were kicked while joining that server! 1 minute cooldown.')
-}).setCriteria('You were kicked while joining that server!')
 
 ////////////////////////////////////////////////////////////////////////////////
 // MESSAGE HIDERS --------------------------------------------------------------
@@ -312,6 +304,16 @@ register('chat', (presetName, plotName, event) => {
     cancel(event);
     ChatLib.chat(`&6&lPASTING: &rUsing Preset &b&l[&r${presetName}&b&l]&r on Plot &b'&c${plotName}&b'&r!`)
 }).setCriteria('Started pasting ${presetName} preset on Garden Plot - ${plotName}!');
+
+
+register("renderEntity", function (entity, position, ticks, event) {
+    if (!World.isLoaded()) return;
+    if (!data.inSkyblock) return;
+    if (!Settings.hide_lightning) return;
+    if(entity.getClassName() === "EntityLightningBolt"){
+      cancel(event)
+    }
+})
 
 // // guild shortener
 // register('chat', (rank, name, role, message, event) => {

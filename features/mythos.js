@@ -187,7 +187,11 @@ register('chat', (event) => {
 // Minos Inquisitor
 register('chat', (event) => {
     cancel(event);
-    sendMessage(`${getPlayerPos()} || ${getPlayerPOI()} || Inquisitor`);
+    // run function to detect name of inquisitor being runic or not
+    // if runicInq, 
+    // if (Settings.announce_inqs) sendMessage(`${getPlayerPos()} || ${getPlayerPOI()} || RUNIC Inquisitor`);
+    // else
+    if (Settings.announce_inqs) sendMessage(`${getPlayerPos()} || ${getPlayerPOI()} || Inquisitor`);
     delayMessage('client', `Mobs Since Last Inq: &b${data.MPI.mobsSinceInq} &ckills`, 100);
     playSound();
 
@@ -310,12 +314,19 @@ register('step', () => {
 register('renderOverlay', () => {
     if (data.inSkyblock === false) return;
     if (currArea !== 'Hub') return;
-    if (!Settings.mythos_main_toggle) return;
+    if (!Settings.mythos_main_toggle && data.wasCounterOn) {
+        Settings.fishing_counter = true;
+        return;
+    }
+    if (Settings.fishing_counter && currArea === 'Hub') {
+        Settings.fishing_counter = false;
+        data.wasCounterOn = true;
+    }
     Renderer.drawStringWithShadow(allMythoLines, 5, 100);
 });
 
 // hideMessage('You need to equip a LEGENDARY griffin pet to fight this!', '&7Equip &6Leg Griff&7!', mythosAudio);
-hideMessage('You need to equip a LEGENDARY griffin pet to fight this!', '', null)
+if (Settings.hide_griffin_error) hideMessage('You need to equip a LEGENDARY griffin pet to fight this!', '', null)
 
 register('command', () => {
     ChatLib.chat(`&6|| &rMobs Since Inq: &c${data.MPI.mobsSinceInq}`);

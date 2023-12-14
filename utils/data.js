@@ -2,6 +2,7 @@ import PogObject from "PogData"
 
 export let data = new PogObject("Bao", {
     "firstTime": true,
+    "modPrefix": '&6[&3Bao&6]&r',
 
     ///////////////////////////////////////////////////////////////////////////////
     // IN SKYBLOCK
@@ -66,6 +67,7 @@ export let data = new PogObject("Bao", {
     ///////////////////////////////////////////////////////////////////////////////
     // FISHING
     ///////////////////////////////////////////////////////////////////////////////
+    "wasCounterOn": false,
     "diaAlready": [], 
     "testExp": 0, 
     "dhTotalStats": 0,

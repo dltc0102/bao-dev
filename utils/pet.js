@@ -4,6 +4,8 @@ import Settings from "../settings.js"
 let usingPet = false;
 let activePet = '';
 
+
+
 register('chat', (pet, event) => {
     usingPet = true;
     activePet = pet;
@@ -22,6 +24,11 @@ register('chat', (lvl, pet, event) => {
     activePet = pet;
     debug(`usingPet: ${usingPet}, activePet: ${activePet}, mainPet: ${pet}`)
 }).setCriteria('Autopet equipped your ${lvl} ${pet}! VIEW RULE')
+
+register('command', () => {
+    ChatLib.chat(`Current Pet: ${activePet}`)
+}).setName('currpet');
+
 
 export function getActivePet() {
     return activePet;

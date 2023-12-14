@@ -52,6 +52,8 @@ register("command", () =>
     Settings.openGUI()
 ).setName("biscuitaddons").setAliases('bao');
 
+
+
 // // move overlays event
 // register('command', () => {
 //     movebao.open()

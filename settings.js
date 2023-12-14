@@ -1,23 +1,93 @@
-import {
-    @ButtonProperty,
-    @CheckboxProperty,
-    Color,
-    @ColorProperty,
-    @PercentSliderProperty,
-    @SelectorProperty,
-    @SwitchProperty,
-    @TextProperty,
-    @Vigilant,
-} from 'Vigilance';
+import { @ButtonProperty, @CheckboxProperty, Color, @ColorProperty, @PercentSliderProperty, @SelectorProperty, @SwitchProperty, @TextProperty, @Vigilant} from 'Vigilance';
 
 @Vigilant("bao", "§3Bao", {
     getCategoryComparator: () => (a, b) => {
-        const categories = ['Garden', 'GUI', 'General QOL', 'Fishing QOL', 'Fishing Pings', 'Misc', 'Slayer', 'Dungeons', 'HP Display', 'Sound', 'Debug']
+        const categories = ['Garden', 'GUI', 'General QOL', 'Fishing QOL', 'Fishing Pings', 'Misc', 'Slayer', 'Dungeons', 'HP Display', 'Sound', 'Debug', 'Mythos']
         return categories.indexOf(a.name) - categories.indexOf(b.name);
     }
 })
 
 class Settings {
+    //////////////////////////////////////////////////////////////////////////////
+    /* Settings @ Mythos ---------------------------------------------------------
+    * Purpose: Settings for Mythological Event
+    ----------------------------------------------------------------------------*/
+    //////////////////////////////////////////////////////////////////////////////
+    // inq announce
+    @SwitchProperty({
+        name: "Announce Inqs",
+        description: "Announces inqs in party chat. Announces in coop if not in party.",
+        category: "Mythos",
+        subcategory: "QOL",
+    })
+    announce_inqs = false;
+
+    // hide 'leg griffin' errors
+    @SwitchProperty({
+        name: "Hide Leg Griffin Error",
+        description: "Hides the specific message: 'You need to equip a LEGENDARY griffin pet to fight this!'.",
+        category: "Mythos",
+        subcategory: "QOL",
+    })
+    hide_griffin_error = false;
+
+
+    // mythos counter
+    @SwitchProperty({
+        name: "Mythos Counter",
+        description: "Turns on/off the Mythological Counter",
+        category: "Mythos",
+        subcategory: "Counter",
+    })
+    mythos_main_toggle = false;
+
+    // general mythos counter info
+    @SwitchProperty({
+        name: "General Mythos Info",
+        description: "Shows Burrow Counter, Feather Counter and Money Dug Up Counter",
+        category: "Mythos",
+        subcategory: "Counter",
+    })
+    mythos_counter_general = false;
+
+    // kills mythos counter info
+    @SwitchProperty({
+        name: "Mythos Mob Kills Info",
+        description: "Shows Kills Info for Mythological Ritual Mobs",
+        category: "Mythos",
+        subcategory: "Counter",
+    })
+    mythos_counter_kills = false;
+
+    // drops mythos counter info
+    @SwitchProperty({
+        name: "Mythos Mob Drops Info",
+        description: "Shows info for Mob Drops for Mythological Ritual Mobs",
+        category: "Mythos",
+        subcategory: "Counter",
+    })
+    mythos_counter_drops = false;
+
+    // average mythos counter info
+    @SwitchProperty({
+        name: "Mythos Mob Averages Info",
+        description: "Shows info for Mob Averages/Rates for Mythological Ritual Mobs",
+        category: "Mythos",
+        subcategory: "Counter",
+    })
+    mythos_counter_averages = false;
+
+    // tracker mythos counter info
+    @SwitchProperty({
+        name: "Mythos Mob Trackers Info",
+        description: "Shows info for Mob Trackers for Mythological Ritual Mobs",
+        category: "Mythos",
+        subcategory: "Counter",
+    })
+    mythos_counter_trackers = false;
+
+
+
     ////////////////////////////////////////////////////////////////////////////
     // HP Display --------------------------------------------------------------
     ////////////////////////////////////////////////////////////////////////////
@@ -127,7 +197,7 @@ class Settings {
 
     // phantom fisher hp
     @SwitchProperty({
-        name: "Display HP: Phantom Fisher",
+        name: "Display HP: Phantom Fishers",
         description: "Toggles health display for Phantom Fisher",
         category: "HP Display",
     })
@@ -316,20 +386,6 @@ class Settings {
         category: "Timers",
     })
     kingScentTimer = false;
-
-    // @SwitchProperty({
-    //     name: "Caducous Feeder Timer",
-    //     description: "Countdown for Caducous Feeder",
-    //     category: "Timers",
-    // })
-    // feeder_timer = false;
-
-    // @SwitchProperty({
-    //     name: "Cake Timer",
-    //     description: "Countdown for new Cake",
-    //     category: "Timers",
-    // })
-    // cake_timer = false; 
 
     ////////////////////////////////////////////////////////////////////////////
     // FISHING COUNTER ---------------------------------------------------------
@@ -553,15 +609,6 @@ class Settings {
     })
     pk_cmd = false;
 
-    // Not on SB Notifier
-    @SwitchProperty({
-        name: "Not on Skyblock Notifier",
-        description: "Tell your party that you're not on skyblock and ask for auto warp.",
-        category: "General QOL",
-        subcategory: "QOL", 
-    })
-    not_on_sb_notifier = false;
-
     // Kicked Notifier
     @SwitchProperty({
         name: "Kicked Notifier",
@@ -585,9 +632,19 @@ class Settings {
     @SwitchProperty({
         name: "Easy get Baker Cake",
         description: "Get Baker cake easily when he arrives.\n Runs &e/openbaker &r to open the baker's gui and let you get cake.",
-        category: "Counter", 
+        category: "General QOL", 
+        subcategory: "QOL"
     })
     get_baker_cake = false;
+
+    // hide lightning
+    @SwitchProperty({
+        name: "Hide Lightning",
+        description: "Hides lightning visual effects.",
+        category: "General QOL", 
+        subcategory: "QOL"
+    })
+    hide_lightning = false;
 
 
     ////////////////////////////////////////////////////////////////////////////
@@ -648,6 +705,14 @@ class Settings {
         category: "Fishing QOL",
     })
     hide_snow_cannon_messages = false;
+
+    // Hide Blessing double drop messages
+    @SwitchProperty({
+        name: "Hide Blessing Enchant Messages",
+        description: "Hides the double drop message proc'ed by the Blessing enchant.",
+        category: "Fishing QOL",
+    })
+    hide_blessing_messages = false;
     
     //////////////////////////////////////////////////////////////////////////////
     /* Settings @ Crimson Isle Fishing -------------------------------------------
@@ -655,7 +720,7 @@ class Settings {
     ----------------------------------------------------------------------------*/
     //////////////////////////////////////////////////////////////////////////////
     // all pings
-    @SwitchProperty({
+    @ButtonProperty({
         name: "Toggle All Fishing Pings",
         description: "Turns on/off all fishing pings",
         category: "Fishing Pings",
@@ -936,65 +1001,6 @@ class Settings {
         subcategory: "zOthers"
     })
     fawe_pings = false;
-
-
-    //////////////////////////////////////////////////////////////////////////////
-    /* Settings @ Misc > Mythological Event -------------------------------------
-    * Purpose: Settings for Mythological Event
-    ----------------------------------------------------------------------------*/
-    //////////////////////////////////////////////////////////////////////////////
-    @SwitchProperty({
-        name: "Mythos Counter",
-        description: "Turns on/off the Mythological Counter",
-        category: "Misc",
-        subcategory: "Mythos"
-    })
-    mythos_main_toggle = false;
-
-    // general mythos counter info
-    @SwitchProperty({
-        name: "General Mythos Info",
-        description: "Shows Burrow Counter, Feather Counter and Money Dug Up Counter",
-        category: "Misc",
-        subcategory: "Mythos"
-    })
-    mythos_counter_general = false;
-
-    // kills mythos counter info
-    @SwitchProperty({
-        name: "Mythos Mob Kills Info",
-        description: "Shows Kills Info for Mythological Ritual Mobs",
-        category: "Misc",
-        subcategory: "Mythos"
-    })
-    mythos_counter_kills = false;
-
-    // drops mythos counter info
-    @SwitchProperty({
-        name: "Mythos Mob Drops Info",
-        description: "Shows info for Mob Drops for Mythological Ritual Mobs",
-        category: "Misc",
-        subcategory: "Mythos"
-    })
-    mythos_counter_drops = false;
-
-    // average mythos counter info
-    @SwitchProperty({
-        name: "Mythos Mob Averages Info",
-        description: "Shows info for Mob Averages/Rates for Mythological Ritual Mobs",
-        category: "Misc",
-        subcategory: "Mythos"
-    })
-    mythos_counter_averages = false;
-
-    // tracker mythos counter info
-    @SwitchProperty({
-        name: "Mythos Mob Trackers Info",
-        description: "Shows info for Mob Trackers for Mythological Ritual Mobs",
-        category: "Misc",
-        subcategory: "Mythos"
-    })
-    mythos_counter_trackers = false;
 
 
     //////////////////////////////////////////////////////////////////////////////
@@ -1517,6 +1523,27 @@ class Settings {
         this.setCategoryDescription("Misc", "Miscellaneous Pings for Event Mobs")
         this.setCategoryDescription("Dungeon", "Dungeon Features")
 
+        // Mythos 
+        this.addDependency("General Mythos Info", "Mythos Counter")
+        this.addDependency("Mythos Mob Kills Info", "Mythos Counter")
+        this.addDependency("Mythos Mob Drops Info", "Mythos Counter")
+        this.addDependency("Mythos Mob Averages Info", "Mythos Counter")
+        this.addDependency("Mythos Mob Trackers Info", "Mythos Counter")
+
+        // Display HP
+        this.addDependency("Display HP: Vanquishers", "Mob HP Display Master Toggle")
+        this.addDependency("Display HP: Inquisitors", "Mob HP Display Master Toggle")
+        this.addDependency("Display HP: Champions", "Mob HP Display Master Toggle")
+        this.addDependency("Display HP: Reindrakes", "Mob HP Display Master Toggle")
+        this.addDependency("Display HP: Yeti", "Mob HP Display Master Toggle")
+        this.addDependency("Display HP: Jawbus", "Mob HP Display Master Toggle")
+        this.addDependency("Display HP: Thunder", "Mob HP Display Master Toggle")
+        this.addDependency("Display HP: Great Whites", "Mob HP Display Master Toggle")
+        this.addDependency("Display HP: Carrot Kings", "Mob HP Display Master Toggle")
+        this.addDependency("Display HP: Water Hydras", "Mob HP Display Master Toggle")
+        this.addDependency("Display HP: Sea Emperors", "Mob HP Display Master Toggle")
+        this.addDependency("Display HP: Grim Reapers", "Mob HP Display Master Toggle")
+        this.addDependency("Display HP: Phantom Fishers", "Mob HP Display Master Toggle")
         // Gardens
         this.addDependency("Pest ESP", "Pest QOL")
         this.addDependency("Auto Set Home Pest", "Pest QOL")
@@ -1577,8 +1604,6 @@ class Settings {
         this.addDependency("Fire Aspect 3 Book Ping", "Blaze Slayer RNG Drops")
         this.addDependency("Fiery Burst Rune Ping", "Blaze Slayer RNG Drops")
         this.addDependency("Lava Tears Rune Ping", "Blaze Slayer RNG Drops")
-
-
         // dungeons
 
     }   

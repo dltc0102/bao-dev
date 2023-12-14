@@ -37,19 +37,14 @@ const flash1_title = '&dFlash 1'
 const vanq_title = '&5Vanquisher'
 const phleg_title = '&4Phlegblast'
 const yeti_title = '&fYETI'
-const leg_yeti_title = '&6Baby Yeti'
-const epic_yeti_title = '&5Baby Yeti'
 const nutcracker_title = "&7Nutcracker"
 const rein_title = '&cReindrake'
 const gw_title = '&3Great White'
-const leg_meg_title = '&6Meg Pet'
-const epic_meg_title = '&5Meg Pet'
 const phantom_title = "&dPhantom Fisher"
 const grim_title = '&5GRIM REAPER'
 const dso_title = '&5Deep Sea Orb'
 const phantom_rod_title = '&6Phantom Rod'
 const hoof_title = '&aLucky Hoof'
-
 const emp_title = "&6Sea Emperor"
 const carrot_title = "&6Carrot King"
 const clover_core_title = '&5Lucky Clover Core'
@@ -90,7 +85,7 @@ register('command', () => {
     
     Settings.zb_miner_ping = true;
     Settings.fawe_pings = true;
-    ChatLib.chat('[Bao] All Fishing Pings have turned on.')
+    ChatLib.chat(`${data.modPrefix} All Fishing Pings have turned on.`)
 }).setName('togglefishingpings');
 
 ////////////////////////////////////////////////////////////////////////////////
