@@ -17,16 +17,6 @@ register('command', () => {
     playSound();
 }).setName('rngtest')
 
-// trophy fish
-data.diaAlready = ['Blobfish', 'Gusher', 'Obfuscated 1', 'Lavahorse', 'Soulfish']
-register('chat', (tfish, event) => {
-    if (!data.diaAlready.includes(tfish)) {
-        showAlert(`&b${tfish}`);
-        playSound();
-        sendMessage(`TROPHY FISH! You caught a ${tfish} DIAMOND.`)
-        data.diaAlready.push(tfish);
-    }
-}).setCriteria('TROPHY FISH! You caught a ${tfish} DIAMOND.'); 
 ////////////////////////////////////////////////////////////////////////////////
 // TITLES ----------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
@@ -85,8 +75,10 @@ register('command', () => {
     
     Settings.zb_miner_ping = true;
     Settings.fawe_pings = true;
-    ChatLib.chat(`${data.modPrefix} All Fishing Pings have turned on.`)
+    ChatLib.chat(`${data.modPrefix} All Fishing Pings have turned ON.`)
 }).setName('togglefishingpings');
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 /* Fishing @ Crimson Isles -----------------------------------------------------

@@ -1,18 +1,12 @@
 import Settings from "../settings.js"
 import Audio from '../utils/audio.js'
 import { data } from "../utils/data.js"
-import { getTabArea, updateCDText, createGuiCommand, renderGuiPosition } from '../utils/functions.js'
+import { getTabArea, updateCDText, createGuiCommand, renderGuiPosition, constrainCoords, crossLoadTimer } from '../utils/functions.js'
 import { getActivePet } from '../utils/pet.js'
 import { showAlert } from '../utils/utils.js'
 import { sendMessage } from '../utils/party.js'
 
-const EntityArmorStand = Java.type("net.minecraft.entity.item.EntityArmorStand");
-
-let currArea = '';
-register('step', () => { currArea = getTabArea(); }).setFps(1);
-
 const timerAudio = new Audio();
-let screenW = Renderer.screen.getWidth();
 
 register('gameLoad', () => {
     if (!Settings.rekindleAlert) return;
@@ -20,61 +14,61 @@ register('gameLoad', () => {
     if (!Settings.mushyTimer) return;
     if (!Settings.bonzo_cd_timer) return;
     if (!Settings.kingScentTimer) return;
+    if (!Settings.gummyTimer) return;
 
-
-    if (data.usedRekindle) {
-        rekindleTimeLeft = 0;
-        const targetTime = new Date(data.targetRekindle);
-        rekindleTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
-    } else {
-        rekindleTimeLeft = 0;
-    }
-
-    if (data.usedSecondWind) {
-        secondWindTimeLeft = 0;
-        const targetTime = new Date(data.targetSecondWind);
-        secondWindTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
-    } else {
-        secondWindTimeLeft = 0;
-    }
-
-    if (data.usedTonic) {
-        tonicTimeLeft = 0;
-        const targetTime = new Date(data.targetTonic);
-        tonicTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
-    } else {
-        tonicTimeLeft = 0;
-    }
-
-    if (data.usedBonzo) {
-        clownTimeLeft = 0;
-        const targetTime = new Date(data.targetBonzo);
-        clownTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
-    } else {
-        clownTimeLeft = 0;
-    }
-
-    if (data.usedScent) {
-        kingsScentTimeLeft = 0;
-        const targetTime = new Date(data.targetScent);
-        kingsScentTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
-    } else {
-        kingsScentTimeLeft = 0;
-    }
-
+    crossLoadTimer(data.usedGummy, data.targetGummy)
+    crossLoadTimer(data.usedRekindle, data.targetRekindle)
+    crossLoadTimer(data.usedSecondWind, data.targetSecondWind)
+    crossLoadTimer(data.usedTonic, data.targetTonic)
+    crossLoadTimer(data.usedBonzo, data.targetBonzo)
+    crossLoadTimer(data.usedScent, data.targetScent)
 })
+
+
+////////////////////////////////////////////////////////////////////////////////
+// GUMMY --------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
+const gummyCD = 60;
+let gummyTimeLeft = 0;
+register('chat', (event) => {
+    if (!Settings.gummyTimer) return;
+    timerAudio.playDrinkSound();
+    data.usedGummy = true; 
+    const targetTime = new Date();
+    targetTime.setMinutes(targetTime.getMinutes() + gummyCD);
+    gummyTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+    data.targetGummy = targetTime;
+}).setCriteria('You ate a reheated gummy!');
+
+register('step', () => {
+    if (!data.inSkyblock) return;
+    if (!Settings.gummyTimer) return;
+    if (!data.usedGummy) return;
+    if (gummyTimeLeft > 0) {
+        gummyTimeLeft -= -1;
+        data.usedGummy = true;
+        updateCDText('&a', 'Gummy Bear', gummyTimeLeft);
+    } else if (gummyTimeLeft === 0) {
+        timerAudio.playDefaultSound();
+        ChatLib.chat('&eYour &cReheated Gummy Bear &ehas expired!');
+        showAlert('&cGummy Bear Expired');
+        data.usedGummy = false;
+        updateCDText('&a', 'Gummy Bear', gummyTimeLeft);
+    }
+}).setFps(1);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // REKINDLE --------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
-const rekindleCD = 10; // 60 
+const rekindleCD = 60; // 60 
 let rekindleTimeLeft = 0;
 register('chat', (event) => {
     if (!Settings.rekindleAlert) return;
     timerAudio.playProcSound();
     data.usedRekindle = true;
     const targetTime = new Date();
-    targetTime.setSeconds(targetTime.getSeconds() + rekindleCD);
+    targetTime.setMinutes(targetTime.getMinutes() + rekindleCD);
     rekindleTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
     data.targetRekindle = targetTime;
 }).setCriteria('Your Phoenix Pet saved you from certain death!');
@@ -145,7 +139,7 @@ register("step", () => {
     if (data.inSkyblock === false) return;
     if (!Settings.flux_timer) return;
 
-    const nearbyOrbs = World.getAllEntitiesOfType(EntityArmorStand)
+    const nearbyOrbs = World.getAllEntitiesOfType(data.entityArmorStand)
         .filter(orbEntity => {
             const orbName = orbEntity.getName().removeFormatting();
             const effectiveRadius = orbEntity.distanceTo(Player.getPlayer());
@@ -373,6 +367,7 @@ let timerDisplayText = '';
 let longestTextWidth = 0;
 
 var movetimer = new Gui(); // timer displays
+var movefluxtimer = new Gui();
 
 register('dragged', (dx, dy, x, y) => {
     if (!data.inSkyblock) return;
@@ -380,9 +375,14 @@ register('dragged', (dx, dy, x, y) => {
         data.timerDis.x = x;
         data.timerDis.y = y;
     }
+    if (movefluxtimer.isOpen()) {
+        data.fluxTimer.x = x;
+        data.fluxTimer.y = y;
+    }
 })
 
-createGuiCommand(movetimer, 'movetimer', 'mtimer');
+createGuiCommand(movetimer, 'movetimer', 'mtm');
+createGuiCommand(movefluxtimer, 'movefluxtimer', 'mflux');
 
 register('step', () => {
     const timerValues = [];
@@ -397,7 +397,7 @@ register('step', () => {
     }
 
     // mushy tonic
-    if (Settings.mushyTimer && currArea !== 'Garden') {
+    if (Settings.mushyTimer && data.currArea !== 'Garden') {
         timerValues.push({ name: "Mushy Tonic", color: '&2', timeLeft: tonicTimeLeft});
     }
     
@@ -417,18 +417,14 @@ register('step', () => {
     // feeder 
     // feederDisplayText = Settings.feeder_timer ? /* NEED VAR*/'' : '';
 
+    // gummy bear
+    if (Settings.gummyTimer) {
+        timerValues.push({name: "Gummy Bear", color: '&a', timeLeft: gummyTimeLeft});
+    }
 
     timerValues.sort((a, b) => b.timeLeft - a.timeLeft);
 
     timerDisplayText = timerValues.map(entry => updateCDText(entry.color, entry.name, entry.timeLeft)).join('');
-
-    // let lengthTimeLefts = [];
-    // timerValues.forEach(entry => {
-    //     lengthTimeLefts.push(Renderer.getStringWidth(entry.timeLeft));
-    // })
-    // longestTextWidth = Math.max(...lengthTimeLefts);
-
-
 }).setFps(1)
 
 register('renderOverlay', () => {
@@ -438,6 +434,7 @@ register('renderOverlay', () => {
     
     if (!Settings.flux_timer) return;
     if (!foundOrb) return;
-    let topRightFluxX = screenW - Renderer.getStringWidth(fluxTimerText);
-    Renderer.drawStringWithShadow(fluxTimerText, topRightFluxX - 5, 45);
+    Renderer.drawStringWithShadow(fluxTimerText, data.fluxTimer.x, data.fluxTimer.y);
+
+    renderGuiPosition(movefluxtimer, data.fluxTimer, '[Flux]: 00s')
 });

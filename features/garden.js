@@ -695,3 +695,19 @@ register('chat', (event) => {
 register("guiClosed", () => {
     deskConfigMsg = false;
 });
+
+// garden message hiders
+register('chat', (event) => {
+    if (Settings.betterGardenMessages) cancel(event);
+}).setCriteria('WARNING! Blocks that you break on this plot will not drop items while using a custom preset!');
+
+register('chat', (event) => {
+    if (Settings.betterGardenMessages) cancel(event);
+}).setCriteria('Remember, you have to be on the island for the resources to be planted!');
+
+register('chat', (presetName, plotName, event) => {
+    if (Settings.betterGardenMessages) {
+        cancel(event);
+        ChatLib.chat(`&6&lPASTING: &rUsing Preset &b&l[&r${presetName}&b&l]&r on Plot &b'&c${plotName}&b'&r!`)
+    }
+}).setCriteria('Started pasting ${presetName} preset on Garden Plot - ${plotName}!');

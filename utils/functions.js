@@ -4,7 +4,6 @@ import { data } from '../utils/data.js'
 import { showAlert } from '../utils/utils.js'
 import { sendMessage } from '../utils/party.js'
 import RenderLib from 'RenderLib/index.js'
-import RenderLibV2 from 'RenderLibV2/index.js'
 
 const fnAudio = new Audio()
 
@@ -213,8 +212,7 @@ export function getFilteredPlayerTabNames() {
 // NEARBY PLAYERS  -------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 export function getNearbyPlayers(maxDistance) {
-    const EntityPlayer = Java.type("net.minecraft.entity.player.EntityPlayer");
-    return World.getAllEntitiesOfType(EntityPlayer)
+    return World.getAllEntitiesOfType(data.entityPlayer)
         .filter(player => player.distanceTo(Player.getPlayer()) < maxDistance);
 }
 
@@ -257,26 +255,20 @@ export function displayEntityHP(names, foundEntity, x, y) {
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTRAIN COORDS ------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
-export function constrainCoords(givenString, x, y) {
+export function constrainCoords(x, y, dataVar, givenString, margin) {
     let screenH = Renderer.screen.getHeight();
     let screenW = Renderer.screen.getWidth();
+    let stringW = Renderer.getStringWidth(givenString);
+    let stringH = 10;
 
     let numLines = 1;
     if (givenString.includes('\n')) {
         numLines = givenString.split('\n')
     }
-    if (x < 5) {
-        x = 5;
-    }
-    if (y < 5) {
-        y = 5;
-    }
-    if (x + Renderer.getStringWidth(givenString) > screenW - 5) {
-        x = screenW - 5 - Renderer.getStringWidth(givenString);
-    }
-    if (y + (numLines * 10) > screenH - 5) {
-        y = screenH - 15;
-    }
+    if (x < margin) dataVar.x = margin;
+    if (y < margin) dataVar.y = margin;
+    if (x > screenW - margin - stringW) dataVar.x = screenW - margin - stringW;
+    if (y > screenH - margin - (numLines * stringH)) dataVar.y = screenH - margin - (numLines * stringH);
 }
 
 export function centerCoords(givenString, x, y) {
@@ -390,8 +382,9 @@ export function getCharges(chargeString) {
 ////////////////////////////////////////////////////////////////////////
 // MESSAGE HIDER -------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////
-export function hideMessage(message, alertMessage, audioInst) {
+export function hideMessage(message, alertMessage, audioInst, toggle) {
     register('chat', (event) => {
+        if (!toggle) return;
         cancel(event);
         showAlert(alertMessage);
         if (audioInst !== null) {
@@ -457,7 +450,7 @@ export function getTabArea() {
     const rawArea = TabList.getNames()[41]
     if (rawArea) {
         const area = rawArea.removeFormatting().trim().split(': ')[1];
-        return area
+        return area;
     }
 }
 
@@ -629,12 +622,6 @@ export function drawLine(x1, y1, z1, x2, y2, z2, givColor, seethru) {
     drawLine3d(x1, y1, z1, x2, y2, z2, colorCode.red, colorCode.green, colorCode.blue, 1, 3, seethru);
 }
 
-export function drawBoundary(x1, z1, x2, z2, givColor, seethru) {
-    let colorCode = colorToRgb(givColor);
-    cx = (x1 + x2) / 2;
-    cz = (z1 + z2) / 2;
-    RenderLibV2.drawInnerEspBoxV2(cx, 67, cz, 95, 0.2, 95, colorCode.red, colorCode.green, colorCode.blue, 0.2, seethru, 2.0)
-}
 export function colorToRgb(input) {
     if (/^#([0-9A-F]{3}){1,2}$/i.test(input)) {
         input = input.replace('#', '');
@@ -751,6 +738,11 @@ export function getCell(plotConfigGui, index) {
     }
 }
 
+export function getSlotInfo(plotConfigGui, index) {
+    const slotIdx = plotConfig.getStackInSlot(index);
+    return slotIdx;
+}
+
 //  function for scaling/translating/rotating/drawing the player's arrow position
 export function drawArrow(arrowImage, scale, rotation, x, y) {
     let arrowSize = 10;
@@ -858,52 +850,41 @@ export function formatTime(seconds) {
     return timerText + '\n';
 }
 
-export function removeLastOccurance(givenArray, givenPhrase) {
-    let phraseArray = givenArray.split('\n');
-    let lastIdx = -1;
-    for (let i = phraseArray.length - 1; i >= 0; i--) {
-        if (phraseArray[i].includes(givenPhrase)) {
-            lastIdx = i;
-            break;
-        }
-    }
-
-    if (lastIdx !== -1) {
-        phraseArray.splice(lastIdx, 1);
-    }
-    return phraseArray.join('\n');
+export function checkLSRange(entity) {
+    entityX = entity.getX();
+    entityY = entity.getY();
+    entityZ = entity.getZ();
+    xDiff = Math.pow(Player.getX() - entityX, 2);
+    yDiff = Math.pow(Player.getY() - entityY, 2);
+    zDiff = Math.pow(Player.getZ() - entityZ, 2);
+    distFromMob = Math.sqrt(xDiff + yDiff + zDiff);
+    return distFromMob;
 }
 
-export function getMobHP(mobName) {
-    let foundMob = false;
-    let mobInfos = [];
-    let inMobRange = 0;
-
-    let EntityArmorStand = Java.type("net.minecraft.entity.item.EntityArmorStand");
-    register('step', () => {
-        mobInfos = [];
-        let nearbyEntities = World.getAllEntitiesOfType(EntityArmorStand)
-            .filter(entity => {
-                let name = entity.getName();
-                let entityX = entity.getX().toFixed(0);
-                let entityY = entity.getY().toFixed(0);
-                let entityZ = entity.getZ().toFixed(0);
-                xDiff = Math.pow(Player.getX() - entityX, 2);
-                yDiff = Math.pow(Player.getY() - entityY, 2);
-                zDiff = Math.pow(Player.getZ() - entityZ, 2);
-                inMobRange = Math.sqrt(xDiff + yDiff + zDiff);
-                return name.includes(mobName);
-            })
-        if (nearbyEntities.length > 0) {
-            for (let zb in nearbyEntities) {
-                let zbName = nearbyEntities[zb].getName();
-                let zbRangeText = inMobRange < 31 ? '&r[&a&l✔&r]' : '&r[&c&l✖&r]'
-                let zbText = `${zbName} &b--&r ${zbRangeText}`
-                mobInfos.push(zbText);
-                foundMob = true;
-            }
+export function calcSkillXP(xp) {
+    let currLevel = 0;
+    let basicXP = {
+        '1': 1000,
+        '2': 2000,
+        '3': 5000,
+        '4': 7500,
+        '5': 10000,
+    }
+    for (let i = 0; i < basicXP.length; i++) {
+        if (xp <= basicXP[i]) {
+            currLevel = i;
+            return currLevel;
         }
-    }).setFps(5);
-    
-    return mobInfos.join('\n')
+    }
 }
+
+export function crossLoadTimer(dataUsedVar, dataTargetVar, varTimeLeft) {
+    varTimeLeft = 0;
+    if (dataUsedVar) {
+        const targetTime = new Date(dataTargetVar);
+        varTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+    } else {
+        varTimeLeft = 0;
+    }
+}
+

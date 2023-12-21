@@ -2,15 +2,9 @@ import Settings from '../settings.js'
 import Audio from '../utils/audio.js'
 import { data } from '../utils/data.js'
 import { showAlert } from '../utils/utils.js'
-import { createGuiCommand, renderGuiPosition, getTabArea, drawBonzoBox, drawLine, drawBeacon, colorToRgb, centerCoordinates, createGuiCommand } from '../utils/functions.js'
+import { createGuiCommand, renderGuiPosition,createGuiCommand } from '../utils/functions.js'
 import { sendMessage } from '../utils/party.js'
-import { drawLine3d } from 'BloomCore/utils/Utils.js';
-
-const EntityArmorStand = Java.type("net.minecraft.entity.item.EntityArmorStand");
-
-let currArea = '';
-register('step', () => { if (!data.inSkyblock) return; currArea = getTabArea(); }).setFps(1);
-
+// import { drawBonzoBox, drawLine, drawBeacon, colorToRgb, centerCoordinates } from '../utils/functions.js'
 const dunAudio = new Audio();
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,18 +35,12 @@ register('step', () => {
         return;
     }
 
-    if (Player.getContainer().getName() !== 'Experimentation Table'  || !Player.getContainer().getName()) return;
+    if (Player.getContainer().getName() !== 'Experimentation Table') return;
 
     sendMessage('melody');
     melodyMsgSent = true;
     lastMelodyMsgTime = Date.now(); // Record the time the message was sent
 })
-
-// Party Full Alert
-register('chat', (event) => {
-    showAlert('&eParty Full')
-    dunAudio.playDefaultSound();
-}).setCriteria('Party Finder > Your dungeon group is full! Click here to warp to the dungeon!')
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,7 +65,7 @@ createGuiCommand(movesecretcounter, 'movesecretcounter', 'msc')
 
 register('chat', (event) => {
     if (!data.inSkyblock) return;
-    if (currArea !== 'Catacombs') return;
+    if (data.currArea !== 'Catacombs') return;
     numRunsStats += 1;
     ChatLib.command('showextrastats');
     statsCommandRun = true;
@@ -85,20 +73,20 @@ register('chat', (event) => {
 
 register('chat', (event) => {
     if (!data.inSkyblock) return;
-    if (currArea !== 'Catacombs') return;
+    if (data.currArea !== 'Catacombs') return;
     if (!statsCommandRun) return;
     extraStatsShown = true;
 }).setCriteria('${mode} Catacombs - Floor ${floor} Stats').setContains();;
 
 register('chat', (playerDeaths, event) => {
     if (!data.inSkyblock) return;
-    if (currArea !== 'Catacombs') return;
+    if (data.currArea !== 'Catacombs') return;
     deathStats += Number(playerDeaths);
 }).setCriteria('Deaths: ${playerDeaths}').setContains();
 
 register('chat', (secretCount, event) => {
     if (!data.inSkyblock) return;
-    if (currArea !== 'Catacombs') return;
+    if (data.currArea !== 'Catacombs') return;
     secretStats += Number(secretCount);
 }).setCriteria('Secrets Found: ${secretCount}').setContains();
 
@@ -120,14 +108,6 @@ register('renderOverlay', () => {
     Renderer.drawStringWithShadow(secretOverviewText, screenW / 2 - (Renderer.getStringWidth(secretOverviewText) / 2), 30)
     renderGuiPosition(movesecretcounter, data.SecretCount, `Runs: 0 | Secrets: 0 | Avg: 0/run`)
 })
-
-// register('command', (args) => {
-//     secretStats += Number(args);
-// }).setName('addsecret')
-
-// register('command', (args) => {
-//     numRunsStats += Number(args);
-// }).setName('addrun');
 
 register('command', () => {
     secretStats = 0;
@@ -396,31 +376,3 @@ register('command', () => {
 // register('command', () => {
 //     ChatLib.chat(data.runCountGoal);
 // }).setName('getrungoal')
-
-// M6 ONLY
-let runCountText = '';
-
-register('chat', (event) => {
-    data.runCount += 1;
-}).setCriteria("[BOSS] Sadan: You thought I'd fall for the same tricks as those before me? Not today!")
-
-register('step', () => {
-    runCountText = data.runCount > 0 ? `Runs: ${data.runCount}/${data.runCountGoal}` : `Runs: 0/${data.runCountGoal}`
-})
-register('renderOverlay', () => {
-    if (!data.inSkyblock) return;
-    if (currArea !== 'Catacombs') return;
-    if (currArea !== 'Dungeon Hub') return;
-    Renderer.drawString(runCountText, data.RCount.x, data.RCount.y);
-    renderGuiPosition(moveruncounter, data.RCount, `Dungeon Runs [M6]: 00/100`);
-})
-
-register('command', () => {
-    data.runCount = 0;
-    ChatLib.chat('&aDungeon Run Counter has been reset!')
-}).setName('resetruncounter')
-
-register('command', (args) => {
-    data.runCountGoal = Number(args)
-    ChatLib.chat(`&aDungeon Run Counter Goal is set to: ${data.runCountGoal}`)
-}).setName('setrungoal');

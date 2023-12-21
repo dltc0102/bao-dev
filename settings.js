@@ -2,7 +2,7 @@ import { @ButtonProperty, @CheckboxProperty, Color, @ColorProperty, @PercentSlid
 
 @Vigilant("bao", "§3Bao", {
     getCategoryComparator: () => (a, b) => {
-        const categories = ['Garden', 'GUI', 'General QOL', 'Fishing QOL', 'Fishing Pings', 'Misc', 'Slayer', 'Dungeons', 'HP Display', 'Sound', 'Debug', 'Mythos']
+        const categories = ['Garden', 'GUI', 'General QOL', 'Fishing QOL', 'Fishing Pings', 'Misc', 'Dungeons', 'HP Display', 'Sound', 'Debug', 'Mythos', 'Timers']
         return categories.indexOf(a.name) - categories.indexOf(b.name);
     }
 })
@@ -91,11 +91,22 @@ class Settings {
     ////////////////////////////////////////////////////////////////////////////
     // HP Display --------------------------------------------------------------
     ////////////////////////////////////////////////////////////////////////////
+    // Edit HP Display Location
+    @ButtonProperty({
+        name: "Edit HP Display Location", 
+        description: "Click the button to move the HP Display on your screen.", 
+        category: "HP Display", 
+    })
+    openHPDisplayGUI() {
+        ChatLib.command('movehp', true)
+    }
+
     // Toggle all boss bars
     @SwitchProperty({
         name: "Mob HP Display Master Toggle",
         description: "Toggles all mob hp displays.",
         category: "HP Display",
+        subcategory: "Toggleables",
     })
     master_displayHP = false;
 
@@ -104,6 +115,7 @@ class Settings {
         name: "Display HP: Vanquishers",
         description: "Toggles health display for Vanquishers",
         category: "HP Display",
+        subcategory: "Toggleables",
     })
     vanq_hp = false;
 
@@ -112,6 +124,7 @@ class Settings {
         name: "Display HP: Inquisitors",
         description: "Toggles health display for Inquisitors",
         category: "HP Display",
+        subcategory: "Toggleables",
     })
     inq_hp = false;
     
@@ -120,6 +133,7 @@ class Settings {
         name: "Display HP: Champions",
         description: "Toggles health display for Champions",
         category: "HP Display",
+        subcategory: "Toggleables",
     })
     champ_hp = false;
 
@@ -128,6 +142,7 @@ class Settings {
         name: "Display HP: Reindrakes",
         description: "Toggles health display for Reindrakes",
         category: "HP Display",
+        subcategory: "Toggleables",
     })
     rein_hp = false;
 
@@ -136,6 +151,7 @@ class Settings {
         name: "Display HP: Yeti",
         description: "Toggles health display for Yeti",
         category: "HP Display",
+        subcategory: "Toggleables",
     })
     yeti_hp = false;
 
@@ -144,6 +160,7 @@ class Settings {
         name: "Display HP: Jawbus",
         description: "Toggles health display for Jawbus",
         category: "HP Display",
+        subcategory: "Toggleables",
     })
     jawbus_hp = false;
 
@@ -152,6 +169,7 @@ class Settings {
         name: "Display HP: Thunder",
         description: "Toggles health display for Thunder",
         category: "HP Display",
+        subcategory: "Toggleables",
     })
     thunder_hp = false;
 
@@ -160,6 +178,7 @@ class Settings {
         name: "Display HP: Great Whites",
         description: "Toggles health display for Great Whites",
         category: "HP Display",
+        subcategory: "Toggleables",
     })
     gwshark_hp = false;
 
@@ -168,6 +187,7 @@ class Settings {
         name: "Display HP: Carrot Kings",
         description: "Toggles health display for Carrot Kings",
         category: "HP Display",
+        subcategory: "Toggleables",
     })
     carrotking_hp = false;
 
@@ -176,6 +196,7 @@ class Settings {
         name: "Display HP: Water Hydras",
         description: "Toggles health display for Water Hydras",
         category: "HP Display",
+        subcategory: "Toggleables",
     })
     waterhydra_hp = false;
 
@@ -184,6 +205,7 @@ class Settings {
         name: "Display HP: Sea Emperors",
         description: "Toggles health display for Sea Emperors",
         category: "HP Display",
+        subcategory: "Toggleables",
     })
     sea_emp_hp = false;
 
@@ -192,6 +214,7 @@ class Settings {
         name: "Display HP: Grim Reapers",
         description: "Toggles health display for Grim Reapers",
         category: "HP Display",
+        subcategory: "Toggleables",
     })
     reaper_hp = false;
 
@@ -200,6 +223,7 @@ class Settings {
         name: "Display HP: Phantom Fishers",
         description: "Toggles health display for Phantom Fisher",
         category: "HP Display",
+        subcategory: "Toggleables",
     })
     phantom_fisher_hp = false;
 
@@ -333,6 +357,15 @@ class Settings {
     })
     alertNoMatSprayonator = false;
 
+    // Better Garden Messages
+    @SwitchProperty({
+        name: "Better Garden Messages",
+        description: "Hides/Changes the message into something simpler.\n&7'WARNING! Blocks that you break on this plot will not drop items while using a custom preset!' &bmessage is hidden.\n&7'Remember, you have to be on the island for the resources to be planted!'&b message is hidden.\n&7'Started pasting &e${presetName}&7 preset on Garden Plot - &e${plotName}&7!'&b has been converted to &7'PASTING: Using Preset [&e${presetName}&7] on Plot &e${plotName}&7!'&b.",
+        category: "Garden",
+        subcategory: "QOL", 
+    })
+    betterGardenMessages = false;
+
 
     // Rare Drop Pings
     @SwitchProperty({
@@ -380,12 +413,32 @@ class Settings {
     })
     flux_timer = false;
 
+    // Edit Flux Timer Location
+    @ButtonProperty({
+        name: "Edit Flux Timer Location", 
+        description: "Click the button to move the Flux Countdown Timer on your screen.", 
+        category: "Timers", 
+        subcategory: "Edit Overlays", 
+    })
+    openFluxTimerGUI() {
+        ChatLib.command('movefluxtimer', true)
+    }
+
+    // King Scent Timer
     @SwitchProperty({
-        name: "Kings Scent Timer",
+        name: "King's Scent Timer",
         description: "Countdown for King's Scent for Nucleus Runs",
         category: "Timers",
     })
     kingScentTimer = false;
+
+    // Reheated Gummy Bear Timer
+    @SwitchProperty({
+        name: "Reheated Gummy Bear Timer",
+        description: "Timer for reheated gummy bear. &7Note: this will be grouped with the timers for bonzo masks and spirit masks timers.",
+        category: "Timers", 
+    })
+    gummyTimer = false;
 
     ////////////////////////////////////////////////////////////////////////////
     // FISHING COUNTER ---------------------------------------------------------
@@ -451,6 +504,16 @@ class Settings {
         category: "Counter", 
     })
     specials_fishingcounter = false;
+
+    // powerup timer overlay
+    @SwitchProperty({
+        name: "Power-Up Timer Overlay",
+        description: "Powerup Timer Overlay for the Season of Jerry Event.",
+        category: "Counter", 
+    })
+    powerupTimerOverlay = false;
+
+
 
     ////////////////////////////////////////////////////////////////////////////
     // GUI OVERLAYS ------------------------------------------------------------
@@ -609,6 +672,15 @@ class Settings {
     })
     pk_cmd = false;
 
+    // Show Active Pet
+    @SwitchProperty({
+        name: "Show Active Pet",
+        description: "Shows active pet.",
+        category: "General QOL",
+        subcategory: "QOL", 
+    })
+    show_active_pet = false;
+
     // Kicked Notifier
     @SwitchProperty({
         name: "Kicked Notifier",
@@ -645,6 +717,79 @@ class Settings {
         subcategory: "QOL"
     })
     hide_lightning = false;
+
+    // Hide Autopet Messages
+    @SwitchProperty({
+        name: "Hide Autopet Messages",
+        description: "Hides autopet messages.",
+        category: "General QOL",
+        subcategory: "QOL",
+    })
+    hide_autopet_messages = false;
+
+    // Hide Snow Cannon messages
+    @SwitchProperty({
+        name: "Hide Snow Cannon Messages",
+        description: "Hides snow cannon messages. [Jerry's Workshop]",
+        category: "General QOL",
+        subcategory: "QOL"
+    })
+    hide_snow_cannon_messages = false;
+
+    // Better Stash Messages
+    @SwitchProperty({
+        name: "Better Stash Messages",
+        description: "Hides/Simplifies Stash Messages.\n&f'From stash: &e${itemName}&f'&b has been hidden.\n&f'You picked up &e${numItems}&f items from your material stash!'&b has been hidden.\n&f'You still have ${matsRem} materials totalling ${numTypes} types of materials in there!'&b has been hidden and simplified to be &f'From Sacks: &e${pickupMat}&f x&e${numMats}&f || R: &e${remMats}&f || Types: &e${sackTypes}&f'",
+        category: "General QOL",
+        subcategory: "QOL"
+    })
+    betterStashMessages = false;
+
+    // Hide Click Stash Messages
+    @SwitchProperty({
+        name: "Hide Click Stash Messages",
+        description: "&bHides Click Stash Messages:\n&fOld Messages:\n&7'You have &e${numMatsRem}&f materials stashed away!'&b -- message hidden.\n&7'(This totals &e${numTypes}&7 type of material stashed!)'&b -- message hidden.\n&7'(This totals &e${numTypes}&7 types of materials stashed!)'&b -- message hidden.\n&7'>>> CLICK HERE to pick them up! <<<'&b -- message hidden.\n\n&bThese messages will be condensed into one message:\n&f'REMINDER: You have &e${reminderMatsRem}&f materials of &e${numTypesRem}&f type(s) in your sacks!'",
+        category: "General QOL",
+        subcategory: "QOL"
+    })
+    hideClickStashMessages = false;
+    
+    // Limit number of times 'Click Stash' appears
+    @SelectorProperty({
+        name: 'Click Stash Limit',
+        description: "Limit number of times 'Click Stash' appears",
+        category: 'General QOL',
+        subcategory: 'QOL',
+        options: ['0', '5', '10', 'hide it forever'],
+    })
+    clickStashLimitOption = 2; // Stores index of option
+
+    // Hide AOTE/AOTV Message
+    @SwitchProperty({
+        name: "Hide AOTE/AOTV Message",
+        description: "Hides 'Blocks in the way' Message.'",
+        category: "General QOL",
+        subcategory: "QOL"
+    })
+    aotvHider = false;
+
+    // Hide Soopy Unknown Command Message
+    @SwitchProperty({
+        name: "Hide Soopy Unknown Command Message",
+        description: "Hides Soopy gibberish command showing up on screen.",
+        category: "General QOL",
+        subcategory: "QOL"
+    })
+    randomSoopyMessageHider = false;
+
+    // grandma wolf hider
+    @SwitchProperty({
+        name: "Grandma Hider",
+        description: "Hides message from Grandma Wolf Pet",
+        category: "General QOL",
+        subcategory: "QOL",
+    })
+    grandma_hider = false; 
 
 
     ////////////////////////////////////////////////////////////////////////////
@@ -690,21 +835,6 @@ class Settings {
     })
     full_bottle_ping = false;
 
-    // Hide Autopet Messages
-    @SwitchProperty({
-        name: "Hide Autopet Messages",
-        description: "Hides autopet messages.",
-        category: "Fishing QOL",
-    })
-    hide_autopet_messages = false;
-
-    // Hide Snow Cannon messages
-    @SwitchProperty({
-        name: "Hide Snow Cannon Messages",
-        description: "Hides snow cannon messages. [Jerry's Workshop]",
-        category: "Fishing QOL",
-    })
-    hide_snow_cannon_messages = false;
 
     // Hide Blessing double drop messages
     @SwitchProperty({
@@ -1026,20 +1156,6 @@ class Settings {
 
 
     //////////////////////////////////////////////////////////////////////////////
-    /* Settings @ Misc > ---------------------------------------------------------
-    * Purpose: Settings for Caducous Feeder and Cakes
-    ----------------------------------------------------------------------------*/
-    //////////////////////////////////////////////////////////////////////////////
-    @SwitchProperty({
-        name: "Grandma Hider",
-        description: "Hides message from Grandma Wolf Pet",
-        category: "Misc",
-    })
-    grandma_hider = false; 
-
-
-
-    //////////////////////////////////////////////////////////////////////////////
     /* Settings @ Misc > Jerry ---------------------------------------------------
     * Purpose: Settings for Jerry Pings
     ----------------------------------------------------------------------------*/
@@ -1179,278 +1295,6 @@ class Settings {
     guild_announce_dye_pings = false;
 
 
-
-    //////////////////////////////////////////////////////////////////////////////
-    /* Settings @ Slayer QOL ----------------------------------------------------
-    * Purpose: Settings for Slayer QOL Features
-    ----------------------------------------------------------------------------*/
-    //////////////////////////////////////////////////////////////////////////////
-    // Shows info for slayer 
-    @SwitchProperty({
-        name: "Detects and Shows Info for Slayer", 
-        description: "Slayer is auto-selected.\n&b - &rRevs: Boom Timer\n&b - &rEman: WIP",
-        category: "Slayer",
-    })
-    slayerInfoToggle = false;
-
-    // QOL for Eman Melee 1-Taps
-    @SwitchProperty({
-        name: "Eman Melee QOL",
-        description: "&b- &rDisplays Pearl #.\n&b- &rAuto GFS for Pearls when you are running low.\n&b- &rDisplays TAP #\n&b- &rReminds you to restock on TAP when low.\n&b- &rShows Current Helmet.",
-        category: "Slayer",
-    })
-    emanMeleeQOL = false;
-
-
-
-    /////////////////////////////////////////////////////////////////////////////
-    /* Settings @ Slayer > Rev ---------------------------------------------------
-    * Purpose: Settings for Rev Slayer RNG Drops
-    ----------------------------------------------------------------------------*/
-    //////////////////////////////////////////////////////////////////////////////
-    // Rev RNG Drops Main Toggle
-    @SwitchProperty({
-        name: "Rev Slayer RNG Drops", 
-        description: "Shows RNG Drops for Rev Slayer",
-        category: "Slayer",
-        subcategory: "Rev Slayer"
-    })
-    revSlayerRNGToggle = false;
-
-    // Scythe Blade Ping
-    @SwitchProperty({
-        name: "Scythe Blade Ping", 
-        description: "Shows Scythe Blade Ping when dropped.",
-        category: "Slayer",
-        subcategory: "Rev Slayer"
-    })
-    scythe_blade_ping = false;
-    
-    // SotS Ping
-    @SwitchProperty({
-        name: "Shard of the Shredded Ping", 
-        description: "Shows Shard of the Shredded Ping when dropped.",
-        category: "Slayer",
-        subcategory: "Rev Slayer"
-    })
-    sots_ping = false;
-    
-    // Warden Heart Ping
-    @SwitchProperty({
-        name: "Warden Heart Ping", 
-        description: "Shows Warden Heart Ping when dropped.",
-        category: "Slayer",
-        subcategory: "Rev Slayer"
-    })
-    warden_heart_ping = false;
-
-
-    /////////////////////////////////////////////////////////////////////////////
-    /* Settings @ Slayer > Tara --------------------------------------------------
-    * Purpose: Settings for Tara Slayer RNG Drops
-    ----------------------------------------------------------------------------*/
-    //////////////////////////////////////////////////////////////////////////////
-    // Tara RNG Drops Main Toggle
-    @SwitchProperty({
-        name: "Tara Slayer RNG Drops", 
-        description: "Shows RNG Drops for Tara Slayer",
-        category: "Slayer",
-        subcategory: "Tara Slayer"
-    })
-    taraSlayerRNGToggle = false;
-
-    // Digested Mosquito Ping
-    @SwitchProperty({
-        name: "Digested Mosquito Ping", 
-        description: "Shows Digested Mosquito Ping when dropped.",
-        category: "Slayer",
-        subcategory: "Tara Slayer"
-    })
-    dig_mos_ping = false;
-
-    // Tara Talisman Ping
-    @SwitchProperty({
-        name: "Tarantula Talisman Ping", 
-        description: "Shows Tarantula Talisman Ping when dropped.",
-        category: "Slayer",
-        subcategory: "Tara Slayer"
-    })
-    tara_tali_ping = false;
-
-    // Fly Swatter Ping
-    @SwitchProperty({
-        name: "Fly Swatter Ping", 
-        description: "Shows Fly Swatter Ping when dropped.",
-        category: "Slayer",
-        subcategory: "Tara Slayer"
-    })
-    fly_swatter_ping = false;
-
-
-
-    /////////////////////////////////////////////////////////////////////////////
-    /* Settings @ Slayer > Sven --------------------------------------------------
-    * Purpose: Settings for Sven Slayer RNG Drops
-    ----------------------------------------------------------------------------*/
-    //////////////////////////////////////////////////////////////////////////////
-    // Sven RNG Drops Main Toggle
-    @SwitchProperty({
-        name: "Sven Slayer RNG Drops", 
-        description: "Shows RNG Drops for Sven Slayer",
-        category: "Slayer",
-        subcategory: "Sven Slayer"
-    })
-    svenSlayerRNGToggle = false;
-
-    // Overflux Capacitor Ping
-    @SwitchProperty({
-        name: "Overcapacitor Ping",
-        description: "Shows Overcapacitor Ping when dropped.",
-        category: "Slayer",
-        subcategory: "Sven Slayer"
-    })
-    overcap_ping = false;
-
-    // Wolf Talisman Ping
-    @SwitchProperty({
-        name: "Wolf Talisman Ping",
-        description: "Shows Wolf Talisman Ping when dropped.",
-        category: "Slayer",
-        subcategory: "Sven Slayer"
-    })
-    wolf_tali_ping = false;
-
-
-    /////////////////////////////////////////////////////////////////////////////
-    /* Settings @ Slayer > Eman --------------------------------------------------
-    * Purpose: Settings for Eman Slayer RNG Drops
-    ----------------------------------------------------------------------------*/
-    //////////////////////////////////////////////////////////////////////////////
-    // Eman RNG Drops Main Toggle
-    @SwitchProperty({
-        name: "Eman Slayer RNG Drops", 
-        description: "Shows RNG Drops for Eman Slayer",
-        category: "Slayer",
-        subcategory: "Eman Slayer"
-    })
-    emanSlayerRNGToggle = false;
-
-    // Judgement Core Ping
-    @SwitchProperty({
-        name: "Judgement Core Ping",
-        description: "Shows ping when Judgement Core dropped.",
-        category: "Slayer",
-        subcategory: "Eman Slayer"
-    })
-    jcore_ping = false;
-    
-    // Ender Slayer 7 Book Ping
-    @SwitchProperty({
-        name: "Ender Slayer 7 Book Ping",
-        description: "Shows ping when Enderslayer 7 Book dropped.",
-        category: "Slayer",
-        subcategory: "Eman Slayer"
-    })
-    es7_book_ping = false;
-    
-    // Enchant Rune Ping
-    @SwitchProperty({
-        name: "Enchant Rune I Ping",
-        description: "Shows ping when Enchant Rune I dropped.",
-        category: "Slayer",
-        subcategory: "Eman Slayer"
-    })
-    enchant_rune_ping = false;
-
-
-
-    /////////////////////////////////////////////////////////////////////////////
-    /* Settings @ Slayer > Blaze -------------------------------------------------
-    * Purpose: Settings for Blaze Slayer RNG Drops
-    ----------------------------------------------------------------------------*/
-    //////////////////////////////////////////////////////////////////////////////
-    // Blaze RNG Drops Main Toggle
-    @SwitchProperty({
-        name: "Blaze Slayer RNG Drops", 
-        description: "Shows RNG Drops for Blaze Slayer",
-        category: "Slayer",
-        subcategory: "Blaze Slayer"
-    })
-    blazeSlayerRNGToggle = false;
-    
-    // Duplex 1 Book Ping
-    @SwitchProperty({
-        name: "Duplex 1 Book Ping", 
-        description: "Shows Duplex 1 Book Ping when dropped.",
-        category: "Slayer",
-        subcategory: "Blaze Slayer"
-    })
-    duplex1_book_ping = false;
-    
-    // High Class Archfiend Dice Ping
-    @SwitchProperty({
-        name: "High Class Archfiend Dice Ping", 
-        description: "Shows High Class Dice Ping when dropped.",
-        category: "Slayer",
-        subcategory: "Blaze Slayer"
-    })
-    high_class_dice_ping = false;
-    
-    // Wilsons Plans Ping
-    @SwitchProperty({
-        name: "Wilsons Plans Ping", 
-        description: "Shows Wilsons Plans Ping when dropped.",
-        category: "Slayer",
-        subcategory: "Blaze Slayer"
-    })
-    wilsons_plans_ping = false;
-    
-    // Subzero Inverter Ping
-    @SwitchProperty({
-        name: "Subzero Inverter Ping", 
-        description: "Shows Subzero Inverter Ping when dropped.",
-        category: "Slayer",
-        subcategory: "Blaze Slayer"
-    })
-    subzero_inverter_ping = false;
-    
-    // Scorched Crystal Ping
-    @SwitchProperty({
-        name: "Scorched Crystal Ping", 
-        description: "Shows Scorched Crystal Ping when dropped.",
-        category: "Slayer",
-        subcategory: "Blaze Slayer"
-    })
-    scorched_crystal_ping = false;
-    
-    // Fire Aspect 3 Book Ping
-    @SwitchProperty({
-        name: "Fire Aspect 3 Book Ping", 
-        description: "Shows Fire Aspect 3 Book Ping when dropped.",
-        category: "Slayer",
-        subcategory: "Blaze Slayer"
-    })
-    fire_aspect3_book_ping = false;
-    
-    // Fiery Burst Rune Ping
-    @SwitchProperty({
-        name: "Fiery Burst Rune Ping", 
-        description: "Shows Fiery Burst Rune Ping when dropped.",
-        category: "Slayer",
-        subcategory: "Blaze Slayer"
-    })
-    fiery_burst_rune_ping = false;
-    
-    // Lava Tears Rune Ping
-    @SwitchProperty({
-        name: "Lava Tears Rune Ping", 
-        description: "Shows Lava Tears Rune Ping when dropped.",
-        category: "Slayer",
-        subcategory: "Blaze Slayer"
-    })
-    lava_tears_rune_ping = false;
-
-
     //////////////////////////////////////////////////////////////////////////////
     /* Settings @ Dungeons -------------------------------------------------------
     * Purpose: Settings for Dungeon Settings
@@ -1514,6 +1358,16 @@ class Settings {
     })
     toggle_debug = false;
 
+    // toggle all settings - biscuit
+    @ButtonProperty({
+        name: "Toggle all Biscuits Settings", 
+        description: "Click to activate all settings for easy dev-ing.", 
+        category: "Debug", 
+    })
+    openBiscuitSettingsGUI() {
+        ChatLib.command('allbaosettings', true)
+    }
+
 
     // constructor for category descriptions
     constructor() {
@@ -1522,6 +1376,10 @@ class Settings {
         this.setCategoryDescription("Fishing Pings", "Fishing Pings for Mobs and Drops")
         this.setCategoryDescription("Misc", "Miscellaneous Pings for Event Mobs")
         this.setCategoryDescription("Dungeon", "Dungeon Features")
+        
+        // General QOL
+        this.addDependency("Hide Click Stash Messages", "Better Stash Messages")
+        this.addDependency("Click Stash Limit", "Hide Click Stash Messages")
 
         // Mythos 
         this.addDependency("General Mythos Info", "Mythos Counter")
@@ -1544,12 +1402,15 @@ class Settings {
         this.addDependency("Display HP: Sea Emperors", "Mob HP Display Master Toggle")
         this.addDependency("Display HP: Grim Reapers", "Mob HP Display Master Toggle")
         this.addDependency("Display HP: Phantom Fishers", "Mob HP Display Master Toggle")
+        
         // Gardens
         this.addDependency("Pest ESP", "Pest QOL")
         this.addDependency("Auto Set Home Pest", "Pest QOL")
         this.addDependency("Autowarp Pest", "Pest QOL")
         this.addDependency("Screen Pest Alert", "Pest QOL")
 
+        // Timers
+        this.addDependency("Edit Flux Timer Location", "Flux Countdown Timer")
 
         // this.addDependency(child name, parent name)
         // fishing.crimson_isles
@@ -1580,32 +1441,6 @@ class Settings {
         this.addDependency("Solver for Mathematician Fear", "Primal Fear Main Toggle")
         this.addDependency("Solver for Karen Fear", "Primal Fear Main Toggle")
         
-        // slayer
-        this.addDependency("Scythe Blade Ping", "Rev Slayer RNG Drops")
-        this.addDependency("Shard of the Shredded Ping", "Rev Slayer RNG Drops")
-        this.addDependency("Warden Heart Ping", "Rev Slayer RNG Drops")
-
-        this.addDependency("Digested Mosquito Ping", "Tara Slayer RNG Drops")
-        this.addDependency("Tarantula Talisman Ping", "Tara Slayer RNG Drops")
-        this.addDependency("Fly Swatter Ping", "Tara Slayer RNG Drops")
-        
-        this.addDependency("Overcapacitor Ping", "Sven Slayer RNG Drops")
-        this.addDependency("Wolf Talisman Ping", "Sven Slayer RNG Drops")
-
-        this.addDependency("Judgement Core Ping", "Eman Slayer RNG Drops")
-        this.addDependency("Ender Slayer 7 Book Ping", "Eman Slayer RNG Drops")
-        this.addDependency("Enchant Rune I Ping", "Eman Slayer RNG Drops")
-
-        this.addDependency("Duplex 1 Book Ping", "Blaze Slayer RNG Drops")
-        this.addDependency("High Class Archfiend Dice Ping", "Blaze Slayer RNG Drops")
-        this.addDependency("Wilsons Plans Ping", "Blaze Slayer RNG Drops")
-        this.addDependency("Subzero Inverter Ping", "Blaze Slayer RNG Drops")
-        this.addDependency("Scorched Crystal Ping", "Blaze Slayer RNG Drops")
-        this.addDependency("Fire Aspect 3 Book Ping", "Blaze Slayer RNG Drops")
-        this.addDependency("Fiery Burst Rune Ping", "Blaze Slayer RNG Drops")
-        this.addDependency("Lava Tears Rune Ping", "Blaze Slayer RNG Drops")
-        // dungeons
-
     }   
 }
 

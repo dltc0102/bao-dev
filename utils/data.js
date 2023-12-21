@@ -5,10 +5,18 @@ export let data = new PogObject("Bao", {
     "modPrefix": '&6[&3Bao&6]&r',
 
     ///////////////////////////////////////////////////////////////////////////////
-    // IN SKYBLOCK
+    // IN SKYBLOCK, CURRAREA
     ///////////////////////////////////////////////////////////////////////////////
     "inSkyblock": false,
+    "currArea": '',
 
+    ///////////////////////////////////////////////////////////////////////////////
+    // JAVA TYPES
+    ///////////////////////////////////////////////////////////////////////////////
+    "entityFishHook": Java.type("net.minecraft.entity.projectile.EntityFishHook"), 
+    "entityArmorStand": Java.type("net.minecraft.entity.item.EntityArmorStand"), 
+    "entityArrow": Java.type("net.minecraft.entity.projectile.EntityArrow"), 
+    "entityPlayer": Java.type("net.minecraft.entity.player.EntityPlayer"),
 
     ///////////////////////////////////////////////////////////////////////////////
     // BEACON
@@ -285,6 +293,10 @@ export let data = new PogObject("Bao", {
         "x": 200, 
         "y": 240
     }, 
+    "DayCount": { // charge count
+        "x": 300, 
+        "y": 200
+    }, 
     "HPCount": { // charge count
         "x": 400, 
         "y": 40
@@ -293,7 +305,24 @@ export let data = new PogObject("Bao", {
         "x": 400, 
         "y": 240
     }, 
-
+    "fluxTimer": { // fluxtimer display
+        "x": 400, 
+        "y": 250
+    }, 
+    "pupDis": { // powerup display
+        "x": 400, 
+        "y": 260
+    }, 
+    
+    "userPets": [],
+    "petDis": { // timer display
+        "x": 300, 
+        "y": 210
+    }, 
+    "FishCounter": { // timer display
+        "x": 5, 
+        "y": 100
+    }, 
     ///////////////////////////////////////////////////////////////////////////////
     // DISPLAY LOCATION FOR MOBS HP
     ///////////////////////////////////////////////////////////////////////////////
@@ -357,7 +386,23 @@ export let data = new PogObject("Bao", {
     // cake timer
     "targetCake": null, 
     "usedCake": false, 
+
+    // gummy timer
+    "targetGummy": null, 
+    "usedGummy": false,
     
+    // powerups
+    // homing snowball timer
+    "targetHoming": null, 
+    "usedHoming": false,
+
+    // strongarm timer
+    "targetStrongarm": null, 
+    "usedStrongarm": false, 
+
+    // doubleup timer
+    "targetDoubleUp": null, 
+    "usedDoubleUp": false,
     ///////////////////////////////////////////////////////////////////////////////
     // GARDEN PLOT TIMERS
     ///////////////////////////////////////////////////////////////////////////////

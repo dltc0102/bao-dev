@@ -5,16 +5,11 @@ import "./features/fishing_overlays.js"
 import "./features/fishing_pings.js" 
 import './features/fishing_stats.js'
 import "./features/misc.js" 
-import "./features/spooky.js" 
-import "./features/slayers.js" 
 import "./features/dungeons.js" 
 import "./features/mythos.js"
-
-// import "./features/garden.js"
+import "./features/garden.js"
 import "./features/winter.js"
-
 import "./features/displayHP.js"
-import "./utils/inrange.js"
 
 /* Dev.js 
 * o Reset Button
@@ -31,6 +26,7 @@ import "./utils/inrange.js"
 
 import Settings from "./settings.js"
 import { data } from "./utils/data.js"
+import { getTabArea } from "./utils/functions.js"
 
 if (data.firstTime) {
     ChatLib.chat('&3--------------- &6<&3Bao&6> &rhas been installed! &3----------------');
@@ -51,6 +47,12 @@ register('command', () => {
 register("command", () => 
     Settings.openGUI()
 ).setName("biscuitaddons").setAliases('bao');
+
+// load current area
+register('step', () => {
+    if (!data.inSkyblock) return;
+    data.currArea = getTabArea();
+}).setFps(1);
 
 
 

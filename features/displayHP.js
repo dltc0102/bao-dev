@@ -1,57 +1,85 @@
 import Settings from '../settings.js'
 import { data } from '../utils/data.js'
-import { getMobHP } from '../utils/functions.js'
+import { checkLSRange } from '../utils/functions.js'
+import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'
+let EntityArmorStand = Java.type("net.minecraft.entity.item.EntityArmorStand");
 
 let specifiedMobs = [];
-// register('step', () => {
-//     if (Settings.master_displayHP) {
-//         if (Settings.vanq_hp) specifiedMobs += 'Vanquisher';
-//         if (Settings.inq_hp) specifiedMobs += 'Exalted Minos Inquisitor';
-//         if (Settings.champ_hp) specifiedMobs += 'Exalted Minos Champion';
-//         if (Settings.rein_hp) specifiedMobs += 'Reindrake';
-//         if (Settings.yeti_hp) specifiedMobs += 'Yeti';
-//         if (Settings.gwshark_hp) gwStr = specifiedMobs += 'Great White Shark';
-//         if (Settings.carrotking_hp) specifiedMobs += 'Carrot King';
-//         if (Settings.waterhydra_hp) specifiedMobs += 'Water Hydra';
-//         if (Settings.sea_emp_hp) specifiedMobs += 'Sea Emperor';
-//         if (Settings.reaper_hp) specifiedMobs += 'Grim Reaper';
-//         if (Settings.phantom_fisher_hp) specifiedMobs += 'Phantom Fisher';
-//         specifiedMobs += 'Frozen Steve';
-//         specifiedMobs += 'Frosty';
-//         specifiedMobs += 'Squid';
-//         specifiedMobs += 'Sea Walker';
-//         specifiedMobs += 'Sea Archer';
-//         specifiedMobs += 'Sea Guardian';
-//         specifiedMobs += 'Sea Witch';
-//         specifiedMobs += 'Rider of the Deep';
-//     }
-// }).setFps(5);
+let lavaSeaCreatures = ['Phlegblast', 'Baby Magma Slug', 'Magma Slug', 'Moogma', 'Lava Leech', 'Pyroclastic Worm', 'Lava Flame', 'Fire Eel', 'Taurus', 'Thunder', 'Jawbus', 'Vanquisher']
 
-register('command', () => {
-    if (Settings.master_displayHP) {
-        if (Settings.vanq_hp) specifiedMobs += 'Vanquisher';
-        if (Settings.inq_hp) specifiedMobs += 'Exalted Minos Inquisitor';
-        if (Settings.champ_hp) specifiedMobs += 'Exalted Minos Champion';
-        if (Settings.rein_hp) specifiedMobs += 'Reindrake';
-        if (Settings.yeti_hp) specifiedMobs += 'Yeti';
-        if (Settings.gwshark_hp) gwStr = specifiedMobs += 'Great White Shark';
-        if (Settings.carrotking_hp) specifiedMobs += 'Carrot King';
-        if (Settings.waterhydra_hp) specifiedMobs += 'Water Hydra';
-        if (Settings.sea_emp_hp) specifiedMobs += 'Sea Emperor';
-        if (Settings.reaper_hp) specifiedMobs += 'Grim Reaper';
-        if (Settings.phantom_fisher_hp) specifiedMobs += 'Phantom Fisher';
-        specifiedMobs += 'Frozen Steve';
-        specifiedMobs += 'Frosty';
-        specifiedMobs += 'Squid';
-        specifiedMobs += 'Sea Walker';
-        specifiedMobs += 'Sea Archer';
-        specifiedMobs += 'Sea Guardian';
-        specifiedMobs += 'Sea Witch';
-        specifiedMobs += 'Rider of the Deep';
+if (Settings.master_displayHP) {
+    specifiedMobs.push(...lavaSeaCreatures);
+    if (Settings.vanq_hp) specifiedMobs.push('Vanquisher');
+    if (Settings.inq_hp) specifiedMobs.push('Exalted Minos Inquisitor');
+    if (Settings.champ_hp) specifiedMobs.push('Exalted Minos Champion');
+    if (Settings.rein_hp) specifiedMobs.push('Reindrake');
+    if (Settings.yeti_hp) specifiedMobs.push('Yeti');
+    if (Settings.gwshark_hp) specifiedMobs.push('Great White Shark');
+    if (Settings.carrotking_hp) specifiedMobs.push('Carrot King');
+    if (Settings.waterhydra_hp) specifiedMobs.push('Water Hydra');
+    if (Settings.sea_emp_hp) specifiedMobs.push('Sea Emperor');
+    if (Settings.reaper_hp) specifiedMobs.push('Grim Reaper');
+    if (Settings.phantom_fisher_hp) specifiedMobs.push('Phantom Fisher');
+}
+
+// debug
+// register('command', () => {
+//     ChatLib.chat(`master display hp toggle is: ${Settings.master_displayHP ? "ON": "OFF"}`)
+// }).setName('checkhp');
+
+// register('command', () => {
+//     console.log(`Mobs to Detect: ${specifiedMobs}`)
+// }).setName('listmobs');
+
+// Gui Stuff
+var movehp = new Gui(); // display hp of mobs
+createGuiCommand(movehp, 'movehp', 'mhp')
+
+let mobInfos = [];
+let inEntityLSRange = false;
+let displayMobInfos = '';
+
+register('dragged', (dx, dy, x, y) => {
+    if (!data.inSkyblock) return;
+    if (movehp.isOpen()) {
+        data.HPCount.x = x;
+        data.HPCount.y = y;
     }
-    console.log(specificMobs.join(', '))
-}).setName('listmobs');
-    
-    
-    
+})
+
+register('step', () => {
+    mobInfos = [];
+    nearbyMobs = World.getAllEntitiesOfType(EntityArmorStand)
+        .filter(dist => dist.distanceTo(Player.getPlayer()) < 61)
+        .filter(mobEntity => {
+            let entityName = mobEntity.getName().removeFormatting();
+            inEntityLSRange = checkLSRange(mobEntity) < 31; // returns dist
+
+            let allowedMobPatterns = specifiedMobs.join('|');
+            let regexPattern = '\\[Lv\\d+\\] (' + allowedMobPatterns + ') (\\d+(\\.\\d*)?[kM]?)\\/(\\d+(\\.\\d+)?[kM]?)❤';
+            let matchMobPattern = entityName.match(regexPattern);
+            // console.log(`Entity Name: ${entityName}`)
+            // console.log(allowedMobPatterns)
+            // console.log(`Match Result: ${matchMobPattern ? true : false}`)
+            
+            if (matchMobPattern) {
+                inRangeText = inEntityLSRange ? '&a✓' : '&c✖'
+                displayedHP = `${mobEntity.getName()} &r-- [${inRangeText}&r]` 
+                mobInfos.push(displayedHP); 
+            }
+        })
+    displayMobInfos = mobInfos.join('\n')
+}).setFps(10);
+
+register('renderOverlay', () => {
+    if (!data.inSkyblock) return;
+    if (!World.isLoaded()) return;
+    if (!Settings.master_displayHP) return;
+    Renderer.drawString(displayMobInfos, data.HPCount.x, data.HPCount.y);
+
+    // gui open
+    renderGuiPosition(movehp, data.HPCount, '[Lv000] SomeMobMonster 10M/10M ❤ -- [✖]')
+});
+
+
 

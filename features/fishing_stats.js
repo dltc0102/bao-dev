@@ -3,10 +3,9 @@ import Settings from '../settings.js';
 import Audio from '../utils/audio.js';
 import { data } from '../utils/data.js';
 import { getTabArea, updateCDText, formatMoney } from '../utils/functions.js';
+import { createGuiCommand, renderGuiPosition } from '../utils/functions.js';
 /// HIDE SCC MESSAGES ON THIS FILE ONLY
 
-let currArea = '';
-register('step', () => { currArea = getTabArea(); }).setFps(1);
 
 // const fStats = new Audio();
 
@@ -121,7 +120,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
     
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -136,7 +135,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceCarrotKing += 1;
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -150,7 +149,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceCarrotKing += 1;
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -164,7 +163,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceCarrotKing += 1;
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -174,21 +173,11 @@ register('chat', (event) => {
 // guardian pet drop
 register('chat', (event) => {
     const message = ChatLib.getChatMessage(event, true);
-    if (message.includes('&rGuardian')) {
-        data.waterSC.commonGD += 1;
-    }
-    if (message.includes('&aGuardian')) {
-        data.waterSC.uncommonGD += 1;
-    }
-    if (message.includes('&9Guardian')) {
-        data.waterSC.rareGD += 1;
-    }
-    if (message.includes('&5Guardian')) {
-        data.waterSC.epicGD += 1;
-    }
-    if (message.includes('&6Guardian')) {
-        data.waterSC.legGD += 1;
-    }
+    if (message.includes('&rGuardian') || message.includes('&fGuardian')) data.waterSC.commonGD += 1;
+    if (message.includes('&aGuardian')) data.waterSC.uncommonGD += 1;
+    if (message.includes('&9Guardian')) data.waterSC.rareGD += 1;
+    if (message.includes('&5Guardian')) data.waterSC.epicGD += 1;
+    if (message.includes('&6Guardian')) data.waterSC.legGD += 1;
 }).setCriteria('GREAT CATCH! You found a [Lvl 1] Guardian.')
 
 
@@ -199,7 +188,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceCarrotKing += 1;
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -213,7 +202,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceCarrotKing += 1;
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -227,7 +216,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceCarrotKing += 1;
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -241,7 +230,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceCarrotKing += 1;
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -255,7 +244,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceCarrotKing = 0;
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -277,7 +266,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceCarrotKing += 1;
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -291,7 +280,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceCarrotKing += 1;
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -305,7 +294,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceCarrotKing += 1;
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -319,7 +308,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceCarrotKing += 1;
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra = 0;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -333,7 +322,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceCarrotKing += 1;
     data.waterSC.catchesSinceSeaEmperor = 0;
     data.waterSC.catchesSinceWaterHydra += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -343,21 +332,11 @@ register('chat', (event) => {
 // Flying Fish Pet [Sea Emperor]
 register('chat', (mf, event) => {
     const message = ChatLib.getChatMessage(event, true);
-    if (message.includes('&rFlying Fish')) {
-        data.waterSC.commonFF += 1;
-    }
-    if (message.includes('&aFlying Fish')) {
-        data.waterSC.uncommonFF += 1;
-    }
-    if (message.includes('&9Flying Fish')) {
-        data.waterSC.rareFF += 1;
-    }
-    if (message.includes('&5Flying Fish')) {
-        data.waterSC.epicFF += 1;
-    }
-    if (message.includes('&6Flying Fish')) {
-        data.waterSC.legFF += 1;
-    }
+    if (message.includes('&rFlying Fish') || message.includes('&fFlying Fish')) data.waterSC.commonFF += 1;
+    if (message.includes('&aFlying Fish')) data.waterSC.uncommonFF += 1;
+    if (message.includes('&9Flying Fish')) data.waterSC.rareFF += 1;
+    if (message.includes('&5Flying Fish')) data.waterSC.epicFF += 1;
+    if (message.includes('&6Flying Fish')) data.waterSC.legFF += 1;
 }).setCriteria('PET DROP! Flying Fish (+${mf}% ✯ Magic Find)')
 
 
@@ -376,7 +355,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceCarrotKing += 1;
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -389,7 +368,7 @@ register('chat', (event) => {
 ////////////////////////////////////////////////////////////////////////////
 // Oasis Rabbit
 register('chat', (event) => {
-    if (currArea !== 'The Farming Islands') return;
+    if (data.currArea !== 'The Farming Islands') return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.waterSC.oasisRabbitCatches += 1;
     data.waterSC.totalOasisWaterSCCatches += 1;
@@ -400,7 +379,7 @@ register('chat', (event) => {
 
 // Oasis Sheep
 register('chat', (event) => {
-    if (currArea !== 'The Farming Islands') return;
+    if (data.currArea !== 'The Farming Islands') return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.waterSC.oasisSheepCatches += 1;
     data.waterSC.totalOasisWaterSCCatches += 1;
@@ -415,7 +394,7 @@ register('chat', (event) => {
 ////////////////////////////////////////////////////////////////////////////
 // Water Worm
 register('chat', (event) => {
-    if (currArea !== 'Crystal Hollows') return;
+    if (data.currArea !== 'Crystal Hollows') return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.waterSC.waterWormCatches += 1;
     data.waterSC.totalCHWaterSCCatches += 1;
@@ -427,7 +406,7 @@ register('chat', (event) => {
 
 // Poisoned Water Worm
 register('chat', (event) => {
-    if (currArea !== 'Crystal Hollows') return;
+    if (data.currArea !== 'Crystal Hollows') return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.waterSC.poisonedWaterWormCatches += 1;
     data.waterSC.totalCHWaterSCCatches += 1;
@@ -439,7 +418,7 @@ register('chat', (event) => {
 
 // Zombie Miner
 register('chat', (event) => {
-    if (currArea !== 'Crystal Hollows') return;
+    if (data.currArea !== 'Crystal Hollows') return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.waterSC.zombieMinerCatches += 1;
     data.waterSC.totalCHWaterSCCatches += 1;
@@ -463,7 +442,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceWaterHydra += 1;
     data.waterSC.catchesSincePhantomFisher += 1;
     data.waterSC.catchesSinceGrimReaper += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -480,7 +459,7 @@ register('chat', (event) => {
     data.catchesSinceWaterHydra += 1;
     data.catchesSincePhantomFisher += 1;
     data.catchesSinceGrimReaper += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -497,7 +476,7 @@ register('chat', (event) => {
     data.catchesSinceWaterHydra += 1;
     data.catchesSincePhantomFisher += 1;
     data.catchesSinceGrimReaper += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -514,7 +493,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceWaterHydra += 1;
     data.waterSC.catchesSincePhantomFisher = 0;
     data.waterSC.catchesSinceGrimReaper += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -531,7 +510,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceWaterHydra += 1;
     data.waterSC.catchesSincePhantomFisher += 1;
     data.waterSC.catchesSinceGrimReaper = 0;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -544,7 +523,7 @@ register('chat', (event) => {
 ////////////////////////////////////////////////////////////////////////////
 // Frozen Steve
 register('chat', (event) => {
-    if (currArea !== "Jerry's Workshop") return;
+    if (data.currArea !== "Jerry's Workshop") return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.waterSC.frozenSteveCatches += 1;
     data.waterSC.totalWinterWaterSCCatches += 1;
@@ -557,7 +536,7 @@ register('chat', (event) => {
 
 // Frosty the Snowman
 register('chat', (event) => {
-    if (currArea !== "Jerry's Workshop") return;
+    if (data.currArea !== "Jerry's Workshop") return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.waterSC.frostySnowmanCatches += 1;
     data.waterSC.totalWinterWaterSCCatches += 1;
@@ -570,7 +549,7 @@ register('chat', (event) => {
 
 // Grinch
 register('chat', (event) => {
-    if (currArea !== "Jerry's Workshop") return;
+    if (data.currArea !== "Jerry's Workshop") return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.waterSC.grinchCatches += 1;
     data.waterSC.totalWinterWaterSCCatches += 1;
@@ -583,7 +562,7 @@ register('chat', (event) => {
 
 // Yeti
 register('chat', (event) => {
-    if (currArea !== "Jerry's Workshop") return;
+    if (data.currArea !== "Jerry's Workshop") return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.waterSC.yetiCatches += 1;
     data.waterSC.totalWinterWaterSCCatches += 1;
@@ -600,7 +579,7 @@ register('chat', (event) => {
 
 // Baby Yeti Pet [Yeti]
 register('chat', (mf, event) => {
-    if (currArea !== "Jerry's Workshop") return;
+    if (data.currArea !== "Jerry's Workshop") return;
     const message = ChatLib.getChatMessage(event, true);
     if (message.includes('&5Baby Yeti')) {
         data.waterSC.epicBabyYeti += 1;
@@ -617,7 +596,7 @@ register('chat', (mf, event) => {
 
 // Nutcracker
 register('chat', (event) => {
-    if (currArea !== "Jerry's Workshop") return;
+    if (data.currArea !== "Jerry's Workshop") return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.waterSC.nutcrackerCatches += 1;
     data.waterSC.totalWinterWaterSCCatches += 1;
@@ -630,7 +609,7 @@ register('chat', (event) => {
 
 // Reindrake
 register('chat', (event) => {
-    if (currArea !== "Jerry's Workshop") return;
+    if (data.currArea !== "Jerry's Workshop") return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.waterSC.reindrakeCatches += 1;
     data.waterSC.totalWinterWaterSCCatches += 1;
@@ -648,7 +627,7 @@ register('chat', (event) => {
 // ice rods
 register('chat', (event) => {
     // code goes here
-    if (currArea !== "Jerry's Workshop") return;
+    if (data.currArea !== "Jerry's Workshop") return;
     data.waterSC.iceRods += 1;
 }).setCriteria('You sold Ice Rod x1 for 20,000 Coins!');
 
@@ -664,7 +643,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
     data.waterSC.catchesSinceGWShark += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -680,7 +659,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
     data.waterSC.catchesSinceGWShark += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -696,7 +675,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
     data.waterSC.catchesSinceGWShark += 1;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -712,7 +691,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
     data.waterSC.catchesSinceGWShark = 0;
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         data.waterSC.catchesSinceYeti += 1;
         data.waterSC.catchesSinceReindrake += 1;
         data.waterSC.totalWinterWaterSCCatches += 1;
@@ -726,7 +705,7 @@ register('chat', (event) => {
 // Phlegblast
 register('chat', (event) => {
     if (!data.inSkyblock) return;
-    if (currArea !== 'Crimson Isle') return;
+    if (data.currArea !== 'Crimson Isle') return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.lavaSC.phlegblastCatches += 1;
     data.lavaSC.totalCrimsonSCCatches += 1;
@@ -737,7 +716,7 @@ register('chat', (event) => {
 // Magma Slug
 register('chat', (event) => {
     if (!data.inSkyblock) return;
-    if (currArea !== 'Crimson Isle') return;
+    if (data.currArea !== 'Crimson Isle') return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.lavaSC.magmaSlugCatches += 1;
     data.lavaSC.totalCrimsonSCCatches += 1;
@@ -748,7 +727,7 @@ register('chat', (event) => {
 // Moogma
 register('chat', (event) => {
     if (!data.inSkyblock) return;
-    if (currArea !== 'Crimson Isle') return;
+    if (data.currArea !== 'Crimson Isle') return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.lavaSC.moogmaCatches += 1;
     data.lavaSC.totalCrimsonSCCatches += 1;
@@ -759,7 +738,7 @@ register('chat', (event) => {
 // Lava Leech
 register('chat', (event) => {
     if (!data.inSkyblock) return;
-    if (currArea !== 'Crimson Isle') return;
+    if (data.currArea !== 'Crimson Isle') return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.lavaSC.lavaLeechCatches += 1;
     data.lavaSC.totalCrimsonSCCatches += 1;
@@ -770,7 +749,7 @@ register('chat', (event) => {
 // Pyroclastic Worm
 register('chat', (event) => {
     if (!data.inSkyblock) return;
-    if (currArea !== 'Crimson Isle') return;
+    if (data.currArea !== 'Crimson Isle') return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.lavaSC.pyroclasticWormCatches += 1;
     data.lavaSC.totalCrimsonSCCatches += 1;
@@ -781,7 +760,7 @@ register('chat', (event) => {
 // Lava Flame
 register('chat', (event) => {
     if (!data.inSkyblock) return;
-    if (currArea !== 'Crimson Isle') return;
+    if (data.currArea !== 'Crimson Isle') return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.lavaSC.lavaFlameCatches += 1;
     data.lavaSC.totalCrimsonSCCatches += 1;
@@ -792,7 +771,7 @@ register('chat', (event) => {
 // Fire Eels
 register('chat', (event) => {
     if (!data.inSkyblock) return;
-    if (currArea !== 'Crimson Isle') return;
+    if (data.currArea !== 'Crimson Isle') return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.lavaSC.fireEelsCatches += 1;
     data.lavaSC.totalCrimsonSCCatches += 1;
@@ -803,7 +782,7 @@ register('chat', (event) => {
 // Taurus
 register('chat', (event) => {
     if (!data.inSkyblock) return;
-    if (currArea !== 'Crimson Isle') return;
+    if (data.currArea !== 'Crimson Isle') return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.lavaSC.taurusCatches += 1;
     data.lavaSC.totalCrimsonSCCatches += 1;
@@ -814,7 +793,7 @@ register('chat', (event) => {
 // Thunder
 register('chat', (event) => {
     if (!data.inSkyblock) return;
-    if (currArea !== 'Crimson Isle') return;
+    if (data.currArea !== 'Crimson Isle') return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.lavaSC.thunderCatches += 1;
     data.lavaSC.totalCrimsonSCCatches += 1;
@@ -825,7 +804,7 @@ register('chat', (event) => {
 // Lord Jawbus
 register('chat', (event) => {
     if (!data.inSkyblock) return;
-    if (currArea !== 'Crimson Isle') return;
+    if (data.currArea !== 'Crimson Isle') return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.lavaSC.lordJawbusCatches += 1;
     data.lavaSC.totalCrimsonSCCatches += 1;
@@ -846,7 +825,7 @@ register('chat', (mf, event) => {
 // Flaming Worm
 register('chat', (event) => {
     if (!data.inSkyblock) return;
-    if (currArea !== 'Crystal Hollows') return;
+    if (data.currArea !== 'Crystal Hollows') return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.lavaSC.flamingWormCatches += 1;
     data.lavaSC.totalLavaCHSCCatches += 1;
@@ -856,7 +835,7 @@ register('chat', (event) => {
 // Lava Blaze
 register('chat', (event) => {
     if (!data.inSkyblock) return;
-    if (currArea !== 'Crystal Hollows') return;
+    if (data.currArea !== 'Crystal Hollows') return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.lavaSC.lavaBlazeCatches += 1;
     data.lavaSC.totalLavaCHSCCatches += 1;
@@ -866,13 +845,27 @@ register('chat', (event) => {
 // Lava Pigman
 register('chat', (event) => {
     if (!data.inSkyblock) return;
-    if (currArea !== 'Crystal Hollows') return;
+    if (data.currArea !== 'Crystal Hollows') return;
     if (Settings.hide_sc_msgs) cancel(event);
     data.lavaSC.lavaPigmanCatches += 1;
     data.lavaSC.totalLavaCHSCCatches += 1;
     data.catchesSinceFlamingWorm += 1;
 }).setCriteria("A Lava Pigman arose from the depths!");
 
+////////////////////////////////////////////////////////////////////////////
+// GUI STUFF FOR FISHING COUNTER -------------------------------------------
+////////////////////////////////////////////////////////////////////////////
+var movefishcounter = new Gui();
+
+register('dragged', (dx, dy, x, y) => {
+    if (!data.inSkyblock) return;
+    if (movefishcounter.isOpen()) {
+        data.FishCounter.x = x;
+        data.FishCounter.y = y;
+    }
+})
+
+createGuiCommand(movefishcounter, 'movefishcounter', 'mfc')
 
 ////////////////////////////////////////////////////////////////////////////
 // RENDER OVERLAY COUNTER --------------------------------------------------
@@ -895,7 +888,7 @@ register('step', () => {
     let hubSepThin = '&5' + separatorThin
 
     // CRIMSON ISLE COUNTER
-    if (currArea === 'Crimson Isle') {
+    if (data.currArea === 'Crimson Isle') {
         crimsonTitle = Settings.kills_fishingcounter || Settings.tracker_fishingcounter || Settings.avgs_fishingcounter ? `&8|&7|&b|&7|&8| &cCrimson Isle &8|&7|&b|&7|&8|\n${crimsonSepThick}` : '';
         
         phlegLine = `&8||&b| &6Phlegblast: &b${data.lavaSC.phlegblastCatches}`
@@ -912,7 +905,7 @@ register('step', () => {
         scSinceThunderLine = `&8||&b| &rSC Since Thunder: &b${data.lavaSC.catchesSinceThunder}`
         scSinceJawbusLine = `&8||&b| &rSC Since Jawbus: &b${data.lavaSC.catchesSinceJawbus}`
 
-        jawbusSinceVialLine = `&8||&b| &rJawbus Since Vial: &b${data.lavaSC.jawbusSinceLastVial == null ? 0 : data.lavaSC.jawbusSinceLastVial}`
+        jawbusSinceVialLine = `&8||&b| &rJawbus Since Vial: &b${data.lavaSC.jawbusSinceLastVial === null ? 0 : data.lavaSC.jawbusSinceLastVial}`
 
         thunderChance = 0.0087;
         jawbusChance = 0.0017;
@@ -950,7 +943,7 @@ register('step', () => {
     }
 
     // WINTER ISLAND COUNTER
-    if (currArea === "Jerry's Workshop") {
+    if (data.currArea === "Jerry's Workshop") {
         winterTitle = Settings.kills_fishingcounter || Settings.mob_since_fishingcounter || Settings.drops_fishingcounter || Settings.tracker_fishingcounter || Settings.avgs_fishingcounter || Settings.elapsed_sincefishingcounter || Settings.specials_fishingcounter ? `&8|&1|&9|&3|&b| &rWinter Island &b|&3|&9|&1|&8|\n${winterSepThick}` : '';
 
         // winter kills
@@ -1025,7 +1018,7 @@ register('step', () => {
     }
 
     // HUB GENERAL COUNTER
-    if (currArea === 'Hub') {
+    if (data.currArea === 'Hub') {
         generalTitle =  Settings.kills_fishingcounter || Settings.drops_fishingcounter || Settings.tracker_fishingcounter || Settings.avgs_fishingcounter || Settings.mob_since_fishingcounter ? `&r  <--]|| &fGENERAL &r||[-->  \n${hubSepThick}` : '';
 
         // kills
@@ -1098,15 +1091,17 @@ register('step', () => {
 register('renderOverlay', () => {
     if (!data.inSkyblock) return;
     if (!Settings.fishing_counter) return;
-    if (currArea === 'Crimson Isle') {
-        Renderer.drawStringWithShadow(CIDisplay, 5, 100)
+    if (data.currArea === 'Crimson Isle') {
+        Renderer.drawStringWithShadow(CIDisplay, data.FishCounter.x, data.FishCounter.y)
     }
-    if (currArea === "Jerry's Workshop") {
-        Renderer.drawStringWithShadow(WIDisplay, 5, 100)
+    if (data.currArea === "Jerry's Workshop") {
+        Renderer.drawStringWithShadow(WIDisplay, data.FishCounter.x, data.FishCounter.y)
     }
-    if (currArea === 'Hub') {
-        Renderer.drawStringWithShadow(HUBDisplay, 5, 100)
+    if (data.currArea === 'Hub') {
+        Renderer.drawStringWithShadow(HUBDisplay, data.FishCounter.x, data.FishCounter.y)
     }
+    
+    renderGuiPosition(movefishcounter, data.FishCounter, '<><FISHING AREA><>\n==================\nKills #1: &b...\nKills #2: &b...: &b...\nKills #3: &b...\n-----------------\nDrops #1: &b...\nDrops #2: &b...\nDrops #3: &b...\n-----------------\nSC since Mob #1: &b...\n SC since Mob #2: &b...\n-----------------\nMob since Drop #1: &b...\n Mob since Drop #2: &b...\n-----------------\nAverage SC per Mob #1: &b...\nAverage SC per Mob #2: &b...\nAverage SC per Mob #3: &b...\n-----------------\nTime Since Mob #1: &b...\nTime Since Mob #2: &b...\n-----------------\nTime Since Drop #1: &b...\nTime Since Drop #2')
 });
 
 register('command', (args) => {

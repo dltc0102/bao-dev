@@ -3,10 +3,7 @@ import Audio from '../utils/audio.js';
 import { data } from '../utils/data.js';
 import { sendMessage } from '../utils/party.js';
 import { showAlert } from '../utils/utils.js';
-import { playSound, hideMessage, getPlayerPos, getPlayerPOI, delayMessage, getTabArea, formatMoney } from '../utils/functions.js';
-
-let currArea = '';
-register('step', () => { if (!World.isLoaded()) return; if (!data.inSkyblock) return; currArea = getTabArea(); }).setFps(1);
+import { playSound, hideMessage, getPlayerPos, getPlayerPOI, delayMessage, formatMoney } from '../utils/functions.js';
 
 const mythosAudio = new Audio();
 
@@ -21,13 +18,13 @@ const chim_title = '&d&lCHIMERA I'
 
 hideMessage('Follow the arrows to find the treasure!', '', null);
 
-// feathers dug up -- WORKS
+// feathers dug up
 register('chat', (event) => {
     cancel(event);
     data.MPI.featherCount += 1;
 }).setCriteria('RARE DROP! You dug out a Griffin Feather!');
 
-// coins dug up -- WORKS
+// coins dug up
 register('chat', (money, event) => {
     cancel(event);
     var moneyStr = money.toString();
@@ -35,7 +32,7 @@ register('chat', (money, event) => {
     data.MPI.moneyCount += Number(moneyNoCom);
 }).setCriteria('Wow! You dug out ${money} coins!');
 
-// burrow digging -- WORKS
+// burrow digging
 register('chat', (event) => {
     cancel(event);
     data.MPI.burrowCount +=1;
@@ -50,79 +47,65 @@ register('chat', (event) => {
     data.MPI.burrowsSinceWUS += 1;
 }).setCriteria('You finished the Griffin burrow chain! (4/4)');
 
-// dwarf turtle shelmet -- WORKS
+// dwarf turtle shelmet
 register('chat', (event) => {
     showAlert(dts_title);
     mythosAudio.playDefaultSound();
-    if (data.MPI.DTS === undefined) {
-        data.MPI.DTS += 2;
-    }
+    if (data.MPI.DTS === undefined) data.MPI.DTS += 2;
     data.MPI.DTS += 1;
 }).setCriteria('[SBE] RARE DROP! Dwarf Turtle Shelmet');
 
-// antique remedies -- WORKS
+// antique remedies
 register('chat', (event) => {
     showAlert(ar_title);
     mythosAudio.playDefaultSound();
-    if (data.MPI.AR === undefined) {
-        data.MPI.AR += 2;
-    }
+    if (data.MPI.AR === undefined) data.MPI.AR += 2;
     data.MPI.AR += 1;
 }).setCriteria('[SBE] RARE DROP! Antique Remedies');
 
-// crochet tiger plushie -- WORKS
+// crochet tiger plushie
 register('chat', (event) => {
     showAlert(ctp_title);
     mythosAudio.playDefaultSound();
-    if (data.MPI.CTP === undefined) {
-        data.MPI.CTP += 2;
-    }
+    if (data.MPI.CTP === undefined) data.MPI.CTP += 2;
     data.MPI.CTP += 1;
 }).setCriteria('[SBE] RARE DROP! Crochet Tiger Plushie');
 
-// minos relic -- WORKS
+// minos relic
 register('chat', (event) => {
     showAlert(relic_title);
     sendMessage(`RARE DROP! Minos Relic [${data.MPI.championsSinceRelic} Champ kills]`);
     playSound();
-    if (data.MPI.MR === undefined) {
-        data.MPI.MR += 2;
-    }
+    if (data.MPI.MR === undefined) data.MPI.MR += 2;
     data.MPI.MR += 1;
 }).setCriteria('[SBE] RARE DROP! Minos Relic');
 
-// crown of greed -- WORKS
+// crown of greed
 register('chat', (event) => {
     sendMessage(`RARE DROP! You dug out a Crown of Greed! [${data.MPI.burrowsSinceCOG} burrows]`);
     showAlert(cog_title);
     mythosAudio.playDefaultSound();
-    if (data.MPI.CoG === undefined) {
-        data.MPI.CoG += 2;
-    }
+    if (data.MPI.CoG === undefined) data.MPI.CoG += 2;
     data.MPI.CoG += 1;
     data.MPI.burrowsSinceCOG = 0;
 }).setCriteria('RARE DROP! You dug out a Crown of Greed!');
 
-// washed up souvenir -- WORKS
+// washed up souvenir
 register('chat', (event) => {
     sendMessage(`RARE DROP! You dug out a Washed-up Souvenir! [${data.MPI.burrowsSinceWUS} burrows]`);
     showAlert(wus_title);
     mythosAudio.playDefaultSound();
-    if (data.MPI.WuS === undefined) {
-        data.MPI.WuS += 2;
-    }
+    if (data.MPI.WuS === undefined) data.MPI.WuS += 2;
     data.MPI.WuS += 1;
     data.MPI.burrowsSinceWUS = 0;
 }).setCriteria('RARE DROP! You dug out a Washed-up Souvenir!');
 
-// daedalus stick -- WORKS
+// daedalus stick
 register('chat', (mf, event) => {
     sendMessage(`RARE DROP! Daedalus Stick (+${mf}% ✯ Magic Find) [${data.MPI.minotaursSinceDae} Minotaur kills]`)
     showAlert(dae_title);
     playSound();
-    if (data.MPI.DS === undefined) {
-        data.MPI.DS += 2;
-    }
+    if (data.MPI.DS === undefined) data.MPI.DS += 2;
     data.MPI.DS += 1;
     data.MPI.minotaursSinceDae = 0;
 }).setCriteria('RARE DROP! Daedalus Stick (+${mf}% ✯ Magic Find)');
@@ -131,12 +114,7 @@ register('chat', (mf, event) => {
 register('chat', (event) => {
     showAlert(chim_title)
     sendMessage('RARE DROP! Enchanted Book');
-    // if last15 chat lines contains `Party > rank player: x:xCoord, y:yCoord, z:zCoord || location || Inquisitor`
-    // 
-
-    if (data.MPI.CHIM === undefined) {
-        data.MPI.CHIM += 2;
-    }
+    if (data.MPI.CHIM === undefined) data.MPI.CHIM += 2;
     data.MPI.CHIM += 1;
     // data.MPI.inqsSinceChim = 0;
     mythosAudio.playDefaultSound();
@@ -187,10 +165,6 @@ register('chat', (event) => {
 // Minos Inquisitor
 register('chat', (event) => {
     cancel(event);
-    // run function to detect name of inquisitor being runic or not
-    // if runicInq, 
-    // if (Settings.announce_inqs) sendMessage(`${getPlayerPos()} || ${getPlayerPOI()} || RUNIC Inquisitor`);
-    // else
     if (Settings.announce_inqs) sendMessage(`${getPlayerPos()} || ${getPlayerPOI()} || Inquisitor`);
     delayMessage('client', `Mobs Since Last Inq: &b${data.MPI.mobsSinceInq} &ckills`, 100);
     playSound();
@@ -240,7 +214,7 @@ register('command', () => {
 let allMythoLines = '';
 register('step', () => {
     if (!data.inSkyblock) return;
-    if (currArea !== 'Hub') return;
+    if (data.currArea !== 'Hub') return;
     if (!Settings.mythos_main_toggle) return;
     const moneyText = formatMoney(data.MPI.moneyCount)
 
@@ -313,19 +287,18 @@ register('step', () => {
 
 register('renderOverlay', () => {
     if (data.inSkyblock === false) return;
-    if (currArea !== 'Hub') return;
+    if (data.currArea !== 'Hub') return;
     if (!Settings.mythos_main_toggle && data.wasCounterOn) {
         Settings.fishing_counter = true;
         return;
     }
-    if (Settings.fishing_counter && currArea === 'Hub') {
+    if (Settings.fishing_counter && data.currArea === 'Hub') {
         Settings.fishing_counter = false;
         data.wasCounterOn = true;
     }
     Renderer.drawStringWithShadow(allMythoLines, 5, 100);
 });
 
-// hideMessage('You need to equip a LEGENDARY griffin pet to fight this!', '&7Equip &6Leg Griff&7!', mythosAudio);
 if (Settings.hide_griffin_error) hideMessage('You need to equip a LEGENDARY griffin pet to fight this!', '', null)
 
 register('command', () => {
@@ -335,8 +308,4 @@ register('command', () => {
     ChatLib.chat(`&6|| &rMinotaurs Since WuS: &c${data.MPI.burrowsSinceWUS}`);
     ChatLib.chat(`&6|| &rChamps Since Relic: &c${data.MPI.championsSinceRelic}`);
 }).setName('mythostats');
-
-// register('command', () => {
-//     data.MPI.mobsSinceInq += 74;
-// }).setName('addinq');
 

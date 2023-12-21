@@ -1,32 +1,69 @@
-Flight debug:
-Fishing: 
--  yeti / rein / thunder / jawbus 'catchesSinceMob' have to not be 0, if they are 0 even after fixes, then its 'b2b'
-- detection for jawbus/thunder is a bit wonky:
-    - sometimes it happens, sometimes it doesnt
-    - say youre in bteween A and B but you're closer to B. if A spawns thunder, you detect it, but if B spawns you dont detect it even thought youre closer to B.
-- bait tracker
-    - exp rates per hour for time elapsed
-- create setting to ping when full bottle
+Flight:
 
-IMPORTANT:
-- inventory/pickup tracker
 
-Dungeons:
-- auto kick if player is in ignore list
-- quiver tracker
-- routes 
+Do:
+- pets fix
+- current pet display
+- party lock list
+- turn on all settings button -- under dev
+- preset saver
+- alignment selector (top left, top right, bot left, bot right, custom)
+- deal with jawbus hp and thunder hp
+- verify name of great white shark
+- add better 'watchdog messages'
+- autokick ignored from party
+- cake timer
+- caducous feeder timer
 
-Slayers:
-- blaze slayer info
-- eman qol info
 
-Others:
-- reformat the files to make them prettier
-- auction house filter
-- preset maker
-- ignore list tracker
-- reset buttonw
-- trophy fish counter for guild event
+experimental:
+- rightclick copy (like sbe)
+- alt rightclick on links (replaces . with '')
+- /embed links (adds random 123 in the link before posting)
+
+
+
+Doing: 
+- season of jerry event -- powerup timers (testing constrainCoords and multi-timer creation functions)
+- check createChatTimer func
+- check crossLoadTimer func
+- generate calcSkillXp data (tooo arbitrary so not doing)
+
+- pets fix and debug (need wifi)
+- check 'better sacks message' feature
+
+
+
+Done:
+- added hp bar for inquis/runic inquis
+- added 'edit locations' feature for displaying hp
+- made gummy bear timer (use wifi to check that it works)
+- added feature 'moveable fishing counter' (use wifi to check that it works)
+- added 'toggle all settings' button for dev-ing (use wifi to check that it works)
+- added 'better garden messages'
+- added 'better stash messages'
+- thunder and jawbus hp displays are toggleable
+- removed renderlibv2: unused lib
+- converted each file's currArea to one data.currArea
+- moved some features over to better positioned categories (easy baker and grandma wolf hider are now in general qol)
+- flux timer is now moveable
+
+dungeons.js
+- removed dungeons m6 run counter (later i cba to work on dungeons atm)
+- removed party full alert for dungeons
+
+misc.js
+- optimized some pings
+
+pet.js
+- removed 'show current pet' for now
+
+winter.js
+- powerup timer being weird and not showing
+
+
+
+
 
 v1.0.1 (Nov 9-10, 2023)
 - fixed spooky import being commented

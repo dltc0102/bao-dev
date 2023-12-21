@@ -2,11 +2,8 @@ import Settings from "../settings.js"
 import Audio from '../utils/audio.js'
 import { data } from '../utils/data.js'
 import { showAlert } from '../utils/utils.js'
-import { playSound, generateRandomStr, hideMessage, getTabArea, timeToSeconds, petDropPing, sendSelf, sendGuild } from "../utils/functions.js"
+import { playSound, generateRandomStr, petDropPing, sendSelf, sendGuild } from "../utils/functions.js"
 import { sendMessage, announce } from '../utils/party.js'
-
-let currArea = '';
-register('step', () => { if (!data.inSkyblock) return; currArea = getTabArea(); }).setFps(1);
 
 const miscAudio = new Audio();
 
@@ -54,6 +51,24 @@ const celeste_pattern = /&6&lRARE DROP! &5Celeste Dye/
 ////////////////////////////////////////////////////////////////////////////////
 // MINING ----------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
+// dwarven mines lobby day
+let lobbyDisplay = '';
+register('step', () => {
+    if (!data.inSkyblock) return;
+    if (!World.isLoaded()) return;
+    if (data.currArea !== 'Dwarven Mines' || data.currArea !== 'Crystal Hollows' || data.currArea !== 'Hub' || data.currArea !== 'Crimson Isle') return;
+    lobbyTicks = World.getTime();
+    lobbyDay = (lobbyTicks / 24000).toFixed(2);
+    lobbyDisplay = `Day: &b${lobbyDay}`
+}).setFps(1);
+
+register('renderOverlay', () => {
+    if (!data.inSkyblock) return;
+    if (!World.isLoaded()) return;
+    if (data.currArea !== 'Dwarven Mines' || data.currArea !== 'Crystal Hollows' || data.currArea !== 'Hub' || data.currArea !== 'Crimson Isle') return;
+    Renderer.drawStringWithShadow(lobbyDisplay, DayCount.x, DayCount.y)
+});
+
 // golden goblin alert
 register('chat', (event) => {
     if (!data.inSkyblock) return;
@@ -182,75 +197,24 @@ register('chat', (event) => {
 // SPOOKY EVENT PINGS ----------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 // trick or treat mob pings
-register('chat', (event) => {
-    if (!Settings.spooky_tot_ping) return
-    var message = ChatLib.getChatMessage(event, true)
-
-    const totPattern = '&r&c&lTRICK! &r&eA &r&c&r&eTrick or Treater &r&ehas tricked you!&r';
-    const wgourdPattern = '&r&c&lTRICK! &r&eA &r&c&r&6Wither Gourd &r&ehas tricked you!&r';
-    const pSpiritPattern = '&r&c&lTRICK! &r&eA &r&c&r&cPhantom Spirit &r&ehas tricked you!&r';
-    const sJerryPattern = '&r&c&lTRICK! &r&eA &r&c&r&6Scary Jerry &r&ehas tricked you!&r';
-    const wraithPattern = '&r&c&lTRICK! &r&eA &r&c&r&8Wraith &r&ehas tricked you!&r';
-    const cWitchPattern = '&r&c&lTRICK! &r&eA &r&c&r&8Crazy Witch &r&ehas tricked you!&r';
-    
-    // trick or treater
-    if (message.includes(totPattern)) { 
-        if (Settings.hide_scc_msgs) cancel(event);
-        sendMessage('TRICK! Trick or Treater spawned!'); 
-        showAlert(sharing_is_caring);
-        miscAudio.playDefaultSound();
-    }  
-    // wither gourd
-    if (message.includes(wgourdPattern)) { 
-        if (Settings.hide_scc_msgs) cancel(event);
-        sendMessage('TRICK! Wither Gourd spawned!'); 
-        showAlert(sharing_is_caring);
-        miscAudio.playDefaultSound();
-    }
-
-    // phantom spirit
-    if (message.includes(pSpiritPattern)) {
-        if (Settings.hide_scc_msgs) cancel(event); 
-        sendMessage('TRICK! Phantom Spirit spawned!'); 
-        showAlert(sharing_is_caring);
-        miscAudio.playDefaultSound();
-    } 
-
-    // scary jerry
-    if (message.includes(sJerryPattern)) { 
-        if (Settings.hide_scc_msgs) cancel(event);
-        sendMessage('TRICK! Scary Jerry spawned!'); 
-        showAlert(sharing_is_caring);
-        miscAudio.playDefaultSound();
-    } 
-
-    // wraith
-    if (message.includes(wraithPattern)) { 
-        if (Settings.hide_scc_msgs) cancel(event);
-        sendMessage('TRICK! Wraith spawned!'); 
-        showAlert(sharing_is_caring);
-        miscAudio.playDefaultSound();
-    } 
-
-    // crazy witch
-    if (message.includes(cWitchPattern)) { 
-        if (Settings.hide_scc_msgs) cancel(event);
-        sendMessage('TRICK! Crazy Witch spawned!'); 
-        showAlert(sharing_is_caring);
-        miscAudio.playDefaultSound();
-    } 
-})
+register('chat', (spookyMob, event) => {
+    if (!Settings.spooky_tot_ping) return;
+    if (Settings.hide_scc_msgs) cancel(event);
+    showAlert(sharing_is_caring);
+    sendMessage(`${spookyMob} has spawned.`)
+    miscAudio.playDefaultSound();
+}).setCriteria('TRICK! A ${spookyMob} has tricked you!');
 
 // headless horseman ping
 register('chat', (spawner, location, event) => {
     cancel(event);
     if (!Settings.horseman_ping) return
-    if (location == 'Wilderness') {
+    if (location === 'Wilderness') {
         showAlert(wildHorseTitle);
         sendMessage('[!] Horseman @ Wilderness [!]');
         miscAudio.playDefaultSound();
     }
-    if (location == 'Graveyard') {
+    if (location === 'Graveyard') {
         showAlert(graveHorseTitle);
         sendMessage('[!] Horseman @ Graveyards [!]');
         miscAudio.playDefaultSound();
