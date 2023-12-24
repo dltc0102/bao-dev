@@ -71,7 +71,6 @@ createGuiCommand(movenearbyjawbus, 'movejawbus', 'mj')
 createGuiCommand(movenearbythunder, 'movethunder', 'mt')
 createGuiCommand(movecharges, 'movecharge', 'mcc')
 
-
 let bobberCount = 0;
 let playerCount = 0;
 let filteredNames = [];
@@ -83,9 +82,9 @@ let thunderBottleDisplayText = '';
 
 register("step", () => {
     if (!data.inSkyblock) return;
+    
     // bobber counter
     bobberCount = World.getAllEntitiesOfType(data.entityFishHook).filter(dist => dist.distanceTo(Player.getPlayer()) < 31).length
-    // bobber counter display
     nearbyBobbers = bobberCount > 0 ? Math.round(bobberCount) : '0';
     bobberCountText = `&rBobbers: &b${nearbyBobbers}`
     

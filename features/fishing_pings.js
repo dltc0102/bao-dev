@@ -155,8 +155,6 @@ register('chat', (event) => {
 * Purpose: Shows Pings for mobs fished up in the Winter Island
  ------------------------------------------------------------------------------*/
 ////////////////////////////////////////////////////////////////////////////////
-hideMessage("It's a snowman! He looks harmless.", "", null)
-
 //Yeti default ping
 register('chat', (event) => {
     if (!data.inSkyblock) return;

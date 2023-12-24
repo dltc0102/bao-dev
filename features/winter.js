@@ -120,19 +120,24 @@ let screenW = Renderer.screen.getWidth();
 let screenH = Renderer.screen.getHeight();
 register('dragged', (dx, dy, x, y) => {
     if (!data.inSkyblock) return;
-    let numLines = 1;
-    if (powerupDisplayText.includes('\n')) numLines = powerupDisplayText.split('\n')
     // if (movepuptimer.isOpen()) constrainCoords(x, y, data.pupDis, powerupDisplayText, 1)
     if (movepuptimer.isOpen()) {
-        if (x < 5) { data.pupDis.x = 5; } else { data.pupDis.x = x;}
-        if (y < 5) { data.pupDis.y = 5; } else { data.pupDis.y = y;}
-
-        alignRight = screenW - 5 - Renderer.getStringWidth(powerupDisplayText) ;
+        let numLines = 1;
+        if (powerupDisplayText.includes('\n')) numLines = powerupDisplayText.split('\n')
+        alignRight = screenW - 5 - (Renderer.getStringWidth(powerupDisplayText) * 4) ;
         alignBottom = screenH - 5 - (numLines * 10);
-        if (x > alignRight) { data.pupDis.x = alignRight; } else { data.pupDis.x = x;}
-        if (y > alignBottom) { data.pupDis.y = alignBottom; } else { data.pupDis.y = y;}
-        // // data.pupDis.x = x;
-        // // data.pupDis.y = y;
+
+        if (x < 5) { 
+            data.pupDis.x = 5; 
+        } else if (x >= alignRight) {
+            data.pupDis.x = alignRight;
+        } else { data.pupDis.x = x; }
+
+        if (y < 5) { 
+            data.pupDis.y = 5; 
+        } else if (y >= alignBottom) {
+            data.pupDis.y = alignBottom;
+        } else { data.pupDis.y = y; }
     }
 })
 
@@ -143,3 +148,9 @@ register('renderOverlay', () => {
 
     renderGuiPosition(movepuptimer, data.pupDis, '&bHoming Snowballs: &r00m 00s\n&bStrongarm: &r00m 00s\n&bDouble Up: &r00m 00s')
 });
+
+register('chat', (player, event) => {
+    if (!data.inSkyblock) return;
+    if (data.currArea !== "Jerry's Workshop") return;
+    cancel(event);
+}).setCriteria(' ☠ ${player} was killed by Liquid Hot Magma.');

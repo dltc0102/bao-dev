@@ -819,7 +819,15 @@ class Settings {
     })
     mushyTimer = false;
 
-    // Hide Scc Messages
+    // Hide Double Hook Messages
+    @SwitchProperty({
+        name: "Hide Double Hook Messages",
+        description: "Hides double hook messages.",
+        category: "Fishing QOL",
+    })
+    hideDHMessages = false;
+
+    // Hide SC Messages
     @SwitchProperty({
         name: "Hide SC Messages",
         description: "Hides default catch messages for SC(s)",

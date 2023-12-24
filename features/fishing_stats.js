@@ -88,31 +88,18 @@ register('chat', (event) => {
 ////////////////////////////////////////////////////////////////////////////
 // LAVA SEA CREATURE SPECIAL MESSAGES --------------------------------------
 ////////////////////////////////////////////////////////////////////////////
-let dhSessionStats = 0;
 register('chat', (event) => {
-    if (Settings.hide_sc_msgs) cancel(event);
-    dhSessionStats += 1;
-    data.dhTotalStats += 1;
+    if (Settings.hideDHMessages) cancel(event);
 }).setCriteria("It's a Double Hook!");
 
 register('chat', (event) => {
-    if (Settings.hide_sc_msgs) cancel(event);
-    dhSessionStats += 1;
-    data.dhTotalStats += 1;
+    if (Settings.hideDHMessages) cancel(event);
 }).setCriteria("It's a Double Hook! Woot Woot!");
 
 ////////////////////////////////////////////////////////////////////////////
 // WATER SEA CREATURES (REGULAR) -------------------------------------------
 ////////////////////////////////////////////////////////////////////////////
 // Squid
-
-register('command', () => {
-    boolText = false;
-    if (Settings.hide_sc_msgs) boolText = true;
-    ChatLib.chat(boolText)
-}).setName('scctoggle');
-
-
 register('chat', (event) => {
     if (Settings.hide_sc_msgs) cancel(event);
     data.waterSC.squidCatches += 1;
@@ -342,11 +329,11 @@ register('chat', (mf, event) => {
 
 // Agarimoo
 register('chat', (event) => {
-    cancel(event);
+    if (Settings.hide_sc_msgs) cancel(event);
 }).setCriteria("Your Chumcap Bucket trembles, it's an Agarimoo.");
 
 register('chat', (event) => {
-    cancel(event);
+    if (Settings.hide_sc_msgs) cancel(event);
 }).setCriteria("The Agarimoo's fumes are damaging you!");
 
 register('chat', (event) => {
@@ -626,7 +613,6 @@ register('chat', (event) => {
 
 // ice rods
 register('chat', (event) => {
-    // code goes here
     if (data.currArea !== "Jerry's Workshop") return;
     data.waterSC.iceRods += 1;
 }).setCriteria('You sold Ice Rod x1 for 20,000 Coins!');
@@ -712,6 +698,7 @@ register('chat', (event) => {
     data.lavaSC.catchesSinceThunder += 1;
     data.lavaSC.catchesSinceJawbus += 1;
 }).setCriteria("WOAH! A Plhlegblast appeared.");
+// yes thats how the plhlegblast is apparently spelt
 
 // Magma Slug
 register('chat', (event) => {
@@ -1125,7 +1112,7 @@ register('command', (args) => {
     data.lavaSC.jawbusSinceLastVial = 0;
 
     data.lavaSC.totalCrimsonSCCatches = 0;
-    ChatLib.chat('&6[&3Bao&6] &aCrimson Fishing stats reset.')
+    ChatLib.chat(`${data.modPrefix} &aCrimson Fishing stats reset.`)
 }).setName('resetcrimson');
 
 register('command', (args) => {
@@ -1146,7 +1133,7 @@ register('command', (args) => {
     data.waterSC.epicBabyYeti = 0;
     data.waterSC.legBabyYeti = 0;
     data.waterSC.prosperityBook = 0;
-    ChatLib.chat('&6[&3Bao&6] &aWinter Fishing stats reset.')
+    ChatLib.chat(`${data.modPrefix} &aWinter Fishing stats reset.`)
 }).setName('resetwinter');
 
 register('command', () => {
@@ -1281,24 +1268,8 @@ register('command', () => {
 
     data.lavaSC.totalCrimsonSCCatches = 0;
 
-    ChatLib.chat('&6[&3Bao&6] All fishing stats reset.')
+    ChatLib.chat(`${data.modPrefix} All fishing stats reset.`)
 }).setName('baoresetfishing');
-
-register('command', () => {
-    data.waterSC.yetiCatches += 1;
-}).setName('addyeti');
-
-register('command', () => {
-    data.waterSC.reindrakeCatches += 1;
-}).setName('addrein');
-
-register('command', () => {
-    data.waterSC.legBabyYeti += 1;
-}).setName('addlegyeti');
-
-register('command', () => {
-    data.waterSC.epicBabyYeti += 1;
-}).setName('addepicyeti');
 
 ////////////////////////////////////////////////////////////////////////////
 // SOME NEW SEA CREATURES I GUESS LOL --------------------------------------

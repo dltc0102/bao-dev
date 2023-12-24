@@ -539,7 +539,7 @@ export function pingDolphinMS(killCount, audioInst) {
 }
 export function petDropPing(message, exclamation, petName, mf, audioInst) {
     let rarity = '';
-    if (message.includes(`&r${petName}`)) { rarity = 1; } // common
+    if (message.includes(`&r${petName}`) || message.include(`&f${petName}`)) { rarity = 1; } // common
     if (message.includes(`&a${petName}`)) { rarity = 2; } // uncommon
     if (message.includes(`&9${petName}`)) { rarity = 3; } // rare
     if (message.includes(`&5${petName}`)) { rarity = 4; } // epic
@@ -551,37 +551,22 @@ export function petDropPing(message, exclamation, petName, mf, audioInst) {
 
     if (petName === 'Rat' || petName === 'Slug') {
         sendMessage(`${exclamation} ${rarityName[rarity]} ${petName} (+${mf}☘)`)
-        if (rarity === 5) {
-            playSound();
-        } else {
-            audioInst.playDefaultSound();
-        }
-    
-    } else if (petName === 'Scatha') {
+        rarity > 4 ? playSound() : audioInst.playDefaultSound();
+    }
+    if (petName === 'Scatha') {
         sendMessage(`${exclamation} ${rarityName[rarity]} ${petName} (+${mf})% ✯ Magic Find)`)
         playSound();
-    } else if (petName === 'Baby Yeti') {
+    }
+    if (petName === 'Baby Yeti') {
         yetiStat = rarity > 4 ? data.waterSC.yetiSinceLegPet : data.waterSC.yetiSinceEpicPet;
         sendMessage(`${exclamation} ${rarityName[rarity]} ${petName} (+${mf})% ✯ Magic Find) [${yetiStat} Yetis since]`)
-        console.log(yetiStat);
-        console.log(`${exclamation} ${rarityName[rarity]} ${petName} (+${mf})% ✯ Magic Find) [${yetiStat} Yetis since]`)
-        if (rarity > 4) {
-            playSound();
-        } else {
-            audioInst.playDefaultSound();
-        }
+        rarity > 4 ? playSound() : audioInst.playDefaultSound();
 
     } else {
-        if (mf === 0) {
-            sendMessage(`${exclamation} You caught a ${rarityName[rarity]} [Lvl 1] ${petName}`)
-        } else {
-            sendMessage(`${exclamation} ${rarityName[rarity]} ${petName} (+${mf})% ✯ Magic Find)`)
-        }
-        if (rarity > 4) {
-            playSound();
-        } else {
-            audioInst.playDefaultSound();
-        }
+        let noMFText = `${exclamation} You caught a ${rarityName[rarity]} [Lvl 1] ${petName}`
+        let withMFText = `${exclamation} ${rarityName[rarity]} ${petName} (+${mf})% ✯ Magic Find)`
+        mf === 0 ? sendMessage(noMFText) : sendMessage(withMFText);
+        rarity > 4 ? playSound() : audioInst.playDefaultSound();
     }
 }
 
@@ -878,13 +863,42 @@ export function calcSkillXP(xp) {
     }
 }
 
-export function crossLoadTimer(dataUsedVar, dataTargetVar, varTimeLeft) {
-    varTimeLeft = 0;
+export function crossLoadTimer(dataUsedVar, dataTargetVar) {
     if (dataUsedVar) {
         const targetTime = new Date(dataTargetVar);
-        varTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+        return ((targetTime - new Date()) / 1000).toFixed(0);
     } else {
-        varTimeLeft = 0;
+        return 0;
     }
 }
+
+export function getTimerTarget(cooldown, timeType) {
+    const targetTime = new Date();
+    if (timeType === 's') targetTime.setSeconds(targetTime.getSeconds() + cooldown);
+    if (timeType === 'm') targetTime.setMinutes(targetTime.getMinutes() + cooldown);
+    if (timeType === 'h') targetTime.setHours(targetTime.getHours() + cooldown);
+    return targetTime;
+}
+
+export function trackChatTimer(dataUsedVar, dataTargetVar, varTimeLeft, nameOfTimer, colorCode, audioInst) {
+    console.log('running func: trackChatTimer')
+    console.log(`trackchattimer val: ${varTimeLeft}`)
+    let updatedTimeLeft = varTimeLeft;
+    if (updatedTimeLeft > 0) {
+        dataUsedVar = true;
+        updatedTimeLeft -= 1;
+        updateCDText(colorCode, nameOfTimer, updatedTimeLeft);
+    } else if (updatedTimeLeft === 0 || updatedTimeLeft < 0) {
+        dataUsedVar = false;
+        showAlert(`&c${nameOfTimer} &eExpired`)
+        audioInst.playDefaultSound();
+        if (nameOfTimer === 'Pest Repellent') ChatLib.chat(`&eYour &cPest Repellent Bonus Farming Fortune &ehas worn off!`);
+        ChatLib.chat(`&eYour &c${nameOfTimer} &ehas expired.`)
+        dataTargetVar = 0;
+        updateCDText(colorCode, nameOfTimer, updatedTimeLeft);
+    }
+    console.log(`updatedtimeleft: ${updatedTimeLeft}`)
+    return updatedTimeLeft;
+}
+
 

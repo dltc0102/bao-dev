@@ -73,38 +73,38 @@ class Pet {
 //     }
 // })
 
-// const petRarities = {
-//     "1": '&f',
-//     "2": '&a',
-//     "3": '&9',
-//     "4": '&5',
-//     "6": '&6',
-//     "7": '&d',
-// }
+const petRarities = {
+    "1": '&f',
+    "2": '&a',
+    "3": '&9',
+    "4": '&5',
+    "6": '&6',
+    "7": '&d',
+}
 
-// let usingPet = false;
-// let activePetName = '';
-// let activePetLvl = '';
-// let activePetRarity = '';
-// let displayPet = `[Lvl ${activePetLvl}] ${petRarities[activePetRarity]}${activePetName}`;
-// register('chat', (pet, event) => {
-//     usingPet = true;
-//     activePet = pet;
-//     debug(`usingPet: ${usingPet}, activePet: ${activePet}`)
-// }).setCriteria('You summoned your ${pet}!')
+let usingPet = false;
+let activePetName = '';
+let activePetLvl = '';
+let activePetRarity = '';
+let displayPet = `[Lvl ${activePetLvl}] ${petRarities[activePetRarity]}${activePetName}`;
+register('chat', (petName, event) => {
+    usingPet = true;
+    activePetName = petName;
+    debug(`usingPet: ${usingPet}, activePet: ${activePetName}`)
+}).setCriteria('You summoned your ${petName}!')
 
-// register('chat', (pet, event) => {
-//     usingPet = false;
-//     activePet = '';
-//     debug(`usingPet: ${usingPet}, activePet: ${activePet}`)
-// }).setCriteria('You despawned your ${pet}!')
+register('chat', (pet, event) => {
+    usingPet = false;
+    activePetName = '';
+    debug(`usingPet: ${usingPet}, activePet: ${activePetName}`)
+}).setCriteria('You despawned your ${pet}!')
 
-// register('chat', (lvlNum, petName, event) => {
-//     if (Settings.hide_autopet_messages) cancel(event);
-//     usingPet = true;
-//     activePet = petName;
-//     debug(`usingPet: ${usingPet}, activePet: ${activePet}, mainPet: ${petName}`)
-// }).setCriteria('Autopet equipped your [Lvl ${lvlNum}] ${petName}! VIEW RULE')
+register('chat', (lvlNum, petName, event) => {
+    if (Settings.hide_autopet_messages) cancel(event);
+    usingPet = true;
+    activePetName = petName;
+    debug(`usingPet: ${usingPet}, activePet: ${activePetName}, mainPet: ${petName}`)
+}).setCriteria('Autopet equipped your [Lvl ${lvlNum}] ${petName}! VIEW RULE')
 
 // register('command', () => {
 //     ChatLib.chat(`Current Pet: ${activePet}`)

@@ -1,4 +1,35 @@
-Flight:
+locals
+- try to make audio instance a data item
+- margin constraints (number selector)
+- when in the gui of moving an overlay, stop rendering the overlay if its on, and after the moving of the overlay is set, turn the render of the overlay on if it was off.
+- inv log: 
+    - flash 1
+    
+dev.js -- fine
+displayHP.js -- fine
+- verified name of gw shark
+
+dungeons.js -- (+)
+- removed #wish cuz useless
+- removed dungeons m6 run counter (later i cba to work on dungeons atm)
+- removed party full alert for dungeons
++ load ignore list for first time and if the ignore list is empty 'WIP'
+
+fishing_overlay.js -- (+)
++ constrain coords for reg dragged on overlays
+
+fishing_pings.js -- fine
+*optimized pet drop ping function for &f pet names 
+
+fishing_stats.js -- 
+- removed # of total DH(s)
+- added 'double hook message hider' under fishing QOL
++ constrain coords for reg dragged on fishing counter overlay
+
+
+
+
+
 
 
 Do:
@@ -24,9 +55,7 @@ experimental:
 
 
 Doing: 
-- season of jerry event -- powerup timers (testing constrainCoords and multi-timer creation functions)
-- check createChatTimer func
-- check crossLoadTimer func
+- season of jerry event -- powerup timers (constrain coords doesnt work for alignright/alignbot)
 - generate calcSkillXp data (tooo arbitrary so not doing)
 
 - pets fix and debug (need wifi)
@@ -47,10 +76,6 @@ Done:
 - converted each file's currArea to one data.currArea
 - moved some features over to better positioned categories (easy baker and grandma wolf hider are now in general qol)
 - flux timer is now moveable
-
-dungeons.js
-- removed dungeons m6 run counter (later i cba to work on dungeons atm)
-- removed party full alert for dungeons
 
 misc.js
 - optimized some pings

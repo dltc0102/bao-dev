@@ -2,38 +2,31 @@ import Settings from '../settings.js'
 import Audio from '../utils/audio.js'
 import { data } from '../utils/data.js'
 import { showAlert } from '../utils/utils.js'
-import { getTabArea, drawOutlineBeacon, getCell, petDropPing, updateCDText, playSound } from '../utils/functions.js'
+import { drawOutlineBeacon, getCell, petDropPing, getTimerTarget, playSound, crossLoadTimer } from '../utils/functions.js'
 import { drawArrow, drawScaledString, updatePlots, colorPlot, startSprayTimer } from '../utils/functions.js'
 import { sendMessage } from '../utils/party.js'
 import { getActivePet } from '../utils/pet.js'
 
+import { trackChatTimer, updateCDText } from '../utils/functions.js'
+ 
 ////////////////////////////////////////////////////////////////////
 // SETUP        
 ////////////////////////////////////////////////////////////////////
 const playerArrow = Image.Companion.fromFile(`config/ChatTriggers/modules/bao-dev/assets/delta-arrow.png`);
 
-let currArea = '';
-register('step', () => { if (!data.inSkyblock) return; currArea = getTabArea(); }).setFps(1);
-
 const gardenAudio = new Audio();
-
-const wKey = Client.getKeyBindFromDescription("key.forward")
-const aKey = Client.getKeyBindFromDescription("key.left")
-const sKey = Client.getKeyBindFromDescription("key.back")
-const dKey = Client.getKeyBindFromDescription("key.right")
 
 ////////////////////////////////////////////////////////////////////
 // Reminder for getting desk config
 ////////////////////////////////////////////////////////////////////
-let sentDeskReminder = false;
 register('step', () => {
     if (!World.isLoaded()) return;
-    if (currArea !== 'Garden') return;
-    if (sentDeskReminder) return;
+    if (data.currArea !== 'Garden') return;
+    if (data.sentDeskReminder) return;
     if (data.plots = []) {
-        ChatLib.chat("&7[&3Bao&6] &7Hi! \n&7Just a reminder, to setup bao for the garden, click into the &e'Configure Plots'&7 window of your &e/desk&7 menu in the Garden. \n&7If you' received the chat message &b'Bao config saved'&7, the process has been completed.")
-        sentDeskReminder = true;
         gardenAudio.playDefaultSound();
+        ChatLib.chat("&7[&3Bao&6] &7Hi! \n&7Just a reminder, to setup bao for the garden, click into the &e'Configure Plots'&7 window of your &e/desk&7 menu in the Garden.\n&7If you' received the chat message &b'Bao config saved'&7, the process has been completed.")
+        data.sentDeskReminder = true;
     }
 }).setFps(1);
 
@@ -43,7 +36,7 @@ register('step', () => {
 ////////////////////////////////////////////////////////////////////
 // alert message: You don't have any ${materialName}!
 register('chat', (materialName, event) => {
-    if (currArea !== 'Garden') return;
+    if (data.currArea !== 'Garden') return;
     if (Settings.alertNoMatSprayonator) {
         gardenAudio.playDefaultSound();
         showAlert(`&cNeed &e${materialName}&c!`)
@@ -51,11 +44,10 @@ register('chat', (materialName, event) => {
 }).setCriteria("You don't have any ${materialName}!");
 
 // selected mat for sprayonator
-let sprayMat = '';
 register('chat', (material, event) => {
-    if (currArea !== 'Garden') return;
+    if (data.currArea !== 'Garden') return;
     cancel(event); // if  settings.garden_sprayonator_hider
-    sprayMat = material;
+    data.selectedSprayMat = material;
 }).setCriteria('SPRAYONATOR! Your selected material is now ${material}!');
 
 
@@ -77,20 +69,16 @@ class Plot {
 }
 
 
-// creating data for data.gardenPlotCoords
-numRows = 5;
-numCols = 5;
-plotW = 96;
-
-data.gardenPlotCoords = [];
-for (let i = 0; i < numRows; i++) {
+// creating data for data.gardenPlot.coords
+data.gardenPlot.coords = [];
+for (let i = 0; i < data.gardenPlot.rows; i++) {
     let rowSet = [];
-    for (let j = 0; j < numCols; j++) {
-        let x1 = -240 + j * plotW;
-        let x2 = -145 + j * plotW;
+    for (let j = 0; j < data.gardenPlot.cols; j++) {
+        let x1 = -240 + j * data.gardenPlot.plotW;
+        let x2 = -145 + j * data.gardenPlot.plotW;
 
-        let z1 = -240 + i * plotW;
-        let z2 = -145 + i * plotW;
+        let z1 = -240 + i * data.gardenPlot.plotW;
+        let z2 = -145 + i * data.gardenPlot.plotW;
         
         let tl = [x1, z1];
         let br = [x2, z2];
@@ -98,65 +86,53 @@ for (let i = 0; i < numRows; i++) {
         let submatrix = [tl, br]
         rowSet.push(submatrix);
     }
-    data.gardenPlotCoords.push(rowSet);
+    data.gardenPlot.coords.push(rowSet);
 }
 
-// creating data for data.plotSprayTimers -- FOR RENDERING ONLY
-data.plotSprayTimers = [];
-timerOffsetX = 5.5;
-timerOffsetY = 35;
-timerDx = 18;
-timerDy = 18;
+// creating data for data.plotSprayInfo.timers -- FOR RENDERING ONLY
+data.plotSprayInfo.timers = [];
 for (let i=0; i <5; i++) {
     let timerRow = [];
     for (let j=0; j<5; j++) {
-        let x1 = data.gardenMap.x + timerOffsetX + i * timerDx;
-        let y1 = data.gardenMap.y + timerOffsetY + j * timerDy;
+        let x1 = data.gardenMap.x + data.plotSprayInfo.offsetX + i * data.plotSprayInfo.dx;
+        let y1 = data.gardenMap.y + data.plotSprayInfo.offsetY + j * data.plotSprayInfo.dy;
         let submatrix = [x1, y1];
         timerRow.push(submatrix);
     }
     // console.log(timerRow)
-    data.plotSprayTimers.push(timerRow);
+    data.plotSprayInfo.timers.push(timerRow);
 }
 
 
-// creating data for data.playerPlotNames
-let deskConfigMsg = false;
-let numLoads = 6;
-// data.playerPlotNames = [];
+// creating data for data.playerPlotInfo.names
 register('guiRender', () => {
-    if (currArea !== 'Garden') return;
-    if (deskConfigMsg) return;
+    if (data.currArea !== 'Garden') return;
+    if (data.playerPlotInfo.configMsg) return;
     if (Player.getPlayer() === null || Player.getOpenedInventory() === null || Player.getContainer().getName() !== 'Configure Plots') return;
 
     let guiContainer = Player.getContainer();
     data.pestPlotCoords = [];
     data.sprayPlotCoords = [];
     data.plots = [];
-    data.playerPlotNames = [];
-    let numRows = 5;
-    let numCols = 5;
+    data.playerPlotInfo.names = [];
     
-    for (let i = 0; i < numRows; i++) {
+    for (let i = 0; i < data.playerPlotInfo.rows; i++) {
         let row = [];
-        for (let j = 0; j < numCols; j++) {
+        for (let j = 0; j < data.playerPlotInfo.cols; j++) {
             let slotIdx = i * 9 + j + 2;
             let cellValue = getCell(guiContainer, slotIdx);
             row.push(cellValue);
         }
-        // console.log(row);
-        data.playerPlotNames.push(row.slice(0, 5));
+        data.playerPlotInfo.names.push(row.slice(0, 5));
     }
     
-    let plotCols = 5;
-    for (let r = 0; r < numRows; r++) {
+    for (let r = 0; r < data.playerPlotInfo.rows; r++) {
         let playerRow = [];
-        for (let c = 0; c < plotCols; c++) {
-            let cellName = data.playerPlotNames[r][c];
-            let timerDis = data.plotSprayTimers[c][r];
-            let [tl, br] = data.gardenPlotCoords[r][c];
+        for (let c = 0; c < data.playerPlotInfo.cols; c++) {
+            let cellName = data.playerPlotInfo.names[r][c];
+            let timerDis = data.plotSprayInfo.timers[c][r];
+            let [tl, br] = data.gardenPlot.coords[r][c];
             let refCoords = [r, c]
-            // console.log(cellName, tl, br, timerDis)
             let plot = {
                 name: cellName, 
                 refCoords: refCoords, 
@@ -171,10 +147,10 @@ register('guiRender', () => {
         data.plots.push(playerRow)
     }
 
-    numLoads -= 1;
-    if (numLoads === 0) {
+    data.playerPlotInfo.numLoads -= 1;
+    if (data.playerPlotInfo.numLoads === 0) {
         ChatLib.chat('&6[&3Bao&6] &bDesk Config Saved.')
-        deskConfigMsg = true;
+        data.playerPlotInfo.configMsg = true;
     }
 });
 
@@ -183,7 +159,7 @@ register('guiRender', () => {
 // PEST APPEARS REG CHAT
 ////////////////////////////////////////////////////////////////////
 register('chat', (exclamation, userPlotName, event) => {
-    if (currArea !== 'Garden') return;
+    if (data.currArea !== 'Garden') return;
     if (!Settings.pestQOL) return;
     //  GROSS! A Pest has appeared in Plot - money 1!
     updatePlots(data.plots, userPlotName, 'pest', true);
@@ -203,7 +179,7 @@ register('chat', (exclamation, userPlotName, event) => {
 }).setCriteria('${exclamation}! A Pest has appeared in Plot - ${userPlotName}!');
 
 register('chat', (exclamation, numPests, userPlotName, event) => {
-    if (currArea !== 'Garden') return;
+    if (data.currArea !== 'Garden') return;
     if (!Settings.pestQOL) return;
     // EWW! 2 Pests have spawned in Plot - kacktoos 2!
     updatePlots(data.plots, userPlotName, 'pest', true);
@@ -222,16 +198,17 @@ register('chat', (exclamation, numPests, userPlotName, event) => {
     gardenAudio.playDefaultSound();
 }).setCriteria('${exclamation}! ${numPests} Pests have spawned in Plot - ${userPlotName}!');
 
+
 ////////////////////////////////////////////////////////////////////
 // PLOT SPRAYED REG CHAT
 ////////////////////////////////////////////////////////////////////
 register('chat', (event) => {
-    if (currArea !== 'Garden') return;
+    if (data.currArea !== 'Garden') return;
     if (Settings.hideSprayonatorExpiryMsg) cancel(event);
 }).setCriteria('SPRAYONATOR! This will expire in 30m!');
 
 register('chat', (userPlotName, mat, event) => {
-    if (currArea !== 'Garden') return;
+    if (data.currArea !== 'Garden') return;
     // SPRAYONATOR! You sprayed Plot - melon 2 with Compost!
     updatePlots(data.plots, userPlotName, 'spray', false);
     updatePlots(data.plots, userPlotName, 'spray', true);
@@ -242,95 +219,20 @@ register('chat', (userPlotName, mat, event) => {
 
 
 ////////////////////////////////////////////////////////////////////
-// HARVEST HARBRINGER POTION CD TIMER
-////////////////////////////////////////////////////////////////////
-let harvPotTimeLeft = 0;
-register('chat', (event) => {
-    if (!data.inSkyblock) return;
-    if (!Settings.harvPotionOverlay) return;
-    let harvPotCD = getActivePet().includes('Parrot') ? 35 : 25;
-    data.usedHarvPot = true;
-    const targetTime = new Date();
-    targetTime.setMinutes(targetTime.getMinutes() + harvPotCD);
-    harvPotTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
-    data.targetHarvPot = targetTime;
-    gardenAudio.playDrinkSound();
-}).setCriteria('BUFF! You have gained Harvest Harbinger V! Press TAB or type /effects to view your active effects!');
-
-register('gameLoad', () => {
-    if (!Settings.harvPotionOverlay) return;
-    if (data.usedHarvPot) {
-        harvPotTimeLeft = 0;
-        const targetTime = new Date(data.targetHarvPot);
-        harvPotTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
-    } else {
-        harvPotTimeLeft = 0;
-    }
-})
-
-
-////////////////////////////////////////////////////////////////////
-// PEST REPELLENT TIMER
-////////////////////////////////////////////////////////////////////
-
-let is2x = false;
-let is4x = false;
-let pestRepelCD = 60; // 60 minutes
-let pestRepellentTimeLeft = 0;
-register('chat', (event) => {
-    if (currArea !== 'Garden') return;
-    if (!Settings.pestRepellentDisplay) return;
-    is2x = true;
-    gardenAudio.playDrinkSound();
-    data.usedPestRepellent = true;
-    const targetTime = new Date();
-    targetTime.setMinutes(targetTime.getMinutes() + pestRepelCD);
-    pestRepellentTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
-    data.targetPestRepellent = targetTime;
-}).setCriteria('YUM! Pests will now spawn 2x less while you break crops for the next 60m!');
-
-
-register('chat', (event) => {
-    if (currArea !== 'Garden') return;
-    if (!Settings.pestRepellentDisplay) return;
-    is4x = true;
-    gardenAudio.playDrinkSound();
-    data.usedPestRepellent = true;
-    const targetTime = new Date();
-    targetTime.setMinutes(targetTime.getMinutes() + pestRepelCD);
-    pestRepellentTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
-    data.targetPestRepellent = targetTime;
-}).setCriteria('YUM! Pests will now spawn 4x less while you break crops for the next 60m!');
-
-register('gameLoad', () => {
-    if (!data.inSkyblock) return;
-    if (!Settings.pestRepellentDisplay) return;
-    if (data.usedPestRepellent) {
-        pestRepellentTimeLeft = 0;
-        const targetTime = new Date(data.targetPestRepellent);
-        pestRepellentTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
-    } else {
-        pestRepellentTimeLeft = 0;
-    }
-})
-
-
-////////////////////////////////////////////////////////////////////
 // VINYL SELECTOR CHAT REG
 ////////////////////////////////////////////////////////////////////
-let vNames = ["Pretty Fly", "Cricket Choir", "Earthworm Ensemble", "Slow and Groovy", "Not Just a Pest", "Cicada Symphony", "DynaMITES", "Rodent Revolution", "Wings of Harmony", "Buzzin' Beats"] 
 register('chat', (vinylName, event) => {
-    if (currArea !== 'Garden') return;
+    if (data.currArea !== 'Garden') return;
     if (!Settings.vinylDisplay) return;
-    if (!vNames.includes(vinylName)) return;
+    if (!data.allVinylNames.includes(vinylName)) return;
     data.isPlayingVinyl = false;
     data.currentVinyl = '&cNo Vinyl Playing';
 }).setCriteria('You are no longer playing ${vinylName}!');
 
 register('chat', (vinylName, event) => {
-    if (currArea !== 'Garden') return;
+    if (data.currArea !== 'Garden') return;
     if (!Settings.vinylDisplay) return;
-    if (!vNames.includes(vinylName)) return;
+    if (!data.allVinylNames.includes(vinylName)) return;
     data.isPlayingVinyl = true;
     data.currentVinyl = vinylName;
     gardenAudio.playDefaultSound();
@@ -338,63 +240,120 @@ register('chat', (vinylName, event) => {
 
 
 ////////////////////////////////////////////////////////////////////
+// HARVEST HARBRINGER POTION CD TIMER
+////////////////////////////////////////////////////////////////////
+register('chat', (event) => {
+    if (!data.inSkyblock) return;
+    if (!Settings.harvPotionOverlay) return;
+    let harvPotCD = getActivePet().includes('Parrot') ? 35 : 25;
+    gardenAudio.playDrinkSound();
+
+    data.usedHarvPot = true;
+    const targetTime = getTimerTarget(harvPotCD, 's');
+    data.harvPotTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+    data.targetHarvPot = targetTime;
+}).setCriteria('BUFF! You have gained Harvest Harbinger V! Press TAB or type /effects to view your active effects!');
+
+
+////////////////////////////////////////////////////////////////////
+// PEST REPELLENT TIMER
+////////////////////////////////////////////////////////////////////
+let is2x = false;
+let is4x = false;
+register('chat', (pestRepellentType, event) => {
+    if (data.currArea !== 'Garden') return;
+    if (!Settings.pestRepellentDisplay) return;
+    if (pestRepellentType === '2') is2x = true; 
+    is2x = pestRepellentType === '2';
+    is4x = pestRepellentType === '4';
+    gardenAudio.playDrinkSound();
+
+    data.usedPestRepellent = true;
+    const targetTime = getTimerTarget(data.pestRepelCD, 'm');
+    data.pestRepellentTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+    data.targetPestRepellent = targetTime;
+}).setCriteria('YUM! Pests will now spawn ${pestRepellentType}x less while you break crops for the next 60m!');
+
+
+////////////////////////////////////////////////////////////////////
 // PEST EXCHANGE 
 ////////////////////////////////////////////////////////////////////
-const pestExCD = 30; // 30 minutes duration
-let pestExTimeLeft = 0;
-register('chat', (numPests, ff, event) => {
-    if (currArea !== 'Garden') return;
+register('chat', (numPests, ff, duration, event) => {
+    if (data.currArea !== 'Garden') return;
     if (!Settings.pestExchangeDisplay) return;
     // [NPC] Phillip: In exchange for 1 Pest, I've given you +10☘ Farming Fortune for 30m!
     data.bonusFF = parseInt(ff.replace(',', ''), 10)
     data.donatedPests = parseInt(numPests.replace(',', ''), 10);
-
     gardenAudio.playDrinkSound();
-    data.usedPestExchange = true;
-    const targetTime = new Date();
-    targetTime.setMinutes(targetTime.getMinutes() + pestExCD);
-    pestExTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
-    data.targetExchange = targetTime;
-}).setCriteria("[NPC] Phillip: In exchange for ${numPests} Pest, I've given you +${ff}☘ Farming Fortune for 30m!");
 
+    data.usedPestExchange = true;
+    const targetTime = getTimerTarget(parseInt(duration.replace(',', ''), 10), 'm');
+    data.pestExchangeTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+    data.targetExchange = targetTime;
+}).setCriteria("[NPC] Phillip: In exchange for ${numPests} Pest, I've given you +${ff}☘ Farming Fortune for ${duration}m!");
+
+
+////////////////////////////////////////////////////////////////////
+// TIMER GAMELOAD REGS
+////////////////////////////////////////////////////////////////////
 register('gameLoad', () => {
     if (!data.inSkyblock) return;
+    if (!Settings.harvPotionOverlay) return;
+    if (!Settings.pestRepellentDisplay) return;
     if (!Settings.pestExchangeDisplay) return;
-    if (data.usedPestExchange) {
-        pestExTimeLeft = 0;
-        const targetTime = new Date(data.targetExchange);
-        pestExTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
-    } else {
-        pestExTimeLeft = 0;
-    }
+    data.harvPotTimeLeft = crossLoadTimer(data.usedHarvPot, data.targetHarvPot);
+    data.pestRepellentTimeLeft = crossLoadTimer(data.usedRepellent, data.targetRepellent);
+    data.pestRepellentTimeLeft = crossLoadTimer(data.usedPestExchange, data.targetExchange);
 })
 
 
 ////////////////////////////////////////////////////////////////////
 // TIMER STEP TRIGGERS
 ////////////////////////////////////////////////////////////////////
-let harbringerText = '';
-let pestRepelText = '';
-let pestExchangeText = '';
+function updateTimer(dataUsedVar, dataTargetVar, timeLeft, colorCode, nameOfTimer, audioInst) { 
+    console.log('func trigger: running updateTimer')
+    console.log(`func trigger: timeleft: ${timeLeft}`)
+    console.log(`func trigger: before func run: usedVar status: ${dataUsedVar}`)
+    if (timeLeft > 0) {
+        dataUsedVar = true;
+        timeLeft -= 1;
+        updateCDText(colorCode, nameOfTimer, timeLeft);
+    } else if (timeLeft === 0 || timeLeft < 0) {
+        dataUsedVar = false;
+        // showAlert(`&c${nameOfTimer}&e Expired`);
+        // audioInst.playDefaultSound();
+        // ChatLib.chat(`&eYour &c${nameOfTimer}&e has expired.`)
+        dataTargetVar = 0;
+        updateCDText(colorCode, nameOfTimer, timeLeft);
+    }
+    console.log(`func trigger: after func run: updateTimer usedVar status: ${dataUsedVar}`)
+    return timeLeft;
+}
+
 register('step', () => {
-    if (currArea !== 'Garden') return;
+    if (data.currArea !== 'Garden') return;
 
     if (Settings.harvPotionOverlay) {
         if (data.usedHarvPot) {
-            if (harvPotTimeLeft > 0) {
-                data.usedHarvPot = true;
-                harvPotTimeLeft -= 1;
-                updateCDText('&6', 'Harbringer Potion', harvPotTimeLeft);
-            } else if (harvPotTimeLeft === 0) {
-                data.usedHarvPot = false;
-                showAlert('&6Harbringer Pot expired');
-                gardenAudio.playDefaultSound();
-                ChatLib.chat('&cYour &6Harvest Harbringer Potion &chas expired.');
-                data.targetHarvPot = 0;
-                updateCDText('&6', 'Harbringer Potion', harvPotTimeLeft);
-            }
+            console.log(`step trigger: data.harvPotTimeLeft val: ${data.harvPotTimeLeft}`)
+            // data.harvPotTimeLeft = trackChatTimer(data.usedHarvPot, data.targetHarvPot, data.harvPotTimeLeft, 'Harbringer Potion', '&6', gardenAudio);
+            // if (data.harvPotTimeLeft > 0) {
+            //     data.usedHarvPot = true;
+            //     data.harvPotTimeLeft -= 1;
+            //     updateCDText('&6', 'Harbringer Potion', data.harvPotTimeLeft);
+            // } else if (data.harvPotTimeLeft === 0 || data.harvPotTimeLeft < 0) {
+            //     data.usedHarvPot = false;
+            //     showAlert(`&cHarbringer Potion &eExpired`)
+            //     gardenAudio.playDefaultSound();
+            //     ChatLib.chat(`&eYour &cHarbringer Potion &ehas expired.`)
+            //     data.targetHarvPot = 0;
+            //     updateCDText('&6', 'Harbringer Potion', data.harvPotTimeLeft);
+            // }
+            console.log(`step trigger: before updateTimer func usedvar status: ${data.usedHarvPot}`)
+            data.harvPotTimeLeft = updateTimer(data.usedHarvPot, data.targetHarvPot, data.harvPotTimeLeft, '&6', 'Harbringer Potion', gardenAudio)
+            console.log(`step trigger: after updateTimer func usedvar status: ${data.usedHarvPot}`)
         }
-        harbringerText = harvPotTimeLeft > 0 ? `&6Harbringer Potion: &r${Math.floor(harvPotTimeLeft/60)}m ${Math.floor(harvPotTimeLeft % 60)}s&r` : '';
+        data.harbringerText = data.harvPotTimeLeft > 0 ? `&6Harbringer Potion: &r${Math.floor(data.harvPotTimeLeft/60)}m ${Math.floor(data.harvPotTimeLeft % 60)}s&r` : '';
     }
 
     // pest repellent timer
@@ -402,77 +361,58 @@ register('step', () => {
         if (is2x) data.pestRepelType = '2x';
         if (is4x) data.pestRepelType = '4x';
         if (!data.usedPestRepellent) return;
-        if (pestRepellentTimeLeft > 0) {
+        console.log(`data.pestRepellentTimeLeft val: ${data.harvPotTimeLeft}`)
+
+        // data.pestRepellentTimeLeft = trackChatTimer(data.usedPestRepellent, data.targetPestRepellent, data.pestRepellentTimeLeft, 'Pest Repellent', '', gardenAudio);
+        if (data.pestRepellentTimeLeft > 0) {
             data.usedPestRepellent = true;
-            pestRepellentTimeLeft -= 1;
-            updateCDText('', 'Pest Repellent', pestRepellentTimeLeft);
-        } else if (pestRepellentTimeLeft === 0 || pestRepellentTimeLeft < 0) {
+            data.pestRepellentTimeLeft -= 1;
+            updateCDText('', 'Pest Repellent', data.pestRepellentTimeLeft);
+        } else if (data.pestRepellentTimeLeft === 0 || data.pestRepellentTimeLeft < 0) {
             data.usedPestRepellent = false;
-            showAlert('&cPest Repellent &eexpired!');
+            showAlert(`&cPest Repellent &eExpired`)
             gardenAudio.playDefaultSound();
-            ChatLib.chat(`&eYour &cPest Repellent &b[${data.pestRepelType}] &ehas expired.`);
+            ChatLib.chat(`&eYour &cPest Repellent Bonus Farming Fortune &ehas worn off!`);
             data.targetPestRepellent = 0;
-            updateCDText('', 'Pest Repellent', pestRepellentTimeLeft);
+            updateCDText('', 'Pest Repellent', data.pestRepellentTimeLeft);
         }
-    
-        pestRepelText = data.usedPestRepellent ? `Pest Repellent [&c${data.pestRepelType}&r]: &bYES&r &7|&r &a${Math.floor(pestRepellentTimeLeft/60)}m ${Math.floor(pestRepellentTimeLeft % 60)}s&r` : `Pest Repellent: &bNO&r`
+
+        data.pestRepellentText = data.usedPestRepellent ? `Pest Repellent [&c${data.pestRepelType}&r]: &bYES&r &7|&r &a${Math.floor(data.pestRepellentTimeLeft/60)}m ${Math.floor(data.pestRepellentTimeLeft % 60)}s&r` : `Pest Repellent: &bNO&r`;
     }
 
     // pest exchange timer
     if (Settings.pestExchangeDisplay) {
         if (!data.usedPestExchange) return;
-        if (pestExTimeLeft > 0) {
+        console.log(`data.pestExchangeTimeLeft val: ${data.harvPotTimeLeft}`)
+        // data.pestExchangeTimeLeft = trackChatTimer(data.usedPestExchange, data.targetExchange, data.pestExchangeTimeLeft, 'Pest Exchange', '', gardenAudio);
+        if (data.pestExchangeTimeLeft > 0) {
             data.usedPestExchange = true;
-            pestExTimeLeft -= 1;
-            updateCDText('', 'Pest Exchange', pestExTimeLeft);
-        } else if (pestExTimeLeft === 0 || pestExTimeLeft < 0) {
+            data.pestExchangeTimeLeft -= 1;
+            updateCDText('', 'Pest Exchange', data.pestExchangeTimeLeft);
+        } else if (data.pestExchangeTimeLeft === 0 || data.pestExchangeTimeLeft < 0) {
             data.usedPestExchange = false;
-            showAlert('&cPest Exchange &rexpired!');
+            showAlert(`&cPest Exchange &eExpired`)
             gardenAudio.playDefaultSound();
-            ChatLib.chat(`&eYour &cPest Exchange Bonus Farming Fortune &ehas worn off!`);
-            data.targetExchange = 0;
-            updateCDText('', 'Pest Exchange', pestExTimeLeft);
+            ChatLib.chat(`&eYour &cPest Exchange &ehas expired.`)
+            data.targetPestRepellent = 0;
+            updateCDText('', 'Pest Exchange', data.pestExchangeTimeLeft);
         }
-        pestExchangeText = data.usedPestExchange ? `&2Pest Exchange: &r${Math.floor(pestExTimeLeft / 60)}m ${Math.floor(pestExTimeLeft % 60)}s &6(+${data.bonusFF === null || isNaN(data.bonusFF) ? 0 : data.bonusFF}☘ &7|&6 ${data.donatedPests === null || isNaN(data.donatedPests) ? 0 : data.donatedPests} Pests )` : ''
+
+        data.pestExchangeText = data.usedPestExchange ? `&2Pest Exchange: &r${Math.floor(data.pestExchangeTimeLeft / 60)}m ${Math.floor(data.pestExchangeTimeLeft % 60)}s &6(+${data.bonusFF === null || isNaN(data.bonusFF) ? 0 : data.bonusFF}☘ &7|&6 ${data.donatedPests === null || isNaN(data.donatedPests) ? 0 : data.donatedPests} Pests )` : '';
     }
 }).setFps(1);
 
 
 
-let playerYP = '';
-let currentGardenPlot = [];
-let sprayMatText = '';
-let possiblePests = '';
-let sprayOverlayText = '';
-let plotMapText = '';
-let arrowX = 0;
-let arrowY = 0;
-let contestText = '';
-let vinylText = '';
 register('step', () => {
     if (!World.isLoaded()) return;
-    if (currArea !== 'Garden') return;
+    if (data.currArea !== 'Garden') return;
 
     // player yaw and pitch
     if (Settings.showPlayerYawPitch) {
         playerYaw = Player.getYaw().toFixed(3);
         playerPitch = Player.getPitch().toFixed(3);
-        playerYP = `Yaw: &b${playerYaw}\nPitch: &b${playerPitch}`
-    }
-
-    // player coords for garden plot coords
-    playerX = Player.getX();
-    playerZ = Player.getZ();
-    for (let rowIdx = 0; rowIdx < data.gardenPlotCoords.length; rowIdx++) {
-        for (let colIdx = 0; colIdx < data.gardenPlotCoords[rowIdx].length; colIdx++) {
-            let plotCoords = data.gardenPlotCoords[rowIdx][colIdx];
-            let [x1, z1] = plotCoords[0];
-            let [x2, z2] = plotCoords[1];
-  
-            if (playerX >= x1 && playerX <= x2 && playerZ >= z1 && playerZ <= z2) {
-                currentGardenPlot = [rowIdx, colIdx]
-            }
-        }
+        data.playerYP = `Yaw: &b${playerYaw}\nPitch: &b${playerPitch}`
     }
 
     // pest death detection
@@ -496,24 +436,23 @@ register('step', () => {
 
     // show sprayonator selected material and possible pests
     if (Settings.sprayonatorDisplay) {
-        sprayMatText = sprayMat ? `&rSprayonator: &a${sprayMat}` : `&rSprayonator: &aCompost`
-        possiblePests = sprayMat ? `&rPossible Pests: &b${data.matAttracts[sprayMat].join(', ')}` :  `&rPossible Pests: &bMosquito, Earthworm`;
-        sprayOverlayText = `${sprayMatText}\n${possiblePests}`
+        data.sprayMatText = data.selectedSprayMat ? `&rSprayonator: &a${data.selectedSprayMat}` : `&rSprayonator: &aCompost`
+        data.possiblePests = data.selectedSprayMat ? `&rPossible Pests: &b${data.matAttracts[data.selectedSprayMat].join(', ')}` :  `&rPossible Pests: &bMosquito, Earthworm`;
+        data.sprayOverlayText = `${data.sprayMatText}\n${data.possiblePests}`
     }
 
     // plot text
     if (Settings.gardenPlotMap) {
-        plotMapText = '';
+        data.plotMapText = '';
         for (let r = 0; r < data.plots.length; r++) {
             let row = '';
             for (let c = 0; c < data.plots[r].length; c++) {
                 let plot = data.plots[r][c];
                 let plotColor = colorPlot(plot);
                 let coloredPlot = `${plotColor}█`
-                console.log(coloredPlot)
                 row += coloredPlot;
             }
-            plotMapText += row + '\n';
+            data.plotMapText += row + '\n';
         }
     }
     
@@ -524,19 +463,19 @@ register('step', () => {
     let arrowBaseY = data.gardenMap.y + offsetY
     let normalizedX = (Player.getX() - (-240)) / (240 - (-240))
     let normalizedY = (Player.getZ() - (-240)) / (240 - (-240))
-    arrowX = arrowBaseX + normalizedX * (117 - 7)
-    arrowY = arrowBaseY + normalizedY * (185 - 75)
+    data.plotArrow.x = arrowBaseX + normalizedX * (117 - 7)
+    data.plotArrow.y = arrowBaseY + normalizedY * (185 - 75)
 
     // is contest:
     if (Settings.gardenContestOverlay) {
         checkTabContest = TabList.getNames()[76]
         data.isContest = checkTabContest && checkTabContest.includes('ACTIVE')
-        contestText = data.isContest ? `Contest: &aYES` : `Contest: &cNO`
+        data.contestText = data.isContest ? `Contest: &aYES` : `Contest: &cNO`
     }
 
     // vinyl selected
     if (Settings.vinylDisplay) {
-        vinylText = data.isPlayingVinyl ? `Current Vinyl: &a${data.currentVinyl}𝅘𝅥𝅮𝅘𝅥𝅮` : `Current Vinyl: &c No Vinyl Playing`;
+        data.vinylText = data.isPlayingVinyl ? `Current Vinyl: &a${data.currentVinyl}𝅘𝅥𝅮𝅘𝅥𝅮` : `Current Vinyl: &c No Vinyl Playing`;
     }
 
 }).setFps(5);
@@ -544,54 +483,53 @@ register('step', () => {
 
 // render overlay
 register('renderOverlay', () => {
-    if (currArea !== 'Garden') return;
-    let screenW = Renderer.screen.getWidth();
+    if (data.currArea !== 'Garden') return;
     const paddingText = (text) => {
-        return screenW - 5 - Renderer.getStringWidth(text);
+        return (Renderer.screen.getWidth()) - 5 - Renderer.getStringWidth(text);
     }
 
     // yaw and pitch
     if (Settings.showPlayerYawPitch) {
-        Renderer.drawStringWithShadow(playerYP, 5, 12) 
+        Renderer.drawStringWithShadow(data.playerYP, 5, 12) 
     }
     
     // Sprayonator selected material
     if (Settings.sprayonatorDisplay) {
-        Renderer.drawStringWithShadow(sprayOverlayText, 5, 32)
+        Renderer.drawStringWithShadow(data.sprayOverlayText, 5, 32)
     }
 
     // draws plot map
     // draws player arrow
     if (Settings.gardenPlotMap) {
-        drawScaledString(plotMapText, data.gardenMap.x, data.gardenMap.y, 2)
-        drawArrow(playerArrow, 0.8, Player.getYaw() + 180, arrowX, arrowY)
+        drawScaledString(data.plotMapText, data.gardenMap.x, data.gardenMap.y, 2)
+        drawArrow(playerArrow, 0.8, Player.getYaw() + 180, data.plotArrow.x, data.plotArrow.y)
     }
     
 
     // draws harbringer potion timer -- 25 / 35
     if (Settings.harvPotionOverlay) {
-        Renderer.drawStringWithShadow(harbringerText, paddingText(harbringerText), 60)
+        Renderer.drawStringWithShadow(data.harbringerText, paddingText(data.harbringerText), 60)
     }
 
     // draw contest
     if (Settings.gardenContestOverlay) {
-        Renderer.drawStringWithShadow(contestText, paddingText(contestText), 10)
+        Renderer.drawStringWithShadow(data.contestText, paddingText(data.contestText), 10)
     }
 
     // draws pest repellent timer -- 60 minutes (pest repellent or pest repellent max)
     if (Settings.pestRepellentDisplay) {
-        Renderer.drawStringWithShadow(pestRepelText, paddingText(pestRepelText), 20);
+        Renderer.drawStringWithShadow(data.pestRepellentText, paddingText(data.pestRepellentText), 20);
     }
     
     
     // draws vinyl display
     if (Settings.vinylDisplay) {
-        Renderer.drawStringWithShadow(vinylText, paddingText(vinylText), 30);
+        Renderer.drawStringWithShadow(data.vinylText, paddingText(data.vinylText), 30);
     }
 
     // pest exchange text
     if (Settings.pestExchangeDisplay) {
-        Renderer.drawStringWithShadow(pestExchangeText, paddingText(pestExchangeText), 40)
+        Renderer.drawStringWithShadow(data.pestExchangeText, paddingText(data.pestExchangeText), 40)
     }
 })
 
@@ -601,7 +539,7 @@ register('renderOverlay', () => {
 ////////////////////////////////////////////////////////////////////
 register("renderWorld", () => {
     if (!data.inSkyblock) return;
-    if (currArea !== 'Garden') return;
+    if (data.currArea !== 'Garden') return;
     if (!Settings.pestQOL) return;
     if (!Settings.pestEsp) return;
     World.getAllEntities().forEach(entity => {if (entity.getName().removeFormatting().includes("ൠ")) drawOutlineBeacon(entity.x, entity.y-0.65, entity.z, 'white', 1, false)})
@@ -612,7 +550,7 @@ register("renderWorld", () => {
 // PEST DROP PINGS
 ////////////////////////////////////////////////////////////////////
 register('chat', (event) => {
-    if (currArea !== 'Garden') return;
+    if (data.currArea !== 'Garden') return;
     if (!Settings.gardenRareDropPings) return;
     showAlert('&dBurrowing Spores')
     sendMessage('VERY RARE DROP! Burrowing Spores');
@@ -621,7 +559,7 @@ register('chat', (event) => {
 
 register('chat', (ff, event) => {
     // RARE DROP! Atmospheric Filter (+4949☘)
-    if (currArea !== 'Garden')return;
+    if (data.currArea !== 'Garden')return;
     if (!Settings.gardenRareDropPings) return;
     showAlert('&6Atmospheric Filter');
     sendMessage(`RARE DROP! Atmospheric Filter (+${ff}☘)`)
@@ -630,7 +568,7 @@ register('chat', (ff, event) => {
 
 register('chat', (ff, event) => {
     // RARE DROP! Pesterminator I Book (+4949☘)
-    if (currArea !== 'Garden')return;
+    if (data.currArea !== 'Garden')return;
     if (!Settings.gardenRareDropPings) return;
     showAlert('&6Pesterminator I Book');
     sendMessage(`RARE DROP! Pesterminator I Book (+${ff}☘)`)
@@ -643,20 +581,18 @@ register('chat', (ff, event) => {
 register('chat', (ff, event) => {
     // PET DROP! &5Rat&r (+1000☘)
     // PET DROP! &6Rat&r (+1000☘)
-    if (currArea !== 'Garden') return;
+    if (data.currArea !== 'Garden') return;
     if (!Settings.gardenPetDropPings) return;
     const message = ChatLib.getChatMessage(event, true);
-    console.log(message);
     petDropPing(message, 'PET DROP!', 'Rat', ff, gardenAudio)
 }).setCriteria('PET DROP! Rat (+${ff}☘)');
 
 register('chat', (ff, event) => {
     // PET DROP! &5Slug&r (+1000☘)
     // PET DROP! &6Slug&r (+1000☘)
-    if (currArea !== 'Garden') return;
+    if (data.currArea !== 'Garden') return;
     if (!Settings.gardenPetDropPings) return;
     const message = ChatLib.getChatMessage(event, true);
-    console.log(message);
     petDropPing(message, 'PET DROP!', 'Slug', ff, gardenAudio)
 }).setCriteria('PET DROP! Slug (+${ff}☘)');
 
@@ -664,24 +600,24 @@ register('chat', (ff, event) => {
 // DEBUGS
 ////////////////////////////////////////////////////////////////////
 register('chat', (event) => {
-    if (currArea !== 'Garden') return;
+    if (data.currArea !== 'Garden') return;
     data.plots.forEach((row, i) => row.forEach((plot, j) => 
     // console.log("props: ", Object.getOwnPropertyNames(Object.getPrototypeOf(plot)))));
     console.log(`Plot ${i * row.length + j + 1}: Name: ${plot.name}, TL: [${plot.tl.join(', ')}], BR: [${plot.br.join(', ')}], Pest: ${plot.pest}, Spray: ${plot.spray}, Color: ${colorPlot(plot)}`)));
 }).setCriteria('#plot').setContains();
 
 register('chat', (event) => {
-    for (let i = 0; i < data.playerPlotNames.length; i++) {
-        console.log(data.playerPlotNames[i])
+    for (let i = 0; i < data.playerPlotInfo.names.length; i++) {
+        console.log(data.playerPlotInfo.names[i])
     }
 }).setCriteria('#log playernames').setContains();
 
 register('chat', (event) => {
-    console.log(data.gardenPlotCoords)
+    console.log(data.gardenPlot.coords)
 }).setCriteria('#log gardennames').setContains();
 
 register('chat', (event) => {
-    console.log(data.plotSprayTimers)
+    console.log(data.plotSprayInfo.timers)
 }).setCriteria('#log spraytimers').setContains();
 
 register('chat', (event) => {
@@ -693,7 +629,7 @@ register('chat', (event) => {
 }).setCriteria('#log sprayplots').setContains();
 
 register("guiClosed", () => {
-    deskConfigMsg = false;
+    data.playerPlotInfo.configMsg = false;
 });
 
 // garden message hiders

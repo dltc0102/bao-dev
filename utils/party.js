@@ -135,21 +135,33 @@ register("chat", (numMembers) => {
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-// lock player
+// P-Lock Implementation
 ///////////////////////////////////////////////////////////////////////////////////////////
+// Party > user: #lock -- lock user
+// Party > user: #lock user2 -- if user is pl, lock user2
+// Party > user: #unlock -- unlock user
+// Party > user: #unlock user2 -- if user is pl, unlock user2
+
+// effects on cmds:
+// Party > user: #w or #warp -- if plocked list has people, party leader automatically does #warpexc (people)
+// Party > user: #pta -- if plocked list has people, and user is pl, pt will be automatically transferred to anyone that is not in plocked list.
+
 register('chat', (rank, name, event) => {
-    if (data.lockedList.includes(name.toString())) {
-        setTimeout(() => {
-            partyAudio.playDefaultSound();
-            ChatLib.chat(`&b[&c${name}&b] &eis already in the lock list. Cannot be added.`);
-        }, 100)
-        return;
-    }
-    inParty = true;
+    // inParty = true;
     data.lockedList.push(name.toString());
     setTimeout(() => {
         ChatLib.chat(`&a${name} has added themselves to the party lock list.`);
     }, 100);
+
+    // locked list already includes (name)
+    if (data.lockedList.includes(name.toString())) {
+        setTimeout(() => {
+            partyAudio.playDefaultSound();
+            ChatLib.chat(`&c&lERROR&r &b${name} &cis already in the lock list.`);
+        }, 100)
+        return;
+    }
+
     debug(`inParty: ${inParty}, selfLockPlayer: ${name}`);
 }).setCriteria('Party > ${rank} ${name}: #lock');
 

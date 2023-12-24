@@ -38,15 +38,49 @@ export let data = new PogObject("Bao", {
     ///////////////////////////////////////////////////////////////////////////////
     // GARDEN QOL
     ///////////////////////////////////////////////////////////////////////////////
+    "playerYP": '',
+    "isContest": false,
+    "contestText": '',
+    
     "plots": [],
-    "playerPlotNames": [], 
-    "gardenPlotCoords": [],
-    "plotSprayTimers": [], 
+    "plotMapText": '',
+    "playerPlotInfo": {
+        "names": [], 
+        "configMsg": false, 
+        "numLoads": 6,
+        "rows": 5,
+        "cols": 5,
+    },
+    "gardenPlot": {
+        "coords": [], 
+        "rows": 5, 
+        "cols": 5, 
+        "plotW": 96,
+    }, 
+    "plotSprayInfo": {
+        "timers": [], 
+        "offsetX": 5.5, 
+        "offsetY": 35, 
+        "dx": 18, 
+        "dy": 18, 
+        "cols": 5, 
+        "rows": 5,
+    },
+
+    "plotArrow": {
+        "x": 0, 
+        "y": 0,
+    }, 
     "pestPlotCoords": [], 
     "sprayPlotCoords": [],
     "pestAliveList": [],
-    "isContest": false,
+
+    "sentDeskReminder": false,
     
+    "sprayOverlayText": '',
+    "possiblePests": '',
+    "sprayMatText": '',
+    "selectedSprayMat": '',
     "matAttracts": {
         "Dung": ["Fly", "Beetle"], 
         "Honey Jar": ["Cricket", "Moth"], 
@@ -58,27 +92,38 @@ export let data = new PogObject("Bao", {
         "x": 3, 
         "y": 30
     }, 
+    "allVinylNames": ["Pretty Fly", "Cricket Choir", "Earthworm Ensemble", "Slow and Groovy", "Not Just a Pest", "Cicada Symphony", "DynaMITES", "Rodent Revolution", "Wings of Harmony", "Buzzin' Beats"],
     "isPlayingVinyl": false,
     "currentVinyl": '',
+    "vinylText": '',
 
     "usedHarvPot": false, 
     "targetHarvPot": null, 
+    "harvPotTimeLeft": 0,
 
     "pestRepelType": '2x',
     "usedPestRepellent": false, 
     "targetPestRepellent": null,
+    "pestRepelCD": 60,
+    "pestRepellentTimeLeft": 0,
 
     "usedPestExchange": false, 
     "targetExchange": null, 
+    "pestExchangeTimeLeft": 0,
+
+    "harbringerText": '', 
+    "pestRepellentText": '', 
+    "pestExchangeText": '',
+
+
     "bonusFF": 0, 
-    "dontaedPests": 0, 
+    "donatedPests": 0, 
     ///////////////////////////////////////////////////////////////////////////////
     // FISHING
     ///////////////////////////////////////////////////////////////////////////////
     "wasCounterOn": false,
     "diaAlready": [], 
     "testExp": 0, 
-    "dhTotalStats": 0,
     "waterSC": { // water scc
 
         // WATER SEA CREATURES (REGULAR)

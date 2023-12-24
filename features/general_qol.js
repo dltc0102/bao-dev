@@ -7,6 +7,35 @@ import { determinePlayerRankColor, hideMessage, calcSkillXP } from '../utils/fun
 
 const generalAudio = new Audio();
 
+/* General QOL
+* #warp, #w
+* plocked implementation
+* type #w or #warp when r for warp
+* #pai
+* #ko
+* #pt, #transfer
+* #pta
+* kicked from sb alert
+* boop notifier
+* /warpexc
+* aotv 'there are blocks in the way' message hider
+* soopy 'ajfaweaefeafesafadfasefaeafea unknown command' message hider
+* better stash messages
+* hide lightning
+* snow cannon message hider
+* grandma wolf hider
+* watchdog message hider
+*/
+
+// Party > user: #lock -- lock user
+// Party > user: #lock user2 -- if user is pl, lock user2
+// Party > user: #unlock -- unlock user
+// Party > user: #unlock user2 -- if user is pl, unlock user2
+
+// effects on cmds:
+// Party > user: #w or #warp -- if plocked list has people, party leader automatically does #warpexc (people)
+// Party > user: #pta -- if plocked list has people, and user is pl, pt will be automatically transferred to anyone that is not in plocked list.
+
 ///////////////////////////////////////////////////////////////////////////////
 // #warp ----------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
@@ -90,6 +119,16 @@ register('chat', (rank, ign, event) => {
     if (!getIsPL()) return;
     ChatLib.command(`p transfer ${ign}`)
 }).setCriteria('Party > ${rank} ${ign}: #transfer')
+
+// #pta
+register('chat', (rank, ign, event) => {
+    if (!getIsPL()) return;
+    // get list of players in party
+    // get list of players in lockedlist
+    // get list of player in party, not in locked list
+    // if pl, choose a random number between 0 and len(possible_players) and index one to transfer to
+}).setCriteria('Party > ${rank} ${ign}: #pta')
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Kicked from SB Alert -------------------------------------------------------
@@ -259,4 +298,24 @@ register('chat', (event) => {
 // }).setCriteria('+25 Kill Combo +3✯ Magic Find');
 
 
+// watchdog announcement message
+// [WATCHDOG ANNOUNCEMENT]
+// Watchdog has banned 8,560 players in the last 7 days.
+// Staff have banned an additional 8,718 in the last 7 days.
+// Blacklisted modifications are a bannable offense!
 
+register('chat', (event) => {
+    if (Settings.betterWDA) cancel(event);
+}).setCriteria('[WATCHDOG ANNOUNCEMENT]');
+
+register('chat', (event) => {
+    if (Settings.betterWDA) cancel(event);
+}).setCriteria('Watchdog has banned 8,560 players in the last 7 days.');
+
+register('chat', (event) => {
+    if (Settings.betterWDA) cancel(event);
+}).setCriteria('Staff have banned an additional 8,718 in the last 7 days.');
+
+register('chat', (event) => {
+    if (Settings.betterWDA) cancel(event);
+}).setCriteria('Blacklisted modifications are a bannable offense!');

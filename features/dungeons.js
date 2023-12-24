@@ -2,44 +2,30 @@ import Settings from '../settings.js'
 import Audio from '../utils/audio.js'
 import { data } from '../utils/data.js'
 import { showAlert } from '../utils/utils.js'
-import { createGuiCommand, renderGuiPosition,createGuiCommand } from '../utils/functions.js'
+import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'
 import { sendMessage } from '../utils/party.js'
 // import { drawBonzoBox, drawLine, drawBeacon, colorToRgb, centerCoordinates } from '../utils/functions.js'
 const dunAudio = new Audio();
 
 ////////////////////////////////////////////////////////////////////////////////
-// #wish ----------------------------------------------------------------------
+// MELODY DETECTOR -------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
-register('chat', (rank, name, event) => {
-    if (!Settings.wish_cmd) return
-    showAlert(wish_title);
-    dunAudio.playDefaultSound();
-}).setCriteria('Party > ${rank} ${name}: #wish')
-
-
-////////////////////////////////////////////////////////////////////////////////
-// OTHERS ----------------------------------------------------------------------
-////////////////////////////////////////////////////////////////////////////////
-// melody detector
 let melodyMsgSent = false;
 let lastMelodyMsgTime = 0;
 register('step', () => {
     if (!World.isLoaded()) return;
     if (!data.inSkyblock) return;
     if (!Settings.alert_melody) return;
-    if (melodyMsgSent) {
-        const currentTime = Date.now();
-        if (currentTime - lastMelodyMsgTime >= 5000) { // Check if at least 10 seconds have passed
-            melodyMsgSent = false; // Reset the flag to allow sending 'Melody' again
+    if (Player.getContainer().getName() === 'Click the button on time!') {
+        if (melodyMsgSent) { 
+            const currentTime = Date.now();
+            if (currentTime - lastMelodyMsgTime >= 5000) melodyMsgSent = false;
+            return;
         }
-        return;
+        sendMessage('melody');
+        melodyMsgSent = true;
+        lastMelodyMsgTime = Date.now();
     }
-
-    if (Player.getContainer().getName() !== 'Experimentation Table') return;
-
-    sendMessage('melody');
-    melodyMsgSent = true;
-    lastMelodyMsgTime = Date.now(); // Record the time the message was sent
 })
 
 
@@ -47,7 +33,6 @@ register('step', () => {
 // secrets per run
 ////////////////////////////////////////////////////////////////////////////////
 let statsCommandRun = false;
-let extraStatsShown = false;
 let deathStats = 0;
 let secretStats = 0;
 let numRunsStats = 0;
@@ -71,13 +56,6 @@ register('chat', (event) => {
     statsCommandRun = true;
 }).setCriteria('> EXTRA STATS <').setContains();
 
-register('chat', (event) => {
-    if (!data.inSkyblock) return;
-    if (data.currArea !== 'Catacombs') return;
-    if (!statsCommandRun) return;
-    extraStatsShown = true;
-}).setCriteria('${mode} Catacombs - Floor ${floor} Stats').setContains();;
-
 register('chat', (playerDeaths, event) => {
     if (!data.inSkyblock) return;
     if (data.currArea !== 'Catacombs') return;
@@ -92,7 +70,7 @@ register('chat', (secretCount, event) => {
 
 register('chat', (event) => {
     setTimeout(() => {
-        ChatLib.chat(`&6[&3Bao&6] &3${Player.getName()} &7Secrets: &b${secretStats}&7, Deaths: &b${deathStats}`)
+        ChatLib.chat(`${data.modPrefix} &3${Player.getName()} &7Secrets: &b${secretStats}&7, Deaths: &b${deathStats}`)
     }, 1000)
 }).setCriteria('CLICK HERE to re-queue into The Catacombs!').setContains();
 
@@ -128,9 +106,9 @@ register('command', () => {
 // if player in ignore list is in party, auto remove
 // load ignore list in first laod
 
-let totalIgnorePages = 0;
-let totalPagesGot = false;
-let inSetupIgnores = false;
+// let totalIgnorePages = 0;
+// let totalPagesGot = false;
+// let inSetupIgnores = false;
 // register('chat', (pageMax, event) => {
 //     cancel(event);
 //     totalIgnorePages = Number(pageMax).toFixed(0);
@@ -156,9 +134,9 @@ let inSetupIgnores = false;
 //     data.ignoredNames.push(playerName);
 // }).setCriteria("${nameIdx}. ${playerName}").setContains();
 
-register('command', () => {
-    console.log(ignoredNames);
-}).setName('getignored');
+// register('command', () => {
+//     console.log(ignoredNames);
+// }).setName('getignored');
 
 
 

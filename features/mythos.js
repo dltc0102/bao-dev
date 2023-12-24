@@ -286,16 +286,9 @@ register('step', () => {
 }).setFps(1)
 
 register('renderOverlay', () => {
-    if (data.inSkyblock === false) return;
+    if (!data.inSkyblock) return;
+    if (!Settings.mythos_main_toggle) return;
     if (data.currArea !== 'Hub') return;
-    if (!Settings.mythos_main_toggle && data.wasCounterOn) {
-        Settings.fishing_counter = true;
-        return;
-    }
-    if (Settings.fishing_counter && data.currArea === 'Hub') {
-        Settings.fishing_counter = false;
-        data.wasCounterOn = true;
-    }
     Renderer.drawStringWithShadow(allMythoLines, 5, 100);
 });
 

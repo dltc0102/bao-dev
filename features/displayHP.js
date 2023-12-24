@@ -5,10 +5,8 @@ import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'
 let EntityArmorStand = Java.type("net.minecraft.entity.item.EntityArmorStand");
 
 let specifiedMobs = [];
-let lavaSeaCreatures = ['Phlegblast', 'Baby Magma Slug', 'Magma Slug', 'Moogma', 'Lava Leech', 'Pyroclastic Worm', 'Lava Flame', 'Fire Eel', 'Taurus', 'Thunder', 'Jawbus', 'Vanquisher']
 
 if (Settings.master_displayHP) {
-    specifiedMobs.push(...lavaSeaCreatures);
     if (Settings.vanq_hp) specifiedMobs.push('Vanquisher');
     if (Settings.inq_hp) specifiedMobs.push('Exalted Minos Inquisitor');
     if (Settings.champ_hp) specifiedMobs.push('Exalted Minos Champion');
@@ -21,15 +19,6 @@ if (Settings.master_displayHP) {
     if (Settings.reaper_hp) specifiedMobs.push('Grim Reaper');
     if (Settings.phantom_fisher_hp) specifiedMobs.push('Phantom Fisher');
 }
-
-// debug
-// register('command', () => {
-//     ChatLib.chat(`master display hp toggle is: ${Settings.master_displayHP ? "ON": "OFF"}`)
-// }).setName('checkhp');
-
-// register('command', () => {
-//     console.log(`Mobs to Detect: ${specifiedMobs}`)
-// }).setName('listmobs');
 
 // Gui Stuff
 var movehp = new Gui(); // display hp of mobs
@@ -58,9 +47,6 @@ register('step', () => {
             let allowedMobPatterns = specifiedMobs.join('|');
             let regexPattern = '\\[Lv\\d+\\] (' + allowedMobPatterns + ') (\\d+(\\.\\d*)?[kM]?)\\/(\\d+(\\.\\d+)?[kM]?)❤';
             let matchMobPattern = entityName.match(regexPattern);
-            // console.log(`Entity Name: ${entityName}`)
-            // console.log(allowedMobPatterns)
-            // console.log(`Match Result: ${matchMobPattern ? true : false}`)
             
             if (matchMobPattern) {
                 inRangeText = inEntityLSRange ? '&a✓' : '&c✖'
@@ -72,14 +58,20 @@ register('step', () => {
 }).setFps(10);
 
 register('renderOverlay', () => {
-    if (!data.inSkyblock) return;
     if (!World.isLoaded()) return;
+    if (!data.inSkyblock) return;
     if (!Settings.master_displayHP) return;
     Renderer.drawString(displayMobInfos, data.HPCount.x, data.HPCount.y);
-
-    // gui open
     renderGuiPosition(movehp, data.HPCount, '[Lv000] SomeMobMonster 10M/10M ❤ -- [✖]')
 });
 
+// debug
+// register('command', () => {
+//     ChatLib.chat(`master display hp toggle is: ${Settings.master_displayHP ? "ON": "OFF"}`)
+// }).setName('checkhp');
+
+// register('command', () => {
+//     console.log(`Mobs to Detect: ${specifiedMobs}`)
+// }).setName('listmobs');
 
 
