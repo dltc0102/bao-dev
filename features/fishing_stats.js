@@ -1,13 +1,10 @@
-import settings from '../settings.js';
 import Settings from '../settings.js';
-import Audio from '../utils/audio.js';
 import { data } from '../utils/data.js';
-import { getTabArea, updateCDText, formatMoney } from '../utils/functions.js';
+import { updateCDText, formatMoney } from '../utils/functions.js';
 import { createGuiCommand, renderGuiPosition } from '../utils/functions.js';
 /// HIDE SCC MESSAGES ON THIS FILE ONLY
 
 
-// const fStats = new Audio();
 
 ////////////////////////////////////////////////////////////////////////////
 // STATISTICAL FISHING EXP RATES TRACKER -----------------------------------
@@ -388,7 +385,7 @@ register('chat', (event) => {
     data.waterSC.catchesSinceCarrotKing += 1;
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
-    data.waterSC.catchesSinceZombieMiner += 1;
+    data.waterSC.abyssalMinerCatches += 1;
 }).setCriteria("A Water Worm surfaces!");
 
 // Poisoned Water Worm
@@ -400,20 +397,19 @@ register('chat', (event) => {
     data.waterSC.catchesSinceCarrotKing += 1;
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
-    data.waterSC.catchesSinceZombieMiner += 1;
+    data.waterSC.abyssalMinerCatches += 1;
 }).setCriteria("A Poisoned Water Worm surfaces!");
 
-// Zombie Miner
+// Abyssal Miner
 register('chat', (event) => {
     if (data.currArea !== 'Crystal Hollows') return;
     if (Settings.hide_sc_msgs) cancel(event);
-    data.waterSC.zombieMinerCatches += 1;
     data.waterSC.totalCHWaterSCCatches += 1;
     data.waterSC.catchesSinceCarrotKing += 1;
     data.waterSC.catchesSinceSeaEmperor += 1;
     data.waterSC.catchesSinceWaterHydra += 1;
-    data.waterSC.catchesSinceZombieMiner = 0;
-}).setCriteria("A Zombie Miner surfaces!");
+    data.waterSC.abyssalMinerCatches = 0;
+}).setCriteria("An Abyssal Miner breaks out of the water!");
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -1171,7 +1167,7 @@ register('command', () => {
     data.waterSC.oasisSheepCatches = 0;
     data.waterSC.waterWormCatches = 0;
     data.waterSC.poisonedWaterWormCatches = 0;
-    data.waterSC.zombieMinerCatches = 0;
+    data.waterSC.abyssalMinerCatches = 0;
     data.waterSC.scarecrowCatches = 0;
     data.waterSC.nightmareCatches = 0;
     data.waterSC.werewolfCatches = 0;
@@ -1203,7 +1199,7 @@ register('command', () => {
     data.waterSC.carrotKingSinceLastClover = 0;
     data.waterSC.catchesSinceWaterHydra = 0;
     data.waterSC.catchesSinceSeaEmperor = 0;
-    data.waterSC.catchesSinceZombieMiner = 0;
+    data.waterSC.abyssalMinerCatches = 0;
     data.waterSC.catchesSincePhantomFisher = 0;
     data.waterSC.catchesSinceGrimReaper = 0;
     data.waterSC.catchesSinceYeti = 0;

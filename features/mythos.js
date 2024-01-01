@@ -1,11 +1,8 @@
 import Settings from '../settings.js';
-import Audio from '../utils/audio.js';
 import { data } from '../utils/data.js';
 import { sendMessage } from '../utils/party.js';
 import { showAlert } from '../utils/utils.js';
-import { playSound, hideMessage, getPlayerPos, getPlayerPOI, delayMessage, formatMoney } from '../utils/functions.js';
-
-const mythosAudio = new Audio();
+import { playSound, getPlayerPos, getPlayerPOI, delayMessage, formatMoney } from '../utils/functions.js';
 
 const dts_title = '&2Dwarf Turtle Shelmet' 
 const ar_title = '&5Antique Remedies'
@@ -16,7 +13,10 @@ const wus_title = '&6Washed-up Souvenir'
 const dae_title = '&6Daedalus Stick'
 const chim_title = '&d&lCHIMERA I'
 
-hideMessage('Follow the arrows to find the treasure!', '', null);
+register('chat', (event) => {
+    // code goes here
+    cancel(event);
+}).setCriteria('Follow the arrows to find the treasure!');
 
 // feathers dug up
 register('chat', (event) => {
@@ -50,7 +50,7 @@ register('chat', (event) => {
 // dwarf turtle shelmet
 register('chat', (event) => {
     showAlert(dts_title);
-    mythosAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
     if (data.MPI.DTS === undefined) data.MPI.DTS += 2;
     data.MPI.DTS += 1;
 }).setCriteria('[SBE] RARE DROP! Dwarf Turtle Shelmet');
@@ -58,7 +58,7 @@ register('chat', (event) => {
 // antique remedies
 register('chat', (event) => {
     showAlert(ar_title);
-    mythosAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
     if (data.MPI.AR === undefined) data.MPI.AR += 2;
     data.MPI.AR += 1;
 }).setCriteria('[SBE] RARE DROP! Antique Remedies');
@@ -66,7 +66,7 @@ register('chat', (event) => {
 // crochet tiger plushie
 register('chat', (event) => {
     showAlert(ctp_title);
-    mythosAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
     if (data.MPI.CTP === undefined) data.MPI.CTP += 2;
     data.MPI.CTP += 1;
 }).setCriteria('[SBE] RARE DROP! Crochet Tiger Plushie');
@@ -84,7 +84,7 @@ register('chat', (event) => {
 register('chat', (event) => {
     sendMessage(`RARE DROP! You dug out a Crown of Greed! [${data.MPI.burrowsSinceCOG} burrows]`);
     showAlert(cog_title);
-    mythosAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
     if (data.MPI.CoG === undefined) data.MPI.CoG += 2;
     data.MPI.CoG += 1;
     data.MPI.burrowsSinceCOG = 0;
@@ -94,7 +94,7 @@ register('chat', (event) => {
 register('chat', (event) => {
     sendMessage(`RARE DROP! You dug out a Washed-up Souvenir! [${data.MPI.burrowsSinceWUS} burrows]`);
     showAlert(wus_title);
-    mythosAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
     if (data.MPI.WuS === undefined) data.MPI.WuS += 2;
     data.MPI.WuS += 1;
     data.MPI.burrowsSinceWUS = 0;
@@ -117,7 +117,7 @@ register('chat', (event) => {
     if (data.MPI.CHIM === undefined) data.MPI.CHIM += 2;
     data.MPI.CHIM += 1;
     // data.MPI.inqsSinceChim = 0;
-    mythosAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria('RARE DROP! Enchanted Book');
 
 // Minos Hunter
@@ -292,7 +292,11 @@ register('renderOverlay', () => {
     Renderer.drawStringWithShadow(allMythoLines, 5, 100);
 });
 
-if (Settings.hide_griffin_error) hideMessage('You need to equip a LEGENDARY griffin pet to fight this!', '', null)
+register('chat', (event) => {
+    if (!data.inSkyblock) return;
+    if (!Settings.hide_griffin_error) return;
+    cancel(event);
+}).setCriteria('You need to equip a LEGENDARY griffin pet to fight this!');
 
 register('command', () => {
     ChatLib.chat(`&6|| &rMobs Since Inq: &c${data.MPI.mobsSinceInq}`);

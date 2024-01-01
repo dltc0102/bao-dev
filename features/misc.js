@@ -1,11 +1,8 @@
 import Settings from "../settings.js"
-import Audio from '../utils/audio.js'
 import { data } from '../utils/data.js'
 import { showAlert } from '../utils/utils.js'
-import { playSound, generateRandomStr, petDropPing, sendSelf, sendGuild } from "../utils/functions.js"
+import { playSound, generateRandomStr, petDropPing, sendSelf, sendGuild, createGuiCommand, renderGuiPosition } from "../utils/functions.js"
 import { sendMessage, announce } from '../utils/party.js'
-
-const miscAudio = new Audio();
 
 ////////////////////////////////////////////////////////////////////////////////
 // JERRY TITLES ----------------------------------------------------------------
@@ -52,11 +49,22 @@ const celeste_pattern = /&6&lRARE DROP! &5Celeste Dye/
 // MINING ----------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 // dwarven mines lobby day
+var movedaycount = new Gui();
+register('dragged', (dx, dy, x, y) => {
+    if (!data.inSkyblock) return;
+    if (movedaycount.isOpen()) {
+        data.DayCount.x = x;
+        data.DayCount.y = y;
+    }
+})
+
+createGuiCommand(movedaycount, 'movedaycount', 'mdc');
+
 let lobbyDisplay = '';
 register('step', () => {
     if (!data.inSkyblock) return;
     if (!World.isLoaded()) return;
-    if (data.currArea !== 'Dwarven Mines' || data.currArea !== 'Crystal Hollows' || data.currArea !== 'Hub' || data.currArea !== 'Crimson Isle') return;
+    if (!Settings.lobbyDayCount) return;
     lobbyTicks = World.getTime();
     lobbyDay = (lobbyTicks / 24000).toFixed(2);
     lobbyDisplay = `Day: &b${lobbyDay}`
@@ -65,8 +73,9 @@ register('step', () => {
 register('renderOverlay', () => {
     if (!data.inSkyblock) return;
     if (!World.isLoaded()) return;
-    if (data.currArea !== 'Dwarven Mines' || data.currArea !== 'Crystal Hollows' || data.currArea !== 'Hub' || data.currArea !== 'Crimson Isle') return;
-    Renderer.drawStringWithShadow(lobbyDisplay, DayCount.x, DayCount.y)
+    if (!Settings.lobbyDayCount) return;
+    Renderer.drawStringWithShadow(lobbyDisplay, data.DayCount.x, data.DayCount.y)
+    renderGuiPosition(movedaycount, data.DayCount, `Day: 0.00`)
 });
 
 // golden goblin alert
@@ -74,7 +83,7 @@ register('chat', (event) => {
     if (!data.inSkyblock) return;
     if (!Settings.golden_goblin_alert) return;
     showAlert('&6Golden Goblin')
-    miscAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
     sendMessage('[!] Golden Goblin [!]')
 }).setCriteria('A Golden Goblin has spawned!')
 
@@ -83,7 +92,7 @@ register('chat', (mf, event) => {
     if (!data.inSkyblock) return;
     if (!Settings.scatha_pet_drop_ping) return;
     const message = ChatLib.getChatMessage(event, true);
-    petDropPing(message, 'PET DROP!', 'Scatha', mf, miscAudio)
+    petDropPing(message, 'PET DROP!', 'Scatha', mf, data.audioInst)
 }).setCriteria('PET DROP! Scatha (+${mf}% ✯ Magic Find)');
 
 
@@ -98,21 +107,21 @@ register('chat', (event) => {
     if (message.includes('&aGreen Jerry&e')) {
         sendSelf('[!] A Green Jerry has spawned [!]');
         showAlert(green_jerry);
-        miscAudio.playDefaultSound();
+        data.audioInst.playDefaultSound();
     }
 
     // blue jerry
     if (message.includes('&9Blue Jerry&e')) {
         sendSelf('[!] A Blue Jerry has spawned [!]');
         showAlert(blue_jerry);
-        miscAudio.playDefaultSound();
+        data.audioInst.playDefaultSound();
     }
 
     // purple jerry
     if (message.includes('&5Purple Jerry&e')) {
         sendSelf('[!] A Purple Jerry has spawned [!]');
         showAlert(purple_jerry);
-        miscAudio.playDefaultSound();
+        data.audioInst.playDefaultSound();
     }
 
     // golden jerry
@@ -131,7 +140,7 @@ register('chat', (event) => {
     if (!Settings.end_protector_ping) return
     showAlert(end_prot_title);
     sendMessage('endstone protector spawning');
-    miscAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria('The ground begins to shake as an Endstone Protector rises from below!')
 
 
@@ -202,7 +211,7 @@ register('chat', (spookyMob, event) => {
     if (Settings.hide_scc_msgs) cancel(event);
     showAlert(sharing_is_caring);
     sendMessage(`${spookyMob} has spawned.`)
-    miscAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria('TRICK! A ${spookyMob} has tricked you!');
 
 // headless horseman ping
@@ -212,12 +221,12 @@ register('chat', (spawner, location, event) => {
     if (location === 'Wilderness') {
         showAlert(wildHorseTitle);
         sendMessage('[!] Horseman @ Wilderness [!]');
-        miscAudio.playDefaultSound();
+        data.audioInst.playDefaultSound();
     }
     if (location === 'Graveyard') {
         showAlert(graveHorseTitle);
         sendMessage('[!] Horseman @ Graveyards [!]');
-        miscAudio.playDefaultSound();
+        data.audioInst.playDefaultSound();
     }
 }).setCriteria("${spawner} has spawned the Headless Horseman boss in the ${location}!")
 
@@ -245,7 +254,7 @@ register('chat', (event) => {
     if (!data.inSkyblock) return;
     if (!Settings.primal_fear_main_toggle) return;
     if (!Settings.primal_fear_spawn_ping) return;
-    miscAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
     showAlert('&4PRIMAL FEAR')
     sendMessage('[!] Primal Fear (not ls-able btw)[!]')
 }).setCriteria('FEAR. A Primal Fear has been summoned!')

@@ -1,28 +1,9 @@
 import Settings from "../settings.js"
-import Audio from '../utils/audio.js'
 import { data } from "../utils/data.js"
-import { getTabArea, updateCDText, createGuiCommand, renderGuiPosition, constrainCoords, crossLoadTimer } from '../utils/functions.js'
+import { updateCDText, createGuiCommand, renderGuiPosition, crossLoadTimer } from '../utils/functions.js'
 import { getActivePet } from '../utils/pet.js'
 import { showAlert } from '../utils/utils.js'
 import { sendMessage } from '../utils/party.js'
-
-const timerAudio = new Audio();
-
-register('gameLoad', () => {
-    if (!Settings.rekindleAlert) return;
-    if (!Settings.secondWindAlert) return;
-    if (!Settings.mushyTimer) return;
-    if (!Settings.bonzo_cd_timer) return;
-    if (!Settings.kingScentTimer) return;
-    if (!Settings.gummyTimer) return;
-
-    crossLoadTimer(data.usedGummy, data.targetGummy)
-    crossLoadTimer(data.usedRekindle, data.targetRekindle)
-    crossLoadTimer(data.usedSecondWind, data.targetSecondWind)
-    crossLoadTimer(data.usedTonic, data.targetTonic)
-    crossLoadTimer(data.usedBonzo, data.targetBonzo)
-    crossLoadTimer(data.usedScent, data.targetScent)
-})
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -32,24 +13,24 @@ const gummyCD = 60;
 let gummyTimeLeft = 0;
 register('chat', (event) => {
     if (!Settings.gummyTimer) return;
-    timerAudio.playDrinkSound();
+    data.audioInst.playDrinkSound();
     data.usedGummy = true; 
     const targetTime = new Date();
     targetTime.setMinutes(targetTime.getMinutes() + gummyCD);
     gummyTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
     data.targetGummy = targetTime;
-}).setCriteria('You ate a reheated gummy!');
+}).setCriteria('You ate a Re-heated Gummy Polar Bear!');
 
 register('step', () => {
     if (!data.inSkyblock) return;
     if (!Settings.gummyTimer) return;
     if (!data.usedGummy) return;
     if (gummyTimeLeft > 0) {
-        gummyTimeLeft -= -1;
+        gummyTimeLeft -= 1;
         data.usedGummy = true;
         updateCDText('&a', 'Gummy Bear', gummyTimeLeft);
     } else if (gummyTimeLeft === 0) {
-        timerAudio.playDefaultSound();
+        data.audioInst.playDefaultSound();
         ChatLib.chat('&eYour &cReheated Gummy Bear &ehas expired!');
         showAlert('&cGummy Bear Expired');
         data.usedGummy = false;
@@ -65,7 +46,7 @@ const rekindleCD = 60; // 60
 let rekindleTimeLeft = 0;
 register('chat', (event) => {
     if (!Settings.rekindleAlert) return;
-    timerAudio.playProcSound();
+    data.audioInst.playProcSound();
     data.usedRekindle = true;
     const targetTime = new Date();
     targetTime.setMinutes(targetTime.getMinutes() + rekindleCD);
@@ -82,7 +63,7 @@ register('step', () => {
         data.usedRekindle = true;
         updateCDText('&6', 'Rekindle', rekindleTimeLeft);
     } else if (rekindleTimeLeft === 0) {
-        timerAudio.playDefaultSound();
+        data.audioInst.playDefaultSound();
         ChatLib.chat('&eYour Phoenix &cRekindle &eability has been refreshed!');
         showAlert('&aRekindle Available');
         data.usedRekindle = false;
@@ -99,7 +80,7 @@ let secondWindTimeLeft = 0;
 register('chat', (event) => {
     if (!data.inSkyblock) return;
     if (!Settings.secondWindAlert) return;
-    timerAudio.playProcSound();
+    data.audioInst.playProcSound();
     data.usedSecondWind = true;
     const targetTime = new Date();
     targetTime.setSeconds(targetTime.getSeconds() + secondWindCD);
@@ -118,7 +99,7 @@ register('step', () => {
     } else if (secondWindTimeLeft === 0) {
         data.usedSecondWind = false;
         showAlert('&aSecond Wind Available');
-        timerAudio.playDefaultSound();
+        data.audioInst.playDefaultSound();
         ChatLib.chat('&eYour Spirit Mask &cSecond Wind &eability has been refreshed!');
         data.targetSecondWind = 0;
         updateCDText('&6', 'Second Wind', secondWindTimeLeft);
@@ -179,7 +160,7 @@ register("step", () => {
 let tonicTimeLeft = 0;
 register('chat', (event) => {
     if (!Settings.mushyTimer) return;
-    timerAudio.playDrinkSound();
+    data.audioInst.playDrinkSound();
     let mushyCD = getActivePet().includes('Parrot') ? 5040 : 3600;
     data.usedTonic = true;
     const targetTime = new Date();
@@ -190,7 +171,7 @@ register('chat', (event) => {
 
 register('chat', (name, event) => {
     if (!Settings.mushyTimer) return;
-    timerAudio.playDrinkSound();
+    data.audioInst.playDrinkSound();
     let mushyCD = getActivePet().includes('Parrot') ? 5040 : 3600;
     data.usedTonic = true;
     const targetTime = new Date();
@@ -204,7 +185,7 @@ register('step', () => {
     if (!data.inSkyblock) return;
     if (!data.usedTonic) return;
     if (tonicTimeLeft === 0) {
-        timerAudio.playDefaultSound();
+        data.audioInst.playDefaultSound();
         ChatLib.chat('&cYour &2Glowy Tonic &c has expired.');
         showAlert('&aGlowy Tonic Expired');
         data.usedTonic = false;
@@ -250,7 +231,7 @@ const clownCD = 360; // 360
 let clownTimeLeft = 0;
 register('chat', (event) => {
     if (!Settings.bonzo_cd_timer) return;
-    timerAudio.playProcSound();
+    data.audioInst.playProcSound();
     data.usedBonzo = true;
     const targetTime = new Date();
     targetTime.setSeconds(targetTime.getSeconds() + clownCD);
@@ -263,7 +244,7 @@ register('step', () => {
     if (!data.inSkyblock) return;
     if (!data.usedBonzo) return;
     if (clownTimeLeft === 0) {
-        timerAudio.playDefaultSound();
+        data.audioInst.playDefaultSound();
         ChatLib.chat("&eYour Bonzo Mask &cClownin' Around &eability has been refreshed!")
         showAlert('&aBonzo Mask Available')
         data.usedBonzo = false;
@@ -302,7 +283,7 @@ register('step', () => {
 //     if (!data.inSkyblock) return;
 //     if (!data.usedCake) return;
 //     if (cakeTimeLeft === 0) {
-//         timerAudio.playDefaultSound();
+//         data.audioInst.playDefaultSound();
 //         ChatLib.chat('&cYour &6&lCAKES &r&chave expired.')
 //         showAlert('&6&lCAKES &r&cExpired');
 //         data.usedCake = false;
@@ -334,7 +315,7 @@ let kingsScentTimeLeft = 0;
 register('chat', (event) => {
     if (!data.inSkyblock) return;
     if (!Settings.kingScentTimer) return;
-    timerAudio.playDrinkSound();
+    data.audioInst.playDrinkSound();
     data.usedScent = true;
     const targetTime = new Date();
     targetTime.setSeconds(targetTime.getSeconds() + kingsScentCD);
@@ -350,7 +331,7 @@ register('step', () => {
         kingsScentTimeLeft -= 1;
         data.usedScent = true;
     } else if (kingsScentTimeLeft === 0) {
-        timerAudio.playProcSound();
+        data.audioInst.playProcSound();
         ChatLib.chat("&cYour &2King's Scent &chas worn off!");
         showAlert(`&cKing's Scent Expired`);
         data.usedScent = false;
@@ -364,10 +345,70 @@ register('step', () => {
 ////////////////////////////////////////////////////////////////////////////////
 
 let timerDisplayText = '';
-let longestTextWidth = 0;
 
 var movetimer = new Gui(); // timer displays
 var movefluxtimer = new Gui();
+
+
+register('gameLoad', () => {
+    if (!Settings.rekindleAlert) return;
+    if (!Settings.secondWindAlert) return;
+    if (!Settings.mushyTimer) return;
+    if (!Settings.bonzo_cd_timer) return;
+    if (!Settings.kingScentTimer) return;
+    if (!Settings.gummyTimer) return;
+
+    if (data.usedRekindle) {
+        const targetTime = new Date(data.targetRekindle);
+        rekindleTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+    } else {
+        rekindleTimeLeft = 0;
+    }
+
+    if (data.usedSecondWind) {
+        const targetTime = new Date(data.targetSecondWind);
+        secondWindTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+    } else {
+        secondWindTimeLeft = 0;
+    }
+
+    if (data.usedTonic) {
+        const targetTime = new Date(data.targetTonic);
+        tonicTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+    } else {
+        tonicTimeLeft = 0;
+    }
+
+    if (data.usedBonzo) {
+        const targetTime = new Date(data.targetBonzo);
+        clownTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+    } else {
+        clownTimeLeft = 0;
+    }
+
+    if (data.usedScent) {
+        const targetTime = new Date(data.targetScent);
+        kingsScentTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+    } else {
+        kingsScentTimeLeft = 0;
+    }
+
+    if (data.usedGummy) {
+        const targetTime = new Date(data.targetGummy);
+        gummyTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+    } else {
+        gummyTimeLeft = 0;
+    }
+
+
+    // crossLoadTimer(data.usedRekindle, data.targetRekindle)
+    // crossLoadTimer(data.usedSecondWind, data.targetSecondWind)
+    // crossLoadTimer(data.usedTonic, data.targetTonic)
+    // crossLoadTimer(data.usedBonzo, data.targetBonzo)
+    // crossLoadTimer(data.usedScent, data.targetScent)
+    // crossLoadTimer(data.usedGummy, data.targetGummy)
+})
+
 
 register('dragged', (dx, dy, x, y) => {
     if (!data.inSkyblock) return;
@@ -430,7 +471,7 @@ register('step', () => {
 register('renderOverlay', () => {
     if (!data.inSkyblock) return;
     Renderer.drawStringWithShadow(timerDisplayText, data.timerDis.x, data.timerDis.y);
-    renderGuiPosition(movetimer, data.timerDis, "&2Mushy Tonic: &r00m 00s\n&2King's Scent: &r00m 00s\n&6Bonzo's Mask: &r00m 00s\n&6Rekindle: 00m 00s\n&6Second Wind: &r00m 00s")
+    renderGuiPosition(movetimer, data.timerDis, "&2Mushy Tonic: &r00m 00s\n&2King's Scent: &r00m 00s\n&6Bonzo's Mask: &r00m 00s\n&6Rekindle: 00m 00s\n&6Second Wind: &r00m 00s\n&aGummy Bear: &r00m00s")
     
     if (!Settings.flux_timer) return;
     if (!foundOrb) return;

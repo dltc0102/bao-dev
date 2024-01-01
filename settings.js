@@ -2,12 +2,61 @@ import { @ButtonProperty, @CheckboxProperty, Color, @ColorProperty, @PercentSlid
 
 @Vigilant("bao", "§3Bao", {
     getCategoryComparator: () => (a, b) => {
-        const categories = ['Garden', 'GUI', 'General QOL', 'Fishing QOL', 'Fishing Pings', 'Misc', 'Dungeons', 'HP Display', 'Sound', 'Debug', 'Mythos', 'Timers']
+        const categories = ['Garden', 'GUI', 'General QOL', 'Fishing QOL', 'Fishing Pings', 'Misc', 'Dungeons', 'HP Display', 'Sound', 'Debug', 'Mythos', 'Timers', 'Dragons']
         return categories.indexOf(a.name) - categories.indexOf(b.name);
     }
 })
 
 class Settings {
+
+    // // Settings for Dragons
+    // @SwitchProperty({
+    //     name: "Display Dragon Counter",
+    //     description: "Counter for Dragons",
+    //     category: "Dragons",
+    // })
+    // displayDragonCounter = false;
+
+    // @SwitchProperty({
+    //     name: "Remove End Crystal Messages",
+    //     description: "",
+    //     category: "Dragons",
+    // })
+    // removeCrystalMsgs = false;
+
+    // @SwitchProperty({
+    //     name: "Remove Dragon Gate Messages",
+    //     description: "",
+    //     category: "Dragons",
+    // })
+    // removeDragonGateMsgs = false;
+
+
+    // //////////////////////////////////////////////////////////////////////////////
+    // /* Settings @ Misc - Winter --------------------------------------------------
+    // * Purpose: Settings for misc winter
+    // ----------------------------------------------------------------------------*/
+    // //////////////////////////////////////////////////////////////////////////////
+
+    // // powerups display
+    // @SwitchProperty({
+    //     name: "Display Powerups",
+    //     description: "Displays Powerup Timers for the Season of Jerry Event.",
+    //     category: "Misc",
+    //     subcategory: "Winter",
+    // })
+    // displayPups = false;
+
+    // // Better Winter Messages
+    // @SwitchProperty({
+    //     name: "Better Winter Messages",
+    //     description: "Better Winter Messages for the Season of Jerry Event",
+    //     category: "Misc",
+    //     subcategory: "Winter",
+    // })
+    // betterWinterMsgs = false;
+    
+
     //////////////////////////////////////////////////////////////////////////////
     /* Settings @ Mythos ---------------------------------------------------------
     * Purpose: Settings for Mythological Event
@@ -451,7 +500,7 @@ class Settings {
     // \n&eNote that session is reset when the counter is reset.
     @SwitchProperty({
         name: "Fishing Counter",
-        description: "Fishing Counter\n&cCurrently only works for crimson isle.",
+        description: "Fishing Counter\n&bOnly works for hub, crimson isles, and jerry island.",
         category: "Counter", 
     })
     fishing_counter = false;
@@ -504,14 +553,6 @@ class Settings {
         category: "Counter", 
     })
     specials_fishingcounter = false;
-
-    // powerup timer overlay
-    @SwitchProperty({
-        name: "Power-Up Timer Overlay",
-        description: "Powerup Timer Overlay for the Season of Jerry Event.",
-        category: "Counter", 
-    })
-    powerupTimerOverlay = false;
 
 
 
@@ -714,7 +755,7 @@ class Settings {
         name: "Hide Lightning",
         description: "Hides lightning visual effects.",
         category: "General QOL", 
-        subcategory: "QOL"
+        subcategory: "Messages QOL"
     })
     hide_lightning = false;
 
@@ -723,7 +764,7 @@ class Settings {
         name: "Hide Autopet Messages",
         description: "Hides autopet messages.",
         category: "General QOL",
-        subcategory: "QOL",
+        subcategory: "Messages QOL",
     })
     hide_autopet_messages = false;
 
@@ -732,7 +773,7 @@ class Settings {
         name: "Hide Snow Cannon Messages",
         description: "Hides snow cannon messages. [Jerry's Workshop]",
         category: "General QOL",
-        subcategory: "QOL"
+        subcategory: "Messages QOL"
     })
     hide_snow_cannon_messages = false;
 
@@ -741,16 +782,16 @@ class Settings {
         name: "Better Stash Messages",
         description: "Hides/Simplifies Stash Messages.\n&f'From stash: &e${itemName}&f'&b has been hidden.\n&f'You picked up &e${numItems}&f items from your material stash!'&b has been hidden.\n&f'You still have ${matsRem} materials totalling ${numTypes} types of materials in there!'&b has been hidden and simplified to be &f'From Sacks: &e${pickupMat}&f x&e${numMats}&f || R: &e${remMats}&f || Types: &e${sackTypes}&f'",
         category: "General QOL",
-        subcategory: "QOL"
+        subcategory: "Messages QOL"
     })
     betterStashMessages = false;
 
     // Hide Click Stash Messages
     @SwitchProperty({
         name: "Hide Click Stash Messages",
-        description: "&bHides Click Stash Messages:\n&fOld Messages:\n&7'You have &e${numMatsRem}&f materials stashed away!'&b -- message hidden.\n&7'(This totals &e${numTypes}&7 type of material stashed!)'&b -- message hidden.\n&7'(This totals &e${numTypes}&7 types of materials stashed!)'&b -- message hidden.\n&7'>>> CLICK HERE to pick them up! <<<'&b -- message hidden.\n\n&bThese messages will be condensed into one message:\n&f'REMINDER: You have &e${reminderMatsRem}&f materials of &e${numTypesRem}&f type(s) in your sacks!'",
+        description: "&bHides Click Stash Messages:\n&fOld Messages:\n&7'You have &e${numMatsRem}&7 materials stashed away!'&b -- message hidden.\n&7'(This totals &e${numTypes}&7 type of material stashed!)'&b -- message hidden.\n&7'(This totals &e${numTypes}&7 types of materials stashed!)'&b -- message hidden.\n&7'>>> CLICK HERE to pick them up! <<<'&b -- message hidden.\n\n&bThese messages will be condensed into one message:\n&f'REMINDER: You have &e${reminderMatsRem}&f materials of &e${numTypesRem}&f type(s) in your sacks!'",
         category: "General QOL",
-        subcategory: "QOL"
+        subcategory: "Messages QOL"
     })
     hideClickStashMessages = false;
     
@@ -759,7 +800,7 @@ class Settings {
         name: 'Click Stash Limit',
         description: "Limit number of times 'Click Stash' appears",
         category: 'General QOL',
-        subcategory: 'QOL',
+        subcategory: 'Messages QOL',
         options: ['0', '5', '10', 'hide it forever'],
     })
     clickStashLimitOption = 2; // Stores index of option
@@ -769,7 +810,7 @@ class Settings {
         name: "Hide AOTE/AOTV Message",
         description: "Hides 'Blocks in the way' Message.'",
         category: "General QOL",
-        subcategory: "QOL"
+        subcategory: "Messages QOL"
     })
     aotvHider = false;
 
@@ -778,7 +819,7 @@ class Settings {
         name: "Hide Soopy Unknown Command Message",
         description: "Hides Soopy gibberish command showing up on screen.",
         category: "General QOL",
-        subcategory: "QOL"
+        subcategory: "Messages QOL"
     })
     randomSoopyMessageHider = false;
 
@@ -787,9 +828,18 @@ class Settings {
         name: "Grandma Hider",
         description: "Hides message from Grandma Wolf Pet",
         category: "General QOL",
-        subcategory: "QOL",
+        subcategory: "Messages QOL",
     })
     grandma_hider = false; 
+
+    // watchdog message hider
+    @SwitchProperty({
+        name: "Removed Watchdog Announcements",
+        description: "Hides message from watchdog announcements.",
+        category: "General QOL",
+        subcategory: "Messages QOL",
+    })
+    betterWDA = false; 
 
 
     ////////////////////////////////////////////////////////////////////////////
@@ -800,6 +850,7 @@ class Settings {
         name: "Phoenix Rekindle CD Timer",
         description: "Shows message when CD for Phoenix Rekindle Ability is available.",
         category: "Fishing QOL",
+        subcategory: "Timers",
     })
     rekindleAlert = false;
 
@@ -808,6 +859,7 @@ class Settings {
         name: "Spirit Mask CD Timer",
         description: "Shows message when CD for Spirit Mask Second Wind is available.",
         category: "Fishing QOL",
+        subcategory: "Timers",
     })
     secondWindAlert = false;
 
@@ -816,6 +868,7 @@ class Settings {
         name: "Mushy Tonic Timer",
         description: "Shows Timer for Mushy Tonic.",
         category: "Fishing QOL",
+        subcategory: "Timers",
     })
     mushyTimer = false;
 
@@ -824,6 +877,7 @@ class Settings {
         name: "Hide Double Hook Messages",
         description: "Hides double hook messages.",
         category: "Fishing QOL",
+        subcategory: "Message Hiders",
     })
     hideDHMessages = false;
 
@@ -832,9 +886,19 @@ class Settings {
         name: "Hide SC Messages",
         description: "Hides default catch messages for SC(s)",
         category: "Fishing QOL",
+        subcategory: "Message Hiders"
     })
     hide_sc_msgs = false;
-
+    
+    // Hide Blessing double drop messages
+    @SwitchProperty({
+        name: "Hide Blessing Enchant Messages",
+        description: "Hides the double drop message proc'ed by the Blessing enchant.",
+        category: "Fishing QOL",
+        subcategory: "Message Hiders",
+    })
+    hide_blessing_messages = false;
+    
     // Full Thunder Bottle Ping
     @SwitchProperty({
         name: "Full Thunder Bottle Ping",
@@ -844,14 +908,6 @@ class Settings {
     full_bottle_ping = false;
 
 
-    // Hide Blessing double drop messages
-    @SwitchProperty({
-        name: "Hide Blessing Enchant Messages",
-        description: "Hides the double drop message proc'ed by the Blessing enchant.",
-        category: "Fishing QOL",
-    })
-    hide_blessing_messages = false;
-    
     //////////////////////////////////////////////////////////////////////////////
     /* Settings @ Crimson Isle Fishing -------------------------------------------
     * Purpose: Settings for Crimson Isle Pings
@@ -1146,6 +1202,25 @@ class Settings {
     * Purpose: Settings for Mining
     ----------------------------------------------------------------------------*/
     //////////////////////////////////////////////////////////////////////////////
+
+    @SwitchProperty({
+        name: "Lobby Day Counter",
+        description: "Shows Lobby Day Counter.",
+        category: "Misc",
+        subcategory: "Mining"
+    })
+    lobbyDayCount = false;
+
+    @ButtonProperty({
+        name: "Edit Location of Lobby Day Counter", 
+        description: "Click to edit gui location of the lobby day counter.", 
+        category: "Misc", 
+        subcategory: "Mining"
+    })
+    openLobbyDayCounterEditGUI() {
+        ChatLib.command('movedaycount', true)
+    }
+
     @SwitchProperty({
         name: "Golden Goblin Alert",
         description: "Notification for when Golden Goblin Spawns",
@@ -1308,14 +1383,6 @@ class Settings {
     * Purpose: Settings for Dungeon Settings
     ----------------------------------------------------------------------------*/
     //////////////////////////////////////////////////////////////////////////////
-    // Wish command (#wish)
-    @SwitchProperty({
-        name: "Wish Command", 
-        description: "Use to ask healer in dungeon party for wish.\nUsage: #wish (in party chat)",
-        category: "Dungeons"
-    })
-    wish_cmd = false;
-
     // Bonzo Mask 
     @SwitchProperty({
         name: "Bonzo Mask CD Timer", 
@@ -1339,6 +1406,78 @@ class Settings {
         category: "Dungeons"
     })
     secretsPerSession = false;
+
+    // // Better Dungeon Messages
+    // @SwitchProperty({
+    //     name: "Better Dungeon Messages", 
+    //     description: "Toggle for all dungeon message changes/deletions etc when you are in a dungeon.",
+    //     category: "Dungeons"
+    // })
+    // betterDungeonMsgs = false;
+
+    // // Toggle: Ability Messages
+    // @SwitchProperty({
+    //     name: "Toggle: Ability Messages", 
+    //     description: "Messages in the dungeon relating your class abilities will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+    //     category: "Dungeons"
+    // })
+    // dungeonAbiMsgs = false;
+
+    // // Toggle: Revives
+    // @SwitchProperty({
+    //     name: "Toggle: Revives", 
+    //     description: "Messages in the dungeon relating to Revives will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+    //     category: "Dungeons"
+    // })
+    // dungeonRevMsgs = false;
+
+    // // Toggle: Deaths
+    // @SwitchProperty({
+    //     name: "Toggle: Deaths", 
+    //     description: "Messages in the dungeon relating to Deaths will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+    //     category: "Dungeons"
+    // })
+    // dungeonDeathMsgs = false;
+
+    // // Toggle: Finding Essences
+    // @SwitchProperty({
+    //     name: "Toggle: Finding Essences", 
+    //     description: "Messages in the dungeon relating to Finding Essences will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+    //     category: "Dungeons"
+    // })
+    // dungeonEssMsgs = false;
+
+    // // Toggle: Milestones
+    // @SwitchProperty({
+    //     name: "Toggle: Milestones", 
+    //     description: "Messages in the dungeon relating to Milestones will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+    //     category: "Dungeons"
+    // })
+    // dungeonMSMsgs = false;
+
+    // // Toggle: Wither Doors
+    // @SwitchProperty({
+    //     name: "Toggle: Wither Doors", 
+    //     description: "Messages in the dungeon relating to Wither Doors will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+    //     category: "Dungeons"
+    // })
+    // dungeonWDoorMsgs = false;
+
+    // // Toggle: Blood Doors
+    // @SwitchProperty({
+    //     name: "Toggle: Blood Doors", 
+    //     description: "Messages in the dungeon relating to Blood Doors will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+    //     category: "Dungeons"
+    // })
+    // dungeonBDoorMsgs = false;
+
+    // // Toggle: Blood Bosses
+    // @SwitchProperty({
+    //     name: "Toggle: Blood Bosses", 
+    //     description: "Messages in the dungeon relating to Blood Room Bosses will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+    //     category: "Dungeons"
+    // })
+    // dungeonBBossMsgs = false;
 
 
     
@@ -1436,6 +1575,8 @@ class Settings {
         this.addDependency("Lucky Clover Core Ping", "Carrot King Ping")
 
 
+        // misc - mining
+        this.addDependency("Edit Location of Lobby Day Counter", "Lobby Day Counter")
         // misc - mythos
         this.addDependency("General Mythos Info", "Mythos Counter")
         this.addDependency("Mythos Mob Kills Info", "Mythos Counter")
@@ -1449,6 +1590,15 @@ class Settings {
         this.addDependency("Solver for Mathematician Fear", "Primal Fear Main Toggle")
         this.addDependency("Solver for Karen Fear", "Primal Fear Main Toggle")
         
+        // dungeons
+        // this.addDependency("Toggle: Ability Messages", "Better Dungeon Messages")
+        // this.addDependency("Toggle: Revives", "Better Dungeon Messages")
+        // this.addDependency("Toggle: Deaths", "Better Dungeon Messages")
+        // this.addDependency("Toggle: Finding Essences", "Better Dungeon Messages")
+        // this.addDependency("Toggle: Milestones", "Better Dungeon Messages")
+        // this.addDependency("Toggle: Wither Doors", "Better Dungeon Messages")
+        // this.addDependency("Toggle: Blood Doors", "Better Dungeon Messages")
+        // this.addDependency("Toggle: Blood Bosses", "Better Dungeon Messages")
     }   
 }
 

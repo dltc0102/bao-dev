@@ -1,14 +1,12 @@
 import Settings from '../settings.js'
-import Audio from '../utils/audio.js'
 import { data } from '../utils/data.js'
 import { showAlert } from '../utils/utils.js'
 import { detectDH } from '../utils/functions.js' // functions for detecting
-import { createGuiCommand, getTabArea } from '../utils/functions.js' // functions for general use
+import { createGuiCommand } from '../utils/functions.js' // functions for general use
 import { getFilteredPlayerTabNames, getNearbyPlayers, filterBotNames } from '../utils/functions.js' // functions for player count
 import { getThunderBottle } from '../utils/functions.js' // functions for charge counter
 import { renderGuiPosition, displayEntityHP } from '../utils/functions.js' // functions for overlays
 
-const overlayAudio = new Audio();
 ////////////////////////////////////////////////////////////////////////////////
 // ENTITY GLOBALS --------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
@@ -117,7 +115,7 @@ register("step", () => {
     if (charge === '50000') {
         if (Settings.full_bottle_ping) {
             showAlert('&b&lTHUNDER BOTTLE FULL');
-            overlayAudio.playDefaultSound();
+            data.audioInst.playDefaultSound();
         }
         thunderBottleDisplayText = `Thunder Bottle: &b&lFULL`
     } else if (charge === 'No Bottle Available') {

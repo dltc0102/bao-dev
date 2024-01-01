@@ -1,11 +1,9 @@
 import Settings from '../settings.js'
-import Audio from '../utils/audio.js'
 import { data } from '../utils/data.js'
 import { showAlert } from '../utils/utils.js'
 import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'
 import { sendMessage } from '../utils/party.js'
 // import { drawBonzoBox, drawLine, drawBeacon, colorToRgb, centerCoordinates } from '../utils/functions.js'
-const dunAudio = new Audio();
 
 ////////////////////////////////////////////////////////////////////////////////
 // MELODY DETECTOR -------------------------------------------------------------
@@ -93,6 +91,141 @@ register('command', () => {
 }).setName('resetsecretcounter');
 
 
+
+////////////////////////////////////////////////////////////////////////////////
+// Better Dungeon Messages
+////////////////////////////////////////////////////////////////////////////////
+// Ability messages
+register('chat', (ability, event) => {
+    if (!Settings.betterDungeonMsgs) return;
+    if (Settings.dungeonAbiMsgs) cancel(event);
+}).setCriteria('${ability} is ready to use! Press DROP to activate it!');
+
+register('chat', (ability, event) => {
+    if (!Settings.betterDungeonMsgs) return;
+    if (Settings.dungeonAbiMsgs) cancel(event);
+}).setCriteria('Used ${ability}!');
+
+register('chat', (ability, numEnemies, damage, event) => {
+    if (!Settings.betterDungeonMsgs) return;
+    if (Settings.dungeonAbiMsgs) cancel(event);
+}).setCriteria('Your ${ability} hit ${numEnemies} enemy for ${damage} damage.');
+
+// Revive messages
+register('chat', (player, event) => {
+    if (!Settings.betterDungeonMsgs) return;
+    if (Settings.dungeonRevMsgs) cancel(event);
+}).setCriteria(' ❣ ${player} was revived!');
+
+register('chat', (player, event) => {
+    if (!Settings.betterDungeonMsgs) return;
+    if (Settings.dungeonRevMsgs) cancel(event);
+}).setCriteria(' ❣ You are reviving ${player}!');
+
+register('chat', (player, fairy, event) => {
+    if (!Settings.betterDungeonMsgs) return;
+    if (Settings.dungeonRevMsgs) cancel(event);
+}).setCriteria('❣ ${player} was revived by ${fairy} the Fairy!');
+
+// Death messages
+register('chat', (player, event) => {
+    if (!Settings.betterDungeonMsgs) return;
+    if (Settings.dungeonDeathMsgs) cancel(event);
+}).setCriteria(' ☠ ${player} was killed by').setContains();
+
+// Essence messages
+register('chat', (event) => {
+    if (!Settings.betterDungeonMsgs) return;
+    if (Settings.dungeonEssMsgs) cancel(event);
+}).setCriteria('You found a Wither Essence! Everyone gains an extra essence!');
+
+// Milestone messages
+function determineMS(milestone) {
+    let ms = 0;
+    if (milestone === '❶') ms = 1;
+    if (milestone === '❷') ms = 2;
+    if (milestone === '❸') ms = 3;
+    if (milestone === '❹') ms = 4;
+    if (milestone === '❺') ms = 5;
+    if (milestone === '❻') ms = 6;
+    if (milestone === '❼') ms = 7;
+    if (milestone === '❽') ms = 8;
+    if (milestone === '❾') ms = 9;
+    if (milestone === '❿') ms = 10;
+    return ms;
+}
+
+register('chat', (msClass, milestone, msDamage, event) => {
+    if (!Settings.betterDungeonMsgs) return;
+    if (Settings.dungeonMSMsgs) {
+        msLevel = determineMS(milestone);
+        milestoneMessage = `&6&l${msClass} Milestone Reached: &r&b${msLevel} &r&6(${msDamage})`
+        cancel(event);
+    }
+}).setCriteria('${msClass} Milestone ${milestone}: You have dealt ${msDamage} Total Damage so far!').setContains();
+
+// Wither Door messages
+register('chat', (player, event) => {
+    if (!Settings.betterDungeonMsgs) return;
+    if (Settings.dungeonWDoorMsgs) cancel(event);
+}).setCriteria('${player} has obtained Wither Key!');
+
+register('chat', (player, event) => {
+    if (!Settings.betterDungeonMsgs) return;
+    if (Settings.dungeonWDoorMsgs) cancel(event);
+}).setCriteria('${player} opened a WITHER door!');
+
+register('chat', (player, event) => {
+    if (!Settings.betterDungeonMsgs) return;
+    if (Settings.dungeonWDoorMsgs) cancel(event);
+}).setCriteria('RIGHT CLICK on a WITHER door to open it. This key can only be used to open 1 door!');
+
+// Blood Door messages
+let bloodPlayer = '';
+register('chat', (player, event) => {
+    if (!Settings.betterDungeonMsgs) return;
+    if (Settings.dungeonBDoorMsgs) {
+        bloodPlayer = player;
+        cancel(event);
+    }
+}).setCriteria('${player} has obtained Blood Key!');
+
+register('chat', (player, event) => {
+    if (!Settings.betterDungeonMsgs) return;
+    if (Settings.dungeonBDoorMsgs) cancel(event);
+}).setCriteria('RIGHT CLICK on the BLOOD DOOR to open it. This key can only be used to open 1 door!');
+
+register('chat', (player, event) => {
+    if (!Settings.betterDungeonMsgs) return;
+    if (Settings.dungeonBDoorMsgs) cancel(event);
+}).setCriteria('A shiver runs down your spine...');
+
+register('chat', (player, event) => {
+    if (!Settings.betterDungeonMsgs) return;
+    if (Settings.dungeonBDoorMsgs) {
+        cancel(event);
+        ChatLib.chat(`${bloodPlayer} opened the Blood Door!`);
+    }
+}).setCriteria('The BLOOD DOOR has been opened!');
+
+// Boss Messages
+register('chat', (message, event) => {
+    if (!Settings.betterDungeonMsgs) return;
+    if (Settings.dungeonBBossMsgs) {
+        if (message !== 'You have proven yourself. You may pass.' || message !== 'That will be enough for now.') cancel (event);
+    }
+}).setCriteria('[BOSS] The Watcher: ${message}');
+
+// Potion Messages
+// You are not allowed to use Potion Effects while in Dungeon, therefore all active effects have been paused and stored. They will be restored when you leave Dungeon!
+
+// Mort Messages
+// [NPC] Mort: Here, I found this map when I first entered the dungeon.
+// [NPC] Mort: You should find it useful if you get lost.
+// [NPC] Mort: Good luck.
+
+// random mob messages
+// The ${randomMob} struck you for ${negligibleDamage} damage!
 
 
 

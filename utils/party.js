@@ -3,9 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 import { data } from '../utils/data.js'
 import { debug, showAlert, removeFromArray } from '../utils/utils.js'
-import Audio from '../utils/audio.js'
 
-const partyAudio = new Audio();
 
 ////////////////////////////////////////////////////////////////////////////////
 // PARTY CHECKER ---------------------------------------------------------------
@@ -135,7 +133,7 @@ register("chat", (numMembers) => {
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-// P-Lock Implementation
+// P-Lock Implementation (deprecated)
 ///////////////////////////////////////////////////////////////////////////////////////////
 // Party > user: #lock -- lock user
 // Party > user: #lock user2 -- if user is pl, lock user2
@@ -146,93 +144,14 @@ register("chat", (numMembers) => {
 // Party > user: #w or #warp -- if plocked list has people, party leader automatically does #warpexc (people)
 // Party > user: #pta -- if plocked list has people, and user is pl, pt will be automatically transferred to anyone that is not in plocked list.
 
-register('chat', (rank, name, event) => {
-    // inParty = true;
-    data.lockedList.push(name.toString());
-    setTimeout(() => {
-        ChatLib.chat(`&a${name} has added themselves to the party lock list.`);
-    }, 100);
-
-    // locked list already includes (name)
-    if (data.lockedList.includes(name.toString())) {
-        setTimeout(() => {
-            partyAudio.playDefaultSound();
-            ChatLib.chat(`&c&lERROR&r &b${name} &cis already in the lock list.`);
-        }, 100)
-        return;
-    }
-
-    debug(`inParty: ${inParty}, selfLockPlayer: ${name}`);
-}).setCriteria('Party > ${rank} ${name}: #lock');
-
-
-// lock player manually
-register('chat', (rank, name1, name2, event) => {
-    if (data.lockedList.includes(name2)) {
-        setTimeout(() => {
-            ChatLib.chat(`&b[&c${name2}&b] &eis already in the lock list. Cannot be added.`);
-            partyAudio.playDefaultSound();
-        }, 100)
-        return;
-    }
-    if (getIsPL()) {
-        inParty = true;
-        partyAudio.playDefaultSound();
-        data.lockedList.push(name2)
-        setTimeout(() => {
-            ChatLib.chat(`&a${name2} has been added to party lock list.`);
-        }, 100)
-    }
-    if (!getIsPL()) {
-        inParty = true;
-        partyAudio.playDefaultSound();
-        setTimeout(() => {
-            ChatLib.chat(`&b[&c#lock ${name2}&b] &ecouldn't be processed because you are not the party leader.`);
-        }, 100)
-    }
-    debug(`inParty: ${inParty}, locker: ${name1}, locked: ${name2}`)
-}).setCriteria('Party > ${rank} ${name1}: #lock ${name2}')
-
-// unlock self
-register('chat', (rank, name, event) => {
-    if (!data.lockedList.includes(name)) {
-        setTimeout(() => {
-            ChatLib.chat(`&b[&c${name}&b] &edoes not exist in the lock list. Nothing can be removed.`);
-            partyAudio.playDefaultSound();
-        }, 100)
-        return;
-    }
-    if (getIsPL) {
-        inParty = true;
-        data.lockedList = removeFromArray(data.lockedList, name);
-        setTimeout(() => {
-            partyAudio.playDefaultSound();
-            ChatLib.chat(`&c${name} has been removed themselves from the party lock list.`);
-        }, 100)
-    }
-    debug(`inParty: ${inParty}, unlocked: ${name}`)
-}).setCriteria('Party > ${rank} ${name}: #unlock')
-
-// unlock manually
-register('chat', (rank, currPL, name, event) => {
-    if (getIsPL) {
-        inParty = true;
-        data.lockedList = removeFromArray(data.lockedList, name);
-        setTimeout(() => {
-            partyAudio.playDefaultSound();
-            ChatLib.chat(`&c${name} has been removed from the party lock list by ${currPL}`);
-        }, 100)
-    }
-    debug(`inParty: ${inParty}, unlocker: ${currPL}, unlocked: ${name}`)
-}).setCriteria('Party > ${rank} ${currPL}: #unlock ${name}')
 
 // check isPL
 if (whoPL == Player.getName()) isPL = true;
 
 // add modNames and memberNames to partyMembers
 partyMembers = whoPL;
-if (modNamesArray.length > 0) { partyMembers.concat(modNamesArray); }
-if (memberNamesArray.length > 0) { partyMembers.concat(memberNamesArray);}
+if (modNamesArray.length > 0) { partyMembers = partyMembers.concat(modNamesArray); }
+if (memberNamesArray.length > 0) { partyMembers = partyMembers.concat(memberNamesArray); }
 
 // disconnected
 function determineRank(rank, ign) {
@@ -272,10 +191,6 @@ export function getPList() {
     return partyMembers;
 }
 
-export function getPLockList() {
-    return data.lockedList;
-}
-
 /**
  * @function sendMessage - Sends message based on prefix
  * @function getInParty() - A function used to get the prefix for message
@@ -301,48 +216,12 @@ export function announce(message) {
 ////////////////////////////////////////////////////////////////////////////////
 // COMMAND CHECKS --------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
-// show locked
-register('command', () => {
-    ChatLib.chat('&6<&3Bao&6> &rLocked Players ---------')
-    data.lockedList.forEach(lockedName => {
-        ChatLib.chat(` -  ${lockedName}`);
-    });
-}).setName('showlocked').setAliases('locked')
-
-// getlocked
-register('command', () => {
-    ChatLib.command(`pc Locked Players: ${data.lockedList.join(', ')}`)
-    debug(`locked players: ${data.lockedList}, (reminder: this is an object of strings)`)
-}).setName('getlocked')
-
-register('chat', (event) => {
-    setTimeout(() => {
-        sendMessage(`Locked Players: ${data.lockedList.join(', ')}`)
-    }, 150)
-}).setCriteria('Party > ${rank} ${ign}: #getlocked');
-
-// clear locked
-register('chat', (rank, ign, event) => {
-    if (!getIsPL()) {
-        setTimeout(() => {
-            partyAudio.playDefaultSound();
-            ChatLib.chat('&c#clearlocked &enot available. Reason: You are not party leader.')
-        }, 150  )
-    } else {
-        data.lockedList = [];
-        setTimeout(() => {
-            partyAudio.playDefaultSound();
-            ChatLib.chat('&aParty Locked List cleared!')
-        }, 150)
-    }
-}).setCriteria('Party > ${rank} ${ign}: #clearlocked')
-
 register('command', () => {
     ChatLib.chat(`pl: ${partyList}`)
 }).setName('getpl')
 
-let partyList = [];
 // party info
+let partyList = [];
 register('command', () => {
     ChatLib.command('pl')
     setTimeout(() => {

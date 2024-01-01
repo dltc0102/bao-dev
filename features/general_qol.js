@@ -1,15 +1,12 @@
 import Settings from '../settings.js';
-import Audio from '../utils/audio.js';
 import { data } from '../utils/data.js';
 import { debug, showAlert } from '../utils/utils.js';
-import { getIsPL, sendMessage, getPLockList } from '../utils/party.js';
-import { determinePlayerRankColor, hideMessage, calcSkillXP } from '../utils/functions.js';
+import { getIsPL, sendMessage, getPList } from '../utils/party.js';
+import { determinePlayerRankColor, calcSkillXP } from '../utils/functions.js';
 
-const generalAudio = new Audio();
 
 /* General QOL
 * #warp, #w
-* plocked implementation
 * type #w or #warp when r for warp
 * #pai
 * #ko
@@ -27,41 +24,27 @@ const generalAudio = new Audio();
 * watchdog message hider
 */
 
-// Party > user: #lock -- lock user
-// Party > user: #lock user2 -- if user is pl, lock user2
-// Party > user: #unlock -- unlock user
-// Party > user: #unlock user2 -- if user is pl, unlock user2
-
-// effects on cmds:
-// Party > user: #w or #warp -- if plocked list has people, party leader automatically does #warpexc (people)
-// Party > user: #pta -- if plocked list has people, and user is pl, pt will be automatically transferred to anyone that is not in plocked list.
-
 ///////////////////////////////////////////////////////////////////////////////
 // #warp ----------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 register('chat', (rank, name, event) => {
     if (!data.inSkyblock) return;
     if (!Settings.auto_warp_cmd) return;
-    if (getIsPL()) ChatLib.command('p warp');
-    generalAudio.playDefaultSound();
+    if (getIsPL()) {
+        ChatLib.command('p warp');
+        data.audioInst.playDefaultSound();
    
-    /* 
-    * plock list code
-    */
-
+    }
     debug(`isPL: ${getIsPL()}`)
 }).setCriteria('Party > ${rank} ${name}: #warp')
 
 register('chat', (rank, name, event) => {
     if (!data.inSkyblock) return;
     if (!Settings.auto_warp_cmd) return;
-    if (getIsPL()) ChatLib.command('p warp');
-    generalAudio.playDefaultSound();
-
-    /* 
-    * plock list code
-    */
-
+    if (getIsPL()) {
+        ChatLib.command('p warp');
+        data.audioInst.playDefaultSound();
+    } 
     debug(`isPL: ${getIsPL()}`)
 }).setCriteria('Party > ${rank} ${name}: #w')
 
@@ -75,7 +58,7 @@ register('chat', (player, event) => {
     if (!Settings.auto_notify_warp_cmd) return
     if (!getIsPL()) return;
     sendMessage('[!] type #warp for warp when r[!]')
-    generalAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria('${player} joined the party.')
 
 
@@ -90,7 +73,7 @@ register('chat', (rank, name, event) => {
     const paiMatch = message.match(paiPattern);
     if (paiMatch) { 
         ChatLib.command('p settings allinvite'); 
-        generalAudio.playDefaultSound();
+        data.audioInst.playDefaultSound();
     }
 }).setCriteria('Party > ${rank} ${name}: #pai')
 
@@ -149,7 +132,7 @@ register('chat', (rank, player, event) => {
     if (!Settings.boop_notifier) return
     const rankColor = determinePlayerRankColor(rank);
     showAlert(`${rankColor}${player} &dBooped &ryou!`);
-    generalAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria("From [${rank}] ${player}: Boop!")
 
 
@@ -186,10 +169,16 @@ register("command", (...args) => {
 // MESSAGE HIDERS --------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 // aotv hider
-hideMessage("There are blocks in the way!", '', null, Settings.aotvHider)
+register('chat', (event) => {
+    if (!Settings.aotvHider) return;
+    cancel(event);
+}).setCriteria('There are blocks in the way!');
 
 // soopy message
-hideMessage(`Unknown command. Type "/help" for help. ('uhfdsolguhkjdjfhgkjhdfdlgkjhldkjhlkjhsldkjfhldshkjf')`, '', null, Settings.randomSoopyMessageHider)
+register('chat', (event) => {
+    if (!Settings.randomSoopyMessageHider) return;
+    cancel(event);
+}).setCriteria(`Unknown command. Type "/help" for help. ('uhfdsolguhkjdjfhgkjhdfdlgkjhldkjhlkjhsldkjfhldshkjf')`);
 
 
 // stash shortener
@@ -263,9 +252,7 @@ register("renderEntity", function (entity, position, ticks, event) {
     if (!World.isLoaded()) return;
     if (!data.inSkyblock) return;
     if (!Settings.hide_lightning) return;
-    if(entity.getClassName() === "EntityLightningBolt"){
-      cancel(event)
-    }
+    if(entity.getClassName() === "EntityLightningBolt") cancel(event);
 })
 
 // snow cannon message hider
@@ -288,34 +275,75 @@ register('chat', (event) => {
 // grandma wolf hider
 register('chat', (event) => {
     if (!data.inSkyblock) return;
-    if (!Settings.grandma_hider) return;
-    cancel(event);
-}).setCriteria('+${comboNum} Kill Combo +${bonus}');
+    if (Settings.grandma_hider) cancel(event);
+}).setCriteria('+5 Kill Combo +3✯ Magic Find');
 
-// }).setCriteria('+10 Kill Combo +10 coins per kill');
-// }).setCriteria('+15 Kill Combo +3✯ Magic Find');
-// }).setCriteria('+20 Kill Combo +15☯ Combat Wisdom');
-// }).setCriteria('+25 Kill Combo +3✯ Magic Find');
+register('chat', (event) => {
+    if (!data.inSkyblock) return;
+    if (Settings.grandma_hider) cancel(event);
+}).setCriteria('+5 Kill Combo +3✯ Magic Find');
+
+register('chat', (event) => {
+    if (!data.inSkyblock) return;
+    if (Settings.grandma_hider) cancel(event);
+}).setCriteria('+10 Kill Combo +10 coins per kill');
+
+register('chat', (event) => {
+    if (!data.inSkyblock) return;
+    if (Settings.grandma_hider) cancel(event);
+}).setCriteria('+15 Kill Combo +3✯ Magic Find');
+
+register('chat', (event) => {
+    if (!data.inSkyblock) return;
+    if (Settings.grandma_hider) cancel(event);
+}).setCriteria('+20 Kill Combo +15☯ Combat Wisdom');
+
+register('chat', (event) => {
+    if (!data.inSkyblock) return;
+    if (Settings.grandma_hider) cancel(event);
+}).setCriteria('+25 Kill Combo +3✯ Magic Find');
+
+register('chat', (event) => {
+    if (!data.inSkyblock) return;
+    if (Settings.grandma_hider) cancel(event);
+}).setCriteria('+30 Kill Combo +10 coins per kill');
+
+register('chat', (event) => {
+    if (!data.inSkyblock) return;
+    if (Settings.grandma_hider) cancel(event);
+}).setCriteria('+${combo} Kill Combo');
+
+register('chat', (combo, event) => {
+    if (!data.inSkyblock) return;
+    if (Settings.grandma_hider) cancel(event);
+}).setCriteria('Your Kill Combo has expired! You reached a ${combo} Kill Combo!');
 
 
-// watchdog announcement message
-// [WATCHDOG ANNOUNCEMENT]
-// Watchdog has banned 8,560 players in the last 7 days.
-// Staff have banned an additional 8,718 in the last 7 days.
-// Blacklisted modifications are a bannable offense!
+/* Better Watchdog Messages
+ * [WATCHDOG ANNOUNCEMENT]
+ * Watchdog has banned 8,560 players in the last 7 days.
+ * Staff have banned an additional 8,718 in the last 7 days.
+ * Blacklisted modifications are a bannable offense!
+ */
 
 register('chat', (event) => {
     if (Settings.betterWDA) cancel(event);
 }).setCriteria('[WATCHDOG ANNOUNCEMENT]');
 
-register('chat', (event) => {
+register('chat', (banned, days, event) => {
     if (Settings.betterWDA) cancel(event);
-}).setCriteria('Watchdog has banned 8,560 players in the last 7 days.');
+}).setCriteria('Watchdog has banned ${banned} players in the last ${days} days.');
 
-register('chat', (event) => {
+register('chat', (banned, days, event) => {
     if (Settings.betterWDA) cancel(event);
-}).setCriteria('Staff have banned an additional 8,718 in the last 7 days.');
+}).setCriteria('Staff have banned an additional ${banned} in the last ${days} days.');
 
 register('chat', (event) => {
     if (Settings.betterWDA) cancel(event);
 }).setCriteria('Blacklisted modifications are a bannable offense!');
+
+ 
+// curr area command
+register('command', () => {
+    sendMessage(`currarea: ${data.currArea}`)
+}).setName('currarea');

@@ -1,4 +1,5 @@
 import PogObject from "PogData"
+import Audio from '../utils/audio.js'
 
 export let data = new PogObject("Bao", {
     "firstTime": true,
@@ -17,6 +18,15 @@ export let data = new PogObject("Bao", {
     "entityArmorStand": Java.type("net.minecraft.entity.item.EntityArmorStand"), 
     "entityArrow": Java.type("net.minecraft.entity.projectile.EntityArrow"), 
     "entityPlayer": Java.type("net.minecraft.entity.player.EntityPlayer"),
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // Padding
+    ///////////////////////////////////////////////////////////////////////////////
+    "testBox": {
+        "x": 400, 
+        "y": 400,
+    },
+
 
     ///////////////////////////////////////////////////////////////////////////////
     // BEACON
@@ -118,6 +128,12 @@ export let data = new PogObject("Bao", {
 
     "bonusFF": 0, 
     "donatedPests": 0, 
+
+    "harvPotInfo": {
+        "end": null,
+        "text": '',
+        "timestamp": 0,
+    }, 
     ///////////////////////////////////////////////////////////////////////////////
     // FISHING
     ///////////////////////////////////////////////////////////////////////////////
@@ -164,7 +180,7 @@ export let data = new PogObject("Bao", {
         // WATER SEA CREATURES (CRYSTAL HOLLOWS)
         "waterWormCatches": 0, 
         "poisonedWaterWormCatches": 0, 
-        "zombieMinerCatches": 0, 
+        "abyssalMinerCatches": 0, 
 
         // WATER SEA CREATURES (SPOOKY FESTIVAL)
         "scarecrowCatches": 0, 
@@ -208,7 +224,7 @@ export let data = new PogObject("Bao", {
         "catchesSinceSeaEmperor": 0,
 
         // CRYSTAL HOLLOWS AVGS
-        "catchesSinceZombieMiner": 0, 
+        "catchesSinceAbyssalMiner": 0, 
 
         // SPOOKY FESTIVAL AVGS
         "catchesSincePhantomFisher": 0, 
@@ -313,7 +329,6 @@ export let data = new PogObject("Bao", {
         "championsSinceRelic": 0, 
         // "inqsSinceChim": 0, 
     }, 
-    
 
     ///////////////////////////////////////////////////////////////////////////////
     // Fishing COUNTERS
@@ -338,11 +353,11 @@ export let data = new PogObject("Bao", {
         "x": 200, 
         "y": 240
     }, 
-    "DayCount": { // charge count
+    "DayCount": { // day counter
         "x": 300, 
         "y": 200
     }, 
-    "HPCount": { // charge count
+    "HPCount": { // hp counter
         "x": 400, 
         "y": 40
     }, 
@@ -454,10 +469,27 @@ export let data = new PogObject("Bao", {
     "targetSpray": null,
     "usedSpray": false,
 
+
+    // Dragons
+    "dragons": {
+        "protector": 0, 
+        "old": 0, 
+        "unstable": 0, 
+        "young": 0, 
+        "strong": 0, 
+        "wise": 0, 
+        "superior": 0,
+        "dragsSinceSup": 0,
+        "crystalFrags": 0,
+    }, 
+
+    // experimental locals
+    "audioInst": new Audio(),
+
 }, "data.json");
 
 register("gameLoad", () => {
-    ChatLib.chat("&6<&3Bao&6> &rUpdated!")
+    ChatLib.chat(`${data.modPrefix} &rUpdated!`)
     ChatLib.command('pl')
 });
 

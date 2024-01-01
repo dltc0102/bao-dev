@@ -1,11 +1,8 @@
 import Settings from "../settings.js"
-import Audio from '../utils/audio.js'
 import { data } from '../utils/data.js'
 import { showAlert } from '../utils/utils.js'
 import { sendMessage } from '../utils/party.js'
 import RenderLib from 'RenderLib/index.js'
-
-const fnAudio = new Audio()
 
 ////////////////////////////////////////////////////////////////////////////////
 // SLAYERS ---------------------------------------------------------------------
@@ -36,10 +33,10 @@ export function drawSlayerInfo(timerName, bossName, specialName1, specialName2, 
  * @returns played sound for RNG drops
  */
 export function playSound() {
-    if (Settings.rng_sound_sel == 0) fnAudio.playDefaultSound();
-    if (Settings.rng_sound_sel == 1) fnAudio.playCatSong();
-    if (Settings.rng_sound_sel == 2) fnAudio.playNitroSong();
-    if (Settings.rng_sound_sel == 3) fnAudio.playBisSong();
+    if (Settings.rng_sound_sel == 0) data.audioInst.playDefaultSound();
+    if (Settings.rng_sound_sel == 1) data.audioInst.playCatSong();
+    if (Settings.rng_sound_sel == 2) data.audioInst.playNitroSong();
+    if (Settings.rng_sound_sel == 3) data.audioInst.playBisSong();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +85,7 @@ export function detectEntity(entityType, givenMobName, givenInfo) {
                 // sendMessage(`${givenInfo.names.length} ${givenMobName}s detected nearby`)
 
                 ChatLib.chat(`${givenMobName} detected nearby`)
-                fnAudio.playDefaultSound();
+                data.audioInst.playDefaultSound();
                 givenInfo.titleShown = true;
             }
         givenInfo.found = false;
@@ -162,7 +159,7 @@ export function detectDH(entityType, givenMobName, givenFormatCode, nameExceptio
     if (givenMobInfo.titleShown) return; // doesnt really change anythign
     if (givenMobInfo.numNearby === 1 && givenMobInfo.currHealth >= (givenMobInfo.totalHealth / 2)) {
         showAlert(`${givenFormatCode}${givenMobName} Nearby!`)
-        fnAudio.playDefaultSound();
+        data.audioInst.playDefaultSound();
         if (!hasMob) { 
             setTimeout(() => { 
                 sendMessage(`Detected ${givenMobName} nearby!`); 
@@ -175,7 +172,7 @@ export function detectDH(entityType, givenMobName, givenFormatCode, nameExceptio
     // doublehook detection
     if (givenMobInfo.numNearby >= 2 && givenMobInfo.currHealth >= (givenMobInfo.totalHealth / 2)) {
         showAlert(`${givenFormatCode}Doublehook ${givenMobName}!`)
-        fnAudio.playDefaultSound();
+        data.audioInst.playDefaultSound();
         if (!hasDoubleMob) { 
             setTimeout(() => {
                 sendMessage(`Doublehook ${givenMobName} Detected!`) 
@@ -255,21 +252,38 @@ export function displayEntityHP(names, foundEntity, x, y) {
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTRAIN COORDS ------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
-export function constrainCoords(x, y, dataVar, givenString, margin) {
-    let screenH = Renderer.screen.getHeight();
-    let screenW = Renderer.screen.getWidth();
-    let stringW = Renderer.getStringWidth(givenString);
-    let stringH = 10;
-
-    let numLines = 1;
-    if (givenString.includes('\n')) {
-        numLines = givenString.split('\n')
+export function constrainX(x, margin, stringW) {
+    let result = 0;
+    if (x < margin) {
+        result = margin
+    } else if (x > data.screenW - margin - stringW) {
+        result = data.screenW - margin - stringW;
+    } else {
+        result = x;
     }
-    if (x < margin) dataVar.x = margin;
-    if (y < margin) dataVar.y = margin;
-    if (x > screenW - margin - stringW) dataVar.x = screenW - margin - stringW;
-    if (y > screenH - margin - (numLines * stringH)) dataVar.y = screenH - margin - (numLines * stringH);
+    return result; 
 }
+
+export function constrainY(y, margin, stringH) {
+    let result = 0;
+    if (y < margin) {
+        result = margin;
+    } else if (y > data.screenH - margin - stringH) {
+        result = data.screenH - margin - stringH;
+    } else {
+        result = y;
+    }
+    return result;
+}
+
+export function getNumLines(givString) {
+    let lines = 1;
+    if (givString.includes('\n')) {
+        lines = givString.split('\n').length;
+    }
+    return lines;
+}
+
 
 export function centerCoords(givenString, x, y) {
     let screenW = Renderer.screen.getWidth();
@@ -328,12 +342,12 @@ export function getPlayerLocation() {
 }
 
 // register setting -- contains
-export function registerSettingContains(settingName, criteria, title, audioInst) {
+export function registerSettingContains(settingName, criteria, title) {
     register('chat', (event) => {
         if (!data.inSkyblock) return;
         if (!settingName) return;
         showAlert(title);
-        audioInst.playDefaultSound();
+        data.audioInst.playDefaultSound();
     }).setCriteria(criteria).setContains();
 }
 
@@ -378,20 +392,6 @@ export function getCharges(chargeString) {
     return charges.replace(/,/g, '');
 }
 
-
-////////////////////////////////////////////////////////////////////////
-// MESSAGE HIDER -------------------------------------------------------
-////////////////////////////////////////////////////////////////////////
-export function hideMessage(message, alertMessage, audioInst, toggle) {
-    register('chat', (event) => {
-        if (!toggle) return;
-        cancel(event);
-        showAlert(alertMessage);
-        if (audioInst !== null) {
-            audioInst.playDefaultSound();
-        }
-    }).setCriteria(message);
-}
 
 // player pos
 export function getPlayerPos() {
@@ -522,7 +522,7 @@ let rarityName = {
     "7": "Divine"
 }
 
-export function pingDolphinMS(killCount, audioInst) {
+export function pingDolphinMS(killCount) {
     if (killCount === 250) rarity = 1;
     if (killCount === 1000) rarity = 2;
     if (killCount === 2500) rarity = 3;
@@ -534,10 +534,10 @@ export function pingDolphinMS(killCount, audioInst) {
     if (rarity === 5) {
         playSound();
     } else {
-        audioInst.playDefaultSound();
+        data.audioInst.playDefaultSound();
     }
 }
-export function petDropPing(message, exclamation, petName, mf, audioInst) {
+export function petDropPing(message, exclamation, petName, mf) {
     let rarity = '';
     if (message.includes(`&r${petName}`) || message.include(`&f${petName}`)) { rarity = 1; } // common
     if (message.includes(`&a${petName}`)) { rarity = 2; } // uncommon
@@ -551,7 +551,7 @@ export function petDropPing(message, exclamation, petName, mf, audioInst) {
 
     if (petName === 'Rat' || petName === 'Slug') {
         sendMessage(`${exclamation} ${rarityName[rarity]} ${petName} (+${mf}☘)`)
-        rarity > 4 ? playSound() : audioInst.playDefaultSound();
+        rarity > 4 ? playSound() : data.audioInst.playDefaultSound();
     }
     if (petName === 'Scatha') {
         sendMessage(`${exclamation} ${rarityName[rarity]} ${petName} (+${mf})% ✯ Magic Find)`)
@@ -560,13 +560,13 @@ export function petDropPing(message, exclamation, petName, mf, audioInst) {
     if (petName === 'Baby Yeti') {
         yetiStat = rarity > 4 ? data.waterSC.yetiSinceLegPet : data.waterSC.yetiSinceEpicPet;
         sendMessage(`${exclamation} ${rarityName[rarity]} ${petName} (+${mf})% ✯ Magic Find) [${yetiStat} Yetis since]`)
-        rarity > 4 ? playSound() : audioInst.playDefaultSound();
+        rarity > 4 ? playSound() : data.audioInst.playDefaultSound();
 
     } else {
         let noMFText = `${exclamation} You caught a ${rarityName[rarity]} [Lvl 1] ${petName}`
         let withMFText = `${exclamation} ${rarityName[rarity]} ${petName} (+${mf})% ✯ Magic Find)`
         mf === 0 ? sendMessage(noMFText) : sendMessage(withMFText);
-        rarity > 4 ? playSound() : audioInst.playDefaultSound();
+        rarity > 4 ? playSound() : data.audioInst.playDefaultSound();
     }
 }
 
@@ -803,7 +803,7 @@ export function updateInterval(array, plotName) {
         plotObj.spray = false;
         plotObj.sprayTimerText = '';
         ChatLib.chat(`&eSpray in &c${plotName}&e has expired!`)
-        fnAudio.playDefaultSound();
+        data.audioInst.playDefaultSound();
 
     } else {
         timeLeft -= 1;
@@ -880,7 +880,7 @@ export function getTimerTarget(cooldown, timeType) {
     return targetTime;
 }
 
-export function trackChatTimer(dataUsedVar, dataTargetVar, varTimeLeft, nameOfTimer, colorCode, audioInst) {
+export function trackChatTimer(dataUsedVar, dataTargetVar, varTimeLeft, nameOfTimer, colorCode) {
     console.log('running func: trackChatTimer')
     console.log(`trackchattimer val: ${varTimeLeft}`)
     let updatedTimeLeft = varTimeLeft;
@@ -891,7 +891,7 @@ export function trackChatTimer(dataUsedVar, dataTargetVar, varTimeLeft, nameOfTi
     } else if (updatedTimeLeft === 0 || updatedTimeLeft < 0) {
         dataUsedVar = false;
         showAlert(`&c${nameOfTimer} &eExpired`)
-        audioInst.playDefaultSound();
+        data.audioInst.playDefaultSound();
         if (nameOfTimer === 'Pest Repellent') ChatLib.chat(`&eYour &cPest Repellent Bonus Farming Fortune &ehas worn off!`);
         ChatLib.chat(`&eYour &c${nameOfTimer} &ehas expired.`)
         dataTargetVar = 0;

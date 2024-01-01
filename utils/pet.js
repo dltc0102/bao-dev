@@ -1,6 +1,6 @@
-import { debug } from '../utils/utils.js'
 import Settings from "../settings.js"
 import { data } from '../utils/data.js'
+import { debug } from '../utils/utils.js'
 import { renderGuiPosition, createGuiCommand } from '../utils/functions.js'
 
 let petPages = 0;

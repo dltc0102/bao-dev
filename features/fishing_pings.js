@@ -1,11 +1,9 @@
 import Settings from '../settings.js'
-import Audio from '../utils/audio.js'
 import { data } from '../utils/data.js'
 import { getInParty, sendMessage } from '../utils/party.js'
-import { playSound, registerSettingContains, hideMessage, pingDolphinMS, petDropPing } from '../utils/functions.js'
+import { playSound, registerSettingContains, pingDolphinMS, petDropPing } from '../utils/functions.js'
 import { showAlert } from '../utils/utils.js'
 
-const fishAudio = new Audio();
 
 register('command', () => {
     if (!data.inSkyblock) return;
@@ -39,7 +37,7 @@ const emp_title = "&6Sea Emperor"
 const carrot_title = "&6Carrot King"
 const clover_core_title = '&5Lucky Clover Core'
 const hydra_title = "&1Hydra"
-const zb_miner_title = '&8Zombie Miner'
+const zb_miner_title = '&6Abyssal Miner'
 
 // master toggle for fishing pings
 register('command', () => {
@@ -86,8 +84,8 @@ register('command', () => {
  ------------------------------------------------------------------------------*/
 ////////////////////////////////////////////////////////////////////////////////
 // Jawbus extra pings
-registerSettingContains(Settings.jawbus_ping, 'Lord Jawbus Spawned!', jawbus_title, fishAudio)
-registerSettingContains(Settings.jawbus_ping, 'Jawbus alert', jawbus_title, fishAudio)
+registerSettingContains(Settings.jawbus_ping, 'Lord Jawbus Spawned!', jawbus_title)
+registerSettingContains(Settings.jawbus_ping, 'Jawbus alert', jawbus_title)
 
 // Jawbus default ping
 register('chat', (event) => {
@@ -95,7 +93,7 @@ register('chat', (event) => {
     if (!Settings.jawbus_ping) return 
     showAlert(jawbus_title);
     sendMessage(`[!] Jawbus [!] (${data.lavaSC.catchesSinceJawbus})`);
-    fishAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria("You have angered a legendary creature... Lord Jawbus has arrived.")
 
 // Radioactive Vial [Jawbus]
@@ -108,8 +106,8 @@ register('chat', (mf, event) => {
 }).setCriteria("RARE DROP! Radioactive Vial (+${mf}% ✯ Magic Find)")
 
 // Thunder extra pings
-registerSettingContains(Settings.thunder_ping, 'Thunder Spawned!', thunder_title, fishAudio)
-registerSettingContains(Settings.thunder_ping, 'Thunder alert', thunder_title, fishAudio)
+registerSettingContains(Settings.thunder_ping, 'Thunder Spawned!', thunder_title)
+registerSettingContains(Settings.thunder_ping, 'Thunder alert', thunder_title)
 
 // Thunder default ping
 register('chat', (event) => {
@@ -117,7 +115,7 @@ register('chat', (event) => {
     if (!Settings.thunder_ping) return
     showAlert(thunder_title);
     sendMessage(`[!] Thunder [!] (${data.lavaSC.catchesSinceThunder})`);
-    fishAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria('You hear a massive rumble as Thunder emerges.')
 
 // Flash 1 [Thunder]
@@ -128,7 +126,7 @@ if (Settings.flash1_ping) {
 }
 
 // Vanquisher extra pings
-registerSettingContains(Settings.vanq_ping, 'Vanquisher Spawned!', vanq_title, fishAudio);
+registerSettingContains(Settings.vanq_ping, 'Vanquisher Spawned!', vanq_title);
 
 // Vanquisher default ping
 register('chat', (event) => {
@@ -137,7 +135,7 @@ register('chat', (event) => {
     cancel(event);
     showAlert(vanq_title);
     sendMessage('[!] Vanquisher [!]');
-    fishAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria('A Vanquisher is spawning nearby!')
 
 // Phlegblast default ping
@@ -146,7 +144,7 @@ register('chat', (event) => {
     if (!Settings.phleg_ping) return
     showAlert(phleg_title);
     sendMessage('[!] Phlegblast [!]');
-    fishAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria('WOAH! A Phlegblast appared.')
 
 
@@ -161,7 +159,7 @@ register('chat', (event) => {
     if (!Settings.yeti_ping) return
     showAlert(yeti_title);
     sendMessage(`[!] Baba Yeti [!] (${data.waterSC.catchesSinceYeti} kills)`);
-    fishAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria('What is this creature!?')
 
 // Baby Yeti Pet [Yeti]
@@ -169,14 +167,14 @@ register('chat', (mf, event) => {
     if (!data.inSkyblock) return;
     if (!Settings.yeti_pet_drop_ping) return
     const message = ChatLib.getChatMessage(event, true);
-    petDropPing(message, 'PET DROP!', 'Baby Yeti', mf, fishAudio)
+    petDropPing(message, 'PET DROP!', 'Baby Yeti', mf)
 }).setCriteria('PET DROP! Baby Yeti (+${mf}% ✯ Magic Find)')
 
 // yeti rod ls
 register('chat', (mf, event) => {
     if (!data.inSkyblock) return;
     sendMessage(`Loot Share: RARE DROP! Yeti Rod (+${mf}% ✯ Magic Find)`);
-    fishAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria('RARE DROP! Yeti Rod (+${mf}% ✯ Magic Find)');
 
 // Nutcracker default ping
@@ -185,7 +183,7 @@ register('chat', (event) => {
     if (!Settings.nutcracker_ping) return
     showAlert(nutcracker_title);
     sendMessage('[!] Nootkracker [!]');
-    fishAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria('You found a forgotten Nutcracker laying beneath the ice.')
 
 // Reindrake default ping
@@ -202,7 +200,7 @@ register('chat', (event) => { // someone else fished up a reindrake
     if (!data.inSkyblock) return;
     if (!Settings.rein_ping) return
     showAlert(rein_title);
-    fishAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria('WOAH! A Reindrake was summoned from the depths!')
 
 
@@ -225,7 +223,7 @@ register('chat', (mf, event) => {
     if (!data.inSkyblock) return;
     if (!Settings.meg_pet_drop_ping) return
     const message = ChatLib.getChatMessage(event, true);
-    petDropPing(message, 'PET DROP!', 'Megalodon', mf, fishAudio)
+    petDropPing(message, 'PET DROP!', 'Megalodon', mf)
 }).setCriteria('PET DROP! Megalodon (+${mf}% ✯ Magic Find)')
 
 
@@ -240,7 +238,7 @@ register('chat', (event) => {
     if (!Settings.phantom_fisher_ping) return
     showAlert(phantom_title);
     sendMessage('[!] Phantom Fisher [!]');
-    fishAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria('The spirit of a long lost Phantom Fisher has come to haunt you.')
 
 // Grim Reaper default ping
@@ -249,7 +247,7 @@ register('chat', (event) => {
     if (!Settings.grim_reaper_ping) return
     showAlert(grim_title);
     sendMessage('[!] Gwim Weeper [!]');
-    fishAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria("This can't be! The manifestation of death himself!")
 
 // Deep Sea Orb [Phantom Fisher / Grim Reaper]
@@ -267,7 +265,7 @@ register('chat', (mf, event) => {
     if (!Settings.phan_rod_ping) return
     showAlert(phantom_rod_title);
     sendMessage(`RARE DROP! Phantom Rod (+${mf}% ✯ Magic Find)`);
-    fishAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria('RARE DROP! Phantom Rod (+${mf}% ✯ Magic Find)')
 
 // Lucky Hoof [Nightmare]
@@ -276,7 +274,7 @@ register('chat', (mf, event) => {
     if (!Settings.hoof_ping) return; 
     showAlert(hoof_title);
     sendMessage(`RARE DROP! Lucky Hoof (+${mf}% ✯ Magic Find)`);
-    fishAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria('RARE DROP! Lucky Hoof (+${mf}% ✯ Magic Find)')
 
 
@@ -291,7 +289,7 @@ register('chat', (event) => {
     if (!Settings.sea_emp_ping) return
     showAlert(emp_title);
     sendMessage('[!] Sea Emperor [!]');
-    fishAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria('The Sea Emperor arises from the depths.')
 
 // Flying Fish Pet [Sea Emperor]
@@ -299,12 +297,12 @@ register('chat', (mf, event) => {
     if (!data.inSkyblock) return;
     if (!Settings.ff_pet_drop_ping) return
     const message = ChatLib.getChatMessage(event, true);
-    petDropPing(message, 'PET DROP!', 'Flying Fish', mf, fishAudio);
+    petDropPing(message, 'PET DROP!', 'Flying Fish', mf);
 }).setCriteria('PET DROP! Flying Fish (+${mf}% ✯ Magic Find)')
 
 // Carrot King extra pings
-registerSettingContains(Settings.carrot_king_ping, 'A Carrot King has spawned', carrot_title, fishAudio);
-registerSettingContains(Settings.carrot_king_ping, 'Carrot King!', carrot_title, fishAudio);
+registerSettingContains(Settings.carrot_king_ping, 'A Carrot King has spawned', carrot_title);
+registerSettingContains(Settings.carrot_king_ping, 'Carrot King!', carrot_title);
 
 // Carrot King default ping
 register('chat', (event) => {
@@ -312,7 +310,7 @@ register('chat', (event) => {
     if (!Settings.carrot_king_ping) return
     showAlert(carrot_title);
     sendMessage('[!] Hop! A Carrot King! [!]');
-    fishAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria("Is this even a fish? It's the Carrot King!")
 
 // lucky Clovert Core [Carrot King]
@@ -330,7 +328,7 @@ register('chat', (event) => {
     if (!Settings.hydra_ping) return
     showAlert(hydra_title);
     sendMessage('[!] Water Hydra, hit for bestiary lol [!]');
-    fishAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria("The Water Hydra has come to test your strength.")
 
 // guardian pet drop
@@ -338,7 +336,7 @@ register('chat', (event) => {
     if (!data.inSkyblock) return;
     if (!Settings.guardian_pet_drop_ping) return;
     const message = ChatLib.getChatMessage(event, true);
-    petDropPing(message, 'GREAT CATCH!', 'Guardian', 0, fishAudio)
+    petDropPing(message, 'GREAT CATCH!', 'Guardian', 0)
 }).setCriteria('GREAT CATCH! You found a [Lvl 1] Guardian.')
 
 // dolphin milestone pet drop
@@ -356,7 +354,7 @@ register('chat', (event) => {
     if (!data.inSkyblock) return;
     if (!Settings.squid_pet_drop_ping) return;
     const message = ChatLib.getChatMessage(event, true);
-    petDropPing(message, 'GREAT CATCH!', 'Squid', 0, fishAudio)
+    petDropPing(message, 'GREAT CATCH!', 'Squid', 0)
 }).setCriteria('GREAT CATCH! You found a [Lvl 1] Squid.')
 
 
@@ -366,14 +364,14 @@ register('chat', (event) => {
 * Purpose: Shows Pings for mobs fished up in the Crystal Hollows
  ------------------------------------------------------------------------------*/
 ////////////////////////////////////////////////////////////////////////////////
-// Zombie Miner
+// Abyssal Miner
 register('chat', (event) => {
     if (!data.inSkyblock) return;
     if (!Settings.zb_miner_ping) return
     showAlert(zb_miner_title);
-    sendMessage('[!] Zombie Miner [!]');
-    fishAudio.playDefaultSound();
-}).setCriteria("A Zombie Miner surfaces!")
+    sendMessage('[!] Abyssal Miner [!]');
+    data.audioInst.playDefaultSound();
+}).setCriteria("An Abyssal Miner breaks out of the water!")
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -381,16 +379,16 @@ register('chat', (event) => {
 * Purpose: Shows Title & Sound pings for fawe messages (up to date for v2.0.5)
  ------------------------------------------------------------------------------*/
 ////////////////////////////////////////////////////////////////////////////////
-registerSettingContains(Settings.fawe_pings, 'A Jawbus has spawned', jawbus_title, fishAudio);
-registerSettingContains(Settings.fawe_pings, 'A Thunder has spawned', thunder_title, fishAudio);
-registerSettingContains(Settings.fawe_pings, 'A YETI has spawned', yeti_title, fishAudio);
-registerSettingContains(Settings.fawe_pings, 'A Vanquisher has spawned', vanq_title, fishAudio);
-registerSettingContains(Settings.fawe_pings, 'A Great White Shark has spawned', gw_title, fishAudio);
-registerSettingContains(Settings.fawe_pings, 'A Phantom Fisher has spawned', phantom_title, fishAudio);
-registerSettingContains(Settings.fawe_pings, 'A GRIM REAPER has spawned', grim_title, fishAudio);
-registerSettingContains(Settings.fawe_pings, 'A Sea Emperor has spawned', emp_title, fishAudio);
-registerSettingContains(Settings.fawe_pings, 'Nut in comming', nutcracker_title, fishAudio);
-registerSettingContains(Settings.fawe_pings, 'A Carrot King has spawned', carrot_title, fishAudio);
+registerSettingContains(Settings.fawe_pings, 'A Jawbus has spawned', jawbus_title);
+registerSettingContains(Settings.fawe_pings, 'A Thunder has spawned', thunder_title);
+registerSettingContains(Settings.fawe_pings, 'A YETI has spawned', yeti_title);
+registerSettingContains(Settings.fawe_pings, 'A Vanquisher has spawned', vanq_title);
+registerSettingContains(Settings.fawe_pings, 'A Great White Shark has spawned', gw_title);
+registerSettingContains(Settings.fawe_pings, 'A Phantom Fisher has spawned', phantom_title);
+registerSettingContains(Settings.fawe_pings, 'A GRIM REAPER has spawned', grim_title);
+registerSettingContains(Settings.fawe_pings, 'A Sea Emperor has spawned', emp_title);
+registerSettingContains(Settings.fawe_pings, 'Nut in comming', nutcracker_title);
+registerSettingContains(Settings.fawe_pings, 'A Carrot King has spawned', carrot_title);
 
 
 ////////////////////////////////////////////////////////////////////////////////

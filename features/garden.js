@@ -1,5 +1,4 @@
 import Settings from '../settings.js'
-import Audio from '../utils/audio.js'
 import { data } from '../utils/data.js'
 import { showAlert } from '../utils/utils.js'
 import { drawOutlineBeacon, getCell, petDropPing, getTimerTarget, playSound, crossLoadTimer } from '../utils/functions.js'
@@ -14,8 +13,6 @@ import { trackChatTimer, updateCDText } from '../utils/functions.js'
 ////////////////////////////////////////////////////////////////////
 const playerArrow = Image.Companion.fromFile(`config/ChatTriggers/modules/bao-dev/assets/delta-arrow.png`);
 
-const gardenAudio = new Audio();
-
 ////////////////////////////////////////////////////////////////////
 // Reminder for getting desk config
 ////////////////////////////////////////////////////////////////////
@@ -24,7 +21,7 @@ register('step', () => {
     if (data.currArea !== 'Garden') return;
     if (data.sentDeskReminder) return;
     if (data.plots = []) {
-        gardenAudio.playDefaultSound();
+        data.audioInst.playDefaultSound();
         ChatLib.chat("&7[&3Bao&6] &7Hi! \n&7Just a reminder, to setup bao for the garden, click into the &e'Configure Plots'&7 window of your &e/desk&7 menu in the Garden.\n&7If you' received the chat message &b'Bao config saved'&7, the process has been completed.")
         data.sentDeskReminder = true;
     }
@@ -38,7 +35,7 @@ register('step', () => {
 register('chat', (materialName, event) => {
     if (data.currArea !== 'Garden') return;
     if (Settings.alertNoMatSprayonator) {
-        gardenAudio.playDefaultSound();
+        data.audioInst.playDefaultSound();
         showAlert(`&cNeed &e${materialName}&c!`)
     }
 }).setCriteria("You don't have any ${materialName}!");
@@ -175,7 +172,7 @@ register('chat', (exclamation, userPlotName, event) => {
             };
         }, 200)
     };
-    gardenAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria('${exclamation}! A Pest has appeared in Plot - ${userPlotName}!');
 
 register('chat', (exclamation, numPests, userPlotName, event) => {
@@ -195,7 +192,7 @@ register('chat', (exclamation, numPests, userPlotName, event) => {
             };
         }, 200)
     };
-    gardenAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria('${exclamation}! ${numPests} Pests have spawned in Plot - ${userPlotName}!');
 
 
@@ -214,7 +211,7 @@ register('chat', (userPlotName, mat, event) => {
     updatePlots(data.plots, userPlotName, 'spray', true);
     updatePlots(data.plots, userPlotName, 'sprayDateEnd', new Date());
     if (Settings.gardenPlotMap) startSprayTimer(data.plots, userPlotName);
-    gardenAudio.playProcSound();
+    data.audioInst.playProcSound();
 }).setCriteria('SPRAYONATOR! You sprayed Plot - ${userPlotName} with ${mat}!');
 
 
@@ -235,7 +232,7 @@ register('chat', (vinylName, event) => {
     if (!data.allVinylNames.includes(vinylName)) return;
     data.isPlayingVinyl = true;
     data.currentVinyl = vinylName;
-    gardenAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria('You are now playing ${vinylName}!');
 
 
@@ -246,7 +243,7 @@ register('chat', (event) => {
     if (!data.inSkyblock) return;
     if (!Settings.harvPotionOverlay) return;
     let harvPotCD = getActivePet().includes('Parrot') ? 35 : 25;
-    gardenAudio.playDrinkSound();
+    data.audioInst.playDrinkSound();
 
     data.usedHarvPot = true;
     const targetTime = getTimerTarget(harvPotCD, 's');
@@ -266,7 +263,7 @@ register('chat', (pestRepellentType, event) => {
     if (pestRepellentType === '2') is2x = true; 
     is2x = pestRepellentType === '2';
     is4x = pestRepellentType === '4';
-    gardenAudio.playDrinkSound();
+    data.audioInst.playDrinkSound();
 
     data.usedPestRepellent = true;
     const targetTime = getTimerTarget(data.pestRepelCD, 'm');
@@ -284,7 +281,7 @@ register('chat', (numPests, ff, duration, event) => {
     // [NPC] Phillip: In exchange for 1 Pest, I've given you +10☘ Farming Fortune for 30m!
     data.bonusFF = parseInt(ff.replace(',', ''), 10)
     data.donatedPests = parseInt(numPests.replace(',', ''), 10);
-    gardenAudio.playDrinkSound();
+    data.audioInst.playDrinkSound();
 
     data.usedPestExchange = true;
     const targetTime = getTimerTarget(parseInt(duration.replace(',', ''), 10), 'm');
@@ -318,7 +315,7 @@ function updateTimer(dataUsedVar, dataTargetVar, timeLeft, colorCode, nameOfTime
         dataUsedVar = true;
         timeLeft -= 1;
         updateCDText(colorCode, nameOfTimer, timeLeft);
-    } else if (timeLeft === 0 || timeLeft < 0) {
+    } else {
         dataUsedVar = false;
         // showAlert(`&c${nameOfTimer}&e Expired`);
         // audioInst.playDefaultSound();
@@ -336,7 +333,7 @@ register('step', () => {
     if (Settings.harvPotionOverlay) {
         if (data.usedHarvPot) {
             console.log(`step trigger: data.harvPotTimeLeft val: ${data.harvPotTimeLeft}`)
-            // data.harvPotTimeLeft = trackChatTimer(data.usedHarvPot, data.targetHarvPot, data.harvPotTimeLeft, 'Harbringer Potion', '&6', gardenAudio);
+            // data.harvPotTimeLeft = trackChatTimer(data.usedHarvPot, data.targetHarvPot, data.harvPotTimeLeft, 'Harbringer Potion', '&6', data.audioInst);
             // if (data.harvPotTimeLeft > 0) {
             //     data.usedHarvPot = true;
             //     data.harvPotTimeLeft -= 1;
@@ -344,13 +341,13 @@ register('step', () => {
             // } else if (data.harvPotTimeLeft === 0 || data.harvPotTimeLeft < 0) {
             //     data.usedHarvPot = false;
             //     showAlert(`&cHarbringer Potion &eExpired`)
-            //     gardenAudio.playDefaultSound();
+            //     data.audioInst.playDefaultSound();
             //     ChatLib.chat(`&eYour &cHarbringer Potion &ehas expired.`)
             //     data.targetHarvPot = 0;
             //     updateCDText('&6', 'Harbringer Potion', data.harvPotTimeLeft);
             // }
             console.log(`step trigger: before updateTimer func usedvar status: ${data.usedHarvPot}`)
-            data.harvPotTimeLeft = updateTimer(data.usedHarvPot, data.targetHarvPot, data.harvPotTimeLeft, '&6', 'Harbringer Potion', gardenAudio)
+            data.harvPotTimeLeft = updateTimer(data.usedHarvPot, data.targetHarvPot, data.harvPotTimeLeft, '&6', 'Harbringer Potion', data.audioInst)
             console.log(`step trigger: after updateTimer func usedvar status: ${data.usedHarvPot}`)
         }
         data.harbringerText = data.harvPotTimeLeft > 0 ? `&6Harbringer Potion: &r${Math.floor(data.harvPotTimeLeft/60)}m ${Math.floor(data.harvPotTimeLeft % 60)}s&r` : '';
@@ -363,7 +360,7 @@ register('step', () => {
         if (!data.usedPestRepellent) return;
         console.log(`data.pestRepellentTimeLeft val: ${data.harvPotTimeLeft}`)
 
-        // data.pestRepellentTimeLeft = trackChatTimer(data.usedPestRepellent, data.targetPestRepellent, data.pestRepellentTimeLeft, 'Pest Repellent', '', gardenAudio);
+        // data.pestRepellentTimeLeft = trackChatTimer(data.usedPestRepellent, data.targetPestRepellent, data.pestRepellentTimeLeft, 'Pest Repellent', '', data.audioInst);
         if (data.pestRepellentTimeLeft > 0) {
             data.usedPestRepellent = true;
             data.pestRepellentTimeLeft -= 1;
@@ -371,7 +368,7 @@ register('step', () => {
         } else if (data.pestRepellentTimeLeft === 0 || data.pestRepellentTimeLeft < 0) {
             data.usedPestRepellent = false;
             showAlert(`&cPest Repellent &eExpired`)
-            gardenAudio.playDefaultSound();
+            data.audioInst.playDefaultSound();
             ChatLib.chat(`&eYour &cPest Repellent Bonus Farming Fortune &ehas worn off!`);
             data.targetPestRepellent = 0;
             updateCDText('', 'Pest Repellent', data.pestRepellentTimeLeft);
@@ -384,7 +381,7 @@ register('step', () => {
     if (Settings.pestExchangeDisplay) {
         if (!data.usedPestExchange) return;
         console.log(`data.pestExchangeTimeLeft val: ${data.harvPotTimeLeft}`)
-        // data.pestExchangeTimeLeft = trackChatTimer(data.usedPestExchange, data.targetExchange, data.pestExchangeTimeLeft, 'Pest Exchange', '', gardenAudio);
+        // data.pestExchangeTimeLeft = trackChatTimer(data.usedPestExchange, data.targetExchange, data.pestExchangeTimeLeft, 'Pest Exchange', '', data.audioInst);
         if (data.pestExchangeTimeLeft > 0) {
             data.usedPestExchange = true;
             data.pestExchangeTimeLeft -= 1;
@@ -392,7 +389,7 @@ register('step', () => {
         } else if (data.pestExchangeTimeLeft === 0 || data.pestExchangeTimeLeft < 0) {
             data.usedPestExchange = false;
             showAlert(`&cPest Exchange &eExpired`)
-            gardenAudio.playDefaultSound();
+            data.audioInst.playDefaultSound();
             ChatLib.chat(`&eYour &cPest Exchange &ehas expired.`)
             data.targetPestRepellent = 0;
             updateCDText('', 'Pest Exchange', data.pestExchangeTimeLeft);
@@ -554,7 +551,7 @@ register('chat', (event) => {
     if (!Settings.gardenRareDropPings) return;
     showAlert('&dBurrowing Spores')
     sendMessage('VERY RARE DROP! Burrowing Spores');
-    gardenAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setCriteria('VERY RARE CROP! Burrowing Spores');
 
 register('chat', (ff, event) => {
@@ -584,7 +581,7 @@ register('chat', (ff, event) => {
     if (data.currArea !== 'Garden') return;
     if (!Settings.gardenPetDropPings) return;
     const message = ChatLib.getChatMessage(event, true);
-    petDropPing(message, 'PET DROP!', 'Rat', ff, gardenAudio)
+    petDropPing(message, 'PET DROP!', 'Rat', ff, data.audioInst)
 }).setCriteria('PET DROP! Rat (+${ff}☘)');
 
 register('chat', (ff, event) => {
@@ -593,7 +590,7 @@ register('chat', (ff, event) => {
     if (data.currArea !== 'Garden') return;
     if (!Settings.gardenPetDropPings) return;
     const message = ChatLib.getChatMessage(event, true);
-    petDropPing(message, 'PET DROP!', 'Slug', ff, gardenAudio)
+    petDropPing(message, 'PET DROP!', 'Slug', ff, data.audioInst)
 }).setCriteria('PET DROP! Slug (+${ff}☘)');
 
 ////////////////////////////////////////////////////////////////////

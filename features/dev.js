@@ -1,12 +1,10 @@
 import Settings from "../settings.js"
-import Audio from '../utils/audio.js';
 
-const devAudio = new Audio();
 
 // test commands
 register('command', (args) => {
     Client.showTitle(args, '', 1, 30, 1);
-    devAudio.playDefaultSound();
+    data.audioInst.playDefaultSound();
 }).setName('titlesim').setAliases('tsim');
 
 ////////////////////////////////
