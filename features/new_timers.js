@@ -10,12 +10,15 @@ import { getActivePet } from '../utils/pet.js'
  * @param {Date} lower Lower timestamp
  * @returns {Number | null} Difference in ms between upper and lower, or null if negative
  */
-function timeDiff(upper, lower) {
-    if (upper === null || lower === null) return null;
-    console.log(`running timeDiff func...`)
-    var timeLeft = upper - lower;
+function timeDiff(upperTS, lower) {
+    let upperDate = new Date(upperTS);
+    if (upperDate === null || lower === null) return null;
+    var timeLeft = upperDate - lower;
     var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
     var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+    // console.log(`running timeDiff func...`);
+    // console.log(`minutes: ${minutes}, seconds: ${seconds}`)
     return { minutes: minutes, seconds: seconds}
 }
 
@@ -27,16 +30,17 @@ function timeDiff(upper, lower) {
  * @param {Number} parrotCD Duration of timer with parrot boost
  * @returns { Number, Number } Minutes and Seconds formatted from timeleft
  */
-function setTimer(timestamp, timeF, cd, parrotCD) {
-    const d = new Date(timestamp);
+function setTimer(timeF, cd, parrotCD) {
+    const d = new Date();
     if (timeF === 's') {
-        getActivePet().includes('Parrot') ? d.setSeconds(parrotCD) : d.setSeconds(cd);
-    } else if (timeF === 'm') {
-        getActivePet().includes('Parrot') ? d.setMinutes(parrotCD) : d.setMinutes(cd);
+        getActivePet().includes('Parrot') ? d.setSeconds(d.getSeconds() + parrotCD) : d.setSeconds(d.getSeconds() + cd);
+        return d.getTime();
+    } if (timeF === 'm') {
+        getActivePet().includes('Parrot') ? d.setMinutes(d.getMinutes() + parrotCD) : d.setMinutes(d.getMinutes() + cd);
+        return d.getTime();
     } else {
         console.log('error occurred running func: setTimer');
         console.log('params given: timestamp, timeF, cd, parrotCD');
-        console.log(`timestamp: ${timestamp}`);
         console.log(`timeF: ${timeF}`);
         console.log(`cd: ${cd}`);
         console.log(`parrotCD: ${parrotCD}`);
@@ -65,20 +69,6 @@ function reloadTimer(timestamp) {
     return new Date(storedTS);
 }
 
-/**
- * 
- * @param {Number} timestamp Timestamp
- * @param {String} timeF m or s depending on the cooldown type for minutes or seconds
- * @param {Number} cooldown duration of the cooldown
- * @returns timestamp of set timestamp with duration of cooldown added.
- */
-function setTimerCD(timestamp, timeF, cooldown) {
-    const d = new Date(timestamp);
-    if (timeF === 'm') d.setMinutes(cooldown);
-    if (timeF === 's') d.setSeconds(cooldown);
-    return d.getTime();
-}
-
 ////////////////////////////////////////////////////////////////////
 // HARVEST HARBRINGER POTION CD TIMER
 ////////////////////////////////////////////////////////////////////
@@ -88,28 +78,24 @@ register('chat', (event) => {
     
     // code
     currentTime = new Date();
-    let end = setTimer(timeF='m', cd=10, parrotCD=15);
-    data.harvPotInfo.end = end;
-    data.harvPotInfo.timestamp = end.getTime();
+    data.harvPotInfo.timestamp = setTimer(timeF='m', cd=10, parrotCD=15);
     data.audioInst.playDrinkSound();
     
     // debugs
-    console.log(`reg chat: criteria: ('BUFF! You have gained Harvest Harbinger V! Press TAB or type /effects to view your active effects!'`)
-    console.log(`reg chat: end: ${data.harvPotInfo.end}`)
+    console.log(`reg chat: criteria: 'BUFF! You have gained Harvest Harbinger V! Press TAB or type /effects to view your active effects!'`)
     console.log(`reg chat: timestamp: ${data.harvPotInfo.timestamp}`)
 }).setCriteria('BUFF! You have gained Harvest Harbinger V! Press TAB or type /effects to view your active effects!');
 
 register('gameLoad', () => {
     if (!Settings.harvPotionOverlay) return;
+    console.log('');
     console.log('reg gameload triggered');
-    if (data.harvPotInfo.end === null) {
+    if (data.harvPotInfo.timestamp === 0) {
         console.log(`reg gameload: data.timestamp: ${data.harvPotInfo.timestamp}`)
         console.log(`reg gameload: data.text: ${data.harvPotInfo.text}`)
         console.log(`returning...`)
         return;
     };
-    console.log('reg gameload triggered');
-    console.log('');
     console.log(`reg gameload: data.timestamp: ${data.harvPotInfo.timestamp}`)
     console.log(`reg gameload: data.text: ${data.harvPotInfo.text}`)
 
@@ -120,9 +106,9 @@ register('gameLoad', () => {
 
 register('step', () => {
     if (!Settings.harvPotionOverlay) return;
-    if (data.harvPotInfo.end !== null) {
+    if (data.harvPotInfo.timestamp !== 0) {
         var now = new Date().getTime();
-        var timeLeft = timeDiff(data.harvPotInfo.end, now);
+        var timeLeft = timeDiff(data.harvPotInfo.timestamp, now);
         if (timeLeft.minutes === 0 && timeLeft.seconds === 0) {
             data.harvPotInfo.text = '';
             data.harvPotInfo.end = null; 
@@ -136,16 +122,14 @@ register('step', () => {
         data.harvPotInfo.text = `&6Harbringer Potion: &r${isNaN(timeLeft.minutes) ? 0 : timeLeft.minutes}m ${isNaN(timeLeft.seconds) ? 0 : timeLeft.seconds}s`
 
     } else {
-        // console.log(`reg step: data.end: ${data.harvPotInfo.end}`);
-        // console.log(`reg step: data.text: ${data.harvPotInfo.text}`);
-        // console.log(`reg step: data.timestamp: ${data.harvPotInfo.timestamp}`);
+        console.log(`reg step: data.text: ${data.harvPotInfo.text}`);
+        console.log(`reg step: data.timestamp: ${data.harvPotInfo.timestamp}`);
         return;
     }
 }).setFps(1);
 
 register('renderOverlay', () => {
     if (!Settings.harvPotionOverlay) return;
-    if (data.harvPotInfo.end === null) return;
     if (data.harvPotInfo.text === '' || data.harvPotInfo.text === '&6Harbringer Potion: &r0m 0s') return;
     // console.log(`reg overlay: text: ${data.harvPotInfo.text}`)
     Renderer.drawString(data.harvPotInfo.text, 400, 40)

@@ -12,7 +12,7 @@ import "./features/winter.js"
 import "./features/displayHP.js"
 
 
-// import "./features/new_timers.js"
+import "./features/new_timers.js"
 // import './features/padding.js'
 
 /* Dev.js 

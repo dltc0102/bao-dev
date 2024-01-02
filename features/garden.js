@@ -644,3 +644,15 @@ register('chat', (presetName, plotName, event) => {
         ChatLib.chat(`&6&lPASTING: &rUsing Preset &b&l[&r${presetName}&b&l]&r on Plot &b'&c${plotName}&b'&r!`)
     }
 }).setCriteria('Started pasting ${presetName} preset on Garden Plot - ${plotName}!');
+
+
+// mutes jacob contest messages if not on garden
+register('chat', (event) => {
+    if (data.currArea === 'Garden') return;
+    cancel(event);
+}).setCriteria('[NPC] Jacob: My contest has started!');
+
+register('chat', (taliPhase, ff, crop, event) => {
+    if (data.currArea === 'Garden') return;
+    cancel(event);
+}).setCriteria("[NPC] Jacob: Your Anita's ${taliPhase} is giving you +${ff}☘ {crop} Fortune during the contest!");

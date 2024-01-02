@@ -42,7 +42,14 @@ export let data = new PogObject("Bao", {
     ///////////////////////////////////////////////////////////////////////////////
     // PARTY LOCK SYSTEM
     ///////////////////////////////////////////////////////////////////////////////
-    "lockedList": [], 
+    // "lockedList": [], 
+
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // SCREEN HEIGHT AND WIDTH
+    ///////////////////////////////////////////////////////////////////////////////
+    "screenH": Renderer.screen.getHeight(), 
+    "screenW": Renderer.screen.getWidth(), 
 
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -408,13 +415,6 @@ export let data = new PogObject("Bao", {
     "runFloor": '',
 
     ///////////////////////////////////////////////////////////////////////////////
-    // SCREEN HEIGHT AND WIDTH
-    ///////////////////////////////////////////////////////////////////////////////
-    "screenH": Renderer.screen.getHeight(), 
-    "screenW": Renderer.screen.getWidth(), 
-
-
-    ///////////////////////////////////////////////////////////////////////////////
     // TIMERS
     ///////////////////////////////////////////////////////////////////////////////
     // feeder timer -- WIP
@@ -471,17 +471,17 @@ export let data = new PogObject("Bao", {
 
 
     // Dragons
-    "dragons": {
-        "protector": 0, 
-        "old": 0, 
-        "unstable": 0, 
-        "young": 0, 
-        "strong": 0, 
-        "wise": 0, 
-        "superior": 0,
-        "dragsSinceSup": 0,
-        "crystalFrags": 0,
-    }, 
+    // "dragons": {
+    //     "protector": 0, 
+    //     "old": 0, 
+    //     "unstable": 0, 
+    //     "young": 0, 
+    //     "strong": 0, 
+    //     "wise": 0, 
+    //     "superior": 0,
+    //     "dragsSinceSup": 0,
+    //     "crystalFrags": 0,
+    // }, 
 
     // experimental locals
     "audioInst": new Audio(),

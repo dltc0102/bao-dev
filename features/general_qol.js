@@ -229,7 +229,7 @@ let limitOptions = {
     '3': 0,
 }
 let stashLimit = limitOptions[Settings.clickStashLimitOption];
-let numTillReminder = stashLimit;
+let numTillReminder = 0;
 
 register('chat', (event) => {
     if (Settings.hideClickStashMessages) {
@@ -237,9 +237,10 @@ register('chat', (event) => {
         
         if (numTillReminder !== 0) {
             ChatLib.chat(`&4&lREMINDER: &rYou have &b${reminderMatsRem}&r materials of &b${numTypesRem}&r type(s) in your sacks!`);
-            if (stashLimit === 1) numTillReminder === 1; 
-            if (stashLimit === 6) numTillReminder === 6; 
-            if (stashLimit === 11) numTillReminder === 11; 
+            numTillReminder = 11;
+            // if (stashLimit === 1) numTillReminder === 1; 
+            // if (stashLimit === 6) numTillReminder === 6; 
+            // if (stashLimit === 11) numTillReminder === 11; 
         }
         numTillReminder -= 1;
     }
