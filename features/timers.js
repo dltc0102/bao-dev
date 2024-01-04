@@ -86,6 +86,8 @@ register('chat', (event) => {
     targetTime.setSeconds(targetTime.getSeconds() + secondWindCD);
     secondWindTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
     data.targetSecondWind = targetTime;
+    showAlert('&cSPIRIT MASK USED');
+    cancel(event);
 }).setCriteria('Second Wind Activated! Your Spirit Mask saved your life!');
 
 register('step', () => {
@@ -237,6 +239,8 @@ register('chat', (event) => {
     targetTime.setSeconds(targetTime.getSeconds() + clownCD);
     clownTimeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
     data.targetBonzo = targetTime;
+    showAlert('&cBONZO MASK USED');
+    cancel(event);
 }).setCriteria("Your Bonzo's Mask saved your life!");
 
 register('step', () => {

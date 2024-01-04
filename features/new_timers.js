@@ -17,11 +17,10 @@ function timeDiff(upperTS, lower) {
     var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
     var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-    // console.log(`running timeDiff func...`);
-    // console.log(`minutes: ${minutes}, seconds: ${seconds}`)
+    console.log('')
+    console.log(`running timeDiff func...: minutes: ${minutes}, seconds: ${seconds}`);
     return { minutes: minutes, seconds: seconds}
 }
-
 
 /**
  * 
@@ -31,11 +30,16 @@ function timeDiff(upperTS, lower) {
  * @returns { Number, Number } Minutes and Seconds formatted from timeleft
  */
 function setTimer(timeF, cd, parrotCD) {
+    console.log('')
+    console.log(`running func: setTimer()`)
     const d = new Date();
+    getActivePet().includes('Parrot') ? console.log('cd chosen: parrotCD') : console.log('cd chosen: default cd')
     if (timeF === 's') {
+        console.log(`chosen time format: 's'`)
         getActivePet().includes('Parrot') ? d.setSeconds(d.getSeconds() + parrotCD) : d.setSeconds(d.getSeconds() + cd);
         return d.getTime();
     } if (timeF === 'm') {
+        console.log(`chosen time format: 'm'`)
         getActivePet().includes('Parrot') ? d.setMinutes(d.getMinutes() + parrotCD) : d.setMinutes(d.getMinutes() + cd);
         return d.getTime();
     } else {
@@ -82,6 +86,7 @@ register('chat', (event) => {
     data.audioInst.playDrinkSound();
     
     // debugs
+    console.log('')
     console.log(`reg chat: criteria: 'BUFF! You have gained Harvest Harbinger V! Press TAB or type /effects to view your active effects!'`)
     console.log(`reg chat: timestamp: ${data.harvPotInfo.timestamp}`)
 }).setCriteria('BUFF! You have gained Harvest Harbinger V! Press TAB or type /effects to view your active effects!');
@@ -106,22 +111,35 @@ register('gameLoad', () => {
 
 register('step', () => {
     if (!Settings.harvPotionOverlay) return;
+    console.log('')
+    console.log('reg step:')
     if (data.harvPotInfo.timestamp !== 0) {
+        
+        console.log('reg step: if data.harvpotinfo.timestamp !== 0:')
         var now = new Date().getTime();
         var timeLeft = timeDiff(data.harvPotInfo.timestamp, now);
+        console.log(`reg step: now (timestmap): ${now}`)
+        console.log(`reg step: timeLeft: ${timeLeft}`)
+
         if (timeLeft.minutes === 0 && timeLeft.seconds === 0) {
+            console.log(`reg step: when timeLeft.minutes === 0 && timeLeft.seconds === 0`);
             data.harvPotInfo.text = '';
-            data.harvPotInfo.end = null; 
+            console.log('reg step: text is set to ""');
             showAlert('&6Harbringer Potion &cExpired')
+            console.log('reg step: alert shown for expired pot');
             data.audioInst.playDefaultSound();
+            console.log('reg step: audio played for expired pot')
             ChatLib.chat('&cYour &6Harbringer Potion&c has run out!')
+            console.log('reg step: chatlib.chat message for expired pot')
         }
-        if (timeLeft.minutes < 0) timeLeft.minutes = 0;
-        if (timeLeft.seconds < 0) timeLeft.seconds = 0;
+        if (timeLeft.minutes < 0) { timeLeft.minutes = 0; console.log('reg step: timeLeft.minutes < 0, timeLeft.minutes = 0') }
+        if (timeLeft.seconds < 0) { timeLeft.seconds = 0; console.log('reg step: timeLeft.seconds < 0, timeLeft.seconds = 0') }
     
         data.harvPotInfo.text = `&6Harbringer Potion: &r${isNaN(timeLeft.minutes) ? 0 : timeLeft.minutes}m ${isNaN(timeLeft.seconds) ? 0 : timeLeft.seconds}s`
+        console.log('reg step: setting data.harvpotinfo.text string')
 
     } else {
+        console.log('reg step: if data.harvpotinfo.timestamp === 0:')
         console.log(`reg step: data.text: ${data.harvPotInfo.text}`);
         console.log(`reg step: data.timestamp: ${data.harvPotInfo.timestamp}`);
         return;

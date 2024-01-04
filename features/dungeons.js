@@ -97,47 +97,61 @@ register('command', () => {
 ////////////////////////////////////////////////////////////////////////////////
 // Ability messages
 register('chat', (ability, event) => {
-    if (!Settings.betterDungeonMsgs) return;
-    if (Settings.dungeonAbiMsgs) cancel(event);
+    // if (!Settings.betterDungeonMsgs) return;
+    // if (Settings.dungeonAbiMsgs) cancel(event);
+    cancel(event);
 }).setCriteria('${ability} is ready to use! Press DROP to activate it!');
 
 register('chat', (ability, event) => {
-    if (!Settings.betterDungeonMsgs) return;
-    if (Settings.dungeonAbiMsgs) cancel(event);
+    // if (!Settings.betterDungeonMsgs) return;
+    // if (Settings.dungeonAbiMsgs) cancel(event);
+    cancel(event);
 }).setCriteria('Used ${ability}!');
 
 register('chat', (ability, numEnemies, damage, event) => {
-    if (!Settings.betterDungeonMsgs) return;
-    if (Settings.dungeonAbiMsgs) cancel(event);
+    // if (!Settings.betterDungeonMsgs) return;
+    // if (Settings.dungeonAbiMsgs) cancel(event);
+    cancel(event);
 }).setCriteria('Your ${ability} hit ${numEnemies} enemy for ${damage} damage.');
 
 // Revive messages
 register('chat', (player, event) => {
-    if (!Settings.betterDungeonMsgs) return;
-    if (Settings.dungeonRevMsgs) cancel(event);
+    // if (!Settings.betterDungeonMsgs) return;
+    // if (Settings.dungeonRevMsgs) cancel(event);
+    cancel(event);
 }).setCriteria(' ❣ ${player} was revived!');
 
 register('chat', (player, event) => {
-    if (!Settings.betterDungeonMsgs) return;
-    if (Settings.dungeonRevMsgs) cancel(event);
+    // if (!Settings.betterDungeonMsgs) return;
+    // if (Settings.dungeonRevMsgs) cancel(event);
+    cancel(event);
 }).setCriteria(' ❣ You are reviving ${player}!');
 
 register('chat', (player, fairy, event) => {
-    if (!Settings.betterDungeonMsgs) return;
-    if (Settings.dungeonRevMsgs) cancel(event);
+    // if (!Settings.betterDungeonMsgs) return;
+    // if (Settings.dungeonRevMsgs) cancel(event);
+    cancel(event);
 }).setCriteria('❣ ${player} was revived by ${fairy} the Fairy!');
 
 // Death messages
 register('chat', (player, event) => {
-    if (!Settings.betterDungeonMsgs) return;
-    if (Settings.dungeonDeathMsgs) cancel(event);
+    // if (!Settings.betterDungeonMsgs) return;
+    // if (Settings.dungeonDeathMsgs) cancel(event);
+    cancel(event);
 }).setCriteria(' ☠ ${player} was killed by').setContains();
 
 // Essence messages
 register('chat', (event) => {
-    if (!Settings.betterDungeonMsgs) return;
-    if (Settings.dungeonEssMsgs) cancel(event);
+    // if (!Settings.betterDungeonMsgs) return;
+    // if (Settings.dungeonEssMsgs) cancel(event);
+    cancel(event);
 }).setCriteria('You found a Wither Essence! Everyone gains an extra essence!');
+
+register('chat', (player, event) => {
+    // if (!Settings.betterDungeonMsgs) return;
+    // if (Settings.dungeonEssMsgs) cancel(event);
+    cancel(event);
+}).setCriteria('${player} found a Wither Essence! Everyone gains an extra essence!');
 
 // Milestone messages
 function determineMS(milestone) {
@@ -156,64 +170,77 @@ function determineMS(milestone) {
 }
 
 register('chat', (msClass, milestone, msDamage, event) => {
-    if (!Settings.betterDungeonMsgs) return;
-    if (Settings.dungeonMSMsgs) {
-        msLevel = determineMS(milestone);
-        milestoneMessage = `&6&l${msClass} Milestone Reached: &r&b${msLevel} &r&6(${msDamage})`
-        cancel(event);
-    }
+    // if (!Settings.betterDungeonMsgs) return;
+    // if (Settings.dungeonMSMsgs) {
+    //     msLevel = determineMS(milestone);
+    //     milestoneMessage = `&6&l${msClass} Milestone Reached: &r&b${msLevel} &r&6(${msDamage})`
+    //     cancel(event);
+    // }
+    msLevel = determineMS(milestone);
+    milestoneMessage = `&6&l${msClass} Milestone Reached: &r&b${msLevel} &r&6(${msDamage})`
+    cancel(event);
 }).setCriteria('${msClass} Milestone ${milestone}: You have dealt ${msDamage} Total Damage so far!').setContains();
 
 // Wither Door messages
 register('chat', (player, event) => {
-    if (!Settings.betterDungeonMsgs) return;
-    if (Settings.dungeonWDoorMsgs) cancel(event);
+    // if (!Settings.betterDungeonMsgs) return;
+    // if (Settings.dungeonWDoorMsgs) cancel(event);
+    cancel(event);
 }).setCriteria('${player} has obtained Wither Key!');
 
 register('chat', (player, event) => {
-    if (!Settings.betterDungeonMsgs) return;
-    if (Settings.dungeonWDoorMsgs) cancel(event);
+    // if (!Settings.betterDungeonMsgs) return;
+    // if (Settings.dungeonWDoorMsgs) cancel(event);
+    cancel(event);
 }).setCriteria('${player} opened a WITHER door!');
 
 register('chat', (player, event) => {
-    if (!Settings.betterDungeonMsgs) return;
-    if (Settings.dungeonWDoorMsgs) cancel(event);
+    // if (!Settings.betterDungeonMsgs) return;
+    // if (Settings.dungeonWDoorMsgs) cancel(event);
+    cancel(event);
 }).setCriteria('RIGHT CLICK on a WITHER door to open it. This key can only be used to open 1 door!');
 
 // Blood Door messages
 let bloodPlayer = '';
 register('chat', (player, event) => {
-    if (!Settings.betterDungeonMsgs) return;
-    if (Settings.dungeonBDoorMsgs) {
-        bloodPlayer = player;
-        cancel(event);
-    }
+    // if (!Settings.betterDungeonMsgs) return;
+    // if (Settings.dungeonBDoorMsgs) {
+    //     bloodPlayer = player;
+    //     cancel(event);
+    // }
+    bloodPlayer = player;
+    cancel(event);
 }).setCriteria('${player} has obtained Blood Key!');
 
 register('chat', (player, event) => {
-    if (!Settings.betterDungeonMsgs) return;
-    if (Settings.dungeonBDoorMsgs) cancel(event);
+    // if (!Settings.betterDungeonMsgs) return;
+    // if (Settings.dungeonBDoorMsgs) cancel(event);
+    cancel(event);
 }).setCriteria('RIGHT CLICK on the BLOOD DOOR to open it. This key can only be used to open 1 door!');
 
 register('chat', (player, event) => {
-    if (!Settings.betterDungeonMsgs) return;
-    if (Settings.dungeonBDoorMsgs) cancel(event);
+    // if (!Settings.betterDungeonMsgs) return;
+    // if (Settings.dungeonBDoorMsgs) cancel(event);
+    cancel(event);
 }).setCriteria('A shiver runs down your spine...');
 
 register('chat', (player, event) => {
-    if (!Settings.betterDungeonMsgs) return;
-    if (Settings.dungeonBDoorMsgs) {
-        cancel(event);
-        ChatLib.chat(`${bloodPlayer} opened the Blood Door!`);
-    }
+    // if (!Settings.betterDungeonMsgs) return;
+    // if (Settings.dungeonBDoorMsgs) {
+    //     cancel(event);
+    //     ChatLib.chat(`${bloodPlayer} opened the Blood Door!`);
+    // }
+    cancel(event);
+    ChatLib.chat(`${bloodPlayer} opened the Blood Door!`);
 }).setCriteria('The BLOOD DOOR has been opened!');
 
 // Boss Messages
 register('chat', (message, event) => {
-    if (!Settings.betterDungeonMsgs) return;
-    if (Settings.dungeonBBossMsgs) {
-        if (message !== 'You have proven yourself. You may pass.' || message !== 'That will be enough for now.') cancel (event);
-    }
+    // if (!Settings.betterDungeonMsgs) return;
+    // if (Settings.dungeonBBossMsgs) {
+    //     if (message !== 'You have proven yourself. You may pass.' || message !== 'That will be enough for now.') cancel (event);
+    // }
+    if (message !== 'You have proven yourself. You may pass.' || message !== 'That will be enough for now.') cancel (event);
 }).setCriteria('[BOSS] The Watcher: ${message}');
 
 // Potion Messages

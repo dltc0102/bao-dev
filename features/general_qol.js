@@ -229,20 +229,22 @@ let limitOptions = {
     '3': 0,
 }
 let stashLimit = limitOptions[Settings.clickStashLimitOption];
-let numTillReminder = 0;
+let numTillReminder = 101;
 
 register('chat', (event) => {
     if (Settings.hideClickStashMessages) {
         cancel(event);
         
-        if (numTillReminder !== 0) {
-            ChatLib.chat(`&4&lREMINDER: &rYou have &b${reminderMatsRem}&r materials of &b${numTypesRem}&r type(s) in your sacks!`);
-            numTillReminder = 11;
-            // if (stashLimit === 1) numTillReminder === 1; 
-            // if (stashLimit === 6) numTillReminder === 6; 
-            // if (stashLimit === 11) numTillReminder === 11; 
-        }
-        numTillReminder -= 1;
+        // if (numTillReminder !== 0 || numTillReminder < 0) {
+        //     if (data.currArea !== 'Catacombs') {
+        //         ChatLib.chat(`&4&lREMINDER: &rYou have &b${reminderMatsRem}&r materials of &b${numTypesRem}&r type(s) in your sacks!`);
+        //         numTillReminder = 101;
+        //     }
+        //     // if (stashLimit === 1) numTillReminder === 1; 
+        //     // if (stashLimit === 6) numTillReminder === 6; 
+        //     // if (stashLimit === 11) numTillReminder === 11; 
+        // }
+        // numTillReminder -= 1;
     }
 }).setCriteria('>>> CLICK HERE to pick them up! <<<').setContains();
 
