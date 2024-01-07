@@ -2,61 +2,12 @@ import { @ButtonProperty, @CheckboxProperty, Color, @ColorProperty, @PercentSlid
 
 @Vigilant("bao", "§3Bao", {
     getCategoryComparator: () => (a, b) => {
-        const categories = ['Garden', 'GUI', 'General QOL', 'Fishing QOL', 'Fishing Pings', 'Misc', 'Dungeons', 'HP Display', 'Sound', 'Debug', 'Mythos', 'Timers', 'Dragons']
+        const categories = ['General QOL', 'GUI', 'HP Display', 'Timers', 'Fishing QOL', 'Fishing Pings', 'Counter', 'Garden', 'Mythos', 'Misc', 'Dungeons', 'Sound', 'Debug']
         return categories.indexOf(a.name) - categories.indexOf(b.name);
     }
 })
 
 class Settings {
-
-    // // Settings for Dragons
-    // @SwitchProperty({
-    //     name: "Display Dragon Counter",
-    //     description: "Counter for Dragons",
-    //     category: "Dragons",
-    // })
-    // displayDragonCounter = false;
-
-    // @SwitchProperty({
-    //     name: "Remove End Crystal Messages",
-    //     description: "",
-    //     category: "Dragons",
-    // })
-    // removeCrystalMsgs = false;
-
-    // @SwitchProperty({
-    //     name: "Remove Dragon Gate Messages",
-    //     description: "",
-    //     category: "Dragons",
-    // })
-    // removeDragonGateMsgs = false;
-
-
-    // //////////////////////////////////////////////////////////////////////////////
-    // /* Settings @ Misc - Winter --------------------------------------------------
-    // * Purpose: Settings for misc winter
-    // ----------------------------------------------------------------------------*/
-    // //////////////////////////////////////////////////////////////////////////////
-
-    // // powerups display
-    // @SwitchProperty({
-    //     name: "Display Powerups",
-    //     description: "Displays Powerup Timers for the Season of Jerry Event.",
-    //     category: "Misc",
-    //     subcategory: "Winter",
-    // })
-    // displayPups = false;
-
-    // // Better Winter Messages
-    // @SwitchProperty({
-    //     name: "Better Winter Messages",
-    //     description: "Better Winter Messages for the Season of Jerry Event",
-    //     category: "Misc",
-    //     subcategory: "Winter",
-    // })
-    // betterWinterMsgs = false;
-    
-
     //////////////////////////////////////////////////////////////////////////////
     /* Settings @ Mythos ---------------------------------------------------------
     * Purpose: Settings for Mythological Event
@@ -437,6 +388,7 @@ class Settings {
         name: "Player Yaw and Pitch",
         description: "Shows the player's Yaw and Pitch to 4 decimal places.",
         category: "Garden",
+        subcategory: "Overlays",
     })
     showPlayerYawPitch = false;
 
@@ -548,7 +500,7 @@ class Settings {
     elapsed_sincefishingcounter = false;
 
     @SwitchProperty({
-        name: "Counter: Special funny Counters",
+        name: "Counter: Special Funny Counters",
         description: "For example: \n&bWinter: &rShows counter for ice rods and money earnt from selling to NPC.",
         category: "Counter", 
     })
@@ -1407,13 +1359,13 @@ class Settings {
     })
     secretsPerSession = false;
 
-    // // Better Dungeon Messages
-    // @SwitchProperty({
-    //     name: "Better Dungeon Messages", 
-    //     description: "Toggle for all dungeon message changes/deletions etc when you are in a dungeon.",
-    //     category: "Dungeons"
-    // })
-    // betterDungeonMsgs = false;
+    // Better Dungeon Messages
+    @SwitchProperty({
+        name: "Better Dungeon Messages", 
+        description: "Toggle for all dungeon message changes/deletions etc when you are in a dungeon.",
+        category: "Dungeons"
+    })
+    betterDungeonMsgs = false;
 
     // // Toggle: Ability Messages
     // @SwitchProperty({
@@ -1550,6 +1502,15 @@ class Settings {
         this.addDependency("Display HP: Grim Reapers", "Mob HP Display Master Toggle")
         this.addDependency("Display HP: Phantom Fishers", "Mob HP Display Master Toggle")
         
+        // Fishing Counter
+        this.addDependency("Counter: Kills", "Fishing Counter")
+        this.addDependency("Counter: Mob Since [RNG]", "Fishing Counter")
+        this.addDependency("Counter: Drops", "Fishing Counter")
+        this.addDependency("Counter: Trackers", "Fishing Counter")
+        this.addDependency("Counter: Averages", "Fishing Counter")
+        this.addDependency("Counter: Time Elapsed since [RNG]", "Fishing Counter")
+        this.addDependency("Counter: Special Funny Counters", "Fishing Counter")
+
         // Gardens
         this.addDependency("Pest ESP", "Pest QOL")
         this.addDependency("Auto Set Home Pest", "Pest QOL")

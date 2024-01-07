@@ -139,7 +139,7 @@ export let data = new PogObject("Bao", {
     "harvPotInfo": {
         "end": null,
         "text": '',
-        "timestamp": 0,
+        "timestamp": '',
     }, 
     ///////////////////////////////////////////////////////////////////////////////
     // FISHING

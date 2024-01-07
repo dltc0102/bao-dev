@@ -74,6 +74,7 @@ register('renderOverlay', () => {
     if (!data.inSkyblock) return;
     if (!World.isLoaded()) return;
     if (!Settings.lobbyDayCount) return;
+    if (data.currArea === 'Garden') return;
     Renderer.drawStringWithShadow(lobbyDisplay, data.DayCount.x, data.DayCount.y)
     renderGuiPosition(movedaycount, data.DayCount, `Day: 0.00`)
 });
