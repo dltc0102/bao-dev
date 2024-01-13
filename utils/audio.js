@@ -1,5 +1,9 @@
 class Audio {
 
+    playChipiSong() {
+        this.sounds.chipi.play();
+    }
+
     playDefaultSound() {
         this.sounds.default.play();
     }
@@ -36,7 +40,8 @@ class Audio {
             rngCat: new Sound({source: "blankcat.ogg"}),
             rngBis: new Sound({source: "tvb-news-theme.ogg"}),
             drink: new Sound({source: "drinking-sound-effect.ogg"}), 
-            dut: new Sound({source: "dut-sound-effect.ogg"})
+            dut: new Sound({source: "dut-sound-effect.ogg"}), 
+            chipi: new Sound({source: "chipichipi.ogg"})
         };
     }
 }

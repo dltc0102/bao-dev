@@ -1,8 +1,8 @@
 import Settings from '../settings.js';
 import { data } from '../utils/data.js';
+import { determinePlayerRankColor } from '../utils/functions.js';
+import { getIsPL, getPList, sendMessage } from '../utils/party.js';
 import { debug, showAlert } from '../utils/utils.js';
-import { getIsPL, sendMessage, getPList } from '../utils/party.js';
-import { determinePlayerRankColor, calcSkillXP } from '../utils/functions.js';
 
 
 /* General QOL
@@ -48,7 +48,10 @@ register('chat', (rank, name, event) => {
     debug(`isPL: ${getIsPL()}`)
 }).setCriteria('Party > ${rank} ${name}: #w')
 
-
+register('command', () => {
+    members = getPList();
+    ChatLib.chat(`pl: ${members}`)
+}).setName('pta');
 
 ///////////////////////////////////////////////////////////////////////////////
 // Auto notifier for #warp when player joins ----------------------------------
@@ -56,9 +59,12 @@ register('chat', (rank, name, event) => {
 register('chat', (player, event) => {
     if (!data.inSkyblock) return;
     if (!Settings.auto_notify_warp_cmd) return
-    if (!getIsPL()) return;
-    sendMessage('[!] type #warp for warp when r[!]')
-    data.audioInst.playDefaultSound();
+    if (getIsPL()) {
+        setTimeout(() => {
+            sendMessage('[!] type #warp for warp when r[!]')
+        }, 1)
+        data.audioInst.playDefaultSound();
+    }
 }).setCriteria('${player} joined the party.')
 
 
@@ -170,81 +176,60 @@ register("command", (...args) => {
 ////////////////////////////////////////////////////////////////////////////////
 // aotv hider
 register('chat', (event) => {
-    if (!Settings.aotvHider) return;
-    cancel(event);
+    if (!Settings.aotvHider) cancel(event);
 }).setCriteria('There are blocks in the way!');
 
 // soopy message
 register('chat', (event) => {
-    if (!Settings.randomSoopyMessageHider) return;
-    cancel(event);
+    if (Settings.randomSoopyMessageHider) cancel(event);
 }).setCriteria(`Unknown command. Type "/help" for help. ('uhfdsolguhkjdjfhgkjhdfdlgkjhldkjhlkjhsldkjfhldshkjf')`);
 
 
 // stash shortener
-let pickupMat = '';
-let numMats = 0;
-let remMats = 0;
-let sackTypes = 0;
 register('chat', (itemName, event) => {
     if (Settings.betterStashMessages) cancel(event);
-    pickupMat = itemName;
+    data.generalQOL.stashes.pickupMat = itemName;
 }).setCriteria('From stash: ${itemName}');
 
 register('chat', (numItems, event) => {
     if (Settings.betterStashMessages) cancel(event);
-    numMats = Number(numItems);
+    data.generalQOL.stashes.numMats = Number(numItems);
 }).setCriteria('You picked up ${numItems} items from your material stash!');
 
 register('chat', (matsRem, numTypes, event) => {
     if (Settings.betterStashMessages) cancel(event);
-    remMats = parseInt(matsRem.replace(',', ''), 10);
-    sackTypes = Number(numTypes);
+    data.generalQOL.stashes.remMats = parseInt(matsRem.replace(',', ''), 10);
+    data.generalQOL.stashes.sackTypes = Number(numTypes);
 
-    if (Settings.betterStashMessages) ChatLib.chat(`&eFrom Sacks: &b${pickupMat} x${numMats} &7|| &cR: &b${remMats} &7|| &aTypes: ${sackTypes}`)
+    if (Settings.betterStashMessages) ChatLib.chat(`&eFrom Sacks: &b${data.generalQOL.stashes.pickupMat} x${data.generalQOL.stashes.numMats} &7|| &cR: &b${data.generalQOL.stashes.remMats} &7|| &aTypes: ${data.generalQOL.stashes.sackTypes}`)
 }).setCriteria('You still have ${matsRem} materials totalling ${numTypes} types of materials in there!');
 
 // click stash shortener
-let reminderMatsRem = 0;
-let numTypesRem = 0;
 register('chat', (numMatsRem, event) => {
     if (Settings.hideClickStashMessages) cancel(event);
-    reminderMatsRem = parseInt(numMatsRem.replace(',', ''), 10);
+    data.generalQOL.clickStash.reminderMatsRem = parseInt(numMatsRem.replace(',', ''), 10);
 }).setCriteria('You have ${numMatsRem} materials stashed away!').setContains();
 
 register('chat', (numTypes, event) => {
     if (Settings.hideClickStashMessages) cancel(event);
-    numTypesRem = Number(numTypes);
+    data.generalQOL.clickStash.numTypesRem = Number(numTypes);
 }).setCriteria('(This totals ${numTypes} type of material stashed!)').setContains();
 
 register('chat', (numTypes, event) => {
     if (Settings.hideClickStashMessages) cancel(event);
-    numTypesRem = Number(numTypes);
+    data.generalQOL.clickStash.numTypesRem = Number(numTypes);
 }).setCriteria('(This totals ${numTypes} types of materials stashed!)').setContains();
 
-let limitOptions = {
-    '0': 1, 
-    '1': 6, 
-    '2': 11, 
-    '3': 0,
-}
-let stashLimit = limitOptions[Settings.clickStashLimitOption];
-let numTillReminder = 101;
-
+data.generalQOL.clickStash.numTillReminder = 10;
+// hides click stash messages and only show them once every 10 times it has appeared.
 register('chat', (event) => {
     if (Settings.hideClickStashMessages) {
+        if (data.generalQOL.clickStash.numTillReminder === 0 && data.currArea !== 'Catacombs') {
+            ChatLib.chat(`&4&lREMINDER: &rYou have &b${data.generalQOL.clickStash.reminderMatsRem}&r materials of &b${data.generalQOL.clickStash.numTypesRem}&r type(s) in your sacks!`);
+            data.generalQOL.clickStash.numTillReminder = 10;
+        }
         cancel(event);
-        
-        // if (numTillReminder !== 0 || numTillReminder < 0) {
-        //     if (data.currArea !== 'Catacombs') {
-        //         ChatLib.chat(`&4&lREMINDER: &rYou have &b${reminderMatsRem}&r materials of &b${numTypesRem}&r type(s) in your sacks!`);
-        //         numTillReminder = 101;
-        //     }
-        //     // if (stashLimit === 1) numTillReminder === 1; 
-        //     // if (stashLimit === 6) numTillReminder === 6; 
-        //     // if (stashLimit === 11) numTillReminder === 11; 
-        // }
-        // numTillReminder -= 1;
+        data.generalQOL.clickStash.numTillReminder -= 1;
     }
 }).setCriteria('>>> CLICK HERE to pick them up! <<<').setContains();
 

@@ -1,7 +1,7 @@
 import Settings from '../settings.js'
 import { data } from '../utils/data.js'
+import { petDropPing, pingDolphinMS, playSound, registerSettingContains } from '../utils/functions.js'
 import { getInParty, sendMessage } from '../utils/party.js'
-import { playSound, registerSettingContains, pingDolphinMS, petDropPing } from '../utils/functions.js'
 import { showAlert } from '../utils/utils.js'
 
 
@@ -75,8 +75,6 @@ register('command', () => {
     Settings.fawe_pings = true;
     ChatLib.chat(`${data.modPrefix} All Fishing Pings have turned ON.`)
 }).setName('togglefishingpings');
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 /* Fishing @ Crimson Isles -----------------------------------------------------

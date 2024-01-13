@@ -1,8 +1,8 @@
 import Settings from "../settings.js"
 import { data } from '../utils/data.js'
+import { constrainX, constrainY, createGuiCommand, generateRandomStr, petDropPing, playSound, renderGuiPosition, sendGuild, sendSelf } from "../utils/functions.js"
+import { sendMessage } from '../utils/party.js'
 import { showAlert } from '../utils/utils.js'
-import { playSound, generateRandomStr, petDropPing, sendSelf, sendGuild, createGuiCommand, renderGuiPosition } from "../utils/functions.js"
-import { sendMessage, announce } from '../utils/party.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // JERRY TITLES ----------------------------------------------------------------
@@ -49,34 +49,33 @@ const celeste_pattern = /&6&lRARE DROP! &5Celeste Dye/
 // MINING ----------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 // dwarven mines lobby day
-var movedaycount = new Gui();
-register('dragged', (dx, dy, x, y) => {
-    if (!data.inSkyblock) return;
-    if (movedaycount.isOpen()) {
-        data.DayCount.x = x;
-        data.DayCount.y = y;
-    }
-})
+data.miscInfo.mining.movedaycounter = new Gui();
+createGuiCommand(data.miscInfo.mining.movedaycounter, 'movedaycount', 'mdc');
 
-createGuiCommand(movedaycount, 'movedaycount', 'mdc');
-
-let lobbyDisplay = '';
 register('step', () => {
     if (!data.inSkyblock) return;
     if (!World.isLoaded()) return;
     if (!Settings.lobbyDayCount) return;
     lobbyTicks = World.getTime();
     lobbyDay = (lobbyTicks / 24000).toFixed(2);
-    lobbyDisplay = `Day: &b${lobbyDay}`
+    data.miscInfo.mining.displayText = `Day: &b${lobbyDay}`
 }).setFps(1);
+
+register('dragged', (dx, dy, x, y) => {
+    if (!data.inSkyblock) return;
+    if (data.miscInfo.mining.movedaycounter.isOpen()) {
+        data.DayCount.x = constrainX(x, 3, data.miscInfo.mining.displayText);
+        data.DayCount.y = constrainY(y, 3, data.miscInfo.mining.displayText);
+    }
+})
 
 register('renderOverlay', () => {
     if (!data.inSkyblock) return;
     if (!World.isLoaded()) return;
     if (!Settings.lobbyDayCount) return;
     if (data.currArea === 'Garden') return;
-    Renderer.drawStringWithShadow(lobbyDisplay, data.DayCount.x, data.DayCount.y)
-    renderGuiPosition(movedaycount, data.DayCount, `Day: 0.00`)
+    Renderer.drawStringWithShadow(data.miscInfo.mining.displayText, data.DayCount.x, data.DayCount.y)
+    renderGuiPosition(data.miscInfo.mining.movedaycounter, data.DayCount, `Day: 0.00`)
 });
 
 // golden goblin alert
@@ -101,8 +100,9 @@ register('chat', (mf, event) => {
 // JERRY PINGS -----------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 register('chat', (event) => {
+    if (!data.inSkyblock) return;
     if (!Settings.jerry_ping) return
-    var message = ChatLib.getChatMessage(event, true)
+    const message = ChatLib.getChatMessage(event, true)
 
     // green jerry
     if (message.includes('&aGreen Jerry&e')) {
@@ -129,7 +129,7 @@ register('chat', (event) => {
     if (message.includes('&6Golden Jerry&e')) {
         sendSelf('[!] A Golden Jerry has spawned [!]');
         showAlert(gold_jerry);
-        playSound()
+        playSound();
     }
 })
 
@@ -144,27 +144,28 @@ register('chat', (event) => {
     data.audioInst.playDefaultSound();
 }).setCriteria('The ground begins to shake as an Endstone Protector rises from below!')
 
+// better end messages
 
 ////////////////////////////////////////////////////////////////////////////////
 // DYE PINGS -------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 register('chat', (event) => {
     if (!Settings.dye_pings) return
-    var message = ChatLib.getChatMessage(event, true)
+    const message = ChatLib.getChatMessage(event, true)
 
     // carmine
-    if (message.match(carmine_pattern)) {
-        showAlert(carmine_title);
-        sendMessage('RARE DROP! Carmine Dye');
-        if (Settings.guild_announce_dye_pings) sendGuild('RARE DROP! Carmine Dye')
-        playSound()
+    if (message.match(data.miscInfo.dye.carmine.pattern)) {
+        showAlert(data.miscInfo.dye.carmine.title);
+        sendMessage(data.miscInfo.dye.carmine.message);
+        // if (Settings.guild_announce_dye_pings) sendGuild(data.miscInfo.dye.carmine.message);
+        playSound();
     }
 
     // necron
     if (message.match(necron_pattern)) {
         showAlert(necron_title);
         sendMessage(`${Player.getName()} unlocked Necron Dye!`);
-        playSound()
+        playSound();
     }
 
     // flame
@@ -176,21 +177,25 @@ register('chat', (event) => {
     if (message.match(holly_pattern) && message.includes(Player.getName())) {
         showAlert(holly_title);
         sendMessage('Holly Dye');
-        playSound()
+        playSound();
     }
 
     // aquamarine
     if (message.match(aquamarine_pattern)) {
         showAlert(aquamarine_title);
-        sendMessage('OUTSTANDING CATCH! You found a Aquamarine Dye.');
-        playSound()
+        aquamarine_msg = 'OUTSTANDING CATCH! You found a Aquamarine Dye.'
+        sendMessage(aquamarine_msg);
+        if (Settings.guild_announce_dye_pings) sendGuild(aquamarine_msg);
+        playSound();
     }
 
     // celeste
     if (message.match(celeste_pattern)) {
         showAlert(celeste_title);
-        sendMessage('RARE DROP! Celeste Dye');
-        playSound()
+        celeste_msg = 'RARE DROP! Celeste Dye'
+        sendMessage(celeste_msg);
+        if (Settings.guild_announce_dye_pings) sendGuild(celeste_msg);
+        playSound();
     }
     // tentacle
     // dark purple
@@ -218,17 +223,10 @@ register('chat', (spookyMob, event) => {
 // headless horseman ping
 register('chat', (spawner, location, event) => {
     cancel(event);
-    if (!Settings.horseman_ping) return
-    if (location === 'Wilderness') {
-        showAlert(wildHorseTitle);
-        sendMessage('[!] Horseman @ Wilderness [!]');
-        data.audioInst.playDefaultSound();
-    }
-    if (location === 'Graveyard') {
-        showAlert(graveHorseTitle);
-        sendMessage('[!] Horseman @ Graveyards [!]');
-        data.audioInst.playDefaultSound();
-    }
+    if (!Settings.horseman_ping) return;
+    location === 'Wilderness' ? showAlert(wildHorseTitle) : location === 'Graveyard' ? showAlert(graveHorseTitle) : null;
+    sendMessage(`[!] Horseman @ ${location} [!]`);
+    data.audioInst.playDefaultSound();
 }).setCriteria("${spawner} has spawned the Headless Horseman boss in the ${location}!")
 
 
@@ -239,15 +237,13 @@ register('chat', (spawner, location, event) => {
 register('chat', (event) => {
     if (!data.inSkyblock) return;
     if (!Settings.primal_fear_main_toggle) return;
-    if (!Settings.hide_fear_messages) return;
-    cancel(event);
+    if (!Settings.hide_fear_messages) cancel(event);
 }).setCriteria('FEAR. You got some rewards from killing a Primal Fear!');
 
 register('chat', (event) => {
     if (!data.inSkyblock) return;
     if (!Settings.primal_fear_main_toggle) return;
-    if (!Settings.hide_fear_messages) return;
-    cancel(event);
+    if (!Settings.hide_fear_messages) cancel(event);
 }).setCriteria('[FEAR]').setContains();
 
 // primal fears spawn ping
@@ -256,9 +252,9 @@ register('chat', (event) => {
     if (!Settings.primal_fear_main_toggle) return;
     if (!Settings.primal_fear_spawn_ping) return;
     data.audioInst.playDefaultSound();
-    showAlert('&4PRIMAL FEAR')
-    sendMessage('[!] Primal Fear (not ls-able btw)[!]')
-}).setCriteria('FEAR. A Primal Fear has been summoned!')
+    showAlert('&4PRIMAL FEAR');
+    sendMessage('[!] Primal Fear (not ls-able btw) [!]');
+}).setCriteria('FEAR. A Primal Fear has been summoned!');
 
 // quick maths lol
 register('chat', (problem, event) => {
@@ -268,36 +264,34 @@ register('chat', (problem, event) => {
     const question = problem.replace(/x/g, '*');
     const result = eval(question);
     setTimeout(() => {
-        ChatLib.chat(result.toFixed(0))
-    }, 300)
-}).setCriteria('QUICK MATHS! Solve: ${problem}')
+        ChatLib.chat(`${data.modPrefix} Answer: ${result.toFixed(0)}`);
+    }, 300);
+}).setCriteria('QUICK MATHS! Solve: ${problem}');
 
 // random blah blah
-let isRandomAnnounced = false;
 register('chat', (name, event) => {
     if (!data.inSkyblock) return;
     if (!Settings.primal_fear_main_toggle) return;
     if (!Settings.fear_karen_solver) return;
     const randomMessage = generateRandomStr(18);
     if (name !== Player.getName()) return;
-    if (!isRandomAnnounced) {
-        isRandomAnnounced = true;
+    if (!data.miscInfo.spooky.isFearAnnounced) {
+        data.miscInfo.spooky.isFearAnnounced = true;
         setTimeout(() => {
-            ChatLib.chat(randomMessage)
-        }, 300)
+            ChatLib.chat(randomMessage);
+        }, 300);
         setTimeout(() => {
-            isRandomAnnounced = false;
-        }, 30000)
-    }
-}).setCriteria('[FEAR] Public Speaking Demon: Say something interesting ${name}!')
+            data.miscInfo.spooky.isFearAnnounced = false;
+        }, 30000);
+    };
+}).setCriteria('[FEAR] Public Speaking Demon: Say something interesting ${name}!');
 
 
 // Royal Resident
 register('chat', (event) => {
     if (!data.inSkyblock) return;
     if (!Settings.primal_fear_main_toggle) return;
-    if (!Settings.hide_royal_resident_messages) return;
-    cancel(event);
+    if (Settings.hide_royal_resident_messages) cancel(event);
 }).setCriteria('[NPC] No Name: ').setContains();
 
 

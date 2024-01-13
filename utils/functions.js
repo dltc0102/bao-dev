@@ -1,8 +1,8 @@
-import Settings from "../settings.js"
-import { data } from '../utils/data.js'
-import { showAlert } from '../utils/utils.js'
-import { sendMessage } from '../utils/party.js'
-import RenderLib from 'RenderLib/index.js'
+import RenderLib from 'RenderLib/index.js';
+import Settings from '../settings.js';
+import { data } from '../utils/data.js';
+import { sendMessage } from '../utils/party.js';
+import { showAlert } from '../utils/utils.js';
 
 ////////////////////////////////////////////////////////////////////////////////
 // SLAYERS ---------------------------------------------------------------------
@@ -37,6 +37,7 @@ export function playSound() {
     if (Settings.rng_sound_sel == 1) data.audioInst.playCatSong();
     if (Settings.rng_sound_sel == 2) data.audioInst.playNitroSong();
     if (Settings.rng_sound_sel == 3) data.audioInst.playBisSong();
+    if (Settings.rng_sound_sel == 4) data.audioInst.playChipiSong();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -209,7 +210,7 @@ export function getFilteredPlayerTabNames() {
 // NEARBY PLAYERS  -------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 export function getNearbyPlayers(maxDistance) {
-    return World.getAllEntitiesOfType(data.entityPlayer)
+    return World.getAllEntitiesOfType(data.entities.entityPlayer)
         .filter(player => player.distanceTo(Player.getPlayer()) < maxDistance);
 }
 
@@ -231,9 +232,9 @@ export function filterBotNames(players, tabNames) {
 ////////////////////////////////////////////////////////////////////////////////
 export function renderGuiPosition(gui, position, infoText) {
     if (gui.isOpen()) {
-        Renderer.drawString(`x: ${Math.round(position.x)}, y: ${Math.round(position.y)}`, parseInt(position.x) - 65, parseInt(position.y) - 12, false);
+        Renderer.drawString(`&cx: ${Math.round(position.x)}, y: ${Math.round(position.y)}`, parseInt(position.x) - 65, parseInt(position.y) - 12, false);
         Renderer.scale(1);
-        Renderer.drawStringWithShadow(infoText, position.x, position.y);
+        Renderer.drawStringWithShadow(`&7${infoText}`, position.x, position.y);
     }
 }
 
@@ -252,7 +253,8 @@ export function displayEntityHP(names, foundEntity, x, y) {
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTRAIN COORDS ------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
-export function constrainX(x, margin, stringW) {
+export function constrainX(x, margin, text) {
+    let stringW = Renderer.getStringWidth(text);
     let result = 0;
     if (x < margin) {
         result = margin
@@ -264,7 +266,8 @@ export function constrainX(x, margin, stringW) {
     return result; 
 }
 
-export function constrainY(y, margin, stringH) {
+export function constrainY(y, margin, text) {
+    let stringH = getNumLines(text) * data.baseTextH;
     let result = 0;
     if (y < margin) {
         result = margin;
@@ -386,6 +389,7 @@ export function closest(num, arr) {
 export function getCharges(chargeString) {
     const chargeRegex = /^Charge: (\d{1,3}(?:,\d{3})*)\/50,000$/;
     const chargeMatch = chargeString.match(chargeRegex);
+    let charges = '';
     if (chargeMatch) {
         charges = chargeMatch[1];
     }

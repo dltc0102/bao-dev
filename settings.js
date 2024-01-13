@@ -31,6 +31,16 @@ class Settings {
     })
     hide_griffin_error = false;
 
+    // edit mythos counter location
+    @ButtonProperty({
+        name: "Edit Mythos Counter Location", 
+        description: "Click the button to move the Mythos Counter on your screen.", 
+        category: "Mythos", 
+        subcategory: "Counter", 
+    })
+    openMythosCounterGUI() {
+        ChatLib.command('movemythoscounter', true)
+    }
 
     // mythos counter
     @SwitchProperty({
@@ -1359,6 +1369,15 @@ class Settings {
     })
     secretsPerSession = false;
 
+    @ButtonProperty({
+        name: "Edit Secret Counter Location", 
+        description: "Click the button to move the Secret Counter on your screen.", 
+        category: "Dungeons", 
+    })
+    openSecretCounterGUI() {
+        ChatLib.command('movesecretcounter', true)
+    }
+
     // Better Dungeon Messages
     @SwitchProperty({
         name: "Better Dungeon Messages", 
@@ -1441,7 +1460,7 @@ class Settings {
         name: "RNG Sounds", 
         description: "Choose a sound to play when RNG Drops happen.", 
         category: "Sound", 
-        options: ['Default', 'Disfigure - Blank', 'Persona4 - Specialist', 'TVB News Theme']
+        options: ['Default', 'Disfigure - Blank', 'Persona4 - Specialist', 'TVB News Theme', 'Chipi Chipi Dubi Daba']
     })
     rng_sound_sel = 0;
 

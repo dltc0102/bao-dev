@@ -1,4 +1,4 @@
-import Settings from "../settings.js"
+import Settings from '../settings.js';
 
 /**
  * Shows a chat message only visible to the client

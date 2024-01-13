@@ -1,5 +1,5 @@
-import PogObject from "PogData"
-import Audio from '../utils/audio.js'
+import PogObject from 'PogData';
+import Audio from '../utils/audio.js';
 
 export let data = new PogObject("Bao", {
     "firstTime": true,
@@ -10,137 +10,409 @@ export let data = new PogObject("Bao", {
     ///////////////////////////////////////////////////////////////////////////////
     "inSkyblock": false,
     "currArea": '',
+    "baseTextH": 10,
 
     ///////////////////////////////////////////////////////////////////////////////
     // JAVA TYPES
     ///////////////////////////////////////////////////////////////////////////////
-    "entityFishHook": Java.type("net.minecraft.entity.projectile.EntityFishHook"), 
-    "entityArmorStand": Java.type("net.minecraft.entity.item.EntityArmorStand"), 
-    "entityArrow": Java.type("net.minecraft.entity.projectile.EntityArrow"), 
-    "entityPlayer": Java.type("net.minecraft.entity.player.EntityPlayer"),
-
-    ///////////////////////////////////////////////////////////////////////////////
-    // Padding
-    ///////////////////////////////////////////////////////////////////////////////
-    "testBox": {
-        "x": 400, 
-        "y": 400,
+    "entities": {
+        "entityFishHook": Java.type("net.minecraft.entity.projectile.EntityFishHook"), 
+        "entityArmorStand": Java.type("net.minecraft.entity.item.EntityArmorStand"), 
+        "entityArrow": Java.type("net.minecraft.entity.projectile.EntityArrow"), 
+        "entityPlayer": Java.type("net.minecraft.entity.player.EntityPlayer"),
     },
 
 
     ///////////////////////////////////////////////////////////////////////////////
-    // BEACON
-    ///////////////////////////////////////////////////////////////////////////////
-    "lastCoords": [],
-
-    ///////////////////////////////////////////////////////////////////////////////
-    // IGNORED
-    //////////////////////////////////////////////w/////////////////////////////////
-    "ignoredNames": [],
-
-
-    ///////////////////////////////////////////////////////////////////////////////
-    // PARTY LOCK SYSTEM
-    ///////////////////////////////////////////////////////////////////////////////
-    // "lockedList": [], 
-
-
-    ///////////////////////////////////////////////////////////////////////////////
-    // SCREEN HEIGHT AND WIDTH
+    // SCREEN HEIGHT AND WIDTH and others
     ///////////////////////////////////////////////////////////////////////////////
     "screenH": Renderer.screen.getHeight(), 
     "screenW": Renderer.screen.getWidth(), 
-
+    "thickSep": '==================', 
+    "thinSep": '------------------',
 
     ///////////////////////////////////////////////////////////////////////////////
-    // GARDEN QOL
+    // HP DISPLAY
     ///////////////////////////////////////////////////////////////////////////////
-    "playerYP": '',
-    "isContest": false,
-    "contestText": '',
-    
-    "plots": [],
-    "plotMapText": '',
-    "playerPlotInfo": {
-        "names": [], 
-        "configMsg": false, 
-        "numLoads": 6,
-        "rows": 5,
-        "cols": 5,
+    "hpDisplayInfo": {
+        "specifiedMobs": [],
+        "inLSRange": false,
+        "displayText": '',
+        "mobInfos": [],
+        "movehp": null,
+    }, 
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // DUNGEONS
+    ///////////////////////////////////////////////////////////////////////////////
+    "dungeons": {
+        "sentMelody": false, 
+        "extraStatsFlag": false,
+        "deathStats": 0, 
+        "secretStats": 0, 
+        "numRunStats": 0, 
+        "secretOverviewText": '',
+        "movesecretcounter": null,
+        "secretCounter": {
+            "x": 400, // arbituary random number, replaced by padding function 
+            "y": 40,
+        }
+    }, 
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // FISHING OVERLAYS
+    ///////////////////////////////////////////////////////////////////////////////
+    "fishingOverlays": {
+        "movebobber": null,
+        "bobberCount": 0, 
+        "bobberCountText": '', 
+        "bobberCounter": {
+            "x": 200, 
+            "y": 200
+        }, 
+
+        "moveplayers": null,
+        "playerCount": 0, 
+        "playerCountText": '',
+        "playerCounter": { // Player Count
+            "x": 200, 
+            "y": 210
+        }, 
+
+        "movenearbyjawbus": null,
+        "jawbusInfo": null, 
+        "nbJawbusText": '', 
+        "jawbusCounter": { // Jawbus Info
+            "x": 200, 
+            "y": 220
+        }, 
+
+        "movenearbythunder": null, 
+        "thunderInfo": null, 
+        "nbThunderText": '', 
+        "thunderCounter": { // Thunder Info
+            "x": 200, 
+            "y": 230
+        }, 
+        
+        "movecharges": null,
+        "thunderBottleText": '',
+        "chargeCounter": { // charge count
+            "x": 200, 
+            "y": 240
+        }, 
+        "fullBottleMsgSent": false,
+
+        "filteredNames": [], 
+    }, 
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // FISHING STATS
+    ///////////////////////////////////////////////////////////////////////////////
+    "fishingStats": {
+        "movefishcounter": null,
+        "fishCounter": { // fish counter
+            "x": 5, 
+            "y": 100
+        }, 
+        "CIDisplay": '', 
+        "WIDisplay": '', 
+        "HUBDisplay": '', 
+        "overallDisplayText": '',
     },
-    "gardenPlot": {
-        "coords": [], 
-        "rows": 5, 
-        "cols": 5, 
-        "plotW": 96,
-    }, 
-    "plotSprayInfo": {
-        "timers": [], 
-        "offsetX": 5.5, 
-        "offsetY": 35, 
-        "dx": 18, 
-        "dy": 18, 
-        "cols": 5, 
-        "rows": 5,
-    },
 
-    "plotArrow": {
-        "x": 0, 
-        "y": 0,
-    }, 
-    "pestPlotCoords": [], 
-    "sprayPlotCoords": [],
-    "pestAliveList": [],
+    ///////////////////////////////////////////////////////////////////////////////
+    // GARDENS
+    ///////////////////////////////////////////////////////////////////////////////
+    "gardens": {
+        // gameload reminder
+        "sentDeskReminder": false,
 
-    "sentDeskReminder": false,
+
+        "playerArrowImage": null, 
+        "plotArrow": {
+            "x": 0, 
+            "y": 0,
+        }, 
+        
+        // yaw and pitch
+        "playerInfo": {
+            "yaw": 0, 
+            "pitch": 0, 
+            "lookingAtText": '',
+            "x": 5, 
+            "y": 12, 
+        },
+
+        // contest
+        "contestInfo": {
+            "isInContest": false,
+            "text": '',
+            "x": 600, // arbituary random number, replaced by padding function 
+            "y": 10,
+
+        }, 
+
+        // sprayonator overlay
+        "sprayonatorOverlay": {
+            "x": 5, 
+            "y": 32, 
+            "displayText": '', 
+            "possiblePests": '', 
+            "materialText": '', 
+            "selectedSprayMaterial": '',
+            "matAttracts": {
+                "Dung": ["Fly", "Beetle"], 
+                "Honey Jar": ["Cricket", "Moth"], 
+                "Plant Matter": ["Locust", "Slug"], 
+                "Tasty Cheese": ["Rat", "Mite"], 
+                "Compost": ["Mosquito", "Earthworm"]
+            }, 
+        }, 
+
+        // vinyls
+        "vinylInfo": {
+            "names": ["Pretty Fly", "Cricket Choir", "Earthworm Ensemble", "Slow and Groovy", "Not Just a Pest", "Cicada Symphony", "DynaMITES", "Rodent Revolution", "Wings of Harmony", "Buzzin' Beats"], 
+            "isPlaying": false, 
+            "currentVinyl": '', 
+            "displayText": '',
+            "x": 5, 
+            "y": 50, 
+        }, 
+
+        // plots
+        "plots": [],
+        "plotMapText": '',
+        "gardenPlotMap": {
+            "ox": 4, 
+            "oy": 45,
+            "x": 3, 
+            "y": 30
+        },  
+
+        // plots - player
+        "playerPlotInfo": {
+            "names": [], 
+            "configMsg": false, 
+            "numLoads": 6,
+            "rows": 5,
+            "cols": 5,
+        },
+
+        // plots - default garden
+        "gardenPlot": {
+            "coords": [], 
+            "rows": 5, 
+            "cols": 5, 
+            "plotW": 96,
+        }, 
+
+        // plots - sprayed
+        "sprayPlotCoords": [],
+        "plotSprayInfo": {
+            "timers": [], 
+            "offsetX": 5.5, 
+            "offsetY": 35, 
+            "dx": 18, 
+            "dy": 18, 
+            "cols": 5, 
+            "rows": 5,
+        },
+        
+        // plots - pest infected
+        "pestPlotCoords": [], 
+
+
+        // harbringer potion
+        "harbringer": {
+            "used": false, 
+            "target": null, 
+            "timeLeft": 0, 
+            "text": '',
+            "x": 600, // arbituary random number, replaced by padding function 
+            "y": 60, 
+        }, 
+
+        // pest repellent
+        "pestRepellent": {
+            "cd": 60, 
+            "used": false, 
+            "is2x": false, 
+            "is4x": false, 
+            "type": '', 
+            "target": null, 
+            "timeLeft": 0, 
+            "text": '',
+            "x": 600, // arbituary random number, replaced by padding function 
+            "y": 20, 
+        }, 
     
-    "sprayOverlayText": '',
-    "possiblePests": '',
-    "sprayMatText": '',
-    "selectedSprayMat": '',
-    "matAttracts": {
-        "Dung": ["Fly", "Beetle"], 
-        "Honey Jar": ["Cricket", "Moth"], 
-        "Plant Matter": ["Locust", "Slug"], 
-        "Tasty Cheese": ["Rat", "Mite"], 
-        "Compost": ["Mosquito", "Earthworm"]
+        // pest exchange
+        "pestExchange": {
+            "used": false, 
+            "target": null, 
+            "timeLeft": 0,
+            "text": '', 
+            "bonusFF": 0, 
+            "donatedPests": 0,
+            "x": 600, // arbituary random number, replaced by padding function 
+            "y": 40,
+        }, 
     }, 
-    "gardenMap": {
-        "x": 3, 
-        "y": 30
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // GENERAL QOL
+    ///////////////////////////////////////////////////////////////////////////////
+    "generalQOL": {
+        "stashes": {
+            "numMats": 0, 
+            "remMats": 0, 
+            "sackTypes": 0, 
+            "pickupMat": '',
+        },
+        "clickStash": {
+            "numTillReminder": 0, 
+            "reminderMatsRem": 0,
+            "numTypesRem": 0, 
+        }, 
     }, 
-    "allVinylNames": ["Pretty Fly", "Cricket Choir", "Earthworm Ensemble", "Slow and Groovy", "Not Just a Pest", "Cicada Symphony", "DynaMITES", "Rodent Revolution", "Wings of Harmony", "Buzzin' Beats"],
-    "isPlayingVinyl": false,
-    "currentVinyl": '',
-    "vinylText": '',
 
-    "usedHarvPot": false, 
-    "targetHarvPot": null, 
-    "harvPotTimeLeft": 0,
-
-    "pestRepelType": '2x',
-    "usedPestRepellent": false, 
-    "targetPestRepellent": null,
-    "pestRepelCD": 60,
-    "pestRepellentTimeLeft": 0,
-
-    "usedPestExchange": false, 
-    "targetExchange": null, 
-    "pestExchangeTimeLeft": 0,
-
-    "harbringerText": '', 
-    "pestRepellentText": '', 
-    "pestExchangeText": '',
-
-
-    "bonusFF": 0, 
-    "donatedPests": 0, 
-
-    "harvPotInfo": {
-        "end": null,
-        "text": '',
-        "timestamp": '',
+    ///////////////////////////////////////////////////////////////////////////////
+    // MISC
+    ///////////////////////////////////////////////////////////////////////////////
+    "miscInfo": {
+        "mining": {
+            "movedaycounter": null,
+            "displayText": '',
+        }, 
+        "dye": {
+            "carmine": {
+                "message": 'RARE DROP! Carmine Dye', 
+                "title": '&3[&b&ka&3] &cCarmine Dye &3[&b&ka&3]', 
+                "pattern": new RegExp(/&6&lRARE DROP! &5Carmine Dye/),
+            }, 
+            "necron": {
+                "message": '', 
+                "title": '', 
+                "pattern": new RegExp(),
+            },
+            "holly": {
+                "message": '', 
+                "title": '', 
+                "pattern": new RegExp(),
+            },
+            "aquamarine": {
+                "message": '', 
+                "title": '', 
+                "pattern": new RegExp(),
+            },
+            "celeste": {
+                "message": '', 
+                "title": '', 
+                "pattern": new RegExp(),
+            },
+        }, 
+        "spooky": {
+            "isFearAnnounced": false, 
+        }, 
     }, 
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // MYTHOS
+    ///////////////////////////////////////////////////////////////////////////////
+    "mythosInfo": {
+        "counter": {
+            "allLines": '',
+            "movemythoscounter": null,
+            "x": 5, 
+            "y": 100,
+        }, 
+        "counterInfo": { // mythos player info
+            "featherCount": 0, 
+            "moneyCount": 0, 
+            "burrowCount": 0, 
+    
+            "minosHunterKills": 0, 
+            "siaLynxKills": 0, 
+            "gaiaConsKills": 0, 
+            "minotaurKills": 0, 
+            "minosChampKills": 0, 
+            "minosInqKills": 0, 
+            "totalMythosKills": 0, 
+    
+            "DTS": 0, // check inventory pickup
+            "AR": 0, // check inventory pickup
+            "CTP": 0, // check inventory pickup
+            "DS": 0, 
+            "CoG": 0, 
+            "WuS": 0, 
+            "MR": 0, // check inventory pickup
+            "CHIM": 0, // check inventory pickup and chat message
+            
+            "cachedMobsSinceInq": 0, 
+            "cachedMinotaursSinceDae": 0, 
+            "cachedBurrowsSinceCOG": 0, 
+            "cachedBurrowsSinceWUS": 0, 
+            "cachedChampionsSinceRelic": 0, 
+    
+            "mobsSinceInq": 0, 
+            "minotaursSinceDae": 0, 
+            "burrowsSinceCOG": 0, 
+            "burrowsSinceWUS": 0, 
+            "championsSinceRelic": 0, 
+            // "inqsSinceChim": 0, 
+        }, 
+    }, 
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // TIMERS
+    ///////////////////////////////////////////////////////////////////////////////
+    "timerInfos": {
+        "gummy": {
+            "cd": 60, 
+            "timeLeft": 0, 
+            "used": false, 
+            "target": null,
+        }, 
+        "rekindle": {
+            "cd": 60,
+            "timeLeft": 0,
+            "used": false, 
+            "target": null,
+        }, 
+        "secondWind": {
+            "cd": 30,
+            "timeLeft": 0,
+            "used": false, 
+            "target": null,
+        }, 
+        "glowyTonic": {
+            "timeLeft": 0,
+            "used": false, 
+            "target": null,
+        }, 
+        "bonzo": {
+            "cd": 6,
+            "timeLeft": 0,
+            "used": false, 
+            "target": null,
+        }, 
+        "kingsScent": {
+            "cd": 6,
+            "timeLeft": 0,
+            "used": false, 
+            "target": null,
+        }, 
+        "orb": {
+            "registered": [], 
+            "displayText": '', 
+            "formattedText": '', 
+            "type": 5, 
+            "found": false,
+
+        }
+    }, 
+
     ///////////////////////////////////////////////////////////////////////////////
     // FISHING
     ///////////////////////////////////////////////////////////////////////////////
@@ -297,69 +569,9 @@ export let data = new PogObject("Bao", {
 
     }, 
 
-
-    ///////////////////////////////////////////////////////////////////////////////
-    // MYTHOLOGICAL EVENT
-    ///////////////////////////////////////////////////////////////////////////////
-    "MPI": { // mythos player info
-        "featherCount": 0, 
-        "moneyCount": 0, 
-        "burrowCount": 0, 
-
-        "minosHunterKills": 0, 
-        "siaLynxKills": 0, 
-        "gaiaConsKills": 0, 
-        "minotaurKills": 0, 
-        "minosChampKills": 0, 
-        "minosInqKills": 0, 
-        "totalMythosKills": 0, 
-
-        "DTS": 0, // check inventory pickup
-        "AR": 0, // check inventory pickup
-        "CTP": 0, // check inventory pickup
-        "DS": 0, 
-        "CoG": 0, 
-        "WuS": 0, 
-        "MR": 0, // check inventory pickup
-        "CHIM": 0, // check inventory pickup and chat message
-        
-        "cachedMobsSinceInq": 0, 
-        "cachedMinotaursSinceDae": 0, 
-        "cachedBurrowsSinceCOG": 0, 
-        "cachedBurrowsSinceWUS": 0, 
-        "cachedChampionsSinceRelic": 0, 
-
-        "mobsSinceInq": 0, 
-        "minotaursSinceDae": 0, 
-        "burrowsSinceCOG": 0, 
-        "burrowsSinceWUS": 0, 
-        "championsSinceRelic": 0, 
-        // "inqsSinceChim": 0, 
-    }, 
-
     ///////////////////////////////////////////////////////////////////////////////
     // Fishing COUNTERS
     ///////////////////////////////////////////////////////////////////////////////
-    "BCount": { // Bobber Count
-        "x": 200, 
-        "y": 200
-    }, 
-    "PCount": { // Player Count
-        "x": 200, 
-        "y": 210
-    }, 
-    "nbJawbus": { // Jawbus Info
-        "x": 200, 
-        "y": 220
-    }, 
-    "nbThunder": { // Thunder Info
-        "x": 200, 
-        "y": 230
-    }, 
-    "CCount": { // charge count
-        "x": 200, 
-        "y": 240
-    }, 
     "DayCount": { // day counter
         "x": 300, 
         "y": 200
@@ -380,16 +592,7 @@ export let data = new PogObject("Bao", {
         "x": 400, 
         "y": 260
     }, 
-    
-    "userPets": [],
-    "petDis": { // timer display
-        "x": 300, 
-        "y": 210
-    }, 
-    "FishCounter": { // timer display
-        "x": 5, 
-        "y": 100
-    }, 
+
     ///////////////////////////////////////////////////////////////////////////////
     // DISPLAY LOCATION FOR MOBS HP
     ///////////////////////////////////////////////////////////////////////////////
@@ -402,10 +605,6 @@ export let data = new PogObject("Bao", {
     ///////////////////////////////////////////////////////////////////////////////
     // DUNGEONS
     ///////////////////////////////////////////////////////////////////////////////
-    "SecretCount": { // dungeon secret counter
-        "x": 300, 
-        "y": 300
-    }, 
     "RCount": { // run counter for goals
         "x": 300, 
         "y": 300
@@ -447,10 +646,6 @@ export let data = new PogObject("Bao", {
     "targetCake": null, 
     "usedCake": false, 
 
-    // gummy timer
-    "targetGummy": null, 
-    "usedGummy": false,
-    
     // powerups
     // homing snowball timer
     "targetHoming": null, 

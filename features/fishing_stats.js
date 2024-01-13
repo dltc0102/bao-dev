@@ -1,7 +1,6 @@
 import Settings from '../settings.js';
 import { data } from '../utils/data.js';
-import { updateCDText, formatMoney } from '../utils/functions.js';
-import { createGuiCommand, renderGuiPosition } from '../utils/functions.js';
+import { createGuiCommand, formatMoney, renderGuiPosition, updateCDText } from '../utils/functions.js';
 /// HIDE SCC MESSAGES ON THIS FILE ONLY
 
 
@@ -28,9 +27,9 @@ import { createGuiCommand, renderGuiPosition } from '../utils/functions.js';
 ////////////////////////////////////////////////////////////////////////////
 // DISPLAY FOR STATISTICAL FS, SCC, MF -------------------------------------
 ////////////////////////////////////////////////////////////////////////////
-let playerFS = 0;
-let playerSCC = 0;
-let playerMF = 0;
+// let playerFS = 0;
+// let playerSCC = 0;
+// let playerMF = 0;
 
 // Fishing Speed
 
@@ -838,42 +837,28 @@ register('chat', (event) => {
 ////////////////////////////////////////////////////////////////////////////
 // GUI STUFF FOR FISHING COUNTER -------------------------------------------
 ////////////////////////////////////////////////////////////////////////////
-var movefishcounter = new Gui();
-
-register('dragged', (dx, dy, x, y) => {
-    if (!data.inSkyblock) return;
-    if (movefishcounter.isOpen()) {
-        data.FishCounter.x = x;
-        data.FishCounter.y = y;
-    }
-})
-
-createGuiCommand(movefishcounter, 'movefishcounter', 'mfc')
+data.fishingStats.movefishcounter = new Gui();
+createGuiCommand(data.fishingStats.movefishcounter, 'movefishcounter', 'mfc')
 
 ////////////////////////////////////////////////////////////////////////////
 // RENDER OVERLAY COUNTER --------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////
-let CIDisplay = '';
-let WIDisplay = '';
-let HUBDisplay = '';
 register('step', () => {
     if (!data.inSkyblock) return;
-    let separatorThick = '=================='
-    let separatorThin = '------------------'
+    let crimsonSepThick = `&3${data.thickSep}`
+    let crimsonSepThin = `&3${data.thinSep}`
 
-    let crimsonSepThick = '&3' + separatorThick
-    let crimsonSepThin = '&3' + separatorThin
+    let winterSepThick = `&7${data.thickSep}`
+    let winterSepThin = `&7${data.thinSep}`
 
-    let winterSepThick = '&7' + separatorThick
-    let winterSepThin = '&7' + separatorThin
-
-    let hubSepThick = '&5' + separatorThick
-    let hubSepThin = '&5' + separatorThin
+    let hubSepThick = `&5${data.thickSep}`
+    let hubSepThin = `&5${data.thinSep}`
 
     // CRIMSON ISLE COUNTER
     if (data.currArea === 'Crimson Isle') {
         crimsonTitle = Settings.kills_fishingcounter || Settings.tracker_fishingcounter || Settings.avgs_fishingcounter ? `&8|&7|&b|&7|&8| &cCrimson Isle &8|&7|&b|&7|&8|\n${crimsonSepThick}` : '';
         
+        // kills
         phlegLine = `&8||&b| &6Phlegblast: &b${data.lavaSC.phlegblastCatches}`
         magmaSlugLine = `&8||&b| &6Magma Slug: &b${data.lavaSC.magmaSlugCatches}`
         moogmaLine = `&8||&b| &6Moogma: &b${data.lavaSC.moogmaCatches}`
@@ -885,16 +870,19 @@ register('step', () => {
         thunderLine = `&8||&b| &6Thunder: &b${data.lavaSC.thunderCatches}`
         JawbusLine = `&8||&b| &6Jawbus: &b${data.lavaSC.lordJawbusCatches}`
 
+        // trackers
         scSinceThunderLine = `&8||&b| &rSC Since Thunder: &b${data.lavaSC.catchesSinceThunder}`
         scSinceJawbusLine = `&8||&b| &rSC Since Jawbus: &b${data.lavaSC.catchesSinceJawbus}`
 
         jawbusSinceVialLine = `&8||&b| &rJawbus Since Vial: &b${data.lavaSC.jawbusSinceLastVial === null ? 0 : data.lavaSC.jawbusSinceLastVial}`
 
+        // probabilities
         thunderChance = 0.0087;
         jawbusChance = 0.0017;
         probabilityThunder = (((data.lavaSC.thunderCatches / data.lavaSC.totalCrimsonSCCatches) + thunderChance) * 100).toFixed(2);
         probabilityJawbus = (((data.lavaSC.lordJawbusCatches / data.lavaSC.totalCrimsonSCCatches) + jawbusChance) * 100).toFixed(2);
 
+        // averages
         averageSCPerThunder = (data.lavaSC.totalCrimsonSCCatches / data.lavaSC.thunderCatches).toFixed(2);
         averageSCPerJawbus = (data.lavaSC.totalCrimsonSCCatches / data.lavaSC.lordJawbusCatches).toFixed(2);
         avgThunderLine = `&8||&b| &rAvg SC/Thunder: &b${averageSCPerThunder} &8|| &9&oP(%): ${probabilityThunder}%`
@@ -922,7 +910,7 @@ register('step', () => {
         if (lastIdx !== -1) {
             phraseArray.splice(lastIdx, 1);
         }
-        CIDisplay = phraseArray.join('\n')
+        data.fishingStats.CIDisplay = phraseArray.join('\n')
     }
 
     // WINTER ISLAND COUNTER
@@ -997,12 +985,12 @@ register('step', () => {
         if (lastIdx !== -1) {
             phraseArray.splice(lastIdx, 1);
         }
-        WIDisplay = phraseArray.join('\n')
+        data.fishingStats.WIDisplay = phraseArray.join('\n')
     }
 
     // HUB GENERAL COUNTER
     if (data.currArea === 'Hub') {
-        generalTitle =  Settings.kills_fishingcounter || Settings.drops_fishingcounter || Settings.tracker_fishingcounter || Settings.avgs_fishingcounter || Settings.mob_since_fishingcounter ? `&r  <--]|| &fGENERAL &r||[-->  \n${hubSepThick}` : '';
+        generalTitle = Settings.kills_fishingcounter || Settings.drops_fishingcounter || Settings.tracker_fishingcounter || Settings.avgs_fishingcounter || Settings.mob_since_fishingcounter ? `&r  <--]|| &fGENERAL &r||[-->  \n${hubSepThick}` : '';
 
         // kills
         squidLine = `&8||| &7Squid: &b${data.waterSC.squidCatches}`
@@ -1067,24 +1055,26 @@ register('step', () => {
         if (lastIdx !== -1) {
             phraseArray.splice(lastIdx, 1);
         }
-        HUBDisplay = phraseArray.join('\n')
+        data.fishingStats.HUBDisplay = phraseArray.join('\n')
     }
 }).setFps(1);
 
+register('dragged', (dx, dy, x, y) => {
+    if (!data.inSkyblock) return;
+    if (data.fishingStats.movefishcounter.isOpen()) {
+        data.fishingStats.fishCounter.x = constrainX(x, 3, data.fishingStats.overallDisplayText);
+        data.fishingStats.fishCounter.y = constrainY(y, 3, data.fishingStats.overallDisplayText);
+    }
+})
 register('renderOverlay', () => {
     if (!data.inSkyblock) return;
     if (!Settings.fishing_counter) return;
-    if (data.currArea === 'Crimson Isle') {
-        Renderer.drawStringWithShadow(CIDisplay, data.FishCounter.x, data.FishCounter.y)
-    }
-    if (data.currArea === "Jerry's Workshop") {
-        Renderer.drawStringWithShadow(WIDisplay, data.FishCounter.x, data.FishCounter.y)
-    }
-    if (data.currArea === 'Hub') {
-        Renderer.drawStringWithShadow(HUBDisplay, data.FishCounter.x, data.FishCounter.y)
-    }
+    if (data.currArea === 'Crimson Isle') data.fishingStats.overallDisplayText = data.fishingStats.CIDisplay;
+    if (data.currArea === "Jerry's Workshop") data.fishingStats.overallDisplayText = data.fishingStats.WIDisplay;
+    if (data.currArea === 'Hub') data.fishingStats.overallDisplayText = data.fishingStats.HUBDisplay;
+    Renderer.drawStringWithShadow(data.fishingStats.overallDisplayText, data.fishingStats.fishCounter.x, data.fishingStats.fishCounter.y)
     
-    renderGuiPosition(movefishcounter, data.FishCounter, '<><FISHING AREA><>\n==================\nKills #1: &b...\nKills #2: &b...: &b...\nKills #3: &b...\n-----------------\nDrops #1: &b...\nDrops #2: &b...\nDrops #3: &b...\n-----------------\nSC since Mob #1: &b...\n SC since Mob #2: &b...\n-----------------\nMob since Drop #1: &b...\n Mob since Drop #2: &b...\n-----------------\nAverage SC per Mob #1: &b...\nAverage SC per Mob #2: &b...\nAverage SC per Mob #3: &b...\n-----------------\nTime Since Mob #1: &b...\nTime Since Mob #2: &b...\n-----------------\nTime Since Drop #1: &b...\nTime Since Drop #2')
+    renderGuiPosition(data.fishingStats.movefishcounter, data.fishingStats.fishCounter, '<><FISHING AREA><>\n==================\nKills #1: &b...\nKills #2: &b...: &b...\nKills #3: &b...\n-----------------\nDrops #1: &b...\nDrops #2: &b...\nDrops #3: &b...\n-----------------\nSC since Mob #1: &b...\n SC since Mob #2: &b...\n-----------------\nMob since Drop #1: &b...\n Mob since Drop #2: &b...\n-----------------\nAverage SC per Mob #1: &b...\nAverage SC per Mob #2: &b...\nAverage SC per Mob #3: &b...\n-----------------\nTime Since Mob #1: &b...\nTime Since Mob #2: &b...\n-----------------\nTime Since Drop #1: &b...\nTime Since Drop #2')
 });
 
 register('command', (args) => {
