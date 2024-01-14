@@ -1,10 +1,9 @@
 import Settings from '../settings.js'
 import { data } from '../utils/data.js'
-import { colorPlot, crossLoadTimer, drawArrow, drawOutlineBeacon, drawScaledString, getCell, getTimerTarget, petDropPing, playSound, startSprayTimer, updatePlots } from '../utils/functions.js'
+import { colorPlot, drawArrow, drawOutlineBeacon, drawScaledString, getCell, petDropPing, playSound, startSprayTimer, updatePlots } from '../utils/functions.js'
 import { sendMessage } from '../utils/party.js'
 import { getActivePet } from '../utils/pet.js'
 import { showAlert } from '../utils/utils.js'
-
 import { updateCDText } from '../utils/functions.js'
  
 ////////////////////////////////////////////////////////////////////

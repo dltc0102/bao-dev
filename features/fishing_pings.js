@@ -116,13 +116,6 @@ register('chat', (event) => {
     data.audioInst.playDefaultSound();
 }).setCriteria('You hear a massive rumble as Thunder emerges.')
 
-// Flash 1 [Thunder]
-if (Settings.flash1_ping) {
-    // flash1 book ping
-    // sendMessage();
-    // playSound()
-}
-
 // Vanquisher extra pings
 registerSettingContains(Settings.vanq_ping, 'Vanquisher Spawned!', vanq_title);
 

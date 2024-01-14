@@ -176,7 +176,7 @@ register("command", (...args) => {
 ////////////////////////////////////////////////////////////////////////////////
 // aotv hider
 register('chat', (event) => {
-    if (!Settings.aotvHider) cancel(event);
+    if (Settings.aotvHider) cancel(event);
 }).setCriteria('There are blocks in the way!');
 
 // soopy message
@@ -296,7 +296,7 @@ register('chat', (event) => {
     if (Settings.grandma_hider) cancel(event);
 }).setCriteria('+30 Kill Combo +10 coins per kill');
 
-register('chat', (event) => {
+register('chat', (combo, event) => {
     if (!data.inSkyblock) return;
     if (Settings.grandma_hider) cancel(event);
 }).setCriteria('+${combo} Kill Combo');

@@ -17,8 +17,8 @@ if (Settings.master_displayHP) {
     if (Settings.phantom_fisher_hp) data.hpDisplayInfo.specifiedMobs.push('Phantom Fisher');
 }
 
-let movehp = new Gui(); // display hp of mobs
-createGuiCommand(movehp, 'movehp', 'mhp')
+data.hpDisplayInfo.moveHpDisplay = new Gui(); // display hp of mobs
+createGuiCommand(data.hpDisplayInfo.moveHpDisplay, 'movehp', 'mhp')
 
 register('step', () => {
     data.hpDisplayInfo.mobInfos = [];
@@ -43,7 +43,7 @@ register('step', () => {
 
 register('dragged', (dx, dy, x, y) => {
     if (!data.inSkyblock) return;
-    if (movehp.isOpen()) {
+    if (data.hpDisplayInfo.moveHpDisplay.isOpen()) {
         data.HPCount.x = constrainX(x, 3, data.hpDisplayInfo.displayText);
         data.HPCount.y = constrainY(y, 3, data.hpDisplayInfo.displayText);
     }
@@ -54,16 +54,7 @@ register('renderOverlay', () => {
     if (!data.inSkyblock) return;
     if (!Settings.master_displayHP) return;
     Renderer.drawString(data.hpDisplayInfo.displayText, data.HPCount.x, data.HPCount.y);
-    renderGuiPosition(movehp, data.HPCount, '[Lv000] SomeMobMonster 10M/10M ❤ -- [✖]')
+    renderGuiPosition(data.hpDisplayInfo.moveHpDisplay, data.HPCount, '[Lv000] SomeMobMonster 10M/10M ❤ -- [✖]')
 });
-
-// debug
-// register('command', () => {
-//     ChatLib.chat(`master display hp toggle is: ${Settings.master_displayHP ? "ON": "OFF"}`)
-// }).setName('checkhp');
-
-// register('command', () => {
-//     console.log(`Mobs to Detect: ${data.hpDisplayInfo.specifiedMobs}`)
-// }).setName('listmobs');
 
 

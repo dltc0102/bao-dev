@@ -11,6 +11,7 @@ export let data = new PogObject("Bao", {
     "inSkyblock": false,
     "currArea": '',
     "baseTextH": 10,
+    "audioInst": new Audio(),
 
     ///////////////////////////////////////////////////////////////////////////////
     // JAVA TYPES
@@ -39,7 +40,7 @@ export let data = new PogObject("Bao", {
         "inLSRange": false,
         "displayText": '',
         "mobInfos": [],
-        "movehp": null,
+        "moveHpDisplay": null,
     }, 
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -67,16 +68,16 @@ export let data = new PogObject("Bao", {
         "bobberCount": 0, 
         "bobberCountText": '', 
         "bobberCounter": {
-            "x": 200, 
-            "y": 200
+            "x": 3, 
+            "y": 14
         }, 
 
         "moveplayers": null,
         "playerCount": 0, 
         "playerCountText": '',
         "playerCounter": { // Player Count
-            "x": 200, 
-            "y": 210
+            "x": 3, 
+            "y": 24,
         }, 
 
         "movenearbyjawbus": null,
@@ -284,6 +285,10 @@ export let data = new PogObject("Bao", {
         "mining": {
             "movedaycounter": null,
             "displayText": '',
+            "dayCounter": {
+                "x": 3, 
+                "y": 34,
+            }, 
         }, 
         "dye": {
             "carmine": {
@@ -369,36 +374,43 @@ export let data = new PogObject("Bao", {
     ///////////////////////////////////////////////////////////////////////////////
     "timerInfos": {
         "gummy": {
+            "name": "Gummy Bear",
             "cd": 60, 
             "timeLeft": 0, 
             "used": false, 
             "target": null,
         }, 
         "rekindle": {
-            "cd": 60,
+            "name": "Rekindle",
+            "cd": 1,
             "timeLeft": 0,
             "used": false, 
             "target": null,
         }, 
         "secondWind": {
+            "name": "Second Wind", 
             "cd": 30,
             "timeLeft": 0,
             "used": false, 
             "target": null,
         }, 
         "glowyTonic": {
+            "name": "Glowy Tonic",
+            "cd": 0,
             "timeLeft": 0,
             "used": false, 
             "target": null,
         }, 
         "bonzo": {
+            "name": "Clownin' Around",
             "cd": 6,
             "timeLeft": 0,
             "used": false, 
             "target": null,
         }, 
         "kingsScent": {
-            "cd": 6,
+            "name": "King's Scent", 
+            "cd": 20,
             "timeLeft": 0,
             "used": false, 
             "target": null,
@@ -406,11 +418,17 @@ export let data = new PogObject("Bao", {
         "orb": {
             "registered": [], 
             "displayText": '', 
-            "formattedText": '', 
+            "timeLeft": 0, 
             "type": 5, 
             "found": false,
-
-        }
+            "x": 400, 
+            "y": 250,
+        },
+        "displayText": '', 
+        "moveTimerDisplay": null, 
+        "moveFluxTimerDisplay": null, 
+        "x": 400, 
+        "y": 240,
     }, 
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -584,10 +602,6 @@ export let data = new PogObject("Bao", {
         "x": 400, 
         "y": 240
     }, 
-    "fluxTimer": { // fluxtimer display
-        "x": 400, 
-        "y": 250
-    }, 
     "pupDis": { // powerup display
         "x": 400, 
         "y": 260
@@ -616,36 +630,6 @@ export let data = new PogObject("Bao", {
     ///////////////////////////////////////////////////////////////////////////////
     // TIMERS
     ///////////////////////////////////////////////////////////////////////////////
-    // feeder timer -- WIP
-    "targetFeeder": null, 
-    "usedFeeder": false,
-    "feederUses": 2, 
-    "feederTimeRemaining": 0, 
-
-    // bonzo mask timer
-    "targetBonzo": null, 
-    "usedBonzo": false, 
-
-    // spirit mask timer
-    "targetSecondWind": null, 
-    "usedSecondWind": false, 
-
-    // rekindle timer
-    "targetRekindle": null, 
-    "usedRekindle": false, 
-
-    // mushy tonic timer
-    "targetTonic": null, 
-    "usedTonic": false, 
-
-    // kings scent timer
-    "targetScent": null, 
-    "usedScent": false, 
-
-    // cake timer
-    "targetCake": null, 
-    "usedCake": false, 
-
     // powerups
     // homing snowball timer
     "targetHoming": null, 
@@ -657,30 +641,7 @@ export let data = new PogObject("Bao", {
 
     // doubleup timer
     "targetDoubleUp": null, 
-    "usedDoubleUp": false,
-    ///////////////////////////////////////////////////////////////////////////////
-    // GARDEN PLOT TIMERS
-    ///////////////////////////////////////////////////////////////////////////////
-    "targetSpray": null,
-    "usedSpray": false,
-
-
-    // Dragons
-    // "dragons": {
-    //     "protector": 0, 
-    //     "old": 0, 
-    //     "unstable": 0, 
-    //     "young": 0, 
-    //     "strong": 0, 
-    //     "wise": 0, 
-    //     "superior": 0,
-    //     "dragsSinceSup": 0,
-    //     "crystalFrags": 0,
-    // }, 
-
-    // experimental locals
-    "audioInst": new Audio(),
-
+    "usedDoubleUp": false, 
 }, "data.json");
 
 register("gameLoad", () => {

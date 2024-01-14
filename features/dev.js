@@ -5,11 +5,6 @@ register('command', (args) => {
     data.audioInst.playDefaultSound();
 }).setName('titlesim').setAliases('tsim');
 
-////////////////////////////////
-// ali's tab thing [WIP]
-// sends message for accurate level detection
-////////////////////////////////
-
 // ah filter
 let attributeAliases = {
     "blazing_fortune": "bf", 
@@ -30,9 +25,3 @@ let attributeAliases = {
     "hunter": "ht", 
     "trophy_hunter": "th"
 }
-
-register('chat', (event) => {
-    setTimeout(() => {
-        ChatLib.command(`msg mlgplush elo blub`)
-    }, 1)
-}).setCriteria('Friend > MLGPlush joined.');

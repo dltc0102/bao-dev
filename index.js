@@ -6,14 +6,15 @@ import './features/fishing_pings.js'
 import './features/fishing_stats.js'
 import './features/garden.js'
 import './features/general_qol.js' 
-// import './features/misc.js' 
+import './features/misc.js' 
 // import './features/mythos.js'
-// import './features/timers.js' 
+import './features/timers.js' 
 
 
 // import './features/winter.js'
 // import './features/new_timers.js'
 // import './features/padding.js'
+import './features/dungeon_cleaner.js'
 
 /* Dev.js 
 * o Reset Button
@@ -66,3 +67,11 @@ register('step', () => {
 // }).setName('movebao').setAliases('mb', 'mbao');
 
 // var movebao = new Gui();
+
+register('command', () => {
+    ChatLib.chat(`x: ${data.fishingOverlays.bobberCounter.x}, y: ${data.fishingOverlays.bobberCounter.y}`);
+}).setName('whatsmbc');
+
+register('command', () => {
+    ChatLib.chat(`x: ${data.fishingOverlays.playerCounter.x}, y: ${data.fishingOverlays.playerCounter.y}`);
+}).setName('whatsmpc');

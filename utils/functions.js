@@ -254,19 +254,22 @@ export function displayEntityHP(names, foundEntity, x, y) {
 // CONSTRAIN COORDS ------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 export function constrainX(x, margin, text) {
+    console.log(`func passedX: ${x}`)
     let stringW = Renderer.getStringWidth(text);
     let result = 0;
     if (x < margin) {
-        result = margin
+        result = margin;
     } else if (x > data.screenW - margin - stringW) {
         result = data.screenW - margin - stringW;
     } else {
         result = x;
     }
+    console.log(`func constrainX: ${result}`);
     return result; 
 }
 
 export function constrainY(y, margin, text) {
+    console.log(`func passedY: ${y}`)
     let stringH = getNumLines(text) * data.baseTextH;
     let result = 0;
     if (y < margin) {
@@ -276,6 +279,7 @@ export function constrainY(y, margin, text) {
     } else {
         result = y;
     }
+    console.log(`func constrainY: ${result}`);
     return result;
 }
 
@@ -489,7 +493,7 @@ export function getThunderBottle() {
         const slotItem = Player.getInventory().getStackInSlot(slotNum).getLore();
         
         // filter out for 'thunder in a bottle' or 'empty thunder bottle'
-        if (slotItem[0].toLowerCase().includes('thunder in a bottle') || slotItem[0].toLowerCase().includes('empty thunder bottle')) {
+        if (slotItem[0] && slotItem[0].toLowerCase().includes('thunder in a bottle') || slotItem[0].toLowerCase().includes('empty thunder bottle')) {
             
             // filter charges
             if (slotItem[0].toLowerCase().includes('thunder in a bottle')) {
@@ -850,59 +854,68 @@ export function checkLSRange(entity) {
     return distFromMob;
 }
 
-export function calcSkillXP(xp) {
-    let currLevel = 0;
-    let basicXP = {
-        '1': 1000,
-        '2': 2000,
-        '3': 5000,
-        '4': 7500,
-        '5': 10000,
-    }
-    for (let i = 0; i < basicXP.length; i++) {
-        if (xp <= basicXP[i]) {
-            currLevel = i;
-            return currLevel;
+export function regNearbyOrbs(dataObj) {
+    const nearbyOrbs = World.getAllEntitiesOfType(data.entities.entityArmorStand)
+            .filter(orbEntity => {
+                const orbName = orbEntity.getName().removeFormatting();
+                const effectiveRadius = orbEntity.distanceTo(Player.getPlayer());
+                return (orbName.includes('Overflux') || orbName.includes('Plasmaflux')) && effectiveRadius < 19; 
+            });
+
+        if (nearbyOrbs.length > 0) {
+            dataObj.found = true;
+            dataObj.registered = [];
+            for (const registeredOrb of nearbyOrbs) {
+                const orbName = registeredOrb.getName().removeFormatting();
+                if (orbName.includes('Overflux')) { dataObj.type = 5; }
+                if (orbName.includes('Plasmaflux')) { dataObj.type = 6; }
+                const countdownMatch = orbName.match(/(\d+)s/);
+                if (countdownMatch) { dataObj.timeLeft = countdownMatch[1]; }
+                dataObj.registered.push(orbName);
+            }
+            
+            if (dataObj.timeLeft !== "") {
+                if (dataObj.type === 5 || dataObj.type === 6) {
+                const orbTypeColor = dataObj.type === 5 ? '&5' : '&d';
+                dataObj.displayText = `${orbTypeColor}[&rFlux${orbTypeColor}]: &b${dataObj.timeLeft}s`;
+                }
+                if (dataObj.displayText === '[Flux]: 10s') ChatLib.chat('&c10s of Flux left!');
+            }
+        } else {
+            dataObj.displayText = "";
+            dataObj.found = false;
         }
-    }
 }
 
-export function crossLoadTimer(dataUsedVar, dataTargetVar) {
-    if (dataUsedVar) {
-        const targetTime = new Date(dataTargetVar);
-        return ((targetTime - new Date()) / 1000).toFixed(0);
-    } else {
-        return 0;
-    }
-}
-
-export function getTimerTarget(cooldown, timeType) {
-    const targetTime = new Date();
-    if (timeType === 's') targetTime.setSeconds(targetTime.getSeconds() + cooldown);
-    if (timeType === 'm') targetTime.setMinutes(targetTime.getMinutes() + cooldown);
-    if (timeType === 'h') targetTime.setHours(targetTime.getHours() + cooldown);
-    return targetTime;
-}
-
-export function trackChatTimer(dataUsedVar, dataTargetVar, varTimeLeft, nameOfTimer, colorCode) {
-    console.log('running func: trackChatTimer')
-    console.log(`trackchattimer val: ${varTimeLeft}`)
-    let updatedTimeLeft = varTimeLeft;
-    if (updatedTimeLeft > 0) {
-        dataUsedVar = true;
-        updatedTimeLeft -= 1;
-        updateCDText(colorCode, nameOfTimer, updatedTimeLeft);
-    } else if (updatedTimeLeft === 0 || updatedTimeLeft < 0) {
-        dataUsedVar = false;
-        showAlert(`&c${nameOfTimer} &eExpired`)
+export function checkTimeLeft(timerObj, name, ability) {
+    if (timerObj.timeLeft > 0) {
+        timerObj.used = true;
+        timerObj.timeLeft -= 1;
+    } else if (timerObj.timeLeft === 0) {
         data.audioInst.playDefaultSound();
-        if (nameOfTimer === 'Pest Repellent') ChatLib.chat(`&eYour &cPest Repellent Bonus Farming Fortune &ehas worn off!`);
-        ChatLib.chat(`&eYour &c${nameOfTimer} &ehas expired.`)
-        dataTargetVar = 0;
-        updateCDText(colorCode, nameOfTimer, updatedTimeLeft);
+        if (name === 'Phoenix' || name === 'Spirit Mask' || name === 'Bonzo Mask') {
+            ChatLib.chat(`&eYour ${name}'s &c${ability}&e ability has been refreshed!`);
+            showAlert(`&a${ability} Available`);
+        } else {
+            if (name === 'Glowy Tonic') ChatLib.chat(`&eYour &2${name}&e has expired.`);
+            if (name === 'Gummy Bear') ChatLib.chat(`&eYour &cReheated ${name}&e has expired.`)
+            showAlert(`&a${ability} Expired`);
+
+        }
+
+        timerObj.used = false;
+        timerObj.target = 0;
     }
-    console.log(`updatedtimeleft: ${updatedTimeLeft}`)
-    return updatedTimeLeft;
 }
 
-
+export function setTimer(timerObj) {
+    timerObj.used = true;
+    const targetTime = new Date();
+    if (timerObj.name === 'Second Wind') {
+        targetTime.setSeconds(targetTime.getSeconds() + timerObj.cd);
+    } else { 
+        targetTime.setMinutes(targetTime.getMinutes() + timerObj.cd);
+    }
+    timerObj.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+    timerObj.target = targetTime;
+}

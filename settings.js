@@ -912,15 +912,6 @@ class Settings {
     })
     thunder_ping = false;
     
-    // Flash 1 Ping [Thunder Ping]
-    @SwitchProperty({
-        name: "Flash I Ping",
-        description: "Shows and Announces Flash I Ping when dropped.",
-        category: "Fishing Pings",
-        subcategory: "Crimson Isles"
-    })
-    flash1_ping = false;
-    
     // Vanquisher Ping
     @SwitchProperty({
         name: "Vanquisher Ping",
@@ -1542,7 +1533,6 @@ class Settings {
         // this.addDependency(child name, parent name)
         // fishing.crimson_isles
         this.addDependency("Radioactive Vial Ping", "Jawbus Ping")
-        this.addDependency("Flash I Ping", "Thunder Ping")
 
         // fishing.winter_island
         this.addDependency("Baby Yeti Pet Drop Ping", "Yeti Ping")

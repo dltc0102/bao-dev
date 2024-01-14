@@ -63,7 +63,7 @@ createGuiCommand(data.fishingOverlays.movecharges, 'movecharge', 'mcc')
 
 register("step", () => {
     if (!data.inSkyblock) return;
-    
+
     // bobber counter
     data.fishingOverlays.bobberCount = World.getAllEntitiesOfType(data.entities.entityFishHook).filter(dist => dist.distanceTo(Player.getPlayer()) < 31).length
     nearbyBobbers = data.fishingOverlays.bobberCount > 0 ? Math.round(data.fishingOverlays.bobberCount) : '0';
@@ -81,34 +81,36 @@ register("step", () => {
     nearbyPlayersText = data.fishingOverlays.playerCount > 0 ? data.fishingOverlays.playerCount : '0';
     data.fishingOverlays.playerCountText = `&rPlayers: ${playerCountColor}${nearbyPlayersText}`
     
-    // detect doublehook jawbus
-    detectDH(data.entities.entityArmorStand, 'Jawbus', '&4', 'Follower', data.fishingOverlays.jawbusInfo);
-    nearbyJawbusText = data.fishingOverlays.jawbusInfo.foundNearby ? 'YES' : 'NO';
-    nearbyJawbusCount = data.fishingOverlays.jawbusInfo.numNearby > 0 ? ` [x${data.fishingOverlays.jawbusInfo.numNearby}]` : '';
-    data.fishingOverlays.nbJawbusText = `&rNearby Jawbus: &b${nearbyJawbusText}  &6${nearbyJawbusCount}`
-    
-    // detect doublehook thunder
-    detectDH(data.entities.entityArmorStand, 'Thunder', '&b', null, data.fishingOverlays.thunderInfo);
-    nearbyThunderText = data.fishingOverlays.thunderInfo.foundNearby ? 'YES' : 'NO';
-    nearbyThunderCount = data.fishingOverlays.thunderInfo.numNearby > 0 ? `[x${data.fishingOverlays.thunderInfo.numNearby}]` : '';
-    data.fishingOverlays.nbThunderText = `&rNearby Thunder: &b${nearbyThunderText}  &6${nearbyThunderCount}`
-
-    // thunder bottle display
-    charge = getThunderBottle();
-    // console.log(charge);
-    if (charge === '50000') {
-        if (Settings.full_bottle_ping && !data.fishingOverlays.fullBottleMsgSent) {
-            showAlert('&b&lTHUNDER BOTTLE FULL');
-            data.audioInst.playDefaultSound();
-            data.fishingOverlays.fullBottleMsgSent = true;
+    if (data.currArea === 'Crimson Isles')  {
+        // detect doublehook jawbus
+        detectDH(data.entities.entityArmorStand, 'Jawbus', '&4', 'Follower', data.fishingOverlays.jawbusInfo);
+        nearbyJawbusText = data.fishingOverlays.jawbusInfo.foundNearby ? 'YES' : 'NO';
+        nearbyJawbusCount = data.fishingOverlays.jawbusInfo.numNearby > 0 ? ` [x${data.fishingOverlays.jawbusInfo.numNearby}]` : '';
+        data.fishingOverlays.nbJawbusText = `&rNearby Jawbus: &b${nearbyJawbusText}  &6${nearbyJawbusCount}`
+        
+        // detect doublehook thunder
+        detectDH(data.entities.entityArmorStand, 'Thunder', '&b', null, data.fishingOverlays.thunderInfo);
+        nearbyThunderText = data.fishingOverlays.thunderInfo.foundNearby ? 'YES' : 'NO';
+        nearbyThunderCount = data.fishingOverlays.thunderInfo.numNearby > 0 ? `[x${data.fishingOverlays.thunderInfo.numNearby}]` : '';
+        data.fishingOverlays.nbThunderText = `&rNearby Thunder: &b${nearbyThunderText}  &6${nearbyThunderCount}`
+        
+        // thunder bottle display
+        charge = getThunderBottle();
+        // console.log(charge);
+        if (charge === '50000') {
+            if (Settings.full_bottle_ping && !data.fishingOverlays.fullBottleMsgSent) {
+                showAlert('&b&lTHUNDER BOTTLE FULL');
+                data.audioInst.playDefaultSound();
+                data.fishingOverlays.fullBottleMsgSent = true;
+            }
+            data.fishingOverlays.thunderBottleText = `Thunder Bottle: &b&lFULL`
+        } else if (charge === 'No Bottle Available') {
+            data.fishingOverlays.thunderBottleText = `Thunder Bottle: &c${charge}`;
+            data.fishingOverlays.fullBottleMsgSent = false;
+        } else {
+            data.fishingOverlays.thunderBottleText = `Thunder Bottle: &b${charge}`;
+            data.fishingOverlays.fullBottleMsgSent = false;
         }
-        data.fishingOverlays.thunderBottleText = `Thunder Bottle: &b&lFULL`
-    } else if (charge === 'No Bottle Available') {
-        data.fishingOverlays.thunderBottleText = `Thunder Bottle: &c${charge}`;
-        data.fishingOverlays.fullBottleMsgSent = false;
-    } else {
-        data.fishingOverlays.thunderBottleText = `Thunder Bottle: &b${charge}`;
-        data.fishingOverlays.fullBottleMsgSent = false;
     }
 }).setFps(5);
 

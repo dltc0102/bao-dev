@@ -64,8 +64,8 @@ register('step', () => {
 register('dragged', (dx, dy, x, y) => {
     if (!data.inSkyblock) return;
     if (data.miscInfo.mining.movedaycounter.isOpen()) {
-        data.DayCount.x = constrainX(x, 3, data.miscInfo.mining.displayText);
-        data.DayCount.y = constrainY(y, 3, data.miscInfo.mining.displayText);
+        data.miscInfo.mining.dayCounter.x = constrainX(x, 3, data.miscInfo.mining.displayText);
+        data.miscInfo.mining.dayCounter.y = constrainY(y, 3, data.miscInfo.mining.displayText);
     }
 })
 
@@ -74,7 +74,7 @@ register('renderOverlay', () => {
     if (!World.isLoaded()) return;
     if (!Settings.lobbyDayCount) return;
     if (data.currArea === 'Garden') return;
-    Renderer.drawStringWithShadow(data.miscInfo.mining.displayText, data.DayCount.x, data.DayCount.y)
+    Renderer.drawStringWithShadow(data.miscInfo.mining.displayText, data.miscInfo.mining.dayCounter.x, data.miscInfo.mining.dayCounter.y)
     renderGuiPosition(data.miscInfo.mining.movedaycounter, data.DayCount, `Day: 0.00`)
 });
 
@@ -228,7 +228,6 @@ register('chat', (spawner, location, event) => {
     sendMessage(`[!] Horseman @ ${location} [!]`);
     data.audioInst.playDefaultSound();
 }).setCriteria("${spawner} has spawned the Headless Horseman boss in the ${location}!")
-
 
 /////////////////////////////////////////////////
 // PRIMAL FEARS
