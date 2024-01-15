@@ -92,61 +92,70 @@ register('chat', (event) => {
 ////////////////////////////////////////////////////////////////////////////////
 // RENDER OVERLAY
 ////////////////////////////////////////////////////////////////////////////////
-data.timerInfos.moveTimerDisplay = new Gui(); // timer displays
-data.timerInfos.moveFluxTimerDisplay = new Gui();
+data.timerInfos.moveTimerDisplay = new Gui(); 
 register('gameLoad', () => {
-    if (!Settings.rekindleAlert) return;
-    if (!Settings.secondWindAlert) return;
-    if (!Settings.mushyTimer) return;
-    if (!Settings.bonzo_cd_timer) return;
-    if (!Settings.kingScentTimer) return;
-    if (!Settings.gummyTimer) return;
-
-    if (data.timerInfos.rekindle.used) {
-        const targetTime = new Date(data.timerInfos.rekindle.target);
-        data.timerInfos.rekindle.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
-    } else {
-        data.timerInfos.rekindle.timeLeft = 0;
+    if (!data.inSkyblock) return;
+    if (Settings.rekindleAlert) {
+        if (data.timerInfos.rekindle.used) {
+            data.timerInfos.rekindle.timeLeft = 0;
+            const targetTime = new Date(data.timerInfos.rekindle.target);
+            data.timerInfos.rekindle.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+        } else {
+            data.timerInfos.rekindle.timeLeft = 0;
+        }
+    }
+    
+    if (Settings.secondWindAlert) {
+        if (data.timerInfos.secondWind.used) {
+            data.timerInfos.secondWind.timeLeft = 0;
+            const targetTime = new Date(data.timerInfos.secondWind.target);
+            data.timerInfos.secondWind.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+        } else {
+            data.timerInfos.secondWind.timeLeft = 0;
+        }
+    }
+    if (Settings.mushyTimer) {
+        if (data.timerInfos.glowyTonic.used) {
+            data.timerInfos.glowyTonic.timeLeft = 0;
+            const targetTime = new Date(data.timerInfos.glowyTonic.target);
+            data.timerInfos.glowyTonic.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+        } else {
+            data.timerInfos.glowyTonic.timeLeft = 0;
+        }
     }
 
-    if (data.timerInfos.secondWind.used) {
-        const targetTime = new Date(data.timerInfos.secondWind.target);
-        data.timerInfos.secondWind.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
-    } else {
-        data.timerInfos.secondWind.timeLeft = 0;
+    if (Settings.bonzo_cd_timer) {
+        if (data.timerInfos.bonzo.used) {
+            data.timerInfos.bonzo.timeLeft = 0;
+            const targetTime = new Date(data.timerInfos.bonzo.target);
+            data.timerInfos.bonzo.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+        } else {
+            data.timerInfos.bonzo.timeLeft = 0;
+        }
+    }   
+
+    if (Settings.kingScentTimer) {
+        if (data.timerInfos.kingsScent.used) {
+            data.timerInfos.kingsScent.timeLeft = 0;
+            const targetTime = new Date(data.timerInfos.kingsScent.target);
+            data.timerInfos.kingsScent.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+        } else {
+            data.timerInfos.kingsScent.timeLeft = 0;
+        }
     }
 
-    if (data.timerInfos.glowyTonic.used) {
-        const targetTime = new Date(data.targetTonic);
-        data.timerInfos.glowyTonic.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
-    } else {
-        data.timerInfos.glowyTonic.timeLeft = 0;
-    }
-
-    if (data.timerInfos.bonzo.used) {
-        const targetTime = new Date(data.timerInfos.bonzo.target);
-        data.timerInfos.bonzo.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
-    } else {
-        data.timerInfos.bonzo.timeLeft = 0;
-    }
-
-    if (data.timerInfos.kingsScent.used) {
-        const targetTime = new Date(data.timerInfos.kingsScent.target);
-        data.timerInfos.kingsScent.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
-    } else {
-        data.timerInfos.kingsScent.timeLeft = 0;
-    }
-
-    if (data.timerInfos.gummy.used) {
-        const targetTime = new Date(data.timerInfos.gummy.target);
-        data.timerInfos.gummy.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
-    } else {
-        data.timerInfos.gummy.timeLeft = 0;
+    if (Settings.gummyTimer) {
+        if (data.timerInfos.gummy.used) {
+            data.timerInfos.gummy.timeLeft = 0;
+            const targetTime = new Date(data.timerInfos.gummy.target);
+            data.timerInfos.gummy.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+        } else {
+            data.timerInfos.gummy.timeLeft = 0;
+        }
     }
 })
 
-createGuiCommand(data.timerInfos.moveTimerDisplay, 'movetimer', 'mtm');
-createGuiCommand(data.timerInfos.moveFluxTimerDisplay, 'movefluxtimer', 'mflux');
+createGuiCommand(data.timerInfos.moveTimerDisplay, 'movetimerdisplay', 'mtm');
 
 register('step', () => {
     if (!data.inSkyblock || !World.isLoaded()) return;
@@ -181,13 +190,19 @@ register('step', () => {
         timerValues.push({ name: "King's Scent", color: '&2', timeLeft: data.timerInfos.kingsScent.timeLeft});
     }
 
-    // cake
-    // cakeDisplayText = Settings.cake_timer ? /** updateCDText(cakeTimeLeft) */ '' : '';
-
     // gummy bear
     if (Settings.gummyTimer) {
+        // console.log(`name: ${gummyObj.name}`)
+        // console.log(`used: ${gummyObj.used}`)
+        // console.log(`cd: ${gummyObj.cd}`)
+        // console.log(`timeLeft: ${gummyObj.timeLeft}`)
+        // console.log(`target: ${gummyObj.target}`)
         if (data.timerInfos.gummy.used) checkTimeLeft(gummyObj, 'Gummy Bear');
         timerValues.push({name: "Gummy Bear", color: '&a', timeLeft: data.timerInfos.gummy.timeLeft});
+    }
+
+    if (Settings.flux_timer) {
+        timerValues.push({name: "Flux", color: data.timerInfos.orb.color, timeLeft: data.timerInfos.orb.timeLeft});
     }
 
     timerValues.sort((a, b) => b.timeLeft - a.timeLeft);
@@ -198,22 +213,14 @@ register('step', () => {
 register('dragged', (dx, dy, x, y) => {
     if (!data.inSkyblock) return;
     if (data.timerInfos.moveTimerDisplay.isOpen()) {
-        data.timerDis.x = constrainX(x, 3, data.timerInfos.displayText);
-        data.timerDis.y = constrainY(y, 3, data.timerInfos.displayText);
-    }
-    if (data.timerInfos.moveFluxTimerDisplay.isOpen()) {
-        data.fluxTimer.x = constrainX(x, 3, orbObj.displayText);
-        data.fluxTimer.y = constrainY(y, 3, orbObj.displayText);
+        data.timerInfos.x = constrainX(x, 3, data.timerInfos.draggedTimerText);
+        data.timerInfos.y = constrainY(y, 3, data.timerInfos.draggedTimerText);
+        data.save();
     }
 });
 
 register('renderOverlay', () => {
     if (!data.inSkyblock) return;
     Renderer.drawStringWithShadow(data.timerInfos.displayText, data.timerInfos.x, data.timerInfos.y);
-    renderGuiPosition(data.timerInfos.moveTimerDisplay, data.timerInfos, "&2Mushy Tonic: &r00m 00s\n&2King's Scent: &r00m 00s\n&6Bonzo's Mask: &r00m 00s\n&6Rekindle: 00m 00s\n&6Second Wind: &r00m 00s\n&aGummy Bear: &r00m00s")
-    
-    if (Settings.flux_timer && orbObj.found) {
-        Renderer.drawStringWithShadow(orbObj.displayText, orbObj.x, orbObj.y);
-        renderGuiPosition(data.timerInfos.moveFluxTimerDisplay, orbObj, '[Flux]: 00s')
-    }
+    renderGuiPosition(data.timerInfos.moveTimerDisplay, data.timerInfos, data.timerInfos.draggedTimerText)
 });

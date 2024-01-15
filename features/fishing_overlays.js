@@ -136,13 +136,13 @@ register('renderOverlay', () => {
     // detect double/nearby jawbus
     if (Settings.detectDoubleJawbus && data.currArea === 'Crimson Isle') {
         Renderer.drawString(data.fishingOverlays.nbJawbusText, data.fishingOverlays.jawbusCounter.x, data.fishingOverlays.jawbusCounter.y);
-        if (Settings.jawbus_hp) displayEntityHP(data.fishingOverlays.jawbusInfo.names, data.fishingOverlays.jawbusInfo.found, data.snapTop.x, data.snapTop.y)
+        if (Settings.jawbus_hp) displayEntityHP(data.fishingOverlays.jawbusInfo.names, data.fishingOverlays.jawbusInfo.found, data.hpDisplayInfo.x, data.hpDisplayInfo.y)
     }
     
     // detect double/nearby thunder
     if (Settings.detectDoubleThunder && data.currArea === 'Crimson Isle') {
         Renderer.drawString(data.fishingOverlays.nbThunderText, data.fishingOverlays.thunderCounter.x, data.fishingOverlays.thunderCounter.y);
-        if (Settings.thunder_hp) displayEntityHP(data.fishingOverlays.thunderInfo.names, data.fishingOverlays.thunderInfo.found, data.snapTop.x, data.snapTop.y)
+        if (Settings.thunder_hp) displayEntityHP(data.fishingOverlays.thunderInfo.names, data.fishingOverlays.thunderInfo.found, data.hpDisplayInfo.x, data.hpDisplayInfo.y)
     }
     
     // charge counter

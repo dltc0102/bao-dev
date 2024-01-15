@@ -53,8 +53,8 @@ register('renderOverlay', () => {
     if (!World.isLoaded()) return;
     if (!data.inSkyblock) return;
     if (!Settings.master_displayHP) return;
-    Renderer.drawString(data.hpDisplayInfo.displayText, data.HPCount.x, data.HPCount.y);
-    renderGuiPosition(data.hpDisplayInfo.moveHpDisplay, data.HPCount, '[Lv000] SomeMobMonster 10M/10M ❤ -- [✖]')
+    Renderer.drawString(data.hpDisplayInfo.displayText, data.hpDisplayInfo.x, data.hpDisplayInfo.y);
+    renderGuiPosition(data.hpDisplayInfo.moveHpDisplay, data.hpDisplayInfo, '[Lv000] SomeMobMonster 10M/10M ❤ -- [✖]')
 });
 
 

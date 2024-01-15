@@ -81,15 +81,16 @@ register('chat', (secretCount, event) => {
 
 register('chat', (cataType, floor, event) => {
     if (!data.inSkyblock) return;
+    data.dungeons.numRunsStats += 1;
     setTimeout(() => {
         ChatLib.chat(`${data.modPrefix} &3${Player.getName()} &7Secrets: &b${data.dungeons.secretStats}&7, Deaths: &b${data.dungeons.deathStats}`)
-    }, 3000)
+    }, 3000);
     debug(`extraStatsFlag: ${data.dungeons.extraStatsFlag}`);
 }).setCriteria('${cataType} Catacombs - Floor ${floor} Stats').setContains();
 
 register('step', () => {
     if (!data.inSkyblock) return;
-    data.dungeons.secretOverviewText = `Runs: &b${data.dungeons.numRunsStats}&r | Secrets: &b${data.dungeons.secretStats}&r | Avg: &b${(data.dungeons.secretStats / data.dungeons.numRunStats).toFixed(2)}&r/&brun`
+    data.dungeons.secretOverviewText = `Runs: &b${data.dungeons.numRunsStats}&r | Secrets: &b${data.dungeons.secretStats}&r | Avg: &b${(data.dungeons.secretStats / data.dungeons.numRunsStats).toFixed(2)}&r/&brun`
 }).setFps(1);
 
 register('dragged', (dx, dy, x, y) => {
@@ -104,6 +105,7 @@ register('renderOverlay', () => {
     if (!data.inSkyblock) return;
     if (!Settings.secretsPerSession) return;
     if (data.currArea === 'Catacombs' || data.currArea === 'Dungeon Hub') {
+        data.dungeons.secretCounter.x = data.screenW / 2 - (Renderer.getStringWidth(data.dungeons.secretOverviewText) / 2);
         Renderer.drawStringWithShadow(data.dungeons.secretOverviewText, data.dungeons.secretCounter.x, data.dungeons.secretCounter.y)
         renderGuiPosition(data.dungeons.movesecretcounter, data.dungeons.secretCounter, `Runs: 0 | Secrets: 0 | Avg: 0/run`)
     }
@@ -120,7 +122,9 @@ register('chat', (leader, catacombType, floorNum, event) => {
 }).setCriteria('${leader} entered ${catacombType} Catacombs, Floor ${floorNum}!').setContains();
 
 register('command', () => {
-    data.dungeons.numRunStats = 0;
+    data.dungeons.deathStats = 0;
+    data.dungeons.secretStats = 0;
+    data.dungeons.numRunsStats = 0;
 }).setName('resetsecretcounter');
 
 // scarf fire freeze timer

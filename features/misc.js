@@ -75,7 +75,7 @@ register('renderOverlay', () => {
     if (!Settings.lobbyDayCount) return;
     if (data.currArea === 'Garden') return;
     Renderer.drawStringWithShadow(data.miscInfo.mining.displayText, data.miscInfo.mining.dayCounter.x, data.miscInfo.mining.dayCounter.y)
-    renderGuiPosition(data.miscInfo.mining.movedaycounter, data.DayCount, `Day: 0.00`)
+    renderGuiPosition(data.miscInfo.mining.movedaycounter, data.miscInfo.mining.dayCounter, `Day: 0.00`)
 });
 
 // golden goblin alert

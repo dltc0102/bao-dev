@@ -1,4 +1,5 @@
 import Settings from '../settings.js';
+import { data } from '../utils/data.js'
 import { debug } from '../utils/utils.js';
 
 let usingPet = false;

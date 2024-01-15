@@ -10,9 +10,8 @@ export let data = new PogObject("Bao", {
     ///////////////////////////////////////////////////////////////////////////////
     "inSkyblock": false,
     "currArea": '',
-    "baseTextH": 10,
     "audioInst": new Audio(),
-
+    
     ///////////////////////////////////////////////////////////////////////////////
     // JAVA TYPES
     ///////////////////////////////////////////////////////////////////////////////
@@ -22,8 +21,8 @@ export let data = new PogObject("Bao", {
         "entityArrow": Java.type("net.minecraft.entity.projectile.EntityArrow"), 
         "entityPlayer": Java.type("net.minecraft.entity.player.EntityPlayer"),
     },
-
-
+    
+    
     ///////////////////////////////////////////////////////////////////////////////
     // SCREEN HEIGHT AND WIDTH and others
     ///////////////////////////////////////////////////////////////////////////////
@@ -31,6 +30,7 @@ export let data = new PogObject("Bao", {
     "screenW": Renderer.screen.getWidth(), 
     "thickSep": '==================', 
     "thinSep": '------------------',
+    "baseTextH": 10,
 
     ///////////////////////////////////////////////////////////////////////////////
     // HP DISPLAY
@@ -41,6 +41,8 @@ export let data = new PogObject("Bao", {
         "displayText": '',
         "mobInfos": [],
         "moveHpDisplay": null,
+        "x": 400, 
+        "y": 40,
     }, 
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -51,7 +53,7 @@ export let data = new PogObject("Bao", {
         "extraStatsFlag": false,
         "deathStats": 0, 
         "secretStats": 0, 
-        "numRunStats": 0, 
+        "numRunsStats": 0, 
         "secretOverviewText": '',
         "movesecretcounter": null,
         "secretCounter": {
@@ -417,6 +419,7 @@ export let data = new PogObject("Bao", {
         }, 
         "orb": {
             "registered": [], 
+            "color": '',
             "displayText": '', 
             "timeLeft": 0, 
             "type": 5, 
@@ -426,7 +429,7 @@ export let data = new PogObject("Bao", {
         },
         "displayText": '', 
         "moveTimerDisplay": null, 
-        "moveFluxTimerDisplay": null, 
+        "draggedTimerText": "&2Mushy Tonic: &r00m 00s\n&2King's Scent: &r00m 00s\n&6Bonzo's Mask: &r00m 00s\n&6Rekindle: 00m 00s\n&6Second Wind: &r00m 00s\n&aGummy Bear: &r00m00s\n[Flux]: 00s", 
         "x": 400, 
         "y": 240,
     }, 
@@ -587,61 +590,6 @@ export let data = new PogObject("Bao", {
 
     }, 
 
-    ///////////////////////////////////////////////////////////////////////////////
-    // Fishing COUNTERS
-    ///////////////////////////////////////////////////////////////////////////////
-    "DayCount": { // day counter
-        "x": 300, 
-        "y": 200
-    }, 
-    "HPCount": { // hp counter
-        "x": 400, 
-        "y": 40
-    }, 
-    "timerDis": { // timer display
-        "x": 400, 
-        "y": 240
-    }, 
-    "pupDis": { // powerup display
-        "x": 400, 
-        "y": 260
-    }, 
-
-    ///////////////////////////////////////////////////////////////////////////////
-    // DISPLAY LOCATION FOR MOBS HP
-    ///////////////////////////////////////////////////////////////////////////////
-    "snapTop": {
-        "x": 400, 
-        "y": 40
-    }, 
-
-
-    ///////////////////////////////////////////////////////////////////////////////
-    // DUNGEONS
-    ///////////////////////////////////////////////////////////////////////////////
-    "RCount": { // run counter for goals
-        "x": 300, 
-        "y": 300
-    }, 
-    "runCount": 0, 
-    "runCountGoal": 0,
-    "runFloor": '',
-
-    ///////////////////////////////////////////////////////////////////////////////
-    // TIMERS
-    ///////////////////////////////////////////////////////////////////////////////
-    // powerups
-    // homing snowball timer
-    "targetHoming": null, 
-    "usedHoming": false,
-
-    // strongarm timer
-    "targetStrongarm": null, 
-    "usedStrongarm": false, 
-
-    // doubleup timer
-    "targetDoubleUp": null, 
-    "usedDoubleUp": false, 
 }, "data.json");
 
 register("gameLoad", () => {

@@ -253,9 +253,23 @@ export function displayEntityHP(names, foundEntity, x, y) {
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTRAIN COORDS ------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
+export function getLongestStrWidth(text) {
+    let maxWidth = 0;
+    const splittedStrings = text.split('\n');
+    splittedStrings.forEach((str) => {
+        const width = Renderer.getStringWidth(str);
+        if (width > maxWidth) {
+            maxWidth = width;
+        }
+    })
+    if (maxWidth === 0) maxWidth = Renderer.getStringWidth(text);
+    return maxWidth;
+}
 export function constrainX(x, margin, text) {
     console.log(`func passedX: ${x}`)
-    let stringW = Renderer.getStringWidth(text);
+    
+    let stringW = getLongestStrWidth(text);
+    console.log(stringW)
     let result = 0;
     if (x < margin) {
         result = margin;
@@ -319,11 +333,12 @@ export function updateCDText(colorCode, displayName, cd) {
         const minutes = Math.floor((cd % 3600) / 60);
         const seconds = cd % 60;
         if (hours > 0) {
-            timerText = `${colorCode}${displayName}: &r${hours}h ${minutes}m`;
+            displayName === 'Flux' ? 
+            timerText = `${colorCode}[&r${displayName}${colorCode}]&r: &b${hours}h ${minutes}m` : timerText = `${colorCode}${displayName}: &r${hours}h ${minutes}m`;
         } else if (minutes > 0) {
-            timerText = `${colorCode}${displayName}: &r${minutes}m ${seconds}s`;
+            displayName === 'Flux' ? timerText = `${colorCode}[&r${displayName}${colorCode}]&r: &b${minutes}m ${seconds}s` : timerText = `${colorCode}${displayName}: &r${minutes}m ${seconds}s`;
         } else {
-            timerText = `${colorCode}${displayName}: &r${seconds}s`;
+            displayName === 'Flux' ? timerText = `${colorCode}[&r${displayName}${colorCode}]&r: &b${seconds}s` : timerText = `${colorCode}${displayName}: &r${seconds}s`;
         }
     }
     return timerText + '\n';
@@ -867,8 +882,8 @@ export function regNearbyOrbs(dataObj) {
             dataObj.registered = [];
             for (const registeredOrb of nearbyOrbs) {
                 const orbName = registeredOrb.getName().removeFormatting();
-                if (orbName.includes('Overflux')) { dataObj.type = 5; }
-                if (orbName.includes('Plasmaflux')) { dataObj.type = 6; }
+                if (orbName.includes('Overflux')) { dataObj.type = 5; dataObj.color = '&5';}
+                if (orbName.includes('Plasmaflux')) { dataObj.type = 6; dataObj.color = '&d';}
                 const countdownMatch = orbName.match(/(\d+)s/);
                 if (countdownMatch) { dataObj.timeLeft = countdownMatch[1]; }
                 dataObj.registered.push(orbName);

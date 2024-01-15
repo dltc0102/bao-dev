@@ -413,7 +413,7 @@ class Settings {
         subcategory: "Edit Overlays", 
     })
     openTimerGUI() {
-        ChatLib.command('movetimer', true)
+        ChatLib.command('movetimerdisplay', true)
     }
     
     // Flux Timer
@@ -1356,14 +1356,16 @@ class Settings {
     @SwitchProperty({
         name: "Display Secrets per Run (per session)", 
         description: "Shows your secrets per run per session.",
-        category: "Dungeons"
+        category: "Dungeons", 
+        subcategory: "Secrets",
     })
     secretsPerSession = false;
 
     @ButtonProperty({
         name: "Edit Secret Counter Location", 
         description: "Click the button to move the Secret Counter on your screen.", 
-        category: "Dungeons", 
+        category: "Dungeons",
+        subcategory: "Secrets",
     })
     openSecretCounterGUI() {
         ChatLib.command('movesecretcounter', true)
@@ -1372,74 +1374,74 @@ class Settings {
     // Better Dungeon Messages
     @SwitchProperty({
         name: "Better Dungeon Messages", 
-        description: "Toggle for all dungeon message changes/deletions etc when you are in a dungeon.",
+        description: "Master Toggle for all dungeon message changes/deletions etc when you are in a dungeon.",
         category: "Dungeons"
     })
     betterDungeonMsgs = false;
 
-    // // Toggle: Ability Messages
-    // @SwitchProperty({
-    //     name: "Toggle: Ability Messages", 
-    //     description: "Messages in the dungeon relating your class abilities will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
-    //     category: "Dungeons"
-    // })
-    // dungeonAbiMsgs = false;
+    // Toggle: Ability Messages
+    @SwitchProperty({
+        name: "Toggle: Ability Messages", 
+        description: "Messages in the dungeon relating your class abilities will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+        category: "Dungeons"
+    })
+    dungeonAbiMsgs = false;
 
-    // // Toggle: Revives
-    // @SwitchProperty({
-    //     name: "Toggle: Revives", 
-    //     description: "Messages in the dungeon relating to Revives will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
-    //     category: "Dungeons"
-    // })
-    // dungeonRevMsgs = false;
+    // Toggle: Revives
+    @SwitchProperty({
+        name: "Toggle: Revives", 
+        description: "Messages in the dungeon relating to Revives will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+        category: "Dungeons"
+    })
+    dungeonRevMsgs = false;
 
-    // // Toggle: Deaths
-    // @SwitchProperty({
-    //     name: "Toggle: Deaths", 
-    //     description: "Messages in the dungeon relating to Deaths will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
-    //     category: "Dungeons"
-    // })
-    // dungeonDeathMsgs = false;
+    // Toggle: Deaths
+    @SwitchProperty({
+        name: "Toggle: Deaths", 
+        description: "Messages in the dungeon relating to Deaths will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+        category: "Dungeons"
+    })
+    dungeonDeathMsgs = false;
 
-    // // Toggle: Finding Essences
-    // @SwitchProperty({
-    //     name: "Toggle: Finding Essences", 
-    //     description: "Messages in the dungeon relating to Finding Essences will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
-    //     category: "Dungeons"
-    // })
-    // dungeonEssMsgs = false;
+    // Toggle: Finding Essences
+    @SwitchProperty({
+        name: "Toggle: Finding Essences", 
+        description: "Messages in the dungeon relating to Finding Essences will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+        category: "Dungeons"
+    })
+    dungeonEssMsgs = false;
 
-    // // Toggle: Milestones
-    // @SwitchProperty({
-    //     name: "Toggle: Milestones", 
-    //     description: "Messages in the dungeon relating to Milestones will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
-    //     category: "Dungeons"
-    // })
-    // dungeonMSMsgs = false;
+    // Toggle: Milestones
+    @SwitchProperty({
+        name: "Toggle: Milestones", 
+        description: "Messages in the dungeon relating to Milestones will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+        category: "Dungeons"
+    })
+    dungeonMSMsgs = false;
 
-    // // Toggle: Wither Doors
-    // @SwitchProperty({
-    //     name: "Toggle: Wither Doors", 
-    //     description: "Messages in the dungeon relating to Wither Doors will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
-    //     category: "Dungeons"
-    // })
-    // dungeonWDoorMsgs = false;
+    // Toggle: Wither Doors
+    @SwitchProperty({
+        name: "Toggle: Wither Doors", 
+        description: "Messages in the dungeon relating to Wither Doors will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+        category: "Dungeons"
+    })
+    dungeonWDoorMsgs = false;
 
-    // // Toggle: Blood Doors
-    // @SwitchProperty({
-    //     name: "Toggle: Blood Doors", 
-    //     description: "Messages in the dungeon relating to Blood Doors will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
-    //     category: "Dungeons"
-    // })
-    // dungeonBDoorMsgs = false;
+    // Toggle: Blood Doors
+    @SwitchProperty({
+        name: "Toggle: Blood Doors", 
+        description: "Messages in the dungeon relating to Blood Doors will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+        category: "Dungeons"
+    })
+    dungeonBDoorMsgs = false;
 
-    // // Toggle: Blood Bosses
-    // @SwitchProperty({
-    //     name: "Toggle: Blood Bosses", 
-    //     description: "Messages in the dungeon relating to Blood Room Bosses will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
-    //     category: "Dungeons"
-    // })
-    // dungeonBBossMsgs = false;
+    // Toggle: Blood Bosses
+    @SwitchProperty({
+        name: "Toggle: Blood Bosses", 
+        description: "Messages in the dungeon relating to Blood Room Bosses will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+        category: "Dungeons"
+    })
+    dungeonBBossMsgs = false;
 
 
     
@@ -1561,14 +1563,14 @@ class Settings {
         this.addDependency("Solver for Karen Fear", "Primal Fear Main Toggle")
         
         // dungeons
-        // this.addDependency("Toggle: Ability Messages", "Better Dungeon Messages")
-        // this.addDependency("Toggle: Revives", "Better Dungeon Messages")
-        // this.addDependency("Toggle: Deaths", "Better Dungeon Messages")
-        // this.addDependency("Toggle: Finding Essences", "Better Dungeon Messages")
-        // this.addDependency("Toggle: Milestones", "Better Dungeon Messages")
-        // this.addDependency("Toggle: Wither Doors", "Better Dungeon Messages")
-        // this.addDependency("Toggle: Blood Doors", "Better Dungeon Messages")
-        // this.addDependency("Toggle: Blood Bosses", "Better Dungeon Messages")
+        this.addDependency("Toggle: Ability Messages", "Better Dungeon Messages")
+        this.addDependency("Toggle: Revives", "Better Dungeon Messages")
+        this.addDependency("Toggle: Deaths", "Better Dungeon Messages")
+        this.addDependency("Toggle: Finding Essences", "Better Dungeon Messages")
+        this.addDependency("Toggle: Milestones", "Better Dungeon Messages")
+        this.addDependency("Toggle: Wither Doors", "Better Dungeon Messages")
+        this.addDependency("Toggle: Blood Doors", "Better Dungeon Messages")
+        this.addDependency("Toggle: Blood Bosses", "Better Dungeon Messages")
     }   
 }
 

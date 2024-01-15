@@ -1,11 +1,6 @@
 import Settings from '../settings.js';
 import { data } from '../utils/data.js';
-import { sendMessage } from '../utils/party.js';
-import { debug } from '../utils/utils.js';
-
-///////////////////////////////////////////////////////////////////////////////
-// BETTER DUNGEON MESSAGES
-///////////////////////////////////////////////////////////////////////////////
+import { showAlert } from '../utils/utils.js'
 
 ///////////////////////////////////////////////////////////////////////////////
 // MORT / START
@@ -21,7 +16,7 @@ register('chat', (event) => {
 ///////////////////////////////////////////////////////////////////////////////
 // CLASS STUFF
 ///////////////////////////////////////////////////////////////////////////////
-let dungeonClasses = ['Berserk', 'Archer', 'Tank', 'Healer', 'Mage']
+let dungeonClasses = ['Berserk', 'Archer', 'Tank', 'Healer', 'Mage'];
 register('chat', (className, event) => {
     if (data.currArea !== 'Catacombs') return;
     if (Settings.betterDungeonMsgs) {
@@ -37,7 +32,6 @@ register('chat', (className, event) => {
         ChatLib.chat(`${data.modPrefix} Mode: SOLO`);
     }
 }).setCriteria('Your ${className} stats are doubled because you are the only player using this class!');
-
 
 register('chat', (orbType, player, heal, shield, time, event) => {
     if (Settings.betterDungeonMsgs) cancel(event);
@@ -102,17 +96,10 @@ register('chat', (p1, p2, event) => {
     if (Settings.betterDungeonMsgs) cancel(event);
 }).setCriteria(' ❣ ${p1} was revived by ${p2}!');
 
-
 register('chat', (player, fairy, event) => {
     // ' ❣ oBiscuit was revived by (name) the Fairy!
     if (Settings.betterDungeonMsgs) cancel(event);
 }).setCriteria('❣ ${player} was revived by ${fairy} the Fairy!').setContains();
-
-// Death messages // keep
-register('chat', (player, event) => {
-    // ☠ oBiscuit was killed by (something...)
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria(' ☠ ${player} was killed by').setContains();
 
 // Essence messages
 register('chat', (player, event) => {
@@ -133,6 +120,7 @@ function determineEss(essence) {
     if (essence === 'Wither') format = '&8';
     return format;
 }
+
 register('chat', (numEss, typeEss, event) => {
     if (Settings.betterDungeonMsgs) {
         cancel(event);
@@ -171,9 +159,6 @@ register('chat', (msClass, milestone, msDamage, event) => {
     }
 }).setCriteria('${msClass} Milestone ${milestone}: You have dealt ${msDamage} Total Damage so far!').setContains();
 
-
-
-
 // Wither Door messages
 register('chat', (player, event) => { // keep
     if (Settings.betterDungeonMsgs) cancel(event);
@@ -186,6 +171,14 @@ register('chat', (player, event) => { // keep
 register('chat', (event) => {
     if (Settings.betterDungeonMsgs) cancel(event);
 }).setCriteria('RIGHT CLICK on a WITHER door to open it. This key can only be used to open 1 door!');
+
+register('chat', (event) => {
+    if (Settings.betterDungeonMsgs) {
+        cancel(event);
+        ChatLib.chat('&8Wither Key &aObtained.')
+    }
+}).setCriteria('A Wither Key was picked up!');
+
 
 // Blood Door messages
 let bloodPlayer = '';
@@ -238,13 +231,20 @@ register('chat', (event) => {
     if (Settings.betterDungeonMsgs) cancel(event);
 }).setCriteria("Don't move diagonally! bad!");
 
-
 register('chat', (event) => {
     if (Settings.betterDungeonMsgs) {
         cancel(event);
         ChatLib.chat('&c&lLEVER USED');
     }
 }).setCriteria('This lever has already been used.');
+
+register('chat', (event) => {
+    if (Settings.betterDungeonMsgs) cancel(event);
+}).setCriteria("You cannot hit the silverfish while it's moving!");
+
+register('chat', (event) => {
+    if (Settings.betterDungeonMsgs) cancel(event);
+}).setCriteria("You cannot move the silverfish in that direction!");
 
 // Creeper Veil Messagess
 register('chat', (event) => {
@@ -270,6 +270,18 @@ register('chat', (skull, damage, event) => {
 register('chat', (damage, event) => {
     if (Settings.betterDungeonMsgs) cancel(event);
 }).setCriteria('The Flamethrower hit you for ${damage} damage!');
+
+register('chat', (damage, event) => {
+    if (Settings.betterDungeonMsgs) cancel(event);
+}).setCriteria('The Stormy Skeleton Master struck you for ${damage} damage!');
+
+register('chat', (damage, event) => {
+    if (Settings.betterDungeonMsgs) cancel(event);
+}).setCriteria('The Stormy Crypt Dreadlord struck you for ${damage} damage!');
+
+register('chat', (damage, event) => {
+    if (Settings.betterDungeonMsgs) cancel(event);
+}).setCriteria('The Stormy Fels struck you for ${damage} damage!');
 
 // f1
 
@@ -367,6 +379,11 @@ register('chat', (damage, event) => {
     if (Settings.betterDungeonMsgs) cancel(event);
 }).setCriteria("Goldor's Greatsword hit you for ${damage} damage.");
 
+// f7 p4 necron
+register('chat', (damage, event) => {
+    if (Settings.betterDungeonMsgs) cancel(event);
+}).setCriteria("Necron's Wither TNT hit you for ${damage} damage.");
+
 // npc sold hider
 // get list of dungeon items
 register('chat', (thing, amt, coin, event) => {
@@ -390,15 +407,6 @@ register('chat', (pplayer, status, event) => {
     }
 }).setCriteria('Friend > ${player} ${status}.');
 
-// silverfish messages
-register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria("You cannot hit the silverfish while it's moving!");
-
-register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria("You cannot move the silverfish in that direction!");
-
 // obtained stuff
 register('chat', (player, ting, event) => {
     if (Settings.betterDungeonMsgs) cancel(event);
@@ -407,6 +415,10 @@ register('chat', (player, ting, event) => {
 register('chat', (book, event) => {
     if (Settings.betterDungeonMsgs) cancel(event);
 }).setCriteria('You found a journal named ${book}!');
+
+register('chat', (item, mf, event) => {
+    if (data.currArea === 'Catacombs' && Settings.betterDungeonMsgs) cancel(event);
+}).setCriteria('RARE DROP! ${item} (+${mf}% ✯ Magic Find)');
 
 // witherborn
 register('chat', (enemies, damage, event) => {
@@ -459,3 +471,27 @@ register('chat', (pu1, pu2, icon, effect, event) => {
 register('chat', (pu1, pu2, icon, effect, event) => {
     if (Settings.betterDungeonMsgs) cancel(event);
 }).setCriteria('Granted you +${pu1} & +${pu2}x ${icon} ${effect}.');
+
+// trivia weirdos
+register('chat', (event) => {
+    if (Settings.betterDungeonMsgs) cancel(event);
+}).setCriteria('[NPC] ').setContains();
+
+register('chat', (event) => {
+    if (Settings.betterDungeonMsgs) cancel(event);
+}).setCriteria('You found a Secret Redstone Key!');
+
+// full inv
+register('chat', (event) => {
+    if (Settings.betterDungeonMsgs) {
+        cancel(event);
+        ChatLib.chat('&c&lFULL INVENTORY');
+        showAlert('&c&lFULL INV');
+        data.audioInst.playDefaultSound();
+    }
+}).setCriteria("You don't have enough space in your inventory to pick up this item!");
+
+// minibosses
+register('chat', (miniBoss, ability, event) => {
+    if (Settings.betterDungeonMsgs) cancel(event);
+}).setCriteria("The ${miniBoss} used ${ability} on you!");
