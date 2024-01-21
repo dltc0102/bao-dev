@@ -1,18 +1,72 @@
-import Settings from '../settings.js'
-import { data } from '../utils/data.js'
-import { constrainX, constrainY, createGuiCommand, detectDH, displayEntityHP, filterBotNames, getFilteredPlayerTabNames, getNearbyPlayers, getThunderBottle, renderGuiPosition } from '../utils/functions.js'; // detecting DH
-import { showAlert } from '../utils/utils.js'
+import Settings from '../settings.js';
+import Audio from '../utils/audio.js';
+import PogObject from 'PogData';
+
+import { showAlert } from '../utils/utils.js';
+import { constrainX, constrainY } from '../utils/functions.js' // padding
+import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'; // gui
+import { detectDH, displayEntityHP, getPlayerCount, getThunderBottle } from '../utils/functions.js'; // detecting DH
+import { getInSkyblock, getCurrArea } from '../utils/functions.js'; // sb, area
+import { baoDisplayHP } from '../features/displayHP.js';
 
 ////////////////////////////////////////////////////////////////////////////////
-// ENTITY GLOBALS --------------------------------------------------------------
+// SETUP CONSTS
 ////////////////////////////////////////////////////////////////////////////////
-data.fishingOverlays.movebobber = new Gui(); // bobber count
-data.fishingOverlays.moveplayers = new Gui(); // player count
-data.fishingOverlays.movenearbyjawbus = new Gui(); // nearby jawbus
-data.fishingOverlays.movenearbythunder = new Gui(); // nearby thunder
-data.fishingOverlays.movecharges = new Gui(); // charges
+const fishOverlayAudio = new Audio();
 
-// maybe save jawbus/thunder info to pogdata
+const entityHook = Java.type("net.minecraft.entity.projectile.EntityFishHook");
+const entityArmorStand = Java.type("net.minecraft.entity.item.EntityArmorStand");
+const entityPlayer = Java.type("net.minecraft.entity.player.EntityPlayer");
+
+const moveBobberCounter = new Gui(); // bobber count
+const movePlayerCounter = new Gui(); // player count
+const moveNearbyJawbusCounter = new Gui(); // nearby jawbus
+const moveNearbyThunderCounter = new Gui(); // nearby thunder
+const moveChargesCounter = new Gui(); // charges
+createGuiCommand(moveBobberCounter, 'movebobber', 'mbc');
+createGuiCommand(movePlayerCounter, 'moveplayer', 'mpc');
+createGuiCommand(moveNearbyJawbusCounter, 'movejawbus', 'mj');
+createGuiCommand(moveNearbyThunderCounter, 'movethunder', 'mt');
+createGuiCommand(moveChargesCounter, 'movecharge', 'mcc');
+
+export const baoFishOverlay = new PogObject("bao-dev", {
+    "bobber": {
+        "count": 0,
+        "text": '', 
+        "x": 3, 
+        "y": 14
+    }, 
+    "player": {
+        "count": 0, 
+        "text": '', 
+        "x": 3, 
+        "y": 24,
+    }, 
+    "nbJawbus": {
+        "info": null, 
+        "text": '', 
+        "x": 3, 
+        "y": 34,
+    },
+    "nbThunder": {
+        "info": null, 
+        "text": '', 
+        "x": 3, 
+        "y": 44,
+    },
+    "charges": {
+        "sentFullMsg": false,
+        "text": '', 
+        "x": 3, 
+        "y": 54, 
+    }, 
+}, '/data/baoFishOverlay.json');
+baoFishOverlay.autosave(5);
+
+
+////////////////////////////////////////////////////////////////////////////////
+// FUNCTIONS
+////////////////////////////////////////////////////////////////////////////////
 function createInfoObject() {
     let resultObj = {
         found: false,
@@ -26,92 +80,85 @@ function createInfoObject() {
     return resultObj;
 }
 
-data.fishingOverlays.jawbusInfo = createInfoObject();
-data.fishingOverlays.thunderInfo = createInfoObject();
+
+////////////////////////////////////////////////////////////////////////////////
+// CODE
+////////////////////////////////////////////////////////////////////////////////
+baoFishOverlay.nbJawbus.info = createInfoObject();
+baoFishOverlay.nbThunder.info = createInfoObject();
 
 // dragged events
 register('dragged', (dx, dy, x, y) => {
-    if (!data.inSkyblock) return;
-    if (data.fishingOverlays.movebobber.isOpen()){
-        data.fishingOverlays.bobberCounter.x = constrainX(x, 3, data.fishingOverlays.bobberCountText);
-        data.fishingOverlays.bobberCounter.y = constrainY(y, 3, data.fishingOverlays.bobberCountText);
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    if (moveBobberCounter.isOpen()){
+        baoFishOverlay.bobber.x = constrainX(x, 3, baoFishOverlay.bobber.text);
+        baoFishOverlay.bobber.y = constrainY(y, 3, baoFishOverlay.bobber.text);
     }
-    if (data.fishingOverlays.moveplayers.isOpen()) {
-        data.fishingOverlays.playerCounter.x = constrainX(x, 3, data.fishingOverlays.playerCountText);
-        data.fishingOverlays.playerCounter.y = constrainY(y, 3, data.fishingOverlays.playerCountText);
+    if (movePlayerCounter.isOpen()) {
+        baoFishOverlay.player.x = constrainX(x, 3, baoFishOverlay.player.text);
+        baoFishOverlay.player.y = constrainY(y, 3, baoFishOverlay.player.text);
     }
-    if (data.fishingOverlays.movenearbyjawbus.isOpen()) {
-        data.fishingOverlays.jawbusCounter.x = constrainX(x, 3, data.fishingOverlays.nbJawbusText);
-        data.fishingOverlays.jawbusCounter.y = constrainY(y, 3, data.fishingOverlays.nbJawbusText);
+    if (moveNearbyJawbusCounter.isOpen()) {
+        baoFishOverlay.nbJawbus.x = constrainX(x, 3, baoFishOverlay.nbJawbus.text);
+        baoFishOverlay.nbJawbus.y = constrainY(y, 3, baoFishOverlay.nbJawbus.text);
     }
-    if (data.fishingOverlays.movenearbythunder.isOpen()) {
-        data.fishingOverlays.thunderCounter.x = constrainX(x, 3, data.fishingOverlays.nbThunderText);
-        data.fishingOverlays.thunderCounter.y = constrainY(y, 3, data.fishingOverlays.nbThunderText);
+    if (moveNearbyThunderCounter.isOpen()) {
+        baoFishOverlay.nbThunder.x = constrainX(x, 3, baoFishOverlay.nbThunder.text);
+        baoFishOverlay.nbThunder.y = constrainY(y, 3, baoFishOverlay.nbThunder.text);
     }
-    if (data.fishingOverlays.movecharges.isOpen()) {
-        data.fishingOverlays.chargeCounter.x = constrainX(x, 3, data.fishingOverlays.thunderBottleText);
-        data.fishingOverlays.chargeCounter.y = constrainY(y, 3, data.fishingOverlays.thunderBottleText);
+    if (moveChargesCounter.isOpen()) {
+        baoFishOverlay.charges.x = constrainX(x, 3, baoFishOverlay.charges.text);
+        baoFishOverlay.charges.y = constrainY(y, 3, baoFishOverlay.charges.text);
     }
+    baoFishOverlay.save();
 })
 
-// manual commands for gui events
-createGuiCommand(data.fishingOverlays.movebobber, 'movebobber', 'mbc')
-createGuiCommand(data.fishingOverlays.moveplayers, 'moveplayer', 'mpc')
-createGuiCommand(data.fishingOverlays.movenearbyjawbus, 'movejawbus', 'mj')
-createGuiCommand(data.fishingOverlays.movenearbythunder, 'movethunder', 'mt')
-createGuiCommand(data.fishingOverlays.movecharges, 'movecharge', 'mcc')
-
 register("step", () => {
-    if (!data.inSkyblock) return;
-
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    
     // bobber counter
-    data.fishingOverlays.bobberCount = World.getAllEntitiesOfType(data.entities.entityFishHook).filter(dist => dist.distanceTo(Player.getPlayer()) < 31).length
-    nearbyBobbers = data.fishingOverlays.bobberCount > 0 ? Math.round(data.fishingOverlays.bobberCount) : '0';
-    data.fishingOverlays.bobberCountText = `&rBobbers: &b${nearbyBobbers}`
+    baoFishOverlay.bobber.count = World.getAllEntitiesOfType(entityHook).filter(dist => dist.distanceTo(Player.getPlayer()) < 31).length;
+    let nearbyBobbers = baoFishOverlay.bobber.count > 0 ? Math.round(baoFishOverlay.bobber.count) : '0';
+    baoFishOverlay.bobber.text = `&rBobbers: &b${nearbyBobbers}`
     
 
     // player counter
-    playerTabNames = getFilteredPlayerTabNames();
-    nearbyPlayers = getNearbyPlayers(31);
-    data.fishingOverlays.filteredNames = filterBotNames(nearbyPlayers, playerTabNames)
-    data.fishingOverlays.playerCount = data.fishingOverlays.filteredNames.length;
-
-    // player counter display
-    playerCountColor = data.fishingOverlays.playerCount > 6 ? '&b&l' : '&b'
-    nearbyPlayersText = data.fishingOverlays.playerCount > 0 ? data.fishingOverlays.playerCount : '0';
-    data.fishingOverlays.playerCountText = `&rPlayers: ${playerCountColor}${nearbyPlayersText}`
+    baoFishOverlay.player.count = getPlayerCount(entityPlayer);
+    let playerCountColor = baoFishOverlay.player.count > 6 ? '&b&l' : '&b'
+    let nearbyPlayersText = baoFishOverlay.player.count > 0 ? baoFishOverlay.player.count : '0';
+    baoFishOverlay.player.text = `&rPlayers: ${playerCountColor}${nearbyPlayersText}`
     
-    if (data.currArea === 'Crimson Isles')  {
+    if (getCurrArea() === 'Crimson Isle')  {
         // detect doublehook jawbus
-        detectDH(data.entities.entityArmorStand, 'Jawbus', '&4', 'Follower', data.fishingOverlays.jawbusInfo);
-        nearbyJawbusText = data.fishingOverlays.jawbusInfo.foundNearby ? 'YES' : 'NO';
-        nearbyJawbusCount = data.fishingOverlays.jawbusInfo.numNearby > 0 ? ` [x${data.fishingOverlays.jawbusInfo.numNearby}]` : '';
-        data.fishingOverlays.nbJawbusText = `&rNearby Jawbus: &b${nearbyJawbusText}  &6${nearbyJawbusCount}`
+        detectDH(entityArmorStand, 'Jawbus', '&4', 'Follower', baoFishOverlay.nbJawbus);
+        let isNBJawbusFound = baoFishOverlay.nbJawbus.foundNearby ? 'YES' : 'NO';
+        let numNBJawbus = baoFishOverlay.nbJawbus.numNearby > 0 ? ` [x${baoFishOverlay.nbJawbus.numNearby}]` : '';
+        baoFishOverlay.nbJawbus.text = `&rNearby Jawbus: &b${isNBJawbusFound}  &6${numNBJawbus}`
         
         // detect doublehook thunder
-        detectDH(data.entities.entityArmorStand, 'Thunder', '&b', null, data.fishingOverlays.thunderInfo);
-        nearbyThunderText = data.fishingOverlays.thunderInfo.foundNearby ? 'YES' : 'NO';
-        nearbyThunderCount = data.fishingOverlays.thunderInfo.numNearby > 0 ? `[x${data.fishingOverlays.thunderInfo.numNearby}]` : '';
-        data.fishingOverlays.nbThunderText = `&rNearby Thunder: &b${nearbyThunderText}  &6${nearbyThunderCount}`
+        detectDH(entityArmorStand, 'Thunder', '&b', null, baoFishOverlay.nbThunder.info);
+        let isNBThunderFound = baoFishOverlay.nbThunder.info.foundNearby ? 'YES' : 'NO';
+        let numNBThunder = baoFishOverlay.nbThunder.info.numNearby > 0 ? `[x${baoFishOverlay.nbThunder.info.numNearby}]` : '';
+        baoFishOverlay.nbThunder.text = `&rNearby Thunder: &b${isNBThunderFound}  &6${numNBThunder}`
         
         // thunder bottle display
-        charge = getThunderBottle();
-        // console.log(charge);
+        let charge = getThunderBottle();
         if (charge === '50000') {
-            if (Settings.full_bottle_ping && !data.fishingOverlays.fullBottleMsgSent) {
+            if (Settings.full_bottle_ping && !baoFishOverlay.charges.sentFullMsg) {
                 showAlert('&b&lTHUNDER BOTTLE FULL');
-                data.audioInst.playDefaultSound();
-                data.fishingOverlays.fullBottleMsgSent = true;
+                fishOverlayAudio.playDefaultSound();
+                baoFishOverlay.charges.sentFullMsg = true;
             }
-            data.fishingOverlays.thunderBottleText = `Thunder Bottle: &b&lFULL`
+            baoFishOverlay.charges.text = `Thunder Bottle: &b&lFULL`
         } else if (charge === 'No Bottle Available') {
-            data.fishingOverlays.thunderBottleText = `Thunder Bottle: &c${charge}`;
-            data.fishingOverlays.fullBottleMsgSent = false;
+            baoFishOverlay.charges.text = `Thunder Bottle: &c${charge}`;
+            baoFishOverlay.charges.sentFullMsg = false;
         } else {
-            data.fishingOverlays.thunderBottleText = `Thunder Bottle: &b${charge}`;
-            data.fishingOverlays.fullBottleMsgSent = false;
+            baoFishOverlay.charges.text = `Thunder Bottle: &b${charge}`;
+            baoFishOverlay.charges.sentFullMsg = false;
         }
     }
+    baoFishOverlay.save();
 }).setFps(5);
 
 
@@ -122,40 +169,41 @@ register("step", () => {
  ------------------------------------------------------------------------------*/
 ////////////////////////////////////////////////////////////////////////////////
 register('renderOverlay', () => {
-    if (!data.inSkyblock) return;
+    if (!getInSkyblock() || !World.isLoaded()) return;
     // bobber count
-    if (Settings.bobberCount && data.currArea !== 'Garden') {
-        Renderer.drawString(data.fishingOverlays.bobberCountText, data.fishingOverlays.bobberCounter.x, data.fishingOverlays.bobberCounter.y)
+    if (Settings.bobberCount && getCurrArea() !== 'Garden') {
+        Renderer.drawString(baoFishOverlay.bobber.text, baoFishOverlay.bobber.x, baoFishOverlay.bobber.y)
     }
 
     // nearby players
-    if (Settings.playersNearbyCount && data.currArea !== 'Garden') {
-        Renderer.drawString(data.fishingOverlays.playerCountText, data.fishingOverlays.playerCounter.x, data.fishingOverlays.playerCounter.y);
+    if (Settings.playersNearbyCount && getCurrArea() !== 'Garden') {
+        Renderer.drawString(baoFishOverlay.player.text, baoFishOverlay.player.x, baoFishOverlay.player.y);
     }
     
     // detect double/nearby jawbus
-    if (Settings.detectDoubleJawbus && data.currArea === 'Crimson Isle') {
-        Renderer.drawString(data.fishingOverlays.nbJawbusText, data.fishingOverlays.jawbusCounter.x, data.fishingOverlays.jawbusCounter.y);
-        if (Settings.jawbus_hp) displayEntityHP(data.fishingOverlays.jawbusInfo.names, data.fishingOverlays.jawbusInfo.found, data.hpDisplayInfo.x, data.hpDisplayInfo.y)
+    if (Settings.detectDoubleJawbus && getCurrArea() === 'Crimson Isle') {
+        Renderer.drawString(baoFishOverlay.nbJawbus.text, baoFishOverlay.nbJawbus.x, baoFishOverlay.nbJawbus.y);
+        if (Settings.jawbus_hp) displayEntityHP(baoFishOverlay.nbJawbus.names, baoFishOverlay.nbJawbus.found, baoDisplayHP.x, baoDisplayHP.y)
     }
     
     // detect double/nearby thunder
-    if (Settings.detectDoubleThunder && data.currArea === 'Crimson Isle') {
-        Renderer.drawString(data.fishingOverlays.nbThunderText, data.fishingOverlays.thunderCounter.x, data.fishingOverlays.thunderCounter.y);
-        if (Settings.thunder_hp) displayEntityHP(data.fishingOverlays.thunderInfo.names, data.fishingOverlays.thunderInfo.found, data.hpDisplayInfo.x, data.hpDisplayInfo.y)
+    if (Settings.detectDoubleThunder && getCurrArea() === 'Crimson Isle') {
+        Renderer.drawString(baoFishOverlay.nbThunder.text, baoFishOverlay.nbThunder.x, baoFishOverlay.nbThunder.y);
+        if (Settings.thunder_hp) displayEntityHP(baoFishOverlay.nbThunder.info.names, baoFishOverlay.nbThunder.info.found, baoDisplayHP.x, baoDisplayHP.y)
     }
     
     // charge counter
-    if (Settings.chargeCounter && data.currArea === 'Crimson Isle') {
-        Renderer.drawString(data.fishingOverlays.thunderBottleText, data.fishingOverlays.chargeCounter.x, data.fishingOverlays.chargeCounter.y)
+    if (Settings.chargeCounter && getCurrArea() === 'Crimson Isle') {
+        Renderer.drawString(baoFishOverlay.charges.text, baoFishOverlay.charges.x, baoFishOverlay.charges.y)
     }
 
 
     // gui open
-    renderGuiPosition(data.fishingOverlays.movebobber, data.fishingOverlays.bobberCounter, 'Bobbers: 0');
-    renderGuiPosition(data.fishingOverlays.moveplayers, data.fishingOverlays.playerCounter, 'Players: 0');
-    renderGuiPosition(data.fishingOverlays.movenearbyjawbus, data.fishingOverlays.jawbusCounter, 'Nearby Jawbus: NO [x0]');
-    renderGuiPosition(data.fishingOverlays.movenearbythunder, data.fishingOverlays.thunderCounter, 'Nearby Thunder: NO [x0]');
-    renderGuiPosition(data.fishingOverlays.movecharges, data.fishingOverlays.chargeCounter, 'Thunder Bottle: 0');
+    renderGuiPosition(moveBobberCounter, baoFishOverlay.bobber, '&7Bobbers: 0');
+    renderGuiPosition(movePlayerCounter, baoFishOverlay.player, '&7Players: 0');
+    renderGuiPosition(moveNearbyJawbusCounter, baoFishOverlay.nbJawbus, '&7Nearby Jawbus: NO [x0]');
+    renderGuiPosition(moveNearbyThunderCounter, baoFishOverlay.nbThunder, '&7Nearby Thunder: NO [x0]');
+    renderGuiPosition(moveChargesCounter, baoFishOverlay.charges, '&7Thunder Bottle: 0');
+    baoFishOverlay.save();
 })
 

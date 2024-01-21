@@ -1,0 +1,22 @@
+{
+    "inLSRange": true,
+    "specifiedMobs": [
+        "Magma Slug",
+        "Pyroclastic Worm",
+        "Moogma",
+        "Lava Leech",
+        "Fire Eel",
+        "Lava Flame",
+        "Exalted Minos Inquisitor",
+        "Exalted Minos Hunter",
+        "Bagheera",
+        "Exalted Minotaur",
+        "Exalted Gaia Construct",
+        "Exalted Minos Champion"
+    ],
+    "mobInfos": [],
+    "displayText": "",
+    "draggableText": "[Lv000] SomeMobMonster 10M/10M ❤ -- [✖]",
+    "x": 381.5,
+    "y": 40.5
+}

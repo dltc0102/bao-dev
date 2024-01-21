@@ -1,114 +1,19 @@
 import Settings from '../settings.js';
-import { data } from '../utils/data.js';
-import { showAlert } from '../utils/utils.js'
+import Audio from '../utils/audio.js';
+import { baoUtils } from '../utils/utils.js';
+import { getCurrArea } from '../utils/functions.js'; // sb, area
 
-///////////////////////////////////////////////////////////////////////////////
-// MORT / START
-///////////////////////////////////////////////////////////////////////////////
-register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('[NPC] Mort:').setContains();
+////////////////////////////////////////////////////////////////////////////////
+// SETUP CONSTS
+////////////////////////////////////////////////////////////////////////////////
+const dungeonCleanAudio = new Audio();
+const importantItems = ['Hyperion', 'Dark Claymore', 'Terminator', "Giant's Sword", 'Infinileap', 'Diamond Pickaxe', 'Stonk', 'Ragnarock Axe', 'Spring Boots'];
+const dungeonClasses = ['Berserk', 'Archer', 'Tank', 'Healer', 'Mage'];
 
-register('chat', (event) => { 
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('You are not allowed to use Potion Effects while in Dungeon, therefore all active effects have been paused and stored. They will be restored when you leave Dungeon!');
 
-///////////////////////////////////////////////////////////////////////////////
-// CLASS STUFF
-///////////////////////////////////////////////////////////////////////////////
-let dungeonClasses = ['Berserk', 'Archer', 'Tank', 'Healer', 'Mage'];
-register('chat', (className, event) => {
-    if (data.currArea !== 'Catacombs') return;
-    if (Settings.betterDungeonMsgs) {
-        if (dungeonClasses.includes(className)) {
-            cancel(event);
-        }
-    }
-}).setCriteria('[${className}] ').setContains();
-
-register('chat', (className, event) => {
-    if (Settings.betterDungeonMsgs) {
-        cancel(event);
-        ChatLib.chat(`${data.modPrefix} Mode: SOLO`);
-    }
-}).setCriteria('Your ${className} stats are doubled because you are the only player using this class!');
-
-register('chat', (orbType, player, heal, shield, time, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('◕ You picked up a ${orbType} Orb from ${player} healing you for ${heal}❤ and granting you +${shield}% Defense for ${time} seconds.');
-
-register('chat', (player, heal, shield, event) => {
-    if (Settings.betterDungeonMsgs) {
-        cancel(event);
-        ChatLib.chat(`&r&l${player} Wished Everyone!`)
-    }
-}).setCriteria("${player}'s Wish healed you for ${heal} health and granted you an absorption shield with ${shield} health!");
-
-///////////////////////////////////////////////////////////////////////////////
-// ABILITIES
-///////////////////////////////////////////////////////////////////////////////
-register('chat', (ability, event) => {
-    if (Settings.betterDungeonMsgs) {
-        cancel(event);
-        ChatLib.chat(`&a${ability} is ready!`);
-    }
-}).setCriteria('${ability} is ready to use! Press DROP to activate it!');
-
-register('chat', (ability, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('Used ${ability}!');
-
-register('chat', (abiWeapon, numEnemies, damage, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('Your ${abiWeapon} hit ${numEnemies} enemy for ${damage} damage.');
-
-register('chat', (abiWeapon, numEnemies, damage, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('Your ${abiWeapon} hit ${numEnemies} enemies for ${damage} damage.');
-
-register('chat', (dunClass, ultAbi, event) => {
-    if (Settings.betterDungeonMsgs) {
-        cancel(event);
-        ChatLib.chat(`&aULTIMATE ${ultAbi} is ready!`);
-    }
-}).setCriteria('Your ${dunClass} ULTIMATE ${ultAbi} is now available');
-
-register('chat', (ability, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('${ability} is now available!');
-
-// Revive messages
-register('chat', (player, event) => {
-    // ' ❣ oBiscuit was revived!
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria(' ❣ ${player} was revived!');
-
-register('chat', (player, event) => {
-    // ' ❣ You are reviving oBiscuit!
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria(' ❣ You are reviving ${player}!');
-
-register('chat', (p1, p2, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria(' ❣ ${p1} is reviving ${p2}!');
-
-register('chat', (p1, p2, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria(' ❣ ${p1} was revived by ${p2}!');
-
-register('chat', (player, fairy, event) => {
-    // ' ❣ oBiscuit was revived by (name) the Fairy!
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('❣ ${player} was revived by ${fairy} the Fairy!').setContains();
-
-// Essence messages
-register('chat', (player, event) => {
-    if (Settings.betterDungeonMsgs) {
-        cancel(event);
-        ChatLib.chat('&8&l+1 Essence');
-    }
-}).setCriteria('${player} found a Wither Essence! Everyone gains an extra essence!');
-
+////////////////////////////////////////////////////////////////////////////////
+// FUNCTIONS
+////////////////////////////////////////////////////////////////////////////////
 function determineEss(essence) {
     let format = '&r';
     if (essence === 'Diamond') format = '&b';
@@ -121,23 +26,6 @@ function determineEss(essence) {
     return format;
 }
 
-register('chat', (numEss, typeEss, event) => {
-    if (Settings.betterDungeonMsgs) {
-        cancel(event);
-        let colorF = determineEss(typeEss);
-        ChatLib.chat(`${colorF}&l+${numEss} Essence`);
-    }
-}).setCriteria('ESSENCE! You found x${numEss} ${typeEss} Essence!');
-
-register('chat', (player, numEss, typeEss, event) => {
-    if (Settings.betterDungeonMsgs) {
-        cancel(event);
-        let colorF = determineEss(typeEss);
-        ChatLib.chat(`${colorF}&l+${numEss} Essence`);
-    }
-}).setCriteria('ESSENCE! ${player} found x${numEss} ${typeEss} Essence!');
-
-// Milestone messages
 function determineMS(milestone) {
     let ms = 0;
     if (milestone === '❶') ms = 1;
@@ -151,7 +39,276 @@ function determineMS(milestone) {
     if (milestone === '❾') ms = 9;
     return ms;
 }
+///////////////////////////////////////////////////////////////////////////////
+// TOGGLE: PLAYER ACTIONS
+///////////////////////////////////////////////////////////////////////////////
+// Abilities
+register('chat', (ability, event) => {
+    if (Settings.dungeonPlayerActions) {
+        cancel(event);
+        ChatLib.chat(`&a${ability} is ready!`);
+    }
+}).setCriteria('${ability} is ready to use! Press DROP to activate it!');
+
+register('chat', (ability, event) => {
+    if (Settings.dungeonPlayerActions) cancel(event);
+}).setCriteria('Used ${ability}!');
+
+register('chat', (abiWeapon, numEnemies, damage, event) => {
+    if (Settings.dungeonPlayerActions) cancel(event);
+}).setCriteria('Your ${abiWeapon} hit ${numEnemies} enemy for ${damage} damage.');
+
+register('chat', (abiWeapon, numEnemies, damage, event) => {
+    if (Settings.dungeonPlayerActions) cancel(event);
+}).setCriteria('Your ${abiWeapon} hit ${numEnemies} enemies for ${damage} damage.');
+
+register('chat', (dunClass, ultAbi, event) => {
+    if (Settings.dungeonPlayerActions) {
+        cancel(event);
+        ChatLib.chat(`&aULTIMATE ${ultAbi} is ready!`);
+    }
+}).setCriteria('Your ${dunClass} ULTIMATE ${ultAbi} is now available');
+
+register('chat', (ability, event) => {
+    if (Settings.dungeonPlayerActions) cancel(event);
+}).setCriteria('${ability} is now available!');
+
+
+// Revives
+register('chat', (player, event) => {
+    if (Settings.dungeonPlayerActions) cancel(event);
+}).setCriteria(' ❣ ${player} was revived!');
+
+register('chat', (player, event) => {
+    if (Settings.dungeonPlayerActions) cancel(event);
+}).setCriteria(' ❣ You are reviving ${player}!');
+
+register('chat', (p1, p2, event) => {
+    if (Settings.dungeonPlayerActions) cancel(event);
+}).setCriteria(' ❣ ${p1} is reviving ${p2}!');
+
+register('chat', (p1, p2, event) => {
+    if (Settings.dungeonPlayerActions) cancel(event);
+}).setCriteria(' ❣ ${p1} was revived by ${p2}!');
+
+register('chat', (player, fairy, event) => {
+    if (Settings.dungeonPlayerActions) cancel(event);
+}).setCriteria('❣ ${player} was revived by ${fairy} the Fairy!').setContains();
+
+register('chat', (name, message, event) => {
+    if (Settings.dungeonPlayerActions) cancel(event);
+}).setCriteria('${name} the Fairy: ${message}');
+
+
+// Obtained Item Messages
+register('chat', (player, ting, event) => {
+    if (Settings.dungeonPlayerActions) cancel(event);
+}).setCriteria('${player} has obtained ${ting}!');
+
+register('chat', (book, event) => {
+    if (Settings.dungeonPlayerActions) cancel(event);
+}).setCriteria('You found a journal named ${book}!');
+
+register('chat', (item, mf, event) => {
+    if (getCurrArea() === 'Catacombs' && Settings.dungeonPlayerActions) cancel(event);
+}).setCriteria('RARE DROP! ${item} (+${mf}% ✯ Magic Find)');
+
+
+// Decoy Deployed
+register('chat', (event) => {
+    if (Settings.dungeonPlayerActions) cancel(event);
+}).setCriteria('Decoy deployed!');
+
+register('chat', (event) => {
+    if (Settings.dungeonPlayerActions) cancel(event);
+}).setCriteria('It was a dud.');
+
+
+// Essence Messages
+register('chat', (player, event) => {
+    if (Settings.dungeonPlayerActions) {
+        cancel(event);
+        ChatLib.chat('&8&l+1 Essence');
+    }
+}).setCriteria('${player} found a Wither Essence! Everyone gains an extra essence!');
+
+register('chat', (player, numEss, typeEss, event) => {
+    if (Settings.dungeonPlayerActions) {
+        cancel(event);
+        let colorF = determineEss(typeEss);
+        ChatLib.chat(`${colorF}&l+${numEss} Essence`);
+    }
+}).setCriteria('ESSENCE! ${player} found x${numEss} ${typeEss} Essence!');
+
+
+// Creeper Veil Messages
+register('chat', (status, event) => {
+    if (Settings.dungeonPlayerActions) {
+        cancel(event);
+        if (status === 'Activated') ChatLib.chat('&aCreeper Veil: &r&lON');
+        if (status === 'De-activated') ChatLib.chat('&aCreeper Veil: &7&lOFF');
+    }
+}).setCriteria('Creeper Veil ${status}!');
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// TOGGLE: MESSAGE QOL
+///////////////////////////////////////////////////////////////////////////////
+// Mute NPC Sold Items 
+register('chat', (thing, amt, coin, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonMessageQOL) {
+        if (!importantItems.includes(thing)) cancel(event);
+    }
+}).setCriteria('You sold ${thing} x${amt} for ${coin} Coins!');
+
+register('chat', (thing, amt, coins, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonMessageQOL) {
+        if (!thing.includes('Hyperion')) cancel(event);
+    }
+}).setCriteria('You sold ${ting} x${amt} for ${coins} Coin!');
+
+// Mute Friend Join/Leave Message
+register('chat', (pplayer, status, event) => {
+    if (getCurrArea() === 'Catacombs') {
+        if (Settings.dungeonMessageQOL) cancel(event);
+    }
+}).setCriteria('Friend > ${player} ${status}.');
+
+
+// Mute GEXP or Hypixel EXP Messages
+register('chat', (exp, event) => {
+    if (Settings.dungeonMessageQOL) cancel(event);
+}).setCriteria('You earned ${exp} GEXP from playing SkyBlock!');
+
+
+// Error Messages
+register('chat', (event) => {
+    if (Settings.dungeonMessageQOL) cancel(event);
+}).setCriteria('You cannot use abilities in this room!');
+
+register('chat', (event) => {
+    if (Settings.dungeonMessageQOL) cancel(event);
+}).setCriteria('Oops! You stepped on the wrong block!');
+
+register('chat', (event) => {
+    if (Settings.dungeonMessageQOL) cancel(event);
+}).setCriteria("Don't move diagonally! bad!");
+
+register('chat', (event) => {
+    if (Settings.dungeonMessageQOL) {
+        cancel(event);
+        ChatLib.chat('&c&lLEVER USED');
+    }
+}).setCriteria('This lever has already been used.');
+
+register('chat', (event) => {
+    if (Settings.dungeonMessageQOL) cancel(event);
+}).setCriteria("You cannot hit the silverfish while it's moving!");
+
+register('chat', (event) => {
+    if (Settings.dungeonMessageQOL) cancel(event);
+}).setCriteria("You cannot move the silverfish in that direction!");
+
+register('chat', (event) => {
+    if (Settings.dungeonMessageQOL) cancel(event);
+}).setCriteria('You cannot do that in this room!');
+
+register('chat', (event) => {
+    if (Settings.dungeonMessageQOL) cancel(event);
+}).setCriteria("It isn't your turn!");
+
+register('chat', (event) => {
+    if (Settings.dungeonMessageQOL) cancel(event);
+}).setCriteria('You found a Secret Redstone Key!');
+
+
+// Full Inventory 
+register('chat', (event) => {
+    if (Settings.dungeonMessageQOL) {
+        cancel(event);
+        ChatLib.chat('&c&lFULL INVENTORY');
+        dungeonCleanAudio.playDefaultSound();
+    }
+}).setCriteria("You don't have enough space in your inventory to pick up this item!");
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// TOGGLE: SYSTEM NOTIFICATIONS
+///////////////////////////////////////////////////////////////////////////////
+// Class Stat Change Messages
+register('chat', (className, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonSysNotifications && dungeonClasses.includes(className)) cancel(event);
+}).setCriteria('[${className}] ').setContains();
+
+register('chat', (className, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonSysNotifications) {
+        cancel(event);
+        ChatLib.chat(`${baoUtils.modPrefix} Mode: SOLO`);
+    }
+}).setCriteria('Your ${className} stats are doubled because you are the only player using this class!');
+
+
+// Wish/Heal Messages
+register('chat', (player, heal, shield, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonSysNotifications) {
+        cancel(event);
+        ChatLib.chat(`&r&l${player} Wished Everyone!`)
+    }
+}).setCriteria("${player}'s Wish healed you for ${heal} health and granted you an absorption shield with ${shield} health!");
+
+
+// Orb Pickups
+register('chat', (orbType, player, heal, shield, time, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonSysNotifications) cancel(event);
+}).setCriteria('◕ You picked up a ${orbType} Orb from ${player} healing you for ${heal}❤ and granting you +${shield}% Defense for ${time} seconds.');
+
+// Sacks Messages
+register('chat', (items, pluralItem, secs, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonSysNotifications) cancel(event);
+}).setCriteria('[Sacks] +${items} ${pluralItem}. (Last ${secs}s.)');
+
+register('chat', (items, pluralItem, secs, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonSysNotifications) cancel(event);
+}).setCriteria('[Sacks] -${items} ${pluralItem}. (Last ${secs}s.)');
+
+
+// Potion Effects Reminder Message
+register('chat', (event) => { 
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonSysNotifications) cancel(event);
+}).setCriteria('You are not allowed to use Potion Effects while in Dungeon, therefore all active effects have been paused and stored. They will be restored when you leave Dungeon!');
+
+
+// Mute Fire Sales in Dungeon
+// register('chat', (event) => {
+//     if (getCurrArea() !== 'Catacombs') return;
+//     if (Settings.dungeonSysNotifications) cancel(event);
+// }).setCriteria('');
+
+
+///////////////////////////////////////////////////////////////////////////////
+// TOGGLE: INTERACTIVE ELEMENTS
+///////////////////////////////////////////////////////////////////////////////
+// NPC Dialogue Messages
+register('chat', (event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
+}).setCriteria('[NPC] ').setContains();
+
+
+// Milestone Messages
 register('chat', (msClass, milestone, msDamage, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
     if (Settings.betterDungeonMsgs) {
         cancel(event);
         let ms = determineMS(milestone);
@@ -159,339 +316,302 @@ register('chat', (msClass, milestone, msDamage, event) => {
     }
 }).setCriteria('${msClass} Milestone ${milestone}: You have dealt ${msDamage} Total Damage so far!').setContains();
 
-// Wither Door messages
-register('chat', (player, event) => { // keep
-    if (Settings.betterDungeonMsgs) cancel(event);
+// Wither Door Messages
+register('chat', (player, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
 }).setCriteria('${player} has obtained Wither Key!');
 
-register('chat', (player, event) => { // keep
-    if (Settings.betterDungeonMsgs) cancel(event);
+register('chat', (player, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
 }).setCriteria('${player} opened a WITHER door!');
 
 register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
 }).setCriteria('RIGHT CLICK on a WITHER door to open it. This key can only be used to open 1 door!');
 
 register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) {
         cancel(event);
         ChatLib.chat('&8Wither Key &aObtained.')
     }
 }).setCriteria('A Wither Key was picked up!');
 
 
-// Blood Door messages
+// Blood Door Messages
 let bloodPlayer = '';
 register('chat', (player, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
     bloodPlayer = player;
-    if (Settings.betterDungeonMsgs) cancel(event);
+    if (Settings.dungeonInteractiveElements) cancel(event);
 }).setCriteria('${player} has obtained Blood Key!');
 
 register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
 }).setCriteria('RIGHT CLICK on the BLOOD DOOR to open it. This key can only be used to open 1 door!');
 
 register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
 }).setCriteria('A shiver runs down your spine...');
 
 register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
+}).setCriteria('You hear something open...');
+
+register('chat', (event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
 }).setCriteria('You hear the sound of something opening...');
 
 register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) {
         cancel(event);
         ChatLib.chat(`&c&l${bloodPlayer} opened the Blood Door!`);
     }
 }).setCriteria('The BLOOD DOOR has been opened!');
 
+
 // Boss Messages
-register('chat', (message, event) => {
-    if (Settings.betterDungeonMsgs) {
-        if (message !== 'You have proven yourself. You may pass.' || message !== 'That will be enough for now.') cancel (event);
+register('chat', (host, dialogue, event) => {
+    // if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) {  
+        if (dialogue === 'That will be enough for now.' || dialogue === 'You have proven yourself. You may pass.') return;
+        cancel(event);
     }
-}).setCriteria('[BOSS] The Watcher: ${message}');
+}).setCriteria("[BOSS] ${host}: ${dialogue}");
+
+register('chat', (event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
+}).setCriteria('[SKULL] ').setContains();
 
 // Statue Messages
 register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('[STATUE] Oruo the Omniscient:').setContains();
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
+}).setCriteria('[STATUE] ').setContains();
 
-// Error Messages
+
+// Floor Specific Messages
+// ALL FLOORS
+register('chat', (mob, damage, weapon, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
+}).setCriteria("${mob}'s ${weapon} hit you for ${damage} damage.");
+
+register('chat', (mob, weapon, damage, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
+}).setCriteria("${mob}'s ${weapon} hit you for ${damage} true damage.");
+
+// FLOOR 1
+
+// FLOOR 2
+
+// FLOOR 3
 register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('You cannot use abilities in this room!');
-
-register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('Oops! You stepped on the wrong block!');
-
-register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria("Don't move diagonally! bad!");
-
-register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) {
-        cancel(event);
-        ChatLib.chat('&c&lLEVER USED');
-    }
-}).setCriteria('This lever has already been used.');
-
-register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria("You cannot hit the silverfish while it's moving!");
-
-register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria("You cannot move the silverfish in that direction!");
-
-// Creeper Veil Messagess
-register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) {
-        cancel(event);
-        ChatLib.chat('&aCreeper Veil: &r&lON');
-    }
-}).setCriteria('Creeper Veil Activated!');
-
-register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) {
-        cancel(event);
-        ChatLib.chat('&aCreeper Veil: &7&lOFF');
-    }
-}).setCriteria('Creeper Veil De-activated!');
-
-// mob messages
-// general
-register('chat', (skull, damage, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('A ${skull} exploded, hitting you for ${damage} damage.');
-
-register('chat', (damage, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('The Flamethrower hit you for ${damage} damage!');
-
-register('chat', (damage, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('The Stormy Skeleton Master struck you for ${damage} damage!');
-
-register('chat', (damage, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('The Stormy Crypt Dreadlord struck you for ${damage} damage!');
-
-register('chat', (damage, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('The Stormy Fels struck you for ${damage} damage!');
-
-// f1
-
-// f2
-
-// f3
-register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
 }).setCriteria('⚠ The Laser Guardian is charging up their Focus Beam! ⚠');
 
 
-// f4
+// FLOOR 4
 register('chat', (dmg, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
 }).setCriteria("The Spirit Chicken's lightning struck you for ${dmg} damage.");
 
 register('chat', (dmg, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
 }).setCriteria("A Chicken Mine exploded, hitting you for ${dmg} damage.");
 
 register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
 }).setCriteria('A Spirit Bear has appeared!');
 
 register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
 }).setCriteria('[CROWD]').setContains();
 
-// f7 p1 - maxor
-register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('⚠ Maxor is enraged! ⚠');
+
+// FLOOR 5
+
+// FLOOR 6
+
+// FLOOR 7 -- p1 - maxor/other boss
+register('chat', (boss, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
+}).setCriteria('⚠ ${boss} is enraged! ⚠');
 
 register('chat', (numCrystals, event) => {
-    if (Settings.betterDungeonMsgs) {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) {
         cancel(event);
         if (numCrystals === '2') ChatLib.chat('&a&lAll Energy Crystals Placed!');
     }
 }).setCriteria('${numCrystals}/2 Energy Crystals are now active!');
 
 register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) {
         cancel(event);
         ChatLib.chat('&c&lLaser Charged!');
     }
 }).setCriteria('The Energy Laser is charging up!');
 
-// f7 p2 - storm
+
+// FLOOR 7 -- p3 terms
 register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria("⚠ Storm is enraged! ⚠");
-
-register('chat', (damage, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria("Storm's Shadow Wave hit you for ${damage} damage.");
-
-register('chat', (damage, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria("Storm's Static Field hit you for ${damage} damage.");
-
-register('chat', (damage, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria("Storm's Giga Lightning hit you for ${damage} true damage.");
-
-register('chat', (damage, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria("Storm's Lightning Fireball hit you for ${damage} true damage.");
-
-register('chat', (damage, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria("Storm's Shadow Explosion hit you for ${damage} damage.");
-
-// f7 p3 terms
-register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
 }).setCriteria('The gate will open in 5 seconds!');
 
 register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
 }).setCriteria('The gate has been destroyed!');
 
 register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
 }).setCriteria('Wrong number!');
 
-register('chat', (damage, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria("Goldor's Frenzy hit you for ${damage} damage.");
 
-register('chat', (damage, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria("Goldor's TNT Trap hit you for ${damage} true damage.");
-
-register('chat', (damage, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria("Goldor's Greatsword hit you for ${damage} damage.");
-
-// f7 p4 necron
-register('chat', (damage, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria("Necron's Wither TNT hit you for ${damage} damage.");
-
-// npc sold hider
-// get list of dungeon items
-register('chat', (thing, amt, coin, event) => {
-    if (data.currArea !== 'Catacombs') return;
-    if (Settings.betterDungeonMsgs) {
-        if (!thing.includes('Hyperion')) cancel(event);
-    }
-}).setCriteria('You sold ${thing} x${amt} for ${coin} Coins!');
-
-register('chat', (thing, amt, coins, event) => {
-    if (data.currArea !== 'Catacombs') return;
-    if (Settings.betterDungeonMsgs) {
-        if (!thing.includes('Hyperion')) cancel(event);
-    }
-}).setCriteria('You sold ${ting} x${amt} for ${coins} Coin!');
-
-// mute friend join leavess during dungeon
-register('chat', (pplayer, status, event) => {
-    if (data.currArea === 'Catacombs') {
-        if (Settings.betterDungeonMsgs) cancel(event);
-    }
-}).setCriteria('Friend > ${player} ${status}.');
-
-// obtained stuff
-register('chat', (player, ting, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('${player} has obtained ${ting}!');
-
-register('chat', (book, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('You found a journal named ${book}!');
-
-register('chat', (item, mf, event) => {
-    if (data.currArea === 'Catacombs' && Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('RARE DROP! ${item} (+${mf}% ✯ Magic Find)');
-
-// witherborn
-register('chat', (enemies, damage, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('Your Witherborn hit ${enemies} enemy for ${damage} damage.');
-
-// default sacks hider
-register('chat', (items, pluralItem, secs, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('[Sacks] +${items} ${pluralItem}. (Last ${secs}s.)');
-
-register('chat', (items, pluralItem, secs, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('[Sacks] -${items} ${pluralItem}. (Last ${secs}s.)');
-
-// puzzle comps
-register('chat', (player, event) => {
-    if (Settings.betterDungeonMsgs) {
-        cancel(event);
-        ChatLib.chat('&a&lTic Tac Toe Completed!')
-    }
-}).setCriteria('PUZZLE SOLVED! ${player} tied Tic Tac Toe! Good job!');
-
-// decoy deployed
+// MM Floor 7 
 register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('Decoy deployed!');
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
+}).setCriteria('The Crystal withers your soul as you hold it in your hands!');
 
-// guild xp
-register('chat', (exp, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('You earned ${exp} GEXP from playing SkyBlock!');
 
-// blessings
+// Blessing Messages
 register('chat', (player, blessing, mins, secs, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
 }).setCriteria('${player} has obtained a Blessing of ${blessing}! (${mins}m ${secs}s)');
 
 register('chat', (player, blessing, mins, secs, event) => {
-    if (Settings.betterDungeonMsgs) {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) {
         cancel(event);
         ChatLib.chat(`&6&lDUNGEON BUFF! &dBlessing of ${blessing}!`);
     }
 }).setCriteria('DUNGEON BUFF! ${player} found a Blessing of ${blessing}! (${mins}m ${secs}s)');
 
 register('chat', (pu1, pu2, icon, effect, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
 }).setCriteria('Also granted you +${pu1} & +${pu2}x ${icon} ${effect}.');
 
 register('chat', (pu1, pu2, icon, effect, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
 }).setCriteria('Granted you +${pu1} & +${pu2}x ${icon} ${effect}.');
 
-// trivia weirdos
-register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('[NPC] ').setContains();
 
-register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
-}).setCriteria('You found a Secret Redstone Key!');
-
-// full inv
-register('chat', (event) => {
-    if (Settings.betterDungeonMsgs) {
+// Puzzle Messages -- Comps
+register('chat', (player, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) {
         cancel(event);
-        ChatLib.chat('&c&lFULL INVENTORY');
-        showAlert('&c&lFULL INV');
-        data.audioInst.playDefaultSound();
+        ChatLib.chat('&a&lTic Tac Toe Completed!');
     }
-}).setCriteria("You don't have enough space in your inventory to pick up this item!");
+}).setCriteria('PUZZLE SOLVED! ${player} tied Tic Tac Toe! Good job!');
 
-// minibosses
+register('chat', (player, npcName, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) {
+        cancel(event);
+        ChatLib.chat('&a&lThree Weirdos Completed!');
+    }
+}).setCriteria("PUZZLE SOLVED! ${player} wasn't fooled by ${npcName}! Good job!");
+
+
+// Puzzle Messages -- Fails
+register('chat', (event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) {
+        cancel(event);
+        ChatLib.chat(`&c&lPUZZLE FAIL! &f&lBOMB DEFUSE`);
+    }
+}).setCriteria('PUZZLE FAIL! The Creeper Bomb exploded! You took too long! Yikes!');
+
+register('chat', (player, npc, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) {
+        cancel(event);
+        ChatLib.chat(`&c&lPUZZLE FAIL! &f&lTHREE WEIRDOS &7(${player})`);
+    }
+}).setCriteria('PUZZLE FAIL! ${player} was fooled by ${npc}! Yikes!');
+
+register('chat', (player, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) {
+        cancel(event);
+        ChatLib.chat(`&c&lPUZZLE FAIL! &f&lBLAZE &7(${player})`)
+    }
+}).setCriteria('PUZZLE FAIL! ${player} killed a Blaze in the wrong order! Yikes!');
+
+// Mob Damage Messages
+register('chat', (skull, damage, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
+}).setCriteria('A ${skull} exploded, hitting you for ${damage} damage.');
+
+register('chat', (mobName, damage, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
+}).setCriteria('The ${mobName} struck you for ${damage} damage!');
+
+register('chat', (damage, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
+}).setCriteria('Your bone plating reduced the damage you took by ${damage}');
+
 register('chat', (miniBoss, ability, event) => {
-    if (Settings.betterDungeonMsgs) cancel(event);
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
 }).setCriteria("The ${miniBoss} used ${ability} on you!");
+
+
+// Witherborn Damage Messages
+register('chat', (enemies, damage, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
+}).setCriteria('Your Witherborn hit ${enemies} enemy for ${damage} damage.');
+
+
+// Bomb Defusal Messages
+register('chat', (message, event) => {
+    // if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) {
+        cancel(event);
+        if (message === "That's a fine pair of loot chests! You better hurry or I'll explode and destroy them!") {
+            ChatLib.chat(`&a&l[BOMB] &r&aCreeper: &f&lPUZZLE STARTED!`);
+
+        }
+        if (message === "I'm starting to get excited! In 30s, I'm going to ruin your day!") {
+            ChatLib.chat(`&a&l[BOMB] &r&aCreeper: &c&l30s Left!`);
+        } 
+    }
+}).setCriteria('[BOMB] Creeper: ${message}').setContains();
+
+
+// auto recombs
+register('chat', (item, event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonInteractiveElements) cancel(event);
+}).setCriteria('Your Auto Recombobulator recombobulated ${item}!').setContains();
+
+/////////////////////////////////////////////////////////////////////////////////////////////

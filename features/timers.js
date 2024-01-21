@@ -1,226 +1,297 @@
-import Settings from "../settings.js"
-import { data } from "../utils/data.js"
-import { constrainX, constrainY, createGuiCommand, renderGuiPosition, updateCDText } from '../utils/functions.js'
+import Settings from '../settings.js';
+import Audio from '../utils/audio.js';
+import PogObject from 'PogData';
+
+import { constrainX, constrainY } from '../utils/functions.js' // padding
+import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'; // gui
+import { updateCDText } from '../utils/functions.js'
 import { getActivePet } from '../utils/pet.js'
 import { setTimer, checkTimeLeft, regNearbyOrbs } from '../utils/functions.js';
+import { getInSkyblock, getCurrArea } from '../utils/functions.js'; // sb, area
 
-const gummyObj = data.timerInfos.gummy; 
-const rekindleObj = data.timerInfos.rekindle;
-const secondWindObj = data.timerInfos.secondWind;
-const tonicObj = data.timerInfos.glowyTonic;
-const bonzoObj = data.timerInfos.bonzo;
-const kingsObj = data.timerInfos.kingsScent;
-const orbObj = data.timerInfos.orb;
+////////////////////////////////////////////////////////////////////////////////
+// SETUP CONSTS
+////////////////////////////////////////////////////////////////////////////////
+const timerAudio = new Audio();
+const moveTimerDisplay = new Gui(); 
+createGuiCommand(moveTimerDisplay, 'movetimerdisplay', 'mtm');
+const timerDraggableText = "&2Mushy Tonic: &r00m 00s\n&2King's Scent: &r00m 00s\n&6Bonzo's Mask: &r00m 00s\n&6Rekindle: 00m 00s\n&6Second Wind: &r00m 00s\n&aGummy Bear: &r00m00s\n[Flux]: 00s";
+export const baoTimers = new PogObject("bao-dev", {
+    "displayText": '', 
+    "x": 400, 
+    "y": 240,
+
+    "gummy": {
+        "name": "Gummy Bear",
+        "cd": 60, 
+        "timeLeft": 0, 
+        "used": false, 
+        "target": null,
+    }, 
+    "rekindle": {
+        "name": "Rekindle",
+        "cd": 1,
+        "timeLeft": 0,
+        "used": false, 
+        "target": null,
+    }, 
+    "secondWind": {
+        "name": "Second Wind", 
+        "cd": 30,
+        "timeLeft": 0,
+        "used": false, 
+        "target": null,
+    }, 
+    "glowyTonic": {
+        "name": "Glowy Tonic",
+        "cd": 0,
+        "timeLeft": 0,
+        "used": false, 
+        "target": null,
+    }, 
+    "bonzo": {
+        "name": "Clownin' Around",
+        "cd": 6,
+        "timeLeft": 0,
+        "used": false, 
+        "target": null,
+    }, 
+    "kingsScent": {
+        "name": "King's Scent", 
+        "cd": 20,
+        "timeLeft": 0,
+        "used": false, 
+        "target": null,
+    }, 
+    "orb": {
+        "registered": [], 
+        "color": '',
+        "displayText": '', 
+        "timeLeft": 0, 
+        "type": 5, 
+        "found": false,
+        "x": 400, 
+        "y": 250,
+    },
+}, '/data/baoTimers.json');
+baoTimers.autosave(5);
+
 ////////////////////////////////////////////////////////////////////////////////
 // GUMMY --------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 register('chat', (event) => {
-    if (!data.inSkyblock) return;
+    if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.gummyTimer) return;
-    data.audioInst.playDrinkSound();
-    setTimer(gummyObj);
+    timerAudio.playDrinkSound();
+    setTimer(baoTimers.gummy);
+    baoTimers.save();
 }).setCriteria('You ate a Re-heated Gummy Polar Bear!');
 
 ////////////////////////////////////////////////////////////////////////////////
 // REKINDLE --------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 register('chat', (event) => {
-    if (!data.inSkyblock) return;
+    if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.rekindleAlert) return;
-    data.audioInst.playProcSound();
-    setTimer(rekindleObj);
+    timerAudio.playProcSound();
+    setTimer(baoTimers.rekindle);
+    baoTimers.save();
 }).setCriteria('Your Phoenix Pet saved you from certain death!');
 
 ////////////////////////////////////////////////////////////////////////////////
 // SPIRIT MASK -----------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 register('chat', (event) => {
-    if (!data.inSkyblock) return;
+    if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.secondWindAlert) return;
-    data.audioInst.playProcSound();
-    setTimer(secondWindObj);
+    timerAudio.playProcSound();
+    setTimer(baoTimers.secondWind);
+    baoTimers.save();
 }).setCriteria('Second Wind Activated! Your Spirit Mask saved your life!');
 
 ///////////////////////////////////////////////////////////////////////////////
 // Flux Countdown Timer -----------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////
 register("step", () => {
-    if (!data.inSkyblock) return;
+    if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.flux_timer) return;
-    regNearbyOrbs(orbObj);
+    regNearbyOrbs(baoTimers.orb);
+    baoTimers.save();
 }).setFps(10);
 
 ////////////////////////////////////////////////////////////////////////////////
 // MUSHY TIMER -----------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 register('chat', (event) => {
-    if (!data.inSkyblock) return;
+    if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.mushyTimer) return;
-    data.audioInst.playDrinkSound();
-    data.timerInfos.glowyTonic.cd = getActivePet().includes('Parrot') ? 84 : 60;
-    setTimer(tonicObj);
+    timerAudio.playDrinkSound();
+    baoTimers.glowyTonic.cd = getActivePet().includes('Parrot') ? 84 : 60;
+    setTimer(baoTimers.glowyTonic);
+    baoTimers.save();
 }).setCriteria('BUFF! You splashed yourself with Mushed Glowy Tonic I! Press TAB or type /effects to view your active effects!');
 
 register('chat', (name, event) => {
-    if (!data.inSkyblock) return;
+    if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.mushyTimer) return;
-    data.audioInst.playDrinkSound();
-    data.timerInfos.glowyTonic.cd = getActivePet().includes('Parrot') ? 84 : 60;
-    setTimer(tonicObj);
+    timerAudio.playDrinkSound();
+    baoTimers.glowyTonic.cd = getActivePet().includes('Parrot') ? 84 : 60;
+    setTimer(baoTimers.glowyTonic);
+    baoTimers.save();
 }).setCriteria('BUFF! You were splashed by ${name} with Mushed Glowy Tonic I! Press TAB or type /effects to view your active effects!')
 
 ////////////////////////////////////////////////////////////////////////////////
 // BONZO MASK -----------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 register('chat', (event) => {
-    if (!data.inSkyblock) return;
+    if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.bonzo_cd_timer) return;
-    data.audioInst.playProcSound();
-    setTimer(bonzoObj);
+    timerAudio.playProcSound();
+    setTimer(baoTimers.bonzo);
+    baoTimers.save();
 }).setCriteria("Your Bonzo's Mask saved your life!");
 
 ////////////////////////////////////////////////////////////////////////////////
 // KINGS SCENT TIMER -----------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 register('chat', (event) => {
-    if (!data.inSkyblock) return;
+    if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.kingScentTimer) return;
-    data.audioInst.playDrinkSound();
-    setTimer(kingsObj);
+    timerAudio.playDrinkSound();
+    setTimer(baoTimers.kingsScent);
+    baoTimers.save();
 }).setCriteria("[NPC] King Yolkar: I'm covering you in my foul stench as we speak. It won't last long before it dissipates!");
 
 ////////////////////////////////////////////////////////////////////////////////
 // RENDER OVERLAY
 ////////////////////////////////////////////////////////////////////////////////
-data.timerInfos.moveTimerDisplay = new Gui(); 
+
 register('gameLoad', () => {
-    if (!data.inSkyblock) return;
+    if (!getInSkyblock() || !World.isLoaded()) return;
     if (Settings.rekindleAlert) {
-        if (data.timerInfos.rekindle.used) {
-            data.timerInfos.rekindle.timeLeft = 0;
-            const targetTime = new Date(data.timerInfos.rekindle.target);
-            data.timerInfos.rekindle.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+        if (baoTimers.rekindle.used) {
+            baoTimers.rekindle.timeLeft = 0;
+            const targetTime = new Date(baoTimers.rekindle.target);
+            baoTimers.rekindle.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
         } else {
-            data.timerInfos.rekindle.timeLeft = 0;
+            baoTimers.rekindle.timeLeft = 0;
         }
     }
     
     if (Settings.secondWindAlert) {
-        if (data.timerInfos.secondWind.used) {
-            data.timerInfos.secondWind.timeLeft = 0;
-            const targetTime = new Date(data.timerInfos.secondWind.target);
-            data.timerInfos.secondWind.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+        if (baoTimers.secondWind.used) {
+            baoTimers.secondWind.timeLeft = 0;
+            const targetTime = new Date(baoTimers.secondWind.target);
+            baoTimers.secondWind.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
         } else {
-            data.timerInfos.secondWind.timeLeft = 0;
+            baoTimers.secondWind.timeLeft = 0;
         }
     }
     if (Settings.mushyTimer) {
-        if (data.timerInfos.glowyTonic.used) {
-            data.timerInfos.glowyTonic.timeLeft = 0;
-            const targetTime = new Date(data.timerInfos.glowyTonic.target);
-            data.timerInfos.glowyTonic.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+        if (baoTimers.glowyTonic.used) {
+            baoTimers.glowyTonic.timeLeft = 0;
+            const targetTime = new Date(baoTimers.glowyTonic.target);
+            baoTimers.glowyTonic.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
         } else {
-            data.timerInfos.glowyTonic.timeLeft = 0;
+            baoTimers.glowyTonic.timeLeft = 0;
         }
     }
 
     if (Settings.bonzo_cd_timer) {
-        if (data.timerInfos.bonzo.used) {
-            data.timerInfos.bonzo.timeLeft = 0;
-            const targetTime = new Date(data.timerInfos.bonzo.target);
-            data.timerInfos.bonzo.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+        if (baoTimers.bonzo.used) {
+            baoTimers.bonzo.timeLeft = 0;
+            const targetTime = new Date(baoTimers.bonzo.target);
+            baoTimers.bonzo.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
         } else {
-            data.timerInfos.bonzo.timeLeft = 0;
+            baoTimers.bonzo.timeLeft = 0;
         }
     }   
 
     if (Settings.kingScentTimer) {
-        if (data.timerInfos.kingsScent.used) {
-            data.timerInfos.kingsScent.timeLeft = 0;
-            const targetTime = new Date(data.timerInfos.kingsScent.target);
-            data.timerInfos.kingsScent.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+        if (baoTimers.kingsScent.used) {
+            baoTimers.kingsScent.timeLeft = 0;
+            const targetTime = new Date(baoTimers.kingsScent.target);
+            baoTimers.kingsScent.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
         } else {
-            data.timerInfos.kingsScent.timeLeft = 0;
+            baoTimers.kingsScent.timeLeft = 0;
         }
     }
 
     if (Settings.gummyTimer) {
-        if (data.timerInfos.gummy.used) {
-            data.timerInfos.gummy.timeLeft = 0;
-            const targetTime = new Date(data.timerInfos.gummy.target);
-            data.timerInfos.gummy.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
+        if (baoTimers.gummy.used) {
+            baoTimers.gummy.timeLeft = 0;
+            const targetTime = new Date(baoTimers.gummy.target);
+            baoTimers.gummy.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
         } else {
-            data.timerInfos.gummy.timeLeft = 0;
+            baoTimers.gummy.timeLeft = 0;
         }
-    }
+    };
+    baoTimers.save();
 })
 
-createGuiCommand(data.timerInfos.moveTimerDisplay, 'movetimerdisplay', 'mtm');
 
 register('step', () => {
-    if (!data.inSkyblock || !World.isLoaded()) return;
+    if (!getInSkyblock() || !World.isLoaded()) return;
     const timerValues = [];
     // rekindle
     if (Settings.rekindleAlert) {
-        if (data.timerInfos.rekindle.used) checkTimeLeft(rekindleObj, 'Phoenix', 'Rekindle');
-        timerValues.push({ name: "Rekindle", color: '&6', timeLeft: data.timerInfos.rekindle.timeLeft});
+        if (baoTimers.rekindle.used) checkTimeLeft(baoTimers.rekindle, 'Phoenix', 'Rekindle');
+        timerValues.push({ name: "Rekindle", color: '&6', timeLeft: baoTimers.rekindle.timeLeft});
     }
 
     // second wind
     if (Settings.secondWindAlert) {
-        if (data.timerInfos.secondWind.used) checkTimeLeft(secondWindObj, 'Spirit Mask', 'Second Wind');
-        timerValues.push({ name: "Second Wind", color: '&6',  timeLeft: data.timerInfos.secondWind.timeLeft});
+        if (baoTimers.secondWind.used) checkTimeLeft(baoTimers.secondWind, 'Spirit Mask', 'Second Wind');
+        timerValues.push({ name: "Second Wind", color: '&6',  timeLeft: baoTimers.secondWind.timeLeft});
     }
 
     // mushy tonic
-    if (Settings.mushyTimer && data.currArea !== 'Garden') {
-        if (data.timerInfos.glowyTonic.used) checkTimeLeft(tonicObj, 'Glowy Tonic');
-        timerValues.push({ name: "Mushy Tonic", color: '&2', timeLeft: data.timerInfos.glowyTonic.timeLeft});
+    if (Settings.mushyTimer && getCurrArea() !== 'Garden') {
+        if (baoTimers.glowyTonic.used) checkTimeLeft(baoTimers.glowyTonic, 'Glowy Tonic');
+        timerValues.push({ name: "Mushy Tonic", color: '&2', timeLeft: baoTimers.glowyTonic.timeLeft});
     }
     
     // bonzo
     if (Settings.bonzo_cd_timer) {
-        if (data.timerInfos.bonzo.used) checkTimeLeft(bonzoObj, 'Bonzo Mask', "Clowin' Around");
-        timerValues.push({ name: "Bonzo Mask", color: '&6', timeLeft: data.timerInfos.bonzo.timeLeft});
+        if (baoTimers.bonzo.used) checkTimeLeft(baoTimers.bonzo, 'Bonzo Mask', "Clowin' Around");
+        timerValues.push({ name: "Bonzo Mask", color: '&6', timeLeft: baoTimers.bonzo.timeLeft});
     }
     
     // kings scent
     if (Settings.kingScentTimer) {
-        if (data.timerInfos.kingsScent.used) checkTimeLeft(kingsObj, '', "King's Scent");
-        timerValues.push({ name: "King's Scent", color: '&2', timeLeft: data.timerInfos.kingsScent.timeLeft});
+        if (baoTimers.kingsScent.used) checkTimeLeft(baoTimers.kingsScent, '', "King's Scent");
+        timerValues.push({ name: "King's Scent", color: '&2', timeLeft: baoTimers.kingsScent.timeLeft});
     }
 
     // gummy bear
     if (Settings.gummyTimer) {
-        // console.log(`name: ${gummyObj.name}`)
-        // console.log(`used: ${gummyObj.used}`)
-        // console.log(`cd: ${gummyObj.cd}`)
-        // console.log(`timeLeft: ${gummyObj.timeLeft}`)
-        // console.log(`target: ${gummyObj.target}`)
-        if (data.timerInfos.gummy.used) checkTimeLeft(gummyObj, 'Gummy Bear');
-        timerValues.push({name: "Gummy Bear", color: '&a', timeLeft: data.timerInfos.gummy.timeLeft});
+        if (baoTimers.gummy.used) checkTimeLeft(baoTimers.gummy, 'Gummy Bear');
+        timerValues.push({name: "Gummy Bear", color: '&a', timeLeft: baoTimers.gummy.timeLeft});
     }
 
-    if (Settings.flux_timer) {
-        timerValues.push({name: "Flux", color: data.timerInfos.orb.color, timeLeft: data.timerInfos.orb.timeLeft});
+    if (Settings.flux_timer && baoTimers.orb.found) {
+        checkTimeLeft(baoTimers.orb, 'Orb');
+        timerValues.push({name: "Flux", color: baoTimers.orb.color, timeLeft: baoTimers.orb.timeLeft});
     }
 
     timerValues.sort((a, b) => b.timeLeft - a.timeLeft);
 
-    data.timerInfos.displayText = timerValues.map(entry => updateCDText(entry.color, entry.name, entry.timeLeft)).join('');
+    baoTimers.displayText = timerValues.map(entry => updateCDText(entry.color, entry.name, entry.timeLeft)).join('');
+    baoTimers.save();
 }).setFps(1);
 
 register('dragged', (dx, dy, x, y) => {
-    if (!data.inSkyblock) return;
-    if (data.timerInfos.moveTimerDisplay.isOpen()) {
-        data.timerInfos.x = constrainX(x, 3, data.timerInfos.draggedTimerText);
-        data.timerInfos.y = constrainY(y, 3, data.timerInfos.draggedTimerText);
-        data.save();
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    if (moveTimerDisplay.isOpen()) {
+        baoTimers.x = constrainX(x, 3, timerDraggableText);
+        baoTimers.y = constrainY(y, 3, timerDraggableText);
     }
+    baoTimers.save();
 });
 
 register('renderOverlay', () => {
-    if (!data.inSkyblock) return;
-    Renderer.drawStringWithShadow(data.timerInfos.displayText, data.timerInfos.x, data.timerInfos.y);
-    renderGuiPosition(data.timerInfos.moveTimerDisplay, data.timerInfos, data.timerInfos.draggedTimerText)
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    Renderer.drawStringWithShadow(baoTimers.displayText, baoTimers.x, baoTimers.y);
+    renderGuiPosition(moveTimerDisplay, baoTimers, timerDraggableText);
+    baoTimers.save();
 });

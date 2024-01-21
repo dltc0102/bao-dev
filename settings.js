@@ -1,6 +1,6 @@
 import { @ButtonProperty, @CheckboxProperty, Color, @ColorProperty, @PercentSliderProperty, @SelectorProperty, @SwitchProperty, @TextProperty, @Vigilant} from 'Vigilance';
 
-@Vigilant("bao", "§3Bao", {
+@Vigilant("bao-dev", "§3bao-dev", {
     getCategoryComparator: () => (a, b) => {
         const categories = ['General QOL', 'GUI', 'HP Display', 'Timers', 'Fishing QOL', 'Fishing Pings', 'Counter', 'Garden', 'Mythos', 'Misc', 'Dungeons', 'Sound', 'Debug']
         return categories.indexOf(a.name) - categories.indexOf(b.name);
@@ -8,6 +8,36 @@ import { @ButtonProperty, @CheckboxProperty, Color, @ColorProperty, @PercentSlid
 })
 
 class Settings {
+    // General QOL
+    // commands
+    // message qol
+    // others
+
+    // GUI
+    // overlay toggles
+    /// edit gui location
+
+    // HP Display
+
+    // Timers
+
+    // Fishing QOL
+
+    // Fishing Pings
+
+    // Counter
+
+    // Garden
+
+    // Mythos
+
+    // Misc
+
+    // Dungeons
+
+    // Sound
+
+    // Debug
     //////////////////////////////////////////////////////////////////////////////
     /* Settings @ Mythos ---------------------------------------------------------
     * Purpose: Settings for Mythological Event
@@ -137,6 +167,14 @@ class Settings {
         subcategory: "Toggleables",
     })
     inq_hp = false;
+
+    @SwitchProperty({
+        name: "Display HP: Mythos Mobs",
+        description: "Toggles health display for Mythos Mobs (not including Inquisitors)",
+        category: "HP Display",
+        subcategory: "Toggleables",
+    })
+    mythosMobHP = false;
     
     // champs hp
     @SwitchProperty({
@@ -367,6 +405,15 @@ class Settings {
     })
     alertNoMatSprayonator = false;
 
+    // Sprayonator Selected Mat Message Hider
+    @SwitchProperty({
+        name: "Sprayonator Selected Mat Message Hider",
+        description: "&7Hides the message: '&cSPRAYONATOR! Your selected material is now &e${material}&c!'",
+        category: "Garden",
+        subcategory: "QOL", 
+    })
+    hideSelSprayMatMsg = false;
+
     // Better Garden Messages
     @SwitchProperty({
         name: "Better Garden Messages",
@@ -423,17 +470,6 @@ class Settings {
         category: "Timers",
     })
     flux_timer = false;
-
-    // Edit Flux Timer Location
-    @ButtonProperty({
-        name: "Edit Flux Timer Location", 
-        description: "Click the button to move the Flux Countdown Timer on your screen.", 
-        category: "Timers", 
-        subcategory: "Edit Overlays", 
-    })
-    openFluxTimerGUI() {
-        ChatLib.command('movefluxtimer', true)
-    }
 
     // King Scent Timer
     @SwitchProperty({
@@ -675,15 +711,6 @@ class Settings {
     })
     pk_cmd = false;
 
-    // Show Active Pet
-    @SwitchProperty({
-        name: "Show Active Pet",
-        description: "Shows active pet.",
-        category: "General QOL",
-        subcategory: "QOL", 
-    })
-    show_active_pet = false;
-
     // Kicked Notifier
     @SwitchProperty({
         name: "Kicked Notifier",
@@ -742,7 +769,7 @@ class Settings {
     // Better Stash Messages
     @SwitchProperty({
         name: "Better Stash Messages",
-        description: "Hides/Simplifies Stash Messages.\n&f'From stash: &e${itemName}&f'&b has been hidden.\n&f'You picked up &e${numItems}&f items from your material stash!'&b has been hidden.\n&f'You still have ${matsRem} materials totalling ${numTypes} types of materials in there!'&b has been hidden and simplified to be &f'From Sacks: &e${pickupMat}&f x&e${numMats}&f || R: &e${remMats}&f || Types: &e${sackTypes}&f'",
+        description: "&cHides/Simplifies Stash Messages.\n&7'From stash: &e${itemName}&f'&b has been hidden.\n&7'You picked up &e${numItems}&7 items from your material stash!'&b has been hidden.\n&7'You still have &e${matsRem}&7 materials totalling &e${numTypes}&7 types of materials in there!'&b has been hidden and simplified to be:\n&7'From Sacks: &e${pickupMat}&7 x&e${numMats}&7 || R: &e${remMats}&7 || Types: &e${sackTypes}&f'",
         category: "General QOL",
         subcategory: "Messages QOL"
     })
@@ -751,21 +778,11 @@ class Settings {
     // Hide Click Stash Messages
     @SwitchProperty({
         name: "Hide Click Stash Messages",
-        description: "&bHides Click Stash Messages:\n&fOld Messages:\n&7'You have &e${numMatsRem}&7 materials stashed away!'&b -- message hidden.\n&7'(This totals &e${numTypes}&7 type of material stashed!)'&b -- message hidden.\n&7'(This totals &e${numTypes}&7 types of materials stashed!)'&b -- message hidden.\n&7'>>> CLICK HERE to pick them up! <<<'&b -- message hidden.\n\n&bThese messages will be condensed into one message:\n&f'REMINDER: You have &e${reminderMatsRem}&f materials of &e${numTypesRem}&f type(s) in your sacks!'",
+        description: "&cHides Click Stash Messages:\n&fOld Messages:\n&7'You have &e${numMatsRem}&7 materials stashed away!'&b -- hidden.\n&7'(This totals &e${numTypes}&7 type of material stashed!)'&b -- hidden.\n&7'(This totals &e${numTypes}&7 types of materials stashed!)'&b -- hidden.\n&7'>>> CLICK HERE to pick them up! <<<'&b -- hidden.\n\n&cThese messages will be condensed into one message:\n&f'REMINDER: You have &e${reminderMatsRem}&f materials of &e${numTypesRem}&f type(s) in your sacks!'",
         category: "General QOL",
         subcategory: "Messages QOL"
     })
     hideClickStashMessages = false;
-    
-    // Limit number of times 'Click Stash' appears
-    @SelectorProperty({
-        name: 'Click Stash Limit',
-        description: "Limit number of times 'Click Stash' appears",
-        category: 'General QOL',
-        subcategory: 'Messages QOL',
-        options: ['0', '5', '10', 'hide it forever'],
-    })
-    clickStashLimitOption = 2; // Stores index of option
 
     // Hide AOTE/AOTV Message
     @SwitchProperty({
@@ -1379,71 +1396,41 @@ class Settings {
     })
     betterDungeonMsgs = false;
 
-    // Toggle: Ability Messages
     @SwitchProperty({
-        name: "Toggle: Ability Messages", 
-        description: "Messages in the dungeon relating your class abilities will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+        name: "Toggle: Player Actions", 
+        description: "o abilities\no revivies\no obtained item messages\no decoy deployed messages\no essence messages\no creeper veil messages",
         category: "Dungeons"
     })
-    dungeonAbiMsgs = false;
+    dungeonPlayerActions = false;
 
-    // Toggle: Revives
     @SwitchProperty({
-        name: "Toggle: Revives", 
-        description: "Messages in the dungeon relating to Revives will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+        name: "Toggle: QOL", 
+        description: "o npc sold items\no friend join/left messages\no gexp/hypixel xp messages",
         category: "Dungeons"
     })
-    dungeonRevMsgs = false;
+    dungeonMessageQOL = false;
 
-    // Toggle: Deaths
     @SwitchProperty({
-        name: "Toggle: Deaths", 
-        description: "Messages in the dungeon relating to Deaths will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+        name: "Toggle: System Notifications", 
+        description: "o mort messages\no class stat change messages\no wish messages\no sacks messages",
         category: "Dungeons"
     })
-    dungeonDeathMsgs = false;
+    dungeonSysNotifications = false;
 
-    // Toggle: Finding Essences
     @SwitchProperty({
-        name: "Toggle: Finding Essences", 
-        description: "Messages in the dungeon relating to Finding Essences will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+        name: "Toggle: Interactive Elements", 
+        description: "o milestones\no wither door messages\no blood door messages\no boss messages\no statue messages\no floor specific messages\no blessing messages\no puzzle messages\no mob damage messages\no witherborn damage messages",
         category: "Dungeons"
     })
-    dungeonEssMsgs = false;
+    dungeonInteractiveElements = false;
 
-    // Toggle: Milestones
+    // party finder shortener
     @SwitchProperty({
-        name: "Toggle: Milestones", 
-        description: "Messages in the dungeon relating to Milestones will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
+        name: "Party Finder Message Shortener", 
+        description: "Changed 'Party Finder > (message) to 'PF > (message)'",
         category: "Dungeons"
     })
-    dungeonMSMsgs = false;
-
-    // Toggle: Wither Doors
-    @SwitchProperty({
-        name: "Toggle: Wither Doors", 
-        description: "Messages in the dungeon relating to Wither Doors will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
-        category: "Dungeons"
-    })
-    dungeonWDoorMsgs = false;
-
-    // Toggle: Blood Doors
-    @SwitchProperty({
-        name: "Toggle: Blood Doors", 
-        description: "Messages in the dungeon relating to Blood Doors will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
-        category: "Dungeons"
-    })
-    dungeonBDoorMsgs = false;
-
-    // Toggle: Blood Bosses
-    @SwitchProperty({
-        name: "Toggle: Blood Bosses", 
-        description: "Messages in the dungeon relating to Blood Room Bosses will be turned off.\nNote: These toggles will only work when you are in a dungeon.",
-        category: "Dungeons"
-    })
-    dungeonBBossMsgs = false;
-
-
+    betterPFMessages = false;
     
     ////////////////////////////////////////////////////////////////////////////
     // SOUNDS ------------------------------------------------------------------
@@ -1459,7 +1446,7 @@ class Settings {
 
     
     ////////////////////////////////////////////////////////////////////////////
-    // DEBUG -------------=-----------------------------------------------------
+    // DEBUG -------------------------------------------------------------------
     ////////////////////////////////////////////////////////////////////////////
     // Toggle Debug Mode
     @SwitchProperty({
@@ -1469,16 +1456,50 @@ class Settings {
     })
     toggle_debug = false;
 
-    // toggle all settings - biscuit
-    @ButtonProperty({
-        name: "Toggle all Biscuits Settings", 
-        description: "Click to activate all settings for easy dev-ing.", 
-        category: "Debug", 
+    ////////////////////////////////////////////////////////////////////////////
+    // DRAGONS -----------------------------------------------------------------
+    ////////////////////////////////////////////////////////////////////////////
+    // Better Dungeon Messages
+    @SwitchProperty({
+        name: "Better End Messages", 
+        description: "Master Toggle for all end message changes/deletions etc when you are in the end.",
+        category: "Misc",
+        subcategory: "End"
     })
-    openBiscuitSettingsGUI() {
-        ChatLib.command('allbaosettings', true)
-    }
+    betterEndMessages = false;
 
+    @SwitchProperty({
+        name: "Alert Special Zealot", 
+        description: "Sends a message to yourself/party that you got a special zealot.",
+        category: "Misc",
+        subcategory: "End"
+    })
+    sendZealotPing = false;
+
+    // drag counter
+    @SwitchProperty({
+        name: "Dragon Counter", 
+        description: "Master Toggle for Dragon Counter.",
+        category: "Misc",
+        subcategory: "End"
+    })
+    showDragonCounter = false;
+
+    @SwitchProperty({
+        name: "Drag Counter: Spawns", 
+        description: "Toggles the area that shows # of spawns per dragon type.",
+        category: "Misc",
+        subcategory: "End"
+    })
+    dragCounterSpawns = false;
+
+    @SwitchProperty({
+        name: "Drag Counter: Trackers", 
+        description: "Toggles the area that shows stats like Dragons Since Superior Dragon or # of Crystals Broken.",
+        category: "Misc",
+        subcategory: "End"
+    })
+    dragCounterTrackers = false;
 
     // constructor for category descriptions
     constructor() {
@@ -1490,7 +1511,6 @@ class Settings {
         
         // General QOL
         this.addDependency("Hide Click Stash Messages", "Better Stash Messages")
-        this.addDependency("Click Stash Limit", "Hide Click Stash Messages")
 
         // Mythos 
         this.addDependency("General Mythos Info", "Mythos Counter")
@@ -1529,9 +1549,6 @@ class Settings {
         this.addDependency("Autowarp Pest", "Pest QOL")
         this.addDependency("Screen Pest Alert", "Pest QOL")
 
-        // Timers
-        this.addDependency("Edit Flux Timer Location", "Flux Countdown Timer")
-
         // this.addDependency(child name, parent name)
         // fishing.crimson_isles
         this.addDependency("Radioactive Vial Ping", "Jawbus Ping")
@@ -1563,14 +1580,14 @@ class Settings {
         this.addDependency("Solver for Karen Fear", "Primal Fear Main Toggle")
         
         // dungeons
-        this.addDependency("Toggle: Ability Messages", "Better Dungeon Messages")
-        this.addDependency("Toggle: Revives", "Better Dungeon Messages")
-        this.addDependency("Toggle: Deaths", "Better Dungeon Messages")
-        this.addDependency("Toggle: Finding Essences", "Better Dungeon Messages")
-        this.addDependency("Toggle: Milestones", "Better Dungeon Messages")
-        this.addDependency("Toggle: Wither Doors", "Better Dungeon Messages")
-        this.addDependency("Toggle: Blood Doors", "Better Dungeon Messages")
-        this.addDependency("Toggle: Blood Bosses", "Better Dungeon Messages")
+        this.addDependency("Toggle: QOL", "Better Dungeon Messages")
+        this.addDependency("Toggle: Player Actions", "Better Dungeon Messages")
+        this.addDependency("Toggle: System Notifications", "Better Dungeon Messages")
+        this.addDependency("Toggle: Interactive Elements", "Better Dungeon Messages")
+
+        // dragons
+        this.addDependency("Drag Counter: Spawns", "Dragon Counter")
+        this.addDependency("Drag Counter: Trackers", "Dragon Counter")
     }   
 }
 

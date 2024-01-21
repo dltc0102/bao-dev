@@ -1,28 +1,37 @@
 import RenderLib from 'RenderLib/index.js';
 import Settings from '../settings.js';
-import { data } from '../utils/data.js';
+import Audio from '../utils/audio.js'
+
 import { sendMessage } from '../utils/party.js';
 import { showAlert } from '../utils/utils.js';
 
-////////////////////////////////////////////////////////////////////////////////
-// SLAYERS ---------------------------------------------------------------------
-////////////////////////////////////////////////////////////////////////////////
-/**
- * Draws slayer info on screen based on params
- * @param {*} timerName 
- * @param {*} bossName 
- * @param {*} specialName1 
- * @param {*} specialName2 
- * @param {*} specialName3 
- * @param {*} specialName4 
- */
-export function drawSlayerInfo(timerName, bossName, specialName1, specialName2, specialName3, specialName4) {
-    Renderer.drawString(`Timer: ${timerName}`, 5, 120);
-    Renderer.drawString(bossName, 5, 130);
-    if (specialName1) { Renderer.drawString(specialName1, 5, 140); }
-    if (specialName2) { Renderer.drawString(specialName2, 5, 150); }
-    if (specialName3) { Renderer.drawString(specialName3, 5, 160); }
-    if (specialName4) { Rendewrer.drawString(specialName4, 5, 170); }
+const funcAudio = new Audio();
+
+// inSkyblock
+export function getInSkyblock() {
+    return ChatLib.removeFormatting(Scoreboard.getTitle()).includes("SKYBLOCK");
+}
+
+// currArea
+export function getCurrArea() {
+    if (!World.isLoaded()) return;
+    const rawArea = TabList.getNames()[41]
+    if (rawArea) {
+        const area = rawArea.removeFormatting().trim().split(': ')[1];
+        return area;
+    }
+}
+
+// fishing_overlay.js -- player count
+export function getPlayerCount(entityPlayer) {
+    const regex = /taurus/i;
+    let nbPlayers = World.getAllEntitiesOfType(entityPlayer).filter(player => player.distanceTo(Player.getPlayer()) < 31);
+    let tabNames = TabList.getNames().filter(name => /\[.*\]/.test(name)).map(name => name.split(' ')[1].removeFormatting());
+
+    return nbPlayers
+        .filter(player => !regex.test(player.getName()))
+        .map(player => player.getName())
+        .filter(name => tabNames.includes(name)).length;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -33,11 +42,11 @@ export function drawSlayerInfo(timerName, bossName, specialName1, specialName2, 
  * @returns played sound for RNG drops
  */
 export function playSound() {
-    if (Settings.rng_sound_sel == 0) data.audioInst.playDefaultSound();
-    if (Settings.rng_sound_sel == 1) data.audioInst.playCatSong();
-    if (Settings.rng_sound_sel == 2) data.audioInst.playNitroSong();
-    if (Settings.rng_sound_sel == 3) data.audioInst.playBisSong();
-    if (Settings.rng_sound_sel == 4) data.audioInst.playChipiSong();
+    if (Settings.rng_sound_sel == 0) funcAudio.playDefaultSound();
+    if (Settings.rng_sound_sel == 1) funcAudio.playCatSong();
+    if (Settings.rng_sound_sel == 2) funcAudio.playNitroSong();
+    if (Settings.rng_sound_sel == 3) funcAudio.playBisSong();
+    if (Settings.rng_sound_sel == 4) funcAudio.playChipiSong();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -86,7 +95,7 @@ export function detectEntity(entityType, givenMobName, givenInfo) {
                 // sendMessage(`${givenInfo.names.length} ${givenMobName}s detected nearby`)
 
                 ChatLib.chat(`${givenMobName} detected nearby`)
-                data.audioInst.playDefaultSound();
+                funcAudio.playDefaultSound();
                 givenInfo.titleShown = true;
             }
         givenInfo.found = false;
@@ -160,7 +169,7 @@ export function detectDH(entityType, givenMobName, givenFormatCode, nameExceptio
     if (givenMobInfo.titleShown) return; // doesnt really change anythign
     if (givenMobInfo.numNearby === 1 && givenMobInfo.currHealth >= (givenMobInfo.totalHealth / 2)) {
         showAlert(`${givenFormatCode}${givenMobName} Nearby!`)
-        data.audioInst.playDefaultSound();
+        funcAudio.playDefaultSound();
         if (!hasMob) { 
             setTimeout(() => { 
                 sendMessage(`Detected ${givenMobName} nearby!`); 
@@ -173,7 +182,7 @@ export function detectDH(entityType, givenMobName, givenFormatCode, nameExceptio
     // doublehook detection
     if (givenMobInfo.numNearby >= 2 && givenMobInfo.currHealth >= (givenMobInfo.totalHealth / 2)) {
         showAlert(`${givenFormatCode}Doublehook ${givenMobName}!`)
-        data.audioInst.playDefaultSound();
+        funcAudio.playDefaultSound();
         if (!hasDoubleMob) { 
             setTimeout(() => {
                 sendMessage(`Doublehook ${givenMobName} Detected!`) 
@@ -192,38 +201,6 @@ export function createGuiCommand(guiName, cmdName, cmdAliases) {
     register('command', () => {
         guiName.open();
     }).setName(cmdName).setAliases(cmdAliases);
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// FILTER TAB NAMES ------------------------------------------------------------
-////////////////////////////////////////////////////////////////////////////////
-export function getFilteredPlayerTabNames() {
-    if (!World.isLoaded()) return;
-    return TabList.getNames()
-        .filter(name => /\[.*\]/.test(name))
-        .map(name => name.split(' ')[1].removeFormatting());
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// NEARBY PLAYERS  -------------------------------------------------------------
-////////////////////////////////////////////////////////////////////////////////
-export function getNearbyPlayers(maxDistance) {
-    return World.getAllEntitiesOfType(data.entities.entityPlayer)
-        .filter(player => player.distanceTo(Player.getPlayer()) < maxDistance);
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// FILTER BOT NAMES ----------------------------------------------------------------------
-////////////////////////////////////////////////////////////////////////////////
-export function filterBotNames(players, tabNames) {
-    const regex = /taurus/i;
-    return players
-        .filter(player => !regex.test(player.getName()))
-        .map(player => player.getName())
-        .filter(name => tabNames.includes(name));
 }
 
 
@@ -266,34 +243,30 @@ export function getLongestStrWidth(text) {
     return maxWidth;
 }
 export function constrainX(x, margin, text) {
-    console.log(`func passedX: ${x}`)
-    
     let stringW = getLongestStrWidth(text);
-    console.log(stringW)
+    const screenW = Renderer.screen.getWidth();
     let result = 0;
     if (x < margin) {
         result = margin;
-    } else if (x > data.screenW - margin - stringW) {
-        result = data.screenW - margin - stringW;
+    } else if (x > screenW - margin - stringW) {
+        result = screenW - margin - stringW;
     } else {
         result = x;
     }
-    console.log(`func constrainX: ${result}`);
     return result; 
 }
 
 export function constrainY(y, margin, text) {
-    console.log(`func passedY: ${y}`)
-    let stringH = getNumLines(text) * data.baseTextH;
+    const screenH = Renderer.screen.getHeight();
+    let stringH = getNumLines(text) * 10;
     let result = 0;
     if (y < margin) {
         result = margin;
-    } else if (y > data.screenH - margin - stringH) {
-        result = data.screenH - margin - stringH;
+    } else if (y > screenH - margin - stringH) {
+        result = screenH - margin - stringH;
     } else {
         result = y;
     }
-    console.log(`func constrainY: ${result}`);
     return result;
 }
 
@@ -366,10 +339,10 @@ export function getPlayerLocation() {
 // register setting -- contains
 export function registerSettingContains(settingName, criteria, title) {
     register('chat', (event) => {
-        if (!data.inSkyblock) return;
+        if (!getInSkyblock() || !World.isLoaded()) return;
         if (!settingName) return;
         showAlert(title);
-        data.audioInst.playDefaultSound();
+        funcAudio.playDefaultSound();
     }).setCriteria(criteria).setContains();
 }
 
@@ -468,15 +441,6 @@ export function delayMessage(prefix, message, ms) {
     }
 }
 
-export function getTabArea() {
-    if (!World.isLoaded()) return;
-    const rawArea = TabList.getNames()[41]
-    if (rawArea) {
-        const area = rawArea.removeFormatting().trim().split(': ')[1];
-        return area;
-    }
-}
-
 export function formatMoney(moneyAmt) {
     if (moneyAmt < 1000000) {
         const formattedMoney = (moneyAmt / 1000).toFixed(1); // (k)
@@ -492,8 +456,7 @@ export function timeToSeconds(hours, minutes, seconds) {
 }
 
 export function getThunderBottle() {
-    if (!World.isLoaded()) return;
-    if (!data.inSkyblock) return;
+    if (!getInSkyblock() || !World.isLoaded()) return;
     let skullItems = []; // list of slot number for skulls
     const invItems = Player.getInventory().getItems();
     for (let idx = 0; idx < invItems.length; idx++) {
@@ -557,7 +520,7 @@ export function pingDolphinMS(killCount) {
     if (rarity === 5) {
         playSound();
     } else {
-        data.audioInst.playDefaultSound();
+        funcAudio.playDefaultSound();
     }
 }
 export function petDropPing(message, exclamation, petName, mf) {
@@ -574,22 +537,21 @@ export function petDropPing(message, exclamation, petName, mf) {
 
     if (petName === 'Rat' || petName === 'Slug') {
         sendMessage(`${exclamation} ${rarityName[rarity]} ${petName} (+${mf}☘)`)
-        rarity > 4 ? playSound() : data.audioInst.playDefaultSound();
+        rarity > 4 ? playSound() : funcAudio.playDefaultSound();
     }
     if (petName === 'Scatha') {
         sendMessage(`${exclamation} ${rarityName[rarity]} ${petName} (+${mf})% ✯ Magic Find)`)
         playSound();
     }
     if (petName === 'Baby Yeti') {
-        yetiStat = rarity > 4 ? data.waterSC.yetiSinceLegPet : data.waterSC.yetiSinceEpicPet;
-        sendMessage(`${exclamation} ${rarityName[rarity]} ${petName} (+${mf})% ✯ Magic Find) [${yetiStat} Yetis since]`)
-        rarity > 4 ? playSound() : data.audioInst.playDefaultSound();
+        sendMessage(`${exclamation} ${rarityName[rarity]} ${petName} (+${mf})% ✯ Magic Find)`)
+        rarity > 4 ? playSound() : funcAudio.playDefaultSound();
 
     } else {
         let noMFText = `${exclamation} You caught a ${rarityName[rarity]} [Lvl 1] ${petName}`
         let withMFText = `${exclamation} ${rarityName[rarity]} ${petName} (+${mf})% ✯ Magic Find)`
         mf === 0 ? sendMessage(noMFText) : sendMessage(withMFText);
-        rarity > 4 ? playSound() : data.audioInst.playDefaultSound();
+        rarity > 4 ? playSound() : funcAudio.playDefaultSound();
     }
 }
 
@@ -611,7 +573,7 @@ export function sendGuild(message) {
 
 export function drawBonzoBox(x, y, z, givColor, seethru) {
     let colorCode = colorToRgb(givColor);
-    RenderLib.drawEspBox(x, y, z, 0.25, 0.25, colorCode.red, colorCode.green, colorCode.blue, 1, seethru);
+    RenderLib.drawEspBox(x, y, z, 0.25, 0.25, colorCode.red, colorCode.green, colorCode.blue, 10, seethru);
 }
 
 export function drawBeacon(x, y, z, givColor, alpha, seethru) {
@@ -826,7 +788,7 @@ export function updateInterval(array, plotName) {
         plotObj.spray = false;
         plotObj.sprayTimerText = '';
         ChatLib.chat(`&eSpray in &c${plotName}&e has expired!`)
-        data.audioInst.playDefaultSound();
+        funcAudio.playDefaultSound();
 
     } else {
         timeLeft -= 1;
@@ -870,36 +832,37 @@ export function checkLSRange(entity) {
 }
 
 export function regNearbyOrbs(dataObj) {
-    const nearbyOrbs = World.getAllEntitiesOfType(data.entities.entityArmorStand)
+    const entityArmorStand = Java.type("net.minecraft.entity.item.EntityArmorStand");
+    const nearbyOrbs = World.getAllEntitiesOfType(entityArmorStand)
             .filter(orbEntity => {
                 const orbName = orbEntity.getName().removeFormatting();
                 const effectiveRadius = orbEntity.distanceTo(Player.getPlayer());
                 return (orbName.includes('Overflux') || orbName.includes('Plasmaflux')) && effectiveRadius < 19; 
             });
 
-        if (nearbyOrbs.length > 0) {
-            dataObj.found = true;
-            dataObj.registered = [];
-            for (const registeredOrb of nearbyOrbs) {
-                const orbName = registeredOrb.getName().removeFormatting();
-                if (orbName.includes('Overflux')) { dataObj.type = 5; dataObj.color = '&5';}
-                if (orbName.includes('Plasmaflux')) { dataObj.type = 6; dataObj.color = '&d';}
-                const countdownMatch = orbName.match(/(\d+)s/);
-                if (countdownMatch) { dataObj.timeLeft = countdownMatch[1]; }
-                dataObj.registered.push(orbName);
-            }
-            
-            if (dataObj.timeLeft !== "") {
-                if (dataObj.type === 5 || dataObj.type === 6) {
-                const orbTypeColor = dataObj.type === 5 ? '&5' : '&d';
-                dataObj.displayText = `${orbTypeColor}[&rFlux${orbTypeColor}]: &b${dataObj.timeLeft}s`;
-                }
-                if (dataObj.displayText === '[Flux]: 10s') ChatLib.chat('&c10s of Flux left!');
-            }
-        } else {
-            dataObj.displayText = "";
-            dataObj.found = false;
+    if (nearbyOrbs.length > 0) {
+        dataObj.found = true;
+        dataObj.registered = [];
+        for (const registeredOrb of nearbyOrbs) {
+            const orbName = registeredOrb.getName().removeFormatting();
+            if (orbName.includes('Overflux')) { dataObj.type = 5; dataObj.color = '&5';}
+            if (orbName.includes('Plasmaflux')) { dataObj.type = 6; dataObj.color = '&d';}
+            const countdownMatch = orbName.match(/(\d+)s/);
+            if (countdownMatch) { dataObj.timeLeft = countdownMatch[1]; }
+            dataObj.registered.push(orbName);
         }
+        
+        if (dataObj.timeLeft !== "") {
+            if (dataObj.type === 5 || dataObj.type === 6) {
+            const orbTypeColor = dataObj.type === 5 ? '&5' : '&d';
+            dataObj.displayText = `${orbTypeColor}[&rFlux${orbTypeColor}]: &b${dataObj.timeLeft}s`;
+            }
+            if (dataObj.displayText === '[Flux]: 10s') ChatLib.chat('&c10s of Flux left!');
+        }
+    } else {
+        dataObj.displayText = "";
+        dataObj.found = false;
+    }
 }
 
 export function checkTimeLeft(timerObj, name, ability) {
@@ -907,7 +870,7 @@ export function checkTimeLeft(timerObj, name, ability) {
         timerObj.used = true;
         timerObj.timeLeft -= 1;
     } else if (timerObj.timeLeft === 0) {
-        data.audioInst.playDefaultSound();
+        funcAudio.playDefaultSound();
         if (name === 'Phoenix' || name === 'Spirit Mask' || name === 'Bonzo Mask') {
             ChatLib.chat(`&eYour ${name}'s &c${ability}&e ability has been refreshed!`);
             showAlert(`&a${ability} Available`);
@@ -918,8 +881,9 @@ export function checkTimeLeft(timerObj, name, ability) {
 
         }
 
-        timerObj.used = false;
-        timerObj.target = 0;
+        if (name !== 'Orb') timerObj.used = false;
+        if (name !== 'Orb') timerObj.target = 0;
+        if (name === 'Orb') timerObj.found = false;
     }
 }
 

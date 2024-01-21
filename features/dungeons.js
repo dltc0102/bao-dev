@@ -1,136 +1,155 @@
 import Settings from '../settings.js';
-import { data } from '../utils/data.js';
-import { constrainY, createGuiCommand, renderGuiPosition, playSound } from '../utils/functions.js';
-import { sendMessage } from '../utils/party.js';
-import { debug } from '../utils/utils.js';
-import { showAlert } from '../utils/utils.js'
+import Audio from '../utils/audio.js';
+import PogObject from 'PogData';
 
+import { baoUtils } from '../utils/utils.js';
+import { centerCoordinates, constrainY, createGuiCommand, drawBonzoBox, playSound, renderGuiPosition } from '../utils/functions.js';
+import { sendMessage } from '../utils/party.js';
+import { debug, showAlert } from '../utils/utils.js';
+import { getInSkyblock, getCurrArea } from '../utils/functions.js';
 
 ////////////////////////////////////////////////////////////////////////////////
-// MELODY DETECTOR -------------------------------------------------------------
+// SETUP CONSTS
+////////////////////////////////////////////////////////////////////////////////
+const entityArmorStand = Java.type("net.minecraft.entity.item.EntityArmorStand");
+const dungeonAudio = new Audio();
+const movesecretcounter = new Gui();
+createGuiCommand(movesecretcounter, 'movesecretcounter', 'msc');
+
+// pogObject
+export const baoDungeons = new PogObject("bao-dev", {
+    "sentMelody": false, 
+    "extraStatsFlag": false,
+    "deathStats": 0, 
+    "secretStats": 0, 
+    "totalSecretStats": 0,
+    "numRunsStats": 0, 
+    "secretOverviewText": '',
+    "draggableText": `&7Runs: 0 | Secrets: 0 | Avg: 0/run`,
+    "secretCounter": {
+        "x": 400, // arbituary random number, replaced by padding function 
+        "y": 40,
+    }, 
+}, '/data/baoDungeons.json');
+baoDungeons.autosave(5);
+
+////////////////////////////////////////////////////////////////////////////////
+// MELODY DETECTOR 
 ////////////////////////////////////////////////////////////////////////////////
 register('guiOpened', () => {
-    if (!World.isLoaded()) return;
-    if (!data.inSkyblock) return;
-    if (data.currArea !== 'Private Island') return;
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    if (getCurrArea() === 'Catacombs') return;
     if (!Settings.alert_melody) return;
-    if (data.dungeons.sentMelody) return;
+    if (baoDungeons.sentMelody) return;
     setTimeout(() => {
         if (Player.getContainer().getName() === 'Click the button on time!') {
             sendMessage('melody');  
-            data.dungeons.sentMelody = true;
-            debug(`sentMelody:  ${data.dungeons.sentMelody}`);
+            baoDungeons.sentMelody = true;
+            debug(`sentMelody:  ${baoDungeons.sentMelody}`);
         }
-    }, 1)
+    }, 1);
+    baoDungeons.save();
 })
 
-register('chat', (player, curr, total, event) => {
-    if (player !== Player.getName()) return;
-    data.dungeons.sentMelody = false;
-    debug(`data.dungeons.sentMelody:  ${data.dungeons.sentMelody}`);
-}).setCriteria('${player} activated a terminal! (${curr}/${total})');
+register('chat', (playerName, curr, total, event) => {
+    if (playerName !== Player.getName()) return;
+    baoDungeons.sentMelody = false;
+    baoDungeons.save();
+    debug(`baoDungeons.sentMelody:  ${baoDungeons.sentMelody}`);
+}).setCriteria('${playerName} activated a terminal! (${curr}/${total})');
 
 register('gameLoad', () => {
-    data.dungeons.sentMelody = false;
-    debug(`data.dungeons.sentMelody:  ${data.dungeons.sentMelody}`);
+    baoDungeons.sentMelody = false;
+    baoDungeons.save();
+    debug(`baoDungeons.sentMelody:  ${baoDungeons.sentMelody}`);
 });
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// secrets per run
+// Secrets - Per Run - Counter for Average Secrets Per Session
 ////////////////////////////////////////////////////////////////////////////////
-data.dungeons.movesecretcounter = new Gui();
-register('dragged', (dx, dy, x, y) => {
-    if (!data.inSkyblock) return;
-    if (data.dungeons.movesecretcounter.isOpen()) {
-        data.SecretCount.y = constrainY(y, 3, data.dungeons.secretOverviewText);
-    }
-})
-
-createGuiCommand(data.dungeons.movesecretcounter, 'movesecretcounter', 'msc')
-
 register('chat', (event) => {
-    if (!data.inSkyblock) return;
-    if (data.dungeons.extraStatsFlag) return;
-    // if (data.currArea !== 'Catacombs') return;
-    data.dungeons.numRunStats += 1;
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    if (getCurrArea() !== 'Catacombs') { debug(`currArea: ${getCurrArea()} -- not in Catacombs`); return; }
+    if (baoDungeons.extraStatsFlag) return;
+    baoDungeons.numRunStats += 1;
     setTimeout(() => {
         ChatLib.command('showextrastats');
-        data.dungeons.extraStatsFlag = true;
-    }, 500)
+        baoDungeons.extraStatsFlag = true;
+    }, 1000);
+    baoDungeons.save();
 
-    debug(`numRunStats: ${data.dungeons.numRunStats} | extraStatsFlag: ${data.dungeons.extraStatsFlag}`);
+    debug(`numRunStats: ${baoDungeons.numRunStats} | extraStatsFlag: ${baoDungeons.extraStatsFlag}`);
 }).setCriteria('> EXTRA STATS <').setContains();
 
 register('chat', (playerDeaths, event) => {
-    if (!data.inSkyblock) return;
-    // if (data.currArea !== 'Catacombs') return;
-    data.dungeons.deathStats += Number(playerDeaths);
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    if (getCurrArea() !== 'Catacombs') { debug(`currArea: ${getCurrArea()} -- not in Catacombs`); return; }
+    baoDungeons.deathStats += Number(playerDeaths);
+    baoDungeons.save();
 
-    debug(`deathStats: ${data.dungeons.deathStats} | ${typeof data.dungeons.deathStats}`);
+    debug(`deathStats: ${baoDungeons.deathStats} | ${typeof baoDungeons.deathStats}`);
 }).setCriteria('Deaths: ${playerDeaths}').setContains();
 
 register('chat', (secretCount, event) => {
-    if (!data.inSkyblock) return;
-    // if (data.currArea !== 'Catacombs') return;
-    debug(typeof Number(secretCount))
-    data.dungeons.secretStats += Number(secretCount);
-
-    debug(`secretStats: ${data.dungeons.secretStats} | ${typeof data.dungeons.secretStats}`);
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    if (getCurrArea() !== 'Catacombs') { debug(`currArea: ${getCurrArea()} -- not in Catacombs`); return; }
+    baoDungeons.secretStats += Number(secretCount);
+    baoDungeons.totalSecretStats += Number(secretCount);
+    baoDungeons.save();
+    
+    debug(typeof Number(secretCount));
+    debug(`secretStats: ${baoDungeons.secretStats} | ${typeof baoDungeons.secretStats}`);
 }).setCriteria('Secrets Found: ${secretCount}').setContains();
 
 register('chat', (cataType, floor, event) => {
-    if (!data.inSkyblock) return;
-    data.dungeons.numRunsStats += 1;
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    if (getCurrArea() !== 'Catacombs') { debug(`currArea: ${getCurrArea()} -- not in Catacombs`); return; }
+    baoDungeons.numRunsStats += 1;
     setTimeout(() => {
-        ChatLib.chat(`${data.modPrefix} &3${Player.getName()} &7Secrets: &b${data.dungeons.secretStats}&7, Deaths: &b${data.dungeons.deathStats}`)
+        ChatLib.chat(`${baoUtils.modPrefix} &3${Player.getName()} &7Secrets: &b${baoDungeons.secretStats}&7, Deaths: &b${baoDungeons.deathStats}`)
     }, 3000);
-    debug(`extraStatsFlag: ${data.dungeons.extraStatsFlag}`);
+    baoDungeons.save();
 }).setCriteria('${cataType} Catacombs - Floor ${floor} Stats').setContains();
 
 register('step', () => {
-    if (!data.inSkyblock) return;
-    data.dungeons.secretOverviewText = `Runs: &b${data.dungeons.numRunsStats}&r | Secrets: &b${data.dungeons.secretStats}&r | Avg: &b${(data.dungeons.secretStats / data.dungeons.numRunsStats).toFixed(2)}&r/&brun`
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    baoDungeons.secretOverviewText = `Runs: &b${baoDungeons.numRunsStats}&r | Secrets: &b${baoDungeons.totalSecretStats}&r | Avg: &b${(baoDungeons.totalSecretStats / baoDungeons.numRunsStats).toFixed(2)}&r/&brun`
+    baoDungeons.save();
 }).setFps(1);
 
 register('dragged', (dx, dy, x, y) => {
-    if (!data.inSkyblock) return;
-    if (data.dungeons.movesecretcounter.isOpen()) {
-        data.dungeons.secretCounter.x = data.screenW / 2 - (Renderer.getStringWidth(data.dungeons.secretOverviewText) / 2);
-        data.dungeons.secretCounter.y = y;
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    if (movesecretcounter.isOpen()) {
+        baoDungeons.secretCounter.x = (baoUtils.screenW - Renderer.getStringWidth(baoDungeons.secretOverviewText)) / 2;
+        baoDungeons.secretCounter.y = constrainY(y, 3, baoDungeons.draggableText);
     };
+    baoDungeons.save();
 });
 
 register('renderOverlay', () => {
-    if (!data.inSkyblock) return;
+    if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.secretsPerSession) return;
-    if (data.currArea === 'Catacombs' || data.currArea === 'Dungeon Hub') {
-        data.dungeons.secretCounter.x = data.screenW / 2 - (Renderer.getStringWidth(data.dungeons.secretOverviewText) / 2);
-        Renderer.drawStringWithShadow(data.dungeons.secretOverviewText, data.dungeons.secretCounter.x, data.dungeons.secretCounter.y)
-        renderGuiPosition(data.dungeons.movesecretcounter, data.dungeons.secretCounter, `Runs: 0 | Secrets: 0 | Avg: 0/run`)
+    if (getCurrArea() === 'Catacombs' || getCurrArea() === 'Dungeon Hub') {
+        Renderer.drawStringWithShadow(baoDungeons.secretOverviewText, baoDungeons.secretCounter.x, baoDungeons.secretCounter.y);
     }
+    renderGuiPosition(movesecretcounter, baoDungeons.secretCounter, baoDungeons.draggableText);
+    baoDungeons.save();
 })
 
 register('chat', (leader, catacombType, floorNum, event) => {
-    let isMM = catacombType === 'MM' ? "Mastermode" : "Normalmode";
-    let match = leader.match(/\[MVP\+\]\s+(\S+)/);
-    let username = match ? match[1] : null;
-    // ChatLib.chat(`leader: ${username}, catacombType: ${isMM}, floor: ${floorNum}`);
-
-    data.dungeons.secretStats = 0;
-    data.dungeons.deathStats = 0;
+    baoDungeons.deathStats = 0;
+    baoDungeons.secretStats = 0;
+    baoDungeons.extraStatsFlag = false;
+    baoDungeons.save();
 }).setCriteria('${leader} entered ${catacombType} Catacombs, Floor ${floorNum}!').setContains();
 
 register('command', () => {
-    data.dungeons.deathStats = 0;
-    data.dungeons.secretStats = 0;
-    data.dungeons.numRunsStats = 0;
+    baoDungeons.deathStats = 0;
+    baoDungeons.totalSecretStats = 0;
+    baoDungeons.numRunsStats = 0;
+    baoDungeons.save();
 }).setName('resetsecretcounter');
-
-// scarf fire freeze timer
-// professor fire freeze timer
-
-// auto dodge
 
 // ice spray wand ping
 register('chat', (player, reforge, event) => {
@@ -140,4 +159,32 @@ register('chat', (player, reforge, event) => {
         sendMessage(`${player} has obtained ${reforge} Ice Spray Wand!`)
     }, 1)
 }).setCriteria('${player} has obtained ${reforge} Ice Spray Wand!');
+
+register('step', () => {
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    if (getCurrArea() !== 'Catacombs') return;
+    let playerInv = Player.getInventory().getItems();
+    if (!playerInv.includes(null)) {
+        showAlert('&4&lFull Inv');
+        dungeonAudio.playDefaultSound();
+    }
+}).setFps(1);
+
+register('command', () => {
+    let nearbyEntities = World.getAllEntitiesOfType(entityArmorStand).filter(mobEntity => {
+        const mobName = mobEntity.getName().removeFormatting();
+        console.log(mobName);
+    })
+}).setName('detectas');
+
+// party finder shortener
+register('chat', (message, event) => {
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    if (Settings.betterPFMessages) {
+        cancel(event);
+        ChatLib.chat(`&d&lPF &r> &a${message}`)
+    }
+}).setCriteria('Party Finder > ${message}');
+
+
 

@@ -1,60 +1,92 @@
 import Settings from '../settings.js';
-import { data } from '../utils/data.js';
+import PogObject from 'PogData';
+
 import { checkLSRange, constrainX, constrainY, createGuiCommand, renderGuiPosition } from '../utils/functions.js';
+import { getInSkyblock } from '../utils/functions.js'; // sb, area
+import { baoUtils } from '../utils/utils.js';
+
+////////////////////////////////////////////////////////////////////////////////
+// SETUP CONSTS
+////////////////////////////////////////////////////////////////////////////////
+const entityArmorStand = Java.type("net.minecraft.entity.item.EntityArmorStand");
+const moveHpDisplay = new Gui(); // display hp of mobs
+createGuiCommand(moveHpDisplay, 'movehp', 'mhp');
+
+// pogObject
+export const baoDisplayHP = new PogObject("bao-dev", {
+    "inLSRange": false,
+    "specifiedMobs": [],
+    "mobInfos": [],
+    "displayText": '',
+    "draggableText": '[Lv000] SomeMobMonster 10M/10M ❤ -- [✖]',
+    "x": 400,
+    "y": 40,
+}, '/data/baoDisplayHP.json');
+baoDisplayHP.autosave(5);
+
 
 if (Settings.master_displayHP) {
-    // data.hpDisplayInfo.specifiedMobs = ['Magma Slug', 'Pyroclastic Worm', 'Moogma', 'Lava Leech', 'Fire Eel'];
-    if (Settings.vanq_hp) data.hpDisplayInfo.specifiedMobs.push('Vanquisher');
-    if (Settings.inq_hp) data.hpDisplayInfo.specifiedMobs.push('Exalted Minos Inquisitor');
-    if (Settings.champ_hp) data.hpDisplayInfo.specifiedMobs.push('Exalted Minos Champion');
-    if (Settings.rein_hp) data.hpDisplayInfo.specifiedMobs.push('Reindrake');
-    if (Settings.yeti_hp) data.hpDisplayInfo.specifiedMobs.push('Yeti');
-    if (Settings.gwshark_hp) data.hpDisplayInfo.specifiedMobs.push('Great White Shark');
-    if (Settings.carrotking_hp) data.hpDisplayInfo.specifiedMobs.push('Carrot King');
-    if (Settings.waterhydra_hp) data.hpDisplayInfo.specifiedMobs.push('Water Hydra');
-    if (Settings.sea_emp_hp) data.hpDisplayInfo.specifiedMobs.push('Sea Emperor');
-    if (Settings.reaper_hp) data.hpDisplayInfo.specifiedMobs.push('Grim Reaper');
-    if (Settings.phantom_fisher_hp) data.hpDisplayInfo.specifiedMobs.push('Phantom Fisher');
+    baoDisplayHP.specifiedMobs = ['Magma Slug', 'Pyroclastic Worm', 'Moogma', 'Lava Leech', 'Fire Eel', 'Lava Flame'];
+    if (Settings.vanq_hp) baoDisplayHP.specifiedMobs.push('Vanquisher');
+    if (Settings.inq_hp) baoDisplayHP.specifiedMobs.push('Exalted Minos Inquisitor');
+    if (Settings.champ_hp) baoDisplayHP.specifiedMobs.push('Exalted Minos Champion');
+    if (Settings.rein_hp) baoDisplayHP.specifiedMobs.push('Reindrake');
+    if (Settings.yeti_hp) baoDisplayHP.specifiedMobs.push('Yeti');
+    if (Settings.gwshark_hp) baoDisplayHP.specifiedMobs.push('Great White Shark');
+    if (Settings.carrotking_hp) baoDisplayHP.specifiedMobs.push('Carrot King');
+    if (Settings.waterhydra_hp) baoDisplayHP.specifiedMobs.push('Water Hydra');
+    if (Settings.sea_emp_hp) baoDisplayHP.specifiedMobs.push('Sea Emperor');
+    if (Settings.reaper_hp) baoDisplayHP.specifiedMobs.push('Grim Reaper');
+    if (Settings.phantom_fisher_hp) baoDisplayHP.specifiedMobs.push('Phantom Fisher');
+    if (Settings.mythosMobHP) {
+        baoDisplayHP.specifiedMobs.push('Exalted Minos Hunter');
+        baoDisplayHP.specifiedMobs.push('Bagheera');
+        baoDisplayHP.specifiedMobs.push('Exalted Minotaur');
+        baoDisplayHP.specifiedMobs.push('Exalted Gaia Construct');
+        baoDisplayHP.specifiedMobs.push('Exalted Minos Champion');
+    }
+    baoDisplayHP.save();
 }
 
-data.hpDisplayInfo.moveHpDisplay = new Gui(); // display hp of mobs
-createGuiCommand(data.hpDisplayInfo.moveHpDisplay, 'movehp', 'mhp')
-
 register('step', () => {
-    data.hpDisplayInfo.mobInfos = [];
-    nearbyMobs = World.getAllEntitiesOfType(data.entities.entityArmorStand)
+    if (!getInSkyblock() || !World.isLoaded()) return;
+
+    baoDisplayHP.mobInfos = [];
+    nearbyMobs = World.getAllEntitiesOfType(entityArmorStand)
         .filter(dist => dist.distanceTo(Player.getPlayer()) < 31)
         .filter(mobEntity => {
             let entityName = mobEntity.getName().removeFormatting();
-            data.hpDisplayInfo.inLSRange = checkLSRange(mobEntity) < 31; // returns dist
+            baoDisplayHP.inLSRange = checkLSRange(mobEntity) < 31; // returns dist
 
-            let allowedMobPatterns = data.hpDisplayInfo.specifiedMobs.join('|');
+            let allowedMobPatterns = baoDisplayHP.specifiedMobs.join('|');
             let mobRegex = new RegExp(`\\[Lv\\d+\\] (aCorrupted\\s?)?(${allowedMobPatterns})(a)? (\\d+(\\.\\d*)?[kM]?)\\/(\\d+(\\.\\d+)?[kM]?)❤`);
             let matchMobPattern = entityName.match(mobRegex);
             
             if (matchMobPattern) {
-                inRangeText = data.hpDisplayInfo.inLSRange ? '&a✓' : '&c✖'
+                inRangeText = baoDisplayHP.inLSRange ? '&a✓' : '&c✖'
                 displayedHP = `${mobEntity.getName()} &r-- [${inRangeText}&r]` 
-                data.hpDisplayInfo.mobInfos.push(displayedHP); 
+                baoDisplayHP.mobInfos.push(displayedHP); 
             }
         })
-    data.hpDisplayInfo.displayText = data.hpDisplayInfo.mobInfos.join('\n')
+    baoDisplayHP.displayText = baoDisplayHP.mobInfos.join('\n');
+    baoDisplayHP.save();
 }).setFps(10);
 
 register('dragged', (dx, dy, x, y) => {
-    if (!data.inSkyblock) return;
-    if (data.hpDisplayInfo.moveHpDisplay.isOpen()) {
-        data.HPCount.x = constrainX(x, 3, data.hpDisplayInfo.displayText);
-        data.HPCount.y = constrainY(y, 3, data.hpDisplayInfo.displayText);
-    }
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    if (moveHpDisplay.isOpen()) {
+        baoDisplayHP.x = constrainX(x, 3, baoDisplayHP.draggableText);
+        baoDisplayHP.y = constrainY(y, 3, baoDisplayHP.draggableText);
+    };
+    baoDisplayHP.save();
 })
 
 register('renderOverlay', () => {
-    if (!World.isLoaded()) return;
-    if (!data.inSkyblock) return;
+    if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.master_displayHP) return;
-    Renderer.drawString(data.hpDisplayInfo.displayText, data.hpDisplayInfo.x, data.hpDisplayInfo.y);
-    renderGuiPosition(data.hpDisplayInfo.moveHpDisplay, data.hpDisplayInfo, '[Lv000] SomeMobMonster 10M/10M ❤ -- [✖]')
+
+    if (baoDisplayHP.x === 400) baoDisplayHP.x = (baoUtils.screenW - Renderer.getStringWidth(baoDisplayHP.displayText)) / 2;
+    Renderer.drawStringWithShadow(baoDisplayHP.displayText, baoDisplayHP.x, baoDisplayHP.y);
+    renderGuiPosition(moveHpDisplay, baoDisplayHP, baoDisplayHP.draggableText);
+    baoDisplayHP.save();
 });
-
-

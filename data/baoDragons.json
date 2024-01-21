@@ -1,0 +1,19 @@
+{
+    "eyesPlaced": 0,
+    "crystalsBroken": 0,
+    "supWeight": 0,
+    "counter": {
+        "old": 0,
+        "protector": 0,
+        "strong": 1,
+        "unstable": 0,
+        "wise": 0,
+        "young": 0,
+        "superior": 0,
+        "dragsSinceSuperior": 1,
+        "x": 3,
+        "y": 100
+    },
+    "displayText": "&5|&d|&5| &6Dragons &5|&d|&5|\n&9==================\n&5|&d|&5| &7Protector: &b0\n&5|&d|&5| &7Old: &b0\n&5|&d|&5| &7Strong: &b1\n&5|&d|&5| &7Unstable: &b0\n&5|&d|&5| &7Wise: &b0\n&5|&d|&5| &7Young: &b0\n&5|&d|&5| &6Superior: &b0\n&9------------------\n&5|&d|&5| &7Drags Since Sup: &b1\n&5|&d|&5| &7Crystals Broken: &b0",
+    "counterdragsSinceSuperior": 0
+}

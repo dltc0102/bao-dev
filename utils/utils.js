@@ -1,4 +1,5 @@
 import Settings from '../settings.js';
+import PogObject from 'PogData';
 
 /**
  * Shows a chat message only visible to the client
@@ -6,7 +7,11 @@ import Settings from '../settings.js';
  * @returns Chat message with information for debugging.
  */
 export function debug(message) {
-    if (Settings.toggle_debug) ChatLib.chat(`&7${message}`);
+    if (Settings.toggle_debug) {
+        setTimeout(() => {
+            ChatLib.chat(`&7${message}`);
+        }, 1)
+    }
 }
 
 /**
@@ -23,3 +28,17 @@ export function removeFromArray(array, value) {
         return etu.toLowerCase() != value.toLowerCase();
     })
 }
+
+// pogObject
+export const baoUtils = new PogObject("bao-dev", {
+    "firstTime": true, 
+    "modPrefix": '&6[&3Bao&6]&r', 
+    "currArea": '',
+    "inSkyblock": false,
+    "screenH": Renderer.screen.getHeight(), 
+    "screenW": Renderer.screen.getWidth(), 
+    "thickSep": '==================', 
+    "thinSep": '------------------',
+    "baseTextH": 10,
+}, './data/baoUtils.json');
+

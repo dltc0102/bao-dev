@@ -1,77 +1,72 @@
-import './features/dev.js'
-import './features/displayHP.js'
-import './features/dungeons.js' 
-import './features/fishing_overlays.js' 
-import './features/fishing_pings.js' 
-import './features/fishing_stats.js'
-import './features/garden.js'
-import './features/general_qol.js' 
-import './features/misc.js' 
-// import './features/mythos.js'
-import './features/timers.js' 
+import Settings from './settings.js';
+import Audio from './utils/audio.js';
+import { baoUtils } from './utils/utils.js';
+import { getCurrArea } from './utils/functions.js';
+
+export const baoAudio = new Audio();
+
+// import './features/dev.js'
+import './features/displayHP.js' // done
+import './features/dungeon_cleaner.js' // done
+import './features/dungeons.js' // done
+import './features/end_cleaner.js' // done
+import './features/fishing_overlays.js' // done
+import './features/general_qol.js' // done
+import './features/garden.js' // done
+import './features/mythos.js' // done
+import './features/misc.js' // done
+import './features/timers.js' // done
+import './features/fishing_pings.js' // done
+import './features/waterSCStats.js'
+import './features/lavaSCStats.js'
 
 
-// import './features/winter.js'
-// import './features/new_timers.js'
-// import './features/padding.js'
-import './features/dungeon_cleaner.js'
+// import './features/fishing_stats.js'
 
-/* Dev.js 
-* o Reset Button
-* o Dev Button
-* o Quick setup fishing button (default preset)
-*/
+register("gameLoad", () => {
+    ChatLib.chat(`${baoUtils.modPrefix} &rUpdated!`)
+    ChatLib.command('pl');
+});
 
-// edit gui
-// try to optimise general_qol functions
+// firstTime
+if (baoUtils.firstTime) {
+    baoUtils.firstTime = false;
+    baoUtils.save();
 
-/* Fishing.js 
-* o Fawe Pings
-*/
+    const messages = [
+        `${baoUtils.modPrefix} has been installed!`, 
+        `&fThank you for downloading. This is Bao by oBiscuit.`, 
+        `&eThis version is v1.0.4 -- &bStart by doing /bao`
+    ]
 
-import Settings from "./settings.js"
-import { data } from "./utils/data.js"
-import { getTabArea } from "./utils/functions.js"
-
-if (data.firstTime) {
-    ChatLib.chat('&3--------------- &6<&3Bao&6> &rhas been installed! &3----------------');
-    ChatLib.chat('&3||         &fThank you for downloading. This is Bao by oBiscuit           &3||');
-    ChatLib.chat('&3||               &eThis version is v1.0.2 -- &bStart by doing /bao               &3||');
-    ChatLib.chat(ChatLib.getChatBreak('&n&3 '))
-    ChatLib.getChatBreak('&3&n-')
-    data.firstTime = false
+    baoAudio.playDefaultSound();
+    ChatLib.chat(`&b&m${ChatLib.getChatBreak(" ")}`);
+    messages.forEach(idx => ChatLib.chat(ChatLib.getCenteredText(idx)));
+    ChatLib.chat(`&b&m${ChatLib.getChatBreak(" ")}`);
 }
-data.autosave(5)
 
-register('command', () => {
-    data.firstTime = true;
-    ChatLib.chat('Bao has been reset!')
-}).setName('resetfirstbao');
+// get currArea & inSkyblock
+register("step", () => {
+    if (!World.isLoaded()) return;
+    baoUtils.currArea = getCurrArea();
+    if (ChatLib.removeFormatting(Scoreboard.getTitle()).includes("SKYBLOCK")) {
+        baoUtils.inSkyblock = true
+    } else {
+        baoUtils.inSkyblock = false
+    }
+}).setFps(1);
 
-// open gui
+// open main gui
 register("command", () => 
     Settings.openGUI()
 ).setName("biscuitaddons").setAliases('bao');
 
-// load current area
-register('step', () => {
-    if (!data.inSkyblock) return;
-    data.currArea = getTabArea();
-}).setFps(1);
-
-
-
-// // move overlays event
-// register('command', () => {
-//     movebao.open()
-// }).setName('movebao').setAliases('mb', 'mbao');
-
-// var movebao = new Gui();
+register('command', () => {
+    baoUtils.firstTime = true;
+}).setName('resetft');
 
 register('command', () => {
-    ChatLib.chat(`x: ${data.fishingOverlays.bobberCounter.x}, y: ${data.fishingOverlays.bobberCounter.y}`);
-}).setName('whatsmbc');
+    ChatLib.chat(`ft: ${baoUtils.firstTime}`)
+}).setName('checkft');
 
-register('command', () => {
-    ChatLib.chat(`x: ${data.fishingOverlays.playerCounter.x}, y: ${data.fishingOverlays.playerCounter.y}`);
-}).setName('whatsmpc');
+baoUtils.autosave(1);

@@ -1,0 +1,60 @@
+{
+    "displayText": "\n\n\n\n\n\n",
+    "x": 847,
+    "y": 3,
+    "gummy": {
+        "name": "Gummy Bear",
+        "cd": 60,
+        "timeLeft": 0,
+        "used": false,
+        "target": 0
+    },
+    "rekindle": {
+        "name": "Rekindle",
+        "cd": 1,
+        "timeLeft": 0,
+        "used": false,
+        "target": 0
+    },
+    "secondWind": {
+        "name": "Second Wind",
+        "cd": 30,
+        "timeLeft": 0,
+        "used": false,
+        "target": 0
+    },
+    "glowyTonic": {
+        "name": "Glowy Tonic",
+        "cd": 60,
+        "timeLeft": 0,
+        "used": false,
+        "target": 0
+    },
+    "bonzo": {
+        "name": "Clownin' Around",
+        "cd": 6,
+        "timeLeft": 0,
+        "used": false,
+        "target": 0
+    },
+    "kingsScent": {
+        "name": "King's Scent",
+        "cd": 20,
+        "timeLeft": 0,
+        "used": false,
+        "target": null
+    },
+    "orb": {
+        "registered": [
+            "Overflux 47s"
+        ],
+        "color": "&5",
+        "displayText": "",
+        "timeLeft": "47",
+        "type": 5,
+        "found": false,
+        "x": 400,
+        "y": 250,
+        "used": true
+    }
+}

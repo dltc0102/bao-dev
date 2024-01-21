@@ -1,0 +1,48 @@
+{
+    "bobber": {
+        "count": 0,
+        "text": "&rBobbers: &b0",
+        "x": 3,
+        "y": 15.5
+    },
+    "player": {
+        "count": 2,
+        "text": "&rPlayers: &b2",
+        "x": 3,
+        "y": 26.5
+    },
+    "nbJawbus": {
+        "info": {
+            "found": false,
+            "foundNearby": false,
+            "names": [],
+            "titleShown": false,
+            "numNearby": 0,
+            "currHealth": 0,
+            "totalHealth": 0
+        },
+        "text": "",
+        "x": 3,
+        "y": 34
+    },
+    "nbThunder": {
+        "info": {
+            "found": false,
+            "foundNearby": false,
+            "names": [],
+            "titleShown": false,
+            "numNearby": 0,
+            "currHealth": 0,
+            "totalHealth": 0
+        },
+        "text": "",
+        "x": 3,
+        "y": 44
+    },
+    "charges": {
+        "sentFullMsg": false,
+        "text": "",
+        "x": 3,
+        "y": 54
+    }
+}

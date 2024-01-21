@@ -1,6 +1,4 @@
-import { data } from '../utils/data.js';
 import { debug } from '../utils/utils.js';
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // PARTY CHECKER ---------------------------------------------------------------
@@ -25,7 +23,6 @@ register("chat", (name) => {
     inParty = false;
     isPL = name === Player.getName();
     whoPL = isPL ? Player.getName() : name;
-    data.lockedList = [];
     debug(`inParty: ${inParty}, isPL: ${isPL}, whoPL: ${whoPL}`)
 }).setCriteria("${name} has disbanded the party!");
 
@@ -195,13 +192,9 @@ export function getPList() {
  * @returns {*} Command that sends message using prefix
  */
 export function sendMessage(message) {
-    if (data.inSkyblock) {
-        const isInP = getInParty() ? "pc" : "cc";
-        const messageToSend = `${isInP} ${message}`
-        ChatLib.command(messageToSend);
-    } else {
-        ChatLib.chat(message);
-    }
+    const isInP = getInParty() ? "pc" : "cc";
+    const messageToSend = `${isInP} ${message}`
+    ChatLib.command(messageToSend);
 }
 
 // announce
