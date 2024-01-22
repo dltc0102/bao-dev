@@ -81,7 +81,7 @@ register('chat', (player, event) => {
     if (!Settings.auto_notify_warp_cmd) return
     if (getIsPL()) {
         setTimeout(() => {
-            sendMessage('[!] type #warp for warp when r[!]')
+            sendMessage('[!] type #warp or #w for warp when r [!]')
         }, 1)
         generalAudio.playDefaultSound();
     }
@@ -205,6 +205,10 @@ register('chat', (event) => {
 
 
 // stash shortener
+register('chat', (numItems, timeS, event) => {
+    if (Settings.betterStashMessages) cancel(event);
+}).setCriteria('[Sacks] +${numItems} items. (Last ${timeS}s.)');
+
 register('chat', (itemName, event) => {
     if (Settings.betterStashMessages) cancel(event);
     baoGeneral.stashes.pickupMat = itemName;
@@ -279,11 +283,6 @@ register('chat', (event) => {
 }).setCriteria('CLICK HERE to get your SPECIAL new year cake!').setContains();
 
 // grandma wolf hider
-register('chat', (event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (Settings.grandma_hider) cancel(event);
-}).setCriteria('+5 Kill Combo +3✯ Magic Find');
-
 register('chat', (event) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (Settings.grandma_hider) cancel(event);

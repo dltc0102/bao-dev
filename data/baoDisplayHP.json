@@ -7,16 +7,25 @@
         "Lava Leech",
         "Fire Eel",
         "Lava Flame",
+        "Vanquisher",
         "Exalted Minos Inquisitor",
+        "Exalted Minos Champion",
+        "Reindrake",
+        "Yeti",
+        "Great White Shark",
+        "Carrot King",
+        "Water Hydra",
+        "Sea Emperor",
+        "Grim Reaper",
+        "Phantom Fisher",
         "Exalted Minos Hunter",
         "Bagheera",
         "Exalted Minotaur",
-        "Exalted Gaia Construct",
-        "Exalted Minos Champion"
+        "Exalted Gaia Construct"
     ],
     "mobInfos": [],
     "displayText": "",
     "draggableText": "[Lv000] SomeMobMonster 10M/10M ❤ -- [✖]",
-    "x": 381.5,
-    "y": 40.5
+    "x": 368.5,
+    "y": 61.5
 }

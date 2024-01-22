@@ -43,7 +43,6 @@ if (Settings.master_displayHP) {
         baoDisplayHP.specifiedMobs.push('Bagheera');
         baoDisplayHP.specifiedMobs.push('Exalted Minotaur');
         baoDisplayHP.specifiedMobs.push('Exalted Gaia Construct');
-        baoDisplayHP.specifiedMobs.push('Exalted Minos Champion');
     }
     baoDisplayHP.save();
 }

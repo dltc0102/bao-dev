@@ -42,6 +42,13 @@ const clover_core_title = '&5Lucky Clover Core';
 const hydra_title = '&1Hydra';
 const zb_miner_title = '&6Abyssal Miner';
 
+// toggle all fishing pings command
+register('command', () => {
+    // code goes here
+}).setName('togglefishingpings');
+
+
+
 // QOL
 register('chat', (event) => {
     if (Settings.hide_blessing_messages) cancel(event);
@@ -270,6 +277,7 @@ register('chat', (event) => {
 register('chat', (mf, event) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.ff_pet_drop_ping) return;
+    ChatLib.chat('ff pet drop ping run..')
     const message = ChatLib.getChatMessage(event, true);
     petDropPing(message, 'PET DROP!', 'Flying Fish', mf);
 }).setCriteria('PET DROP! Flying Fish (+${mf}% ✯ Magic Find)');

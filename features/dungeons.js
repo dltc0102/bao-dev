@@ -164,9 +164,11 @@ register('step', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (getCurrArea() !== 'Catacombs') return;
     let playerInv = Player.getInventory().getItems();
-    if (!playerInv.includes(null)) {
-        showAlert('&4&lFull Inv');
-        dungeonAudio.playDefaultSound();
+    if (Settings.fullInventoryAlert) {
+        if (!playerInv.includes(null)) {
+            showAlert('&4&lFull Inv');
+            dungeonAudio.playDefaultSound();
+        }
     }
 }).setFps(1);
 

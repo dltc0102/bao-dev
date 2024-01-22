@@ -525,7 +525,7 @@ export function pingDolphinMS(killCount) {
 }
 export function petDropPing(message, exclamation, petName, mf) {
     let rarity = '';
-    if (message.includes(`&r${petName}`) || message.include(`&f${petName}`)) { rarity = 1; } // common
+    if (message.includes(`&r${petName}`) || message.includes(`&f${petName}`)) { rarity = 1; } // common
     if (message.includes(`&a${petName}`)) { rarity = 2; } // uncommon
     if (message.includes(`&9${petName}`)) { rarity = 3; } // rare
     if (message.includes(`&5${petName}`)) { rarity = 4; } // epic

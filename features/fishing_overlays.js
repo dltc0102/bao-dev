@@ -172,29 +172,29 @@ register('renderOverlay', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     // bobber count
     if (Settings.bobberCount && getCurrArea() !== 'Garden') {
-        Renderer.drawString(baoFishOverlay.bobber.text, baoFishOverlay.bobber.x, baoFishOverlay.bobber.y)
+        Renderer.drawStringWithShadow(baoFishOverlay.bobber.text, baoFishOverlay.bobber.x, baoFishOverlay.bobber.y)
     }
 
     // nearby players
     if (Settings.playersNearbyCount && getCurrArea() !== 'Garden') {
-        Renderer.drawString(baoFishOverlay.player.text, baoFishOverlay.player.x, baoFishOverlay.player.y);
+        Renderer.drawStringWithShadow(baoFishOverlay.player.text, baoFishOverlay.player.x, baoFishOverlay.player.y);
     }
     
     // detect double/nearby jawbus
     if (Settings.detectDoubleJawbus && getCurrArea() === 'Crimson Isle') {
-        Renderer.drawString(baoFishOverlay.nbJawbus.text, baoFishOverlay.nbJawbus.x, baoFishOverlay.nbJawbus.y);
+        Renderer.drawStringWithShadow(baoFishOverlay.nbJawbus.text, baoFishOverlay.nbJawbus.x, baoFishOverlay.nbJawbus.y);
         if (Settings.jawbus_hp) displayEntityHP(baoFishOverlay.nbJawbus.names, baoFishOverlay.nbJawbus.found, baoDisplayHP.x, baoDisplayHP.y)
     }
     
     // detect double/nearby thunder
     if (Settings.detectDoubleThunder && getCurrArea() === 'Crimson Isle') {
-        Renderer.drawString(baoFishOverlay.nbThunder.text, baoFishOverlay.nbThunder.x, baoFishOverlay.nbThunder.y);
+        Renderer.drawStringWithShadow(baoFishOverlay.nbThunder.text, baoFishOverlay.nbThunder.x, baoFishOverlay.nbThunder.y);
         if (Settings.thunder_hp) displayEntityHP(baoFishOverlay.nbThunder.info.names, baoFishOverlay.nbThunder.info.found, baoDisplayHP.x, baoDisplayHP.y)
     }
     
     // charge counter
     if (Settings.chargeCounter && getCurrArea() === 'Crimson Isle') {
-        Renderer.drawString(baoFishOverlay.charges.text, baoFishOverlay.charges.x, baoFishOverlay.charges.y)
+        Renderer.drawStringWithShadow(baoFishOverlay.charges.text, baoFishOverlay.charges.x, baoFishOverlay.charges.y)
     }
 
 

@@ -1,10 +1,10 @@
 {
     "firstTime": false,
     "modPrefix": "&6[&3Bao&6]&r",
-    "currArea": "Private Island",
+    "currArea": "Hub",
     "inSkyblock": true,
-    "screenH": 540,
-    "screenW": 960,
+    "screenH": 240,
+    "screenW": 427,
     "thickSep": "==================",
     "thinSep": "------------------",
     "baseTextH": 10

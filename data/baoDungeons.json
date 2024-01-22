@@ -3,13 +3,12 @@
     "extraStatsFlag": false,
     "deathStats": 0,
     "secretStats": 0,
-    "totalSecretStats": 78,
-    "numRunsStats": 4,
-    "secretOverviewText": "Runs: &b4&r | Secrets: &b78&r | Avg: &b19.50&r/&brun",
+    "totalSecretStats": 0,
+    "numRunsStats": 0,
+    "secretOverviewText": "Runs: &b0&r | Secrets: &b0&r | Avg: &bNaN&r/&brun",
     "draggableText": "&7Runs: 0 | Secrets: 0 | Avg: 0/run",
     "secretCounter": {
         "x": 400,
         "y": 40
-    },
-    "numRunStats": 3
+    }
 }

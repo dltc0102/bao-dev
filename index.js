@@ -17,6 +17,8 @@ import './features/mythos.js' // done
 import './features/misc.js' // done
 import './features/timers.js' // done
 import './features/fishing_pings.js' // done
+
+import './features/mainSCStats.js' // done
 import './features/waterSCStats.js'
 import './features/lavaSCStats.js'
 

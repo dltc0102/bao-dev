@@ -4,8 +4,8 @@ import PogObject from 'PogData';
 import { createGuiCommand, formatMoney, renderGuiPosition, updateCDText } from '../utils/functions.js';
 import { getInSkyblock, getCurrArea } from '../utils/functions.js'; // sb, area
 import { baoUtils } from '../utils/utils.js';
-import { baoWaterSCStats } from './water_fishingStats.js';
-import { baoLavaSCStats } from './lava_fishingStats.js';
+import { baoWaterSCStats } from './waterSCStats.js';
+import { baoLavaSCStats } from './lavaSCStats.js';
 
 
 ////////////////////////////////////////////////////////////////////////////////

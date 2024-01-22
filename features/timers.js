@@ -15,7 +15,7 @@ import { getInSkyblock, getCurrArea } from '../utils/functions.js'; // sb, area
 const timerAudio = new Audio();
 const moveTimerDisplay = new Gui(); 
 createGuiCommand(moveTimerDisplay, 'movetimerdisplay', 'mtm');
-const timerDraggableText = "&2Mushy Tonic: &r00m 00s\n&2King's Scent: &r00m 00s\n&6Bonzo's Mask: &r00m 00s\n&6Rekindle: 00m 00s\n&6Second Wind: &r00m 00s\n&aGummy Bear: &r00m00s\n[Flux]: 00s";
+const timerDraggableText = "&2Mushy Tonic: &r00m 00s\n&2King's Scent: &r00m 00s\n&6Bonzo's Mask: &r00m 00s\n&6Rekindle: &r00m 00s\n&6Second Wind: &r00m 00s\n&aGummy Bear: &r00m00s\n[Flux]: 00s";
 export const baoTimers = new PogObject("bao-dev", {
     "displayText": '', 
     "x": 400, 

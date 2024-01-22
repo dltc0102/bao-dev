@@ -290,10 +290,15 @@ register('chat', (event) => {
 
 
 // Mute Fire Sales in Dungeon
-// register('chat', (event) => {
-//     if (getCurrArea() !== 'Catacombs') return;
-//     if (Settings.dungeonSysNotifications) cancel(event);
-// }).setCriteria('');
+register('chat', (event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonSysNotifications) cancel(event);
+}).setCriteria('FIRE SALE').setContains();
+
+register('chat', (event) => {
+    if (getCurrArea() !== 'Catacombs') return;
+    if (Settings.dungeonSysNotifications) cancel(event);
+}).setCriteria('♨').setContains();
 
 
 ///////////////////////////////////////////////////////////////////////////////
