@@ -9,6 +9,8 @@ import { showAlert } from '../utils/utils.js'
 import { baoUtils } from '../utils/utils.js';
 import { updateCDText, setTimer } from '../utils/functions.js'
 import { getInSkyblock, getCurrArea } from '../utils/functions.js'; // sb, area
+import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'; // gui
+import { constrainX, constrainY } from '../utils/functions.js' // padding
 
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP CONSTS
@@ -31,6 +33,7 @@ const matAttracts =  {
 };
 
 const allVinylNames = ["Pretty Fly", "Cricket Choir", "Earthworm Ensemble", "Slow and Groovy", "Not Just a Pest", "Cicada Symphony", "DynaMITES", "Rodent Revolution", "Wings of Harmony", "Buzzin' Beats"];
+
 
 export const baoGardens = new PogObject("bao-dev", {
     "sentDeskReminder": false,
@@ -460,6 +463,7 @@ register('gameLoad', () => {
 // TIMER STEP TRIGGERS
 ////////////////////////////////////////////////////////////////////
 register('step', () => {
+    if (!getInSkyblock() || !World.isLoaded()) return;
     if (getCurrArea() !== 'Garden') return;
 
     if (Settings.harvPotionOverlay && baoGardens.harbringer.used) {
@@ -521,6 +525,7 @@ register('step', () => {
 
 
 register('step', () => {
+    if (!getInSkyblock() || !World.isLoaded()) return;
     if (getCurrArea() !== 'Garden') return;
 
     // player yaw and pitch
@@ -594,7 +599,6 @@ register('step', () => {
     baoGardens.save();
 }).setFps(5);
 
-
 // render overlay
 register('renderOverlay', () => {
     if (getCurrArea() !== 'Garden') return;
@@ -648,6 +652,7 @@ register('renderOverlay', () => {
         baoGardens.pestExchange.x = paddingText(baoGardens.pestExchange.text);
         Renderer.drawStringWithShadow(baoGardens.pestExchange.text, baoGardens.pestExchange.x, baoGardens.pestExchange.y);
     }
+
 })
 
 

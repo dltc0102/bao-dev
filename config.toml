@@ -11,21 +11,33 @@
 	debug_mode = false
 
 [dungeons]
-	"toggle:_player_actions" = false
-	"toggle:_system_notifications" = false
-	"toggle:_interactive_elements" = false
-	full_inventory_alert = false
-	"toggle:_qol" = false
-	party_finder_message_shortener = false
-	melody_terminal_alert = false
-	better_dungeon_messages = false
-	bonzo_mask_cd_timer = false
+	"toggle:_player_actions" = true
+	"toggle:_system_notifications" = true
+	"toggle:_interactive_elements" = true
+	full_inventory_alert = true
+	"toggle:_qol" = true
+	party_finder_message_shortener = true
+	melody_terminal_alert = true
+	better_dungeon_messages = true
+	bonzo_mask_cd_timer = true
 
 	[dungeons.secrets]
-		"display_secrets_per_run_(per_session)" = false
+		"display_secrets_per_run_(per_session)" = true
 
 [sound]
 	rng_sounds = 0
+
+["dragons/end"]
+
+	["dragons/end".counter]
+		"drag_counter:_trackers" = true
+		dragon_counter = true
+		"drag_counter:_spawns" = true
+
+	["dragons/end".qol]
+		alert_special_zealot = true
+		end_protector_ping = true
+		better_end_messages = true
 
 [fishing_qol]
 	full_thunder_bottle_ping = true
@@ -34,6 +46,7 @@
 		hide_sc_messages = true
 		hide_blessing_enchant_messages = true
 		hide_double_hook_messages = true
+		better_fishing_messages = true
 
 	[fishing_qol.timers]
 		phoenix_rekindle_cd_timer = true
@@ -50,6 +63,16 @@
 	"counter:_trackers" = true
 	"counter:_averages" = true
 
+	[counter.overlay]
+		"counter:_drops" = true
+		fishing_counter = false
+		"counter:_time_elapsed_since_[rng]" = true
+		"counter:_kills" = true
+		"counter:_special_funny_counters" = true
+		"counter:_mob_since_[rng]" = true
+		"counter:_trackers" = true
+		"counter:_averages" = true
+
 [general_qol]
 
 	[general_qol.messages_qol]
@@ -61,7 +84,7 @@
 		hide_snow_cannon_messages = true
 		better_stash_messages = true
 		hide_click_stash_messages = true
-		hide_lightning = true
+		hide_lightning = false
 
 	[general_qol.commands]
 		auto_warp_command = true
@@ -76,10 +99,25 @@
 		boop_notifier = true
 
 [hp_display]
+	"display_hp:_phantom_fishers" = true
+	mob_hp_display_master_toggle = true
+	"display_hp:_vanquishers" = true
+	"display_hp:_yeti" = true
+	"display_hp:_mythos_mobs" = true
+	"display_hp:_grim_reapers" = true
+	"display_hp:_jawbus" = true
+	"display_hp:_water_hydras" = true
+	"display_hp:_inquisitors" = false
+	"display_hp:_sea_emperors" = true
+	"display_hp:_reindrakes" = true
+	"display_hp:_great_whites" = true
+	"display_hp:_thunder" = true
+	"display_hp:_carrot_kings" = true
+	"display_hp:_champions" = false
 
 	[hp_display.toggleables]
 		"display_hp:_phantom_fishers" = true
-		mob_hp_display_master_toggle = true
+		mob_hp_display_master_toggle = false
 		"display_hp:_vanquishers" = true
 		"display_hp:_yeti" = true
 		"display_hp:_mythos_mobs" = true
@@ -94,9 +132,15 @@
 		"display_hp:_carrot_kings" = true
 		"display_hp:_champions" = true
 
+["dragons/end/end"]
+
+	["dragons/end/end".qol]
+		end_protector_ping = false
+
 [gui]
 	bobber_count = true
 	detect_double_jawbus = true
+	lobby_day_counter = true
 	players_nearby_count = true
 	detect_charge_counter = true
 	detect_double_thunder = true
@@ -109,29 +153,53 @@
 		detect_double_thunder = false
 
 [garden]
-	garden_pet_drop_pings = false
-	garden_rare_drop_pings = false
+	garden_pet_drop_pings = true
+	garden_rare_drop_pings = true
+
+	[garden.pest_qol]
+		pest_qol = true
+		"pest_qol:_screen_pest_alert" = true
+		"pest_qol:_auto_set_home_pest" = true
+		"pest_qol:_esp" = true
+		"pest_qol:_autowarp_pest" = true
+
+	[garden.timers]
+		pest_repellent_timer = true
+		harbringer_potion_timer = true
+		pest_exchange_timer = true
 
 	[garden.overlays]
-		vinyl_display = false
-		pest_repellent_timer = false
-		display_contest_overlay = false
-		harbringer_potion_timer = false
-		player_yaw_and_pitch = false
-		pest_exchange_timer = false
-		sprayonator_display = false
+		vinyl_display = true
+		pest_repellent_timer = true
+		display_contest_overlay = true
+		harbringer_potion_timer = true
+		player_yaw_and_pitch = true
+		pest_exchange_timer = true
+		sprayonator_display = true
 
 	[garden.qol]
-		plot_map = false
-		pest_qol = false
-		sprayonator_no_mat_alert = false
-		hide_sprayonator_expiry_message = false
-		screen_pest_alert = false
-		sprayonator_selected_mat_message_hider = false
-		autowarp_pest = false
-		pest_esp = false
-		better_garden_messages = false
-		auto_set_home_pest = false
+		plot_map = true
+		pest_qol = true
+		sprayonator_no_mat_alert = true
+		"pest_qol:_screen_pest_alert" = true
+		"pest_qol:_auto_set_home_pest" = true
+		"pest_qol:_esp" = true
+		"pest_qol:_autowarp_pest" = true
+		auto_set_home_pest = true
+		hide_sprayonator_expiry_message = true
+		screen_pest_alert = true
+		sprayonator_selected_mat_message_hider = true
+		autowarp_pest = true
+		pest_esp = true
+		better_garden_messages = true
+
+["sounds/dev"]
+
+	["sounds/dev".debug]
+		debug_mode = false
+
+	["sounds/dev".sounds]
+		rng_sounds = 4
 
 [mythos]
 
@@ -144,8 +212,8 @@
 		mythos_mob_kills_info = false
 
 	[mythos.qol]
-		announce_inqs = false
-		hide_leg_griffin_error = false
+		announce_inqs = true
+		hide_leg_griffin_error = true
 
 [fishing_pings]
 
@@ -187,26 +255,30 @@
 		phantom_rod_ping = true
 		lucky_hoof_ping = true
 
+["sound/debug"]
+	debug_mode = false
+	rng_sounds = 0
+
 [dragons]
 
 	[dragons.counter]
-		"drag_counter:_trackers" = false
-		dragon_counter = false
-		"drag_counter:_spawns" = false
+		"drag_counter:_trackers" = true
+		dragon_counter = true
+		"drag_counter:_spawns" = true
 
 	[dragons.qol]
-		alert_special_zealot = false
-		better_end_messages = false
+		alert_special_zealot = true
+		better_end_messages = true
 
 [misc]
-	mute_the_sheep = false
+	mute_the_sheep = true
 
 	[misc.spooky]
-		trick_or_treat_mobs_ping = false
+		trick_or_treat_mobs_ping = true
 		primal_fear_ping = false
 		hide_fear_messages = false
 		primal_fear_main_toggle = false
-		headless_horseman_ping = false
+		headless_horseman_ping = true
 		solver_for_karen_fear = false
 		solver_for_mathematician_fear = false
 
@@ -215,13 +287,13 @@
 
 	[misc.mining]
 		lobby_day_counter = false
-		scatha_pet_drop_alert = false
-		golden_goblin_alert = false
+		scatha_pet_drop_alert = true
+		golden_goblin_alert = true
 
 	[misc.jerry]
-		hidden_jerry_ping = false
+		hidden_jerry_ping = true
 
 	[misc.dyes]
-		dye_pings = false
+		dye_pings = true
 		announce_dye_pings_in_guild = false
 

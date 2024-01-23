@@ -220,7 +220,7 @@ export function renderGuiPosition(gui, position, infoText) {
 // DISPLAY ENTITY HP -----------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 export function displayEntityHP(names, foundEntity, x, y) {
-    if (names.length > 0 && foundEntity) {
+    if (names && names.length > 0 && foundEntity) {
         const stringOfNames = names.join('\n');
         Renderer.drawString(stringOfNames, x, y);
     }
@@ -897,4 +897,21 @@ export function setTimer(timerObj) {
     }
     timerObj.timeLeft = ((targetTime - new Date()) / 1000).toFixed(0);
     timerObj.target = targetTime;
+}
+
+export function filterSeparators(rawString, sepThin) {
+    let filter = rawString.replace(/\n{2,}/g, '\n');
+    let phraseArray = filter.split('\n');
+    let lastIdx = -1;
+    for (let i = phraseArray.length - 1; i >= 0; i--) {
+        if (phraseArray[i].includes(sepThin)) {
+            lastIdx = i;
+            break;
+        }
+    }
+
+    if (lastIdx !== -1) {
+        phraseArray.splice(lastIdx, 1);
+    }
+    return phraseArray.join('\n');;
 }

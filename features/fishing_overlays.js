@@ -23,11 +23,20 @@ const movePlayerCounter = new Gui(); // player count
 const moveNearbyJawbusCounter = new Gui(); // nearby jawbus
 const moveNearbyThunderCounter = new Gui(); // nearby thunder
 const moveChargesCounter = new Gui(); // charges
+const movedaycounter = new Gui();
 createGuiCommand(moveBobberCounter, 'movebobber', 'mbc');
 createGuiCommand(movePlayerCounter, 'moveplayer', 'mpc');
 createGuiCommand(moveNearbyJawbusCounter, 'movejawbus', 'mj');
 createGuiCommand(moveNearbyThunderCounter, 'movethunder', 'mt');
 createGuiCommand(moveChargesCounter, 'movecharge', 'mcc');
+createGuiCommand(movedaycounter, 'movedaycount', 'mdc');
+
+const bobberDraggable = '&7Bobbers: 0';
+const playerDraggable = '&7Players: 0';
+const jawbusDraggable = '&7Nearby Jawbus: NO [x0]'
+const thunderDraggable = '&7Nearby Thunder: NO [x0]'
+const chargesDraggable = '&7Thunder Bottle: 0'
+const dayDraggable = '&7Day: 0.00'
 
 export const baoFishOverlay = new PogObject("bao-dev", {
     "bobber": {
@@ -60,6 +69,11 @@ export const baoFishOverlay = new PogObject("bao-dev", {
         "x": 3, 
         "y": 54, 
     }, 
+    "lobbyDay": {
+        "text": '',
+        "x": 3, 
+        "y": 34
+    }
 }, '/data/baoFishOverlay.json');
 baoFishOverlay.autosave(5);
 
@@ -91,24 +105,28 @@ baoFishOverlay.nbThunder.info = createInfoObject();
 register('dragged', (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveBobberCounter.isOpen()){
-        baoFishOverlay.bobber.x = constrainX(x, 3, baoFishOverlay.bobber.text);
-        baoFishOverlay.bobber.y = constrainY(y, 3, baoFishOverlay.bobber.text);
+        baoFishOverlay.bobber.x = constrainX(x, 3, bobberDraggable);
+        baoFishOverlay.bobber.y = constrainY(y, 3, bobberDraggable);
     }
     if (movePlayerCounter.isOpen()) {
-        baoFishOverlay.player.x = constrainX(x, 3, baoFishOverlay.player.text);
-        baoFishOverlay.player.y = constrainY(y, 3, baoFishOverlay.player.text);
+        baoFishOverlay.player.x = constrainX(x, 3, playerDraggable);
+        baoFishOverlay.player.y = constrainY(y, 3, playerDraggable);
     }
     if (moveNearbyJawbusCounter.isOpen()) {
-        baoFishOverlay.nbJawbus.x = constrainX(x, 3, baoFishOverlay.nbJawbus.text);
-        baoFishOverlay.nbJawbus.y = constrainY(y, 3, baoFishOverlay.nbJawbus.text);
+        baoFishOverlay.nbJawbus.x = constrainX(x, 3, jawbusDraggable);
+        baoFishOverlay.nbJawbus.y = constrainY(y, 3, jawbusDraggable);
     }
     if (moveNearbyThunderCounter.isOpen()) {
-        baoFishOverlay.nbThunder.x = constrainX(x, 3, baoFishOverlay.nbThunder.text);
-        baoFishOverlay.nbThunder.y = constrainY(y, 3, baoFishOverlay.nbThunder.text);
+        baoFishOverlay.nbThunder.x = constrainX(x, 3, thunderDraggable);
+        baoFishOverlay.nbThunder.y = constrainY(y, 3, thunderDraggable);
     }
     if (moveChargesCounter.isOpen()) {
-        baoFishOverlay.charges.x = constrainX(x, 3, baoFishOverlay.charges.text);
-        baoFishOverlay.charges.y = constrainY(y, 3, baoFishOverlay.charges.text);
+        baoFishOverlay.charges.x = constrainX(x, 3, chargesDraggable);
+        baoFishOverlay.charges.y = constrainY(y, 3, chargesDraggable);
+    }
+    if (movedaycounter.isOpen()) {
+        baoFishOverlay.lobbyDay.x = constrainX(x, 3, dayDraggable);
+        baoFishOverlay.lobbyDay.y = constrainY(y, 3, dayDraggable);
     }
     baoFishOverlay.save();
 })
@@ -158,6 +176,12 @@ register("step", () => {
             baoFishOverlay.charges.sentFullMsg = false;
         }
     }
+    if (Settings.lobbyDayCount) {
+        lobbyTicks = World.getTime();
+        lobbyDay = (lobbyTicks / 24000).toFixed(2);
+        baoFishOverlay.lobbyDay.text = `Day: &b${lobbyDay}`
+    }
+
     baoFishOverlay.save();
 }).setFps(5);
 
@@ -197,13 +221,19 @@ register('renderOverlay', () => {
         Renderer.drawStringWithShadow(baoFishOverlay.charges.text, baoFishOverlay.charges.x, baoFishOverlay.charges.y)
     }
 
-
+    // lobby day counter
+    if (Settings.lobbyDayCount && getCurrArea() !== 'Garden') {
+        Renderer.drawStringWithShadow(baoFishOverlay.lobbyDay.text, baoFishOverlay.lobbyDay.x, baoFishOverlay.lobbyDay.y);
+    }
+    
+    
     // gui open
-    renderGuiPosition(moveBobberCounter, baoFishOverlay.bobber, '&7Bobbers: 0');
-    renderGuiPosition(movePlayerCounter, baoFishOverlay.player, '&7Players: 0');
-    renderGuiPosition(moveNearbyJawbusCounter, baoFishOverlay.nbJawbus, '&7Nearby Jawbus: NO [x0]');
-    renderGuiPosition(moveNearbyThunderCounter, baoFishOverlay.nbThunder, '&7Nearby Thunder: NO [x0]');
-    renderGuiPosition(moveChargesCounter, baoFishOverlay.charges, '&7Thunder Bottle: 0');
+    renderGuiPosition(moveBobberCounter, baoFishOverlay.bobber, bobberDraggable);
+    renderGuiPosition(movePlayerCounter, baoFishOverlay.player, playerDraggable);
+    renderGuiPosition(moveNearbyJawbusCounter, baoFishOverlay.nbJawbus, jawbusDraggable);
+    renderGuiPosition(moveNearbyThunderCounter, baoFishOverlay.nbThunder, thunderDraggable);
+    renderGuiPosition(moveChargesCounter, baoFishOverlay.charges, chargesDraggable);
+    renderGuiPosition(movedaycounter, baoFishOverlay.lobbyDay, dayDraggable);
     baoFishOverlay.save();
 })
 

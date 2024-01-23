@@ -26,10 +26,8 @@ baoDisplayHP.autosave(5);
 
 
 if (Settings.master_displayHP) {
-    baoDisplayHP.specifiedMobs = ['Magma Slug', 'Pyroclastic Worm', 'Moogma', 'Lava Leech', 'Fire Eel', 'Lava Flame'];
+    // baoDisplayHP.specifiedMobs = ['Magma Slug', 'Pyroclastic Worm', 'Moogma', 'Lava Leech', 'Fire Eel', 'Lava Flame'];
     if (Settings.vanq_hp) baoDisplayHP.specifiedMobs.push('Vanquisher');
-    if (Settings.inq_hp) baoDisplayHP.specifiedMobs.push('Exalted Minos Inquisitor');
-    if (Settings.champ_hp) baoDisplayHP.specifiedMobs.push('Exalted Minos Champion');
     if (Settings.rein_hp) baoDisplayHP.specifiedMobs.push('Reindrake');
     if (Settings.yeti_hp) baoDisplayHP.specifiedMobs.push('Yeti');
     if (Settings.gwshark_hp) baoDisplayHP.specifiedMobs.push('Great White Shark');
@@ -40,9 +38,11 @@ if (Settings.master_displayHP) {
     if (Settings.phantom_fisher_hp) baoDisplayHP.specifiedMobs.push('Phantom Fisher');
     if (Settings.mythosMobHP) {
         baoDisplayHP.specifiedMobs.push('Exalted Minos Hunter');
-        baoDisplayHP.specifiedMobs.push('Bagheera');
+        baoDisplayHP.specifiedMobs.push('Bagheera'); 
         baoDisplayHP.specifiedMobs.push('Exalted Minotaur');
         baoDisplayHP.specifiedMobs.push('Exalted Gaia Construct');
+        baoDisplayHP.specifiedMobs.push('Exalted Minos Champion');
+        baoDisplayHP.specifiedMobs.push('Exalted Minos Inquisitor');
     }
     baoDisplayHP.save();
 }
@@ -83,8 +83,6 @@ register('dragged', (dx, dy, x, y) => {
 register('renderOverlay', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.master_displayHP) return;
-
-    if (baoDisplayHP.x === 400) baoDisplayHP.x = (baoUtils.screenW - Renderer.getStringWidth(baoDisplayHP.displayText)) / 2;
     Renderer.drawStringWithShadow(baoDisplayHP.displayText, baoDisplayHP.x, baoDisplayHP.y);
     renderGuiPosition(moveHpDisplay, baoDisplayHP, baoDisplayHP.draggableText);
     baoDisplayHP.save();

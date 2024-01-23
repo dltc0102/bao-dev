@@ -1,12 +1,13 @@
 import Settings from '../settings.js';
 import PogObject from 'PogData';
-import { getCurrArea } from '../utils/functions.js'; // sb, area
-
-
+import { getInSkyblock, getCurrArea } from '../utils/functions.js'; // sb, area
+import { baoUtils } from '../utils/utils.js';
+import { filterSeparators } from '../utils/functions.js';
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP CONSTS
 ////////////////////////////////////////////////////////////////////////////////
 export const baoLavaSCStats = new PogObject("bao-dev", {
+    "CIDisplay": '',
     // LAVA SEA CREATURES (CRIMSON ISLE)
     "phlegblastCatches": 0, 
     "magmaSlugCatches": 0, 
@@ -198,3 +199,57 @@ register('chat', (event) => {
     baoLavaSCStats.catchesSinceFlamingWorm += 1;
     baoLavaSCStats.save();
 }).setCriteria("A Lava Pigman arose from the depths!");
+
+////////////////////////////////////////////////////////////////
+// step 
+////////////////////////////////////////////////////////////////
+register('step', () => {
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    if (getCurrArea() !== 'Crimson Isle') return;
+    const crimsonSepThick = `&3${baoUtils.thickSep}`;
+    const crimsonSepThin = `&3${baoUtils.thinSep}`;
+
+    const crimsonTitle = Settings.kills_fishingcounter || Settings.tracker_fishingcounter || Settings.avgs_fishingcounter ? `&8|&7|&b|&7|&8| &cCrimson Isle &8|&7|&b|&7|&8|\n${crimsonSepThick}` : '';
+        
+    // kills
+    let phlegLine = `&8||&b| &6Phlegblast: &b${baoLavaSCStats.phlegblastCatches}`
+    let magmaSlugLine = `&8||&b| &6Magma Slug: &b${baoLavaSCStats.magmaSlugCatches}`
+    let moogmaLine = `&8||&b| &6Moogma: &b${baoLavaSCStats.moogmaCatches}`
+    let lavaLeechLine = `&8||&b| &6Lava Leech: &b${baoLavaSCStats.lavaLeechCatches}`
+    let pyroWormLine = `&8||&b| &6Pyroclasic Worm: &b${baoLavaSCStats.pyroclasticWormCatches}`
+    let lavaFlameLine = `&8||&b| &6Lava Flame: &b${baoLavaSCStats.lavaFlameCatches}`
+    let fireEelLine = `&8||&b| &6Fire Eel: &b${baoLavaSCStats.fireEelsCatches}`
+    let taurusLine = `&8||&b| &6Taurus: &b${baoLavaSCStats.taurusCatches}`
+    let thunderLine = `&8||&b| &6Thunder: &b${baoLavaSCStats.thunderCatches}`
+    let jawbusLine = `&8||&b| &6Jawbus: &b${baoLavaSCStats.lordJawbusCatches}`
+
+    // trackers
+    let scSinceThunderLine = `&8||&b| &rSC Since Thunder: &b${baoLavaSCStats.catchesSinceThunder}`
+    let scSinceJawbusLine = `&8||&b| &rSC Since Jawbus: &b${baoLavaSCStats.catchesSinceJawbus}`
+
+    let jawbusSinceVialLine = `&8||&b| &rJawbus Since Vial: &b${baoLavaSCStats.jawbusSinceLastVial === null ? 0 :baoLavaSCStats.jawbusSinceLastVial}`
+
+    // probabilities
+    const thunderChance = 0.0087;
+    const jawbusChance = 0.0017;
+    let probabilityThunder = (((baoLavaSCStats.thunderCatches /baoLavaSCStats.totalCrimsonSCCatches) + thunderChance) * 100).toFixed(2);
+    let probabilityJawbus = (((baoLavaSCStats.lordJawbusCatches /baoLavaSCStats.totalCrimsonSCCatches) + jawbusChance) * 100).toFixed(2);
+
+    // averages
+    let averageSCPerThunder = (baoLavaSCStats.totalCrimsonSCCatches /baoLavaSCStats.thunderCatches).toFixed(2);
+    let averageSCPerJawbus = (baoLavaSCStats.totalCrimsonSCCatches /baoLavaSCStats.lordJawbusCatches).toFixed(2);
+    let avgThunderLine = `&8||&b| &rAvg SC/Thunder: &b${averageSCPerThunder} &8|| &9&oP(%): ${probabilityThunder}%`
+    let avgJawbusLine = `&8||&b| &rAvg SC/Jawbus: &b${averageSCPerJawbus} &8|| &9&oP(%): ${probabilityJawbus}%`
+
+
+    const showCIKills = Settings.kills_fishingcounter ? [phlegLine, magmaSlugLine, moogmaLine, lavaLeechLine, pyroWormLine, lavaFlameLine, fireEelLine, taurusLine, thunderLine, jawbusLine, crimsonSepThin].join('\n') : '';
+
+    const showCITrackers = Settings.tracker_fishingcounter ? [scSinceThunderLine, scSinceJawbusLine, jawbusSinceVialLine, crimsonSepThin].join('\n') : '';
+
+    const showCIAverages = Settings.avgs_fishingcounter ? [avgThunderLine, avgJawbusLine, crimsonSepThin].join('\n') : '';
+
+    const CIDisplayRaw = [crimsonTitle, showCIKills, showCITrackers, showCIAverages].join('\n').replace(/\n{6,}/g, '\n');
+    
+    baoLavaSCStats.CIDisplay = filterSeparators(CIDisplayRaw, crimsonSepThin);
+    baoLavaSCStats.save();
+}).setFps(1);

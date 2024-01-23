@@ -6,26 +6,14 @@ import { generateRandomStr, petDropPing, playSound, sendGuild, sendSelf } from '
 import { sendMessage } from '../utils/party.js';
 import { showAlert } from '../utils/utils.js';
 import { getInSkyblock, getCurrArea } from '../utils/functions.js'; // sb, area
-import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'; // gui
-import { constrainX, constrainY } from '../utils/functions.js' // padding
 import { baoUtils } from '../utils/utils.js';
 
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP CONSTS
 ////////////////////////////////////////////////////////////////////////////////
 const miscAudio = new Audio();
-const movedaycounter = new Gui();
-createGuiCommand(movedaycounter, 'movedaycount', 'mdc');
-const miningDragText = `Day: 0.00`;
 export const baoMisc = new PogObject("bao-dev", {
-    "mining": {
-        "displayText": '',
-        "x": 3, 
-        "y": 34,
-    }, 
-    "spooky": {
-        "isFearAnnounced": false, 
-    }, 
+    "isFearAnnounced": false, 
 }, '/data/baoMisc.json');
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -91,32 +79,6 @@ const celesteDyeInfo = {
 ////////////////////////////////////////////////////////////////////////////////
 // MINING ----------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
-// dwarven mines lobby day
-register('step', () => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!Settings.lobbyDayCount) return;
-    lobbyTicks = World.getTime();
-    lobbyDay = (lobbyTicks / 24000).toFixed(2);
-    baoMisc.mining.displayText = `Day: &b${lobbyDay}`
-}).setFps(1);
-
-register('dragged', (dx, dy, x, y) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (movedaycounter.isOpen()) {
-        baoMisc.mining.x = constrainX(x, 3, miningDragText);
-        baoMisc.mining.y = constrainY(y, 3, miningDragText);
-    }
-})
-
-register('renderOverlay', () => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!Settings.lobbyDayCount) return;
-    if (getCurrArea() !== 'Garden') {
-        Renderer.drawStringWithShadow(baoMisc.mining.displayText, baoMisc.mining.x, baoMisc.mining.y);
-    }
-    renderGuiPosition(movedaycounter, baoMisc.mining, miningDragText);
-});
-
 // golden goblin alert
 register('chat', (event) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
@@ -313,13 +275,13 @@ register('chat', (name, event) => {
     if (!Settings.fear_karen_solver) return;
     const randomMessage = generateRandomStr(18);
     if (name !== Player.getName()) return;
-    if (!baoMisc.spooky.isFearAnnounced) {
-        baoMisc.spooky.isFearAnnounced = true;
+    if (!baoMisc.isFearAnnounced) {
+        baoMisc.isFearAnnounced = true;
         setTimeout(() => {
             ChatLib.chat(randomMessage);
         }, 300);
         setTimeout(() => {
-            baoMisc.spooky.isFearAnnounced = false;
+            baoMisc.isFearAnnounced = false;
         }, 30000);
     };
 }).setCriteria('[FEAR] Public Speaking Demon: Say something interesting ${name}!');

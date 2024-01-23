@@ -21,9 +21,14 @@
             "currHealth": 0,
             "totalHealth": 0
         },
-        "text": "",
+        "text": "&rNearby Jawbus: &bNO  &6",
         "x": 3,
-        "y": 34
+        "y": 43.5,
+        "found": false,
+        "numNearby": 0,
+        "titleShown": false,
+        "messageSent": false,
+        "foundNearby": false
     },
     "nbThunder": {
         "info": {
@@ -35,14 +40,19 @@
             "currHealth": 0,
             "totalHealth": 0
         },
-        "text": "",
+        "text": "&rNearby Thunder: &bNO  &6",
         "x": 3,
-        "y": 44
+        "y": 53.5
     },
     "charges": {
         "sentFullMsg": false,
-        "text": "",
+        "text": "Thunder Bottle: &cNo Bottle Available",
         "x": 3,
-        "y": 54
+        "y": 63.5
+    },
+    "lobbyDay": {
+        "text": "Day: &b1.23",
+        "x": 3,
+        "y": 34
     }
 }

@@ -1,12 +1,18 @@
 import Settings from '../settings.js';
 import PogObject from 'PogData';
-import { getCurrArea } from '../utils/functions.js'; // sb, area
-
+import { getInSkyblock, getCurrArea } from '../utils/functions.js'; // sb, area
+import { baoUtils } from '../utils/utils.js';
+import { formatMoney } from '../utils/functions.js';
+import { filterSeparators } from '../utils/functions.js';
+import { updateCDText } from '../utils/functions.js';
 
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP CONSTS
 ////////////////////////////////////////////////////////////////////////////////
 export const baoWaterSCStats = new PogObject("bao-dev", {
+    "HUBDisplay": '',
+    "WIDisplay": '',
+
     // WATER SEA CREATURES (REGULAR)
     "squidCatches": 0, 
     "seaWalkerCatches": 0, 
@@ -743,3 +749,134 @@ register('chat', (event) => {
     baoWaterSCStats.save();
 }).setCriteria("Hide no longer, a Great White Shark has tracked your scent and thirsts for your blood!");
 
+// reg steps 
+register('step', () => {
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    const hubSepThick = `&5${baoUtils.thickSep}`;
+    const hubSepThin = `&5${baoUtils.thinSep}`;
+
+    const winterSepThick = `&7${baoUtils.thickSep}`;
+    const winterSepThin = `&7${baoUtils.thinSep}`;
+
+
+    if (getCurrArea() === "Hub") {
+        const generalTitle = Settings.kills_fishingcounter || Settings.mob_since_fishingcounter || Settings.drops_fishingcounter || Settings.tracker_fishingcounter || Settings.avgs_fishingcounter ? `&r  <--]|| &fGENERAL &r||[-->\n${hubSepThick}` : '';
+
+        // kills
+        let squidLine = `&8||| &7Squid: &b${baoWaterSCStats.squidCatches}`
+        let seaWalkerLine = `&8||| &7Sea Walker: &b${baoWaterSCStats.seaWalkerCatches}`
+        let seaGuardianLine = `&8||| &7Sea Guardian: &b${baoWaterSCStats.seaGuardianCatches}`
+        let seaWitchLine = `&8||| &7Sea Witch: &b${baoWaterSCStats.seaWitchCatches}`
+        let seaArcherLine = `&8||| &7Sea Archer: &b${baoWaterSCStats.seaArcherCatches}`
+        let rotdLine = `&8||| &7Rider of the Deep: &b${baoWaterSCStats.rotdCatches}`
+        let catfishLine = `&8||| &7Catfish: &b${baoWaterSCStats.catfishCatches}`
+        let seaLeechLine = `&8||| &7Sea Leech: &b${baoWaterSCStats.seaLeechCatches}`
+        let guardianDefenderLine = `&8||| &7Guardian Defender: &b${baoWaterSCStats.guardianDefenderCatches}`
+        let dspLine = `&8||| &7Deep Sea Protector: &b${baoWaterSCStats.deepSeaProtectorCatches}`
+        let agarimooLine = `&8||| &7Agarimoo: &b${baoWaterSCStats.agarimooCatches}`
+        let carrotKingLine = `&8||| &6Carrot King: &b${baoWaterSCStats.carrotKingCatches}`
+        let waterHydraLine = `&8||| &6Water Hydra: &b${baoWaterSCStats.waterHydraCatches}`
+        let seaEmpLine = `&8||| &6Sea Emperor: &b${baoWaterSCStats.seaEmperorCatches}`
+        
+        
+        // trackers
+        let scSinceCarrotKing = `&8||&r| SC Since Carrot King: &b${baoWaterSCStats.catchesSinceCarrotKing}`;
+        let scSinceWaterHydra = `&8||&r| SC Since Water Hydra: &b${baoWaterSCStats.catchesSinceWaterHydra}`;
+        let scSinceSeaEmperor = `&8||&r| SC Since Sea Emperor: &b${baoWaterSCStats.catchesSinceSeaEmperor}`;
+        
+        // averages
+        let averageSCPerCarrotKing = (baoWaterSCStats.totalRegularWaterSCCatches / baoWaterSCStats.carrotKingCatches).toFixed(2);
+        let averageSCPerWaterHydra = (baoWaterSCStats.totalRegularWaterSCCatches / baoWaterSCStats.waterHydraCatches).toFixed(2);
+        let averageSCPerSeaEmperor = (baoWaterSCStats.totalRegularWaterSCCatches / baoWaterSCStats.seaEmperorCatches).toFixed(2);
+        let avgCarrotKingLine = `&8||&r| Avg SC/Carrot King: &b${averageSCPerCarrotKing == null || isNaN(averageSCPerCarrotKing) ? '0.00' : averageSCPerCarrotKing}`;
+        let avgWaterHydraLine = `&8||&r| Avg SC/Water Hydra: &b${averageSCPerWaterHydra == null || isNaN(averageSCPerWaterHydra) ? '0.00' : averageSCPerWaterHydra}`;
+        let avgSeaEmperorLine = `&8||&r| Avg SC/Sea Emperor: &b${averageSCPerSeaEmperor == null || isNaN(averageSCPerSeaEmperor) ? '0.00' : averageSCPerSeaEmperor}`;
+        
+        // mobs since last rng
+        let carrotKingSinceLastCloverLine = `&8||&r| CK(s) since last Clover: &3${baoWaterSCStats.carrotKingSinceLastClover == null ? 0 : baoWaterSCStats.carrotKingSinceLastClover}`;
+        
+        // drops
+        let cloverDropsLine = baoWaterSCStats.clover == null ? "&8||&d| &rLucky Clover: &a0" : `&8||&d| &rLucky Clover: &a${baoWaterSCStats.clover}`;
+        let flyingFishDropsLine = `&8||&d| &rFlying Fish: &r${baoWaterSCStats.commonFF == null ? 0 : baoWaterSCStats.commonFF}&8|&a${baoWaterSCStats.uncommonFF == null ? 0 : baoWaterSCStats.uncommonFF}&8|&9${baoWaterSCStats.rareFF == null ? 0 : baoWaterSCStats.rareFF}&8|&5${baoWaterSCStats.epicFF == null ? 0 : baoWaterSCStats.epicFF}&8|&6${baoWaterSCStats.legFF == null ? 0 : baoWaterSCStats.legFF}`;
+        let guardianDropsLine = `&8||&d| &rGuardian: &r${baoWaterSCStats.commonGD == null ? 0 : baoWaterSCStats.commonGD}&8|&a${baoWaterSCStats.uncommonGD == null ? 0 : baoWaterSCStats.uncommonGD}&8|&9${baoWaterSCStats.rareGD == null ? 0 : baoWaterSCStats.rareGD}&8|&5${baoWaterSCStats.epicGD == null ? 0 : baoWaterSCStats.epicGD}&8|&6${baoWaterSCStats.legGD == null ? 0 : baoWaterSCStats.legGD}`;
+        
+        
+        const showHubKills = Settings.kills_fishingcounter ? [squidLine, seaWalkerLine, seaGuardianLine, seaWitchLine, seaArcherLine, rotdLine, catfishLine, seaLeechLine, guardianDefenderLine, dspLine, agarimooLine, carrotKingLine, waterHydraLine, seaEmpLine, hubSepThin].join('\n') : '';
+        
+        const showHubDrops = Settings.drops_fishingcounter ? [cloverDropsLine, flyingFishDropsLine, guardianDropsLine, hubSepThin].join('\n') : '';
+
+        const showMobSinceTrackers = Settings.mob_since_fishingcounter ? [carrotKingSinceLastCloverLine, hubSepThin].join('\n') : '';
+
+        const showHubTrackers = Settings.tracker_fishingcounter ? [scSinceCarrotKing, scSinceWaterHydra, scSinceSeaEmperor, hubSepThin].join('\n') : '';
+        
+        const showHubAverages = Settings.avgs_fishingcounter ? [avgCarrotKingLine, avgWaterHydraLine, avgSeaEmperorLine, hubSepThin].join('\n') : '';
+        
+
+        const HubDisplayRaw = [generalTitle, showHubKills, showHubDrops, showMobSinceTrackers, showHubTrackers, showHubAverages].join('\n').replace(/\n{6,}/g, '\n');
+
+        baoWaterSCStats.HUBDisplay = filterSeparators(HubDisplayRaw, hubSepThin)
+        baoWaterSCStats.save();
+    }
+    if (getCurrArea() === "Jerry's Workshop") {
+        const winterTitle = Settings.kills_fishingcounter || Settings.mob_since_fishingcounter || Settings.drops_fishingcounter || Settings.tracker_fishingcounter || Settings.avgs_fishingcounter || Settings.elapsed_sincefishingcounter || Settings.specials_fishingcounter ? `&8|&1|&9|&3|&b| &rWinter Island &b|&3|&9|&1|&8|\n${winterSepThick}` : '';
+    
+        // winter kills
+        let frozenSteveLine = `&9|&3|&b| &rFrozen Steve: &b${baoWaterSCStats.frozenSteveCatches}`
+        let frostySnowmanLine = `&9|&3|&b| &rFrosty Snowman: &b${baoWaterSCStats.frostySnowmanCatches}`
+        let grinchLine = `&9|&3|&b| &rGrinch: &b${baoWaterSCStats.grinchCatches}`
+        let nutcrackerLine = `&9|&3|&b| &rNutcracker: &b${baoWaterSCStats.nutcrackerCatches}`
+        let yetiLine = `&9|&3|&b| &rYeti: &b${baoWaterSCStats.yetiCatches}`
+        let reindrakeLine = `&9|&3|&b| &rReindrake: &b${baoWaterSCStats.reindrakeCatches}`
+    
+        // winter trackers
+        let scSinceYetiLine = `&9|&3|&b| &rSC Since Yeti: &b${baoWaterSCStats.catchesSinceYeti}`
+        let scSinceReindrakeLine = `&9|&3|&b| &rSC Since Reindrake: &b${baoWaterSCStats.catchesSinceReindrake}`;
+    
+        // yeti since drops
+        let yetiSinceEpicPetLine = `&9|&3|&b| &rYeti Since &5Epic &rPet: &b${baoWaterSCStats.yetiSinceEpicPet}`
+        let yetiSinceLegPetLine = `&9|&3|&b| &rYeti Since &6Leg &rPet: &b${baoWaterSCStats.yetiSinceLegPet}`
+        let yetiSincePetLine = `${yetiSinceEpicPetLine}\n${yetiSinceLegPetLine}`
+    
+        // drops
+        let yetiPetLine = `&9|&3|&b| &rBaby Yeti Pet: &5${baoWaterSCStats.epicBabyYeti == null || isNaN(baoWaterSCStats.epicBabyYeti) ? 0 : baoWaterSCStats.epicBabyYeti}&r | &6${baoWaterSCStats.legBabyYeti == null || isNaN(baoWaterSCStats.legBabyYeti) ? 0 : baoWaterSCStats.legBabyYeti}&r`;
+        let prosperityLine = `&9|&3|&b| &rProsperity I Book: &6${baoWaterSCStats.prosperityBook == null || isNaN(baoWaterSCStats.prosperityBook) ? 0 : baoWaterSCStats.prosperityBook}&r`;
+        
+        // winter time
+        baoWaterSCStats.timeSinceEpicPet += 1;
+        baoWaterSCStats.timeSinceLegPet += 1;
+        baoWaterSCStats.timeSinceReindrake += 1;
+        let timeSinceEpicPetLine = updateCDText('', '&9|&3|&b| &rTime Since Epic Pet', baoWaterSCStats.timeSinceEpicPet);
+        let timeSinceLegPetLine = updateCDText('', '&9|&3|&b| &rTime Since Leg Pet', baoWaterSCStats.timeSinceLegPet);
+        let timeSinceReinLine = updateCDText('', '&9|&3|&b| &rTime Since Reindrake', baoWaterSCStats.timeSinceReindrake);
+    
+        
+        // ice rod counts
+        let iceRodsLine = `&9|&3|&b| &rIce Rods: ${baoWaterSCStats.iceRods == null || isNaN(baoWaterSCStats.iceRods) ? 0 : baoWaterSCStats.iceRods} &7(${baoWaterSCStats.iceRods == null || isNaN(baoWaterSCStats.iceRods) ? 0 : formatMoney(baoWaterSCStats.iceRods * 20000)})`;
+        
+        // winter averages
+        let averageSCPerYeti = (baoWaterSCStats.totalWinterWaterSCCatches / baoWaterSCStats.yetiCatches).toFixed(2);
+        let averageSCPerReindrake = (baoWaterSCStats.totalWinterWaterSCCatches / baoWaterSCStats.reindrakeCatches).toFixed(2);
+        let avgYetiLine = `&9|&3|&b| &rAvg SC/Yeti: &b${averageSCPerYeti == null || isNaN(averageSCPerYeti) ? 0 : averageSCPerYeti}`;
+        let avgReindrakeLine = `&9|&3|&b| &rAvg SC/Reindrake: &b${averageSCPerReindrake == null || isNaN(averageSCPerReindrake) ? 0 : averageSCPerReindrake}`;
+    
+        const showWIKills = Settings.kills_fishingcounter ? [frozenSteveLine, frostySnowmanLine, grinchLine, nutcrackerLine, yetiLine, reindrakeLine, winterSepThin].join('\n') : '';
+    
+        const showWITrackers = Settings.tracker_fishingcounter ? [scSinceYetiLine, scSinceReindrakeLine, winterSepThin].join('\n') : '';
+    
+        const showMobSinceTrackers = Settings.mob_since_fishingcounter ? [yetiSincePetLine, winterSepThin].join('\n') : '';
+    
+        const showWIDrops = Settings.drops_fishingcounter ? [yetiPetLine, prosperityLine, winterSepThin].join('\n') : '';
+    
+        const showWIAverages = Settings.avgs_fishingcounter ? [avgYetiLine, avgReindrakeLine, winterSepThin].join('\n') : '';
+    
+        const timeSincePetLine = Settings.elapsed_sincefishingcounter ? [`${timeSinceEpicPetLine}${timeSinceLegPetLine}${timeSinceReinLine}`, winterSepThin].join('\n') : '';
+    
+        const showIceRodCounter = Settings.specials_fishingcounter ? [iceRodsLine, winterSepThin].join('\n') : ''
+    
+        const WIDisplayRaw = [winterTitle, showWIKills, showWITrackers, showMobSinceTrackers, showWIDrops, showWIAverages, timeSincePetLine, showIceRodCounter].join('\n').replace(/\n{6,}/g, '\n');
+
+        baoWaterSCStats.WIDisplay = filterSeparators(WIDisplayRaw, winterSepThin);
+        baoWaterSCStats.save();
+    }
+    baoWaterSCStats.save();
+}).setFps(1);

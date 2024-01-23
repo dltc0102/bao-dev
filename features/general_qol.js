@@ -205,9 +205,10 @@ register('chat', (event) => {
 
 
 // stash shortener
-register('chat', (numItems, timeS, event) => {
+register('chat', (numItems, itemOrItems, timeS, event) => {
     if (Settings.betterStashMessages) cancel(event);
-}).setCriteria('[Sacks] +${numItems} items. (Last ${timeS}s.)');
+    // ChatLib.chat(ChatLib.getChatMessage(event, true));
+}).setCriteria('[Sacks] +${numItems} ${itemOrItems}. (Last ${timeS}s.)');
 
 register('chat', (itemName, event) => {
     if (Settings.betterStashMessages) cancel(event);
@@ -229,16 +230,19 @@ register('chat', (matsRem, numTypes, event) => {
 
 // click stash shortener
 register('chat', (numMatsRem, event) => {
+    if (!Settings.betterStashMessages) return;
     if (Settings.hideClickStashMessages) cancel(event);
     baoGeneral.clickStash.reminderMatsRem = parseInt(numMatsRem.replace(',', ''), 10);
 }).setCriteria('You have ${numMatsRem} materials stashed away!').setContains();
 
 register('chat', (numTypes, event) => {
+    if (!Settings.betterStashMessages) return;
     if (Settings.hideClickStashMessages) cancel(event);
     baoGeneral.clickStash.numTypesRem = Number(numTypes);
 }).setCriteria('(This totals ${numTypes} type of material stashed!)').setContains();
 
 register('chat', (numTypes, event) => {
+    if (!Settings.betterStashMessages) return;
     if (Settings.hideClickStashMessages) cancel(event);
     baoGeneral.clickStash.numTypesRem = Number(numTypes);
 }).setCriteria('(This totals ${numTypes} types of materials stashed!)').setContains();
@@ -246,6 +250,7 @@ register('chat', (numTypes, event) => {
 let numTillReminder = 10;
 // hides click stash messages and only show them once every 10 times it has appeared.
 register('chat', (event) => {
+    if (!Settings.betterStashMessages) return;
     if (Settings.hideClickStashMessages) {
         if (numTillReminder === 0 && getCurrArea() !== 'Catacombs') {
             ChatLib.chat(`&4&lREMINDER: &rYou have &b${baoGeneral.clickStash.reminderMatsRem}&r materials of &b${baoGeneral.clickStash.numTypesRem}&r type(s) in your sacks!`);
@@ -262,7 +267,7 @@ register("renderEntity", function (entity, position, ticks, event) {
     if (!World.isLoaded()) return;
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.hide_lightning) return;
-    if(entity.getClassName() === "EntityLightningBolt") cancel(event);
+    if (entity.getClassName() === "EntityLightningBolt") cancel(event);
 })
 
 // snow cannon message hider
@@ -353,16 +358,10 @@ register('command', () => {
     sendMessage(`currarea: ${getCurrArea()}`);
 }).setName('currarea');
 
-// mute fire sale notis
-register('chat', (event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    cancel(event);
-}).setCriteria('♨').setContains();
 
-register('chat', (event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    cancel(event);
-}).setCriteria('FIRE SALE').setContains();
+
+
+
 
 register('chat', (event) => {
     setTimeout(() => {

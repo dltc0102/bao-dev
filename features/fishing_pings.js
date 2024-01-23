@@ -50,20 +50,35 @@ register('command', () => {
 
 
 // QOL
+
+////////////////////////////////////////////////////////////////////////////
+// BETTER FISHING MESSAGES
+////////////////////////////////////////////////////////////////////////////
+register('chat', (AOrAn, baitType, event) => {
+    if (Settings.betterFishingMessages) cancel(event);
+}).setCriteria('GOOD CATCH! You found ${AOrAn} ${baitType} Bait.');
+
+register('chat', (coin, event) => {
+    if (Settings.betterFishingMessages) {
+        cancel(event);
+        ChatLib.chat(`&7+ &6${coin} &7coins`);
+    }
+}).setCriteria('GOOD CATCH! You found ${coin} Coins.');
+
+register('chat', (typeOfCatch, aOrAn, item, event) => {
+    if (Settings.betterFishingMessages) {
+        cancel(event);
+        if (item === 'Lava Shell') ChatLib.chat('&a+ &5Lava Shell');
+    }
+}).setCriteria('${typeOfCatch} CATCH! You found ${aOrAn} ${item}.');
+
 register('chat', (event) => {
-    if (Settings.hide_blessing_messages) cancel(event);
+    if (Settings.betterFishingMessages) cancel(event);
 }).setCriteria('Your Blessing enchant got you double drops!');
 
-////////////////////////////////////////////////////////////////////////////
-// LAVA SEA CREATURE SPECIAL MESSAGES --------------------------------------
-////////////////////////////////////////////////////////////////////////////
 register('chat', (event) => {
     if (Settings.hideDHMessages) cancel(event);
-}).setCriteria("It's a Double Hook!");
-
-register('chat', (event) => {
-    if (Settings.hideDHMessages) cancel(event);
-}).setCriteria("It's a Double Hook! Woot Woot!");
+}).setCriteria("It's a Double Hook!").setContains();
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -87,6 +102,7 @@ register('chat', (event) => {
 // Radioactive Vial [Jawbus]
 register('chat', (mf, event) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
+    if (!Settings.jawbus_ping) return;
     if (!Settings.rvial_ping) return;
     showAlert(rvial_title);
     sendMessage(`ay RARE DROP! Radioactive Vial (+${mf}% ✯ Magic Find)`);
@@ -146,6 +162,7 @@ register('chat', (event) => {
 // Baby Yeti Pet [Yeti]
 register('chat', (mf, event) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
+    if (!Settings.yeti_ping) return;
     if (!Settings.yeti_pet_drop_ping) return;
     const message = ChatLib.getChatMessage(event, true);
     petDropPing(message, 'PET DROP!', 'Baby Yeti', mf);
@@ -202,6 +219,7 @@ register('chat', (event) => {
 // Megalodon Pet [Great White Shark / Tiger Shark]
 register('chat', (mf, event) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
+    if (!Settings.gw_ping) return;
     if (!Settings.meg_pet_drop_ping) return;
     const message = ChatLib.getChatMessage(event, true);
     petDropPing(message, 'PET DROP!', 'Megalodon', mf);
@@ -298,6 +316,7 @@ register('chat', (event) => {
 // lucky Clovert Core [Carrot King]
 register('chat', (mf, event) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
+    if (!Settings.carrot_king_ping) return;
     if (!Settings.lucky_core_ping) return;
     showAlert(clover_core_title);
     sendMessage(`ay RARE DROP! Lucky CLover Core (+${mf}% ✯ Magic Find)`);

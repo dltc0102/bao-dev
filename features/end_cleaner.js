@@ -5,6 +5,7 @@ import { sendMessage } from '../utils/party.js';
 import { getInSkyblock, getCurrArea } from '../utils/functions.js'; // sb, area
 import { baoUtils } from '../utils/utils.js';
 import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'; // gui
+import { constrainX, constrainY } from '../utils/functions.js' // padding
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -157,8 +158,9 @@ register('dragged', (dx, dy, x, y) => {
 register('renderOverlay', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.showDragonCounter) return;
-    if (getCurrArea() !== 'The End') return;
-    Renderer.drawStringWithShadow(baoDragons.displayText, baoDragons.counter.x, baoDragons.counter.y);
+    if (getCurrArea() === 'The End') {
+        Renderer.drawStringWithShadow(baoDragons.displayText, baoDragons.counter.x, baoDragons.counter.y);
+    }
     renderGuiPosition(moveDragonCounter, baoDragons.counter, dragonDraggable);
 });
 

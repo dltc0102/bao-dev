@@ -2,7 +2,7 @@ import { @ButtonProperty, @CheckboxProperty, Color, @ColorProperty, @PercentSlid
 
 @Vigilant("bao-dev", "§3bao-dev", {
     getCategoryComparator: () => (a, b) => {
-        const categories = ['General QOL', 'GUI', 'HP Display', 'Timers', 'Fishing QOL', 'Fishing Pings', 'Counter', 'Garden', 'Dragons', 'Mythos', 'Misc', 'Dungeons', 'Sound', 'Debug']
+        const categories = ['General QOL', 'GUI', 'HP Display', 'Timers', 'Fishing QOL', 'Fishing Pings', 'Counter', 'Garden', 'Dragons/End', 'Mythos', 'Misc', 'Dungeons', 'Sounds/Dev']
         return categories.indexOf(a.name) - categories.indexOf(b.name);
     }
 })
@@ -19,13 +19,13 @@ class Settings {
     auto_warp_cmd = false;
 
     // Auto notify new party joiners to use the warp command when ready
-    @SwitchProperty({
-        name: "Auto notify new party joiners",
-        description: "Notifies new party joiners to use &b#warp&r or &b#w&r command when ready",
-        category: "General QOL",
-        subcategory: "Commands", 
-    })
-    auto_notify_warp_cmd = false;
+    // @SwitchProperty({
+    //     name: "Auto notify new party joiners",
+    //     description: "Notifies new party joiners to use &b#warp&r or &b#w&r command when ready",
+    //     category: "General QOL",
+    //     subcategory: "Commands", 
+    // })
+    // auto_notify_warp_cmd = false;
 
     // Warpexc command (/warpexc)
     @SwitchProperty({
@@ -121,7 +121,7 @@ class Settings {
     // Hide Click Stash Messages
     @SwitchProperty({
         name: "Hide Click Stash Messages",
-        description: "&cHides Click Stash Messages:\n&fOld Messages:\n&7'You have &e${numMatsRem}&7 materials stashed away!'&b -- hidden.\n&7'(This totals &e${numTypes}&7 type of material stashed!)'&b -- hidden.\n&7'(This totals &e${numTypes}&7 types of materials stashed!)'&b -- hidden.\n&7'>>> CLICK HERE to pick them up! <<<'&b -- hidden.\n\n&cThese messages will be condensed into one message:\n&f'REMINDER: You have &e${reminderMatsRem}&f materials of &e${numTypesRem}&f type(s) in your sacks!'",
+        description: "&cHides Click Stash Messages:\n&fOld Messages:\n&7'You have &e${numMatsRem}&7 materials stashed away!'&b -- hidden.\n&7'(This totals &e${numTypes}&7 type of material stashed!)'&b -- hidden.\n&7'(This totals &e${numTypes}&7 types of materials stashed!)'&b -- hidden.\n&7'>>> CLICK HERE to pick them up! <<<'&b -- hidden.\n\n&cThese messages will be condensed into one message:\n&f'REMINDER: You have &e${reminderMatsRem}&f materials of &e${numTypesRem}&f type(s) in your sacks!'\n\n&cRequires 'Better Stash Messages' to be turned on.",
         category: "General QOL",
         subcategory: "Messages QOL"
     })
@@ -207,11 +207,18 @@ class Settings {
     })
     chargeCounter = false;
 
+    @SwitchProperty({
+        name: "Lobby Day Counter",
+        description: "Shows Lobby Day Counter.",
+        category: "GUI",
+    })
+    lobbyDayCount = false;
+
     @ButtonProperty({
         name: "Edit Bobber Count Location", 
         description: "Click the button to move the Bobber Counter on your screen.", 
         category: "GUI", 
-        subcategory: "Overlays", 
+        subcategory: "Edit Overlays", 
     })
     openBobberGUI() {
         ChatLib.command('movebobber', true)
@@ -222,7 +229,7 @@ class Settings {
         name: "Edit Player Count Location", 
         description: "Click the button to move the Player Counter on your screen.", 
         category: "GUI", 
-        subcategory: "Overlays", 
+        subcategory: "Edit Overlays", 
     })
     openPlayerGUI() {
         ChatLib.command('moveplayer', true)
@@ -233,7 +240,7 @@ class Settings {
         name: "Edit Nearby Jawbus Location", 
         description: "Click the button to move the Nearby Jawbus Text on your screen.", 
         category: "GUI", 
-        subcategory: "Overlays", 
+        subcategory: "Edit Overlays", 
     })
     openJawbusGUI() {
         ChatLib.command('movejawbus', true)
@@ -244,7 +251,7 @@ class Settings {
         name: "Edit Nearby Thunder Location", 
         description: "Click the button to move the Nearby Thunder Text on your screen.", 
         category: "GUI", 
-        subcategory: "Overlays", 
+        subcategory: "Edit Overlays", 
     })
     openThunderGUI() {
         ChatLib.command('movethunder', true)
@@ -255,21 +262,31 @@ class Settings {
         name: "Edit Charge Counter Location", 
         description: "Click the button to move the Charge Counter Text on your screen.", 
         category: "GUI", 
-        subcategory: "Overlays", 
+        subcategory: "Edit Overlays", 
     })
     openChargeGUI() {
         ChatLib.command('movecharge', true)
     }
 
+    @ButtonProperty({
+        name: "Edit Location of Lobby Day Counter", 
+        description: "Click to edit gui location of the lobby day counter.", 
+        category: "GUI", 
+        subcategory: "Edit Overlays"
+    })
+    openLobbyDayCounterEditGUI() {
+        ChatLib.command('movedaycount', true)
+    }
     
 
-    ////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
     // HP DISPLAY
-    ////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
     @ButtonProperty({
         name: "Edit HP Display Location", 
         description: "Click the button to move the HP Display on your screen.", 
         category: "HP Display", 
+        subcategory: "Edit Overlays",
     })
     openHPDisplayGUI() {
         ChatLib.command('movehp', true)
@@ -279,7 +296,6 @@ class Settings {
         name: "Mob HP Display Master Toggle",
         description: "Toggles all mob hp displays.",
         category: "HP Display",
-        subcategory: "Toggleables",
     })
     master_displayHP = false;
 
@@ -287,31 +303,13 @@ class Settings {
         name: "Display HP: Vanquishers",
         description: "Toggles health display for Vanquishers",
         category: "HP Display",
-        subcategory: "Toggleables",
     })
     vanq_hp = false;
-
-    @SwitchProperty({
-        name: "Display HP: Inquisitors",
-        description: "Toggles health display for Inquisitors",
-        category: "HP Display",
-        subcategory: "Toggleables",
-    })
-    inq_hp = false;
     
     @SwitchProperty({
-        name: "Display HP: Champions",
-        description: "Toggles health display for Champions",
-        category: "HP Display",
-        subcategory: "Toggleables",
-    })
-    champ_hp = false;
-
-    @SwitchProperty({
         name: "Display HP: Mythos Mobs",
-        description: "Toggles health display for Mythos Mobs (not including Inquisitors)",
+        description: "Toggles health display for All Mythos Mobs",
         category: "HP Display",
-        subcategory: "Toggleables",
     })
     mythosMobHP = false;
 
@@ -319,7 +317,6 @@ class Settings {
         name: "Display HP: Reindrakes",
         description: "Toggles health display for Reindrakes",
         category: "HP Display",
-        subcategory: "Toggleables",
     })
     rein_hp = false;
 
@@ -327,7 +324,6 @@ class Settings {
         name: "Display HP: Yeti",
         description: "Toggles health display for Yeti",
         category: "HP Display",
-        subcategory: "Toggleables",
     })
     yeti_hp = false;
 
@@ -335,7 +331,6 @@ class Settings {
         name: "Display HP: Jawbus",
         description: "Toggles health display for Jawbus",
         category: "HP Display",
-        subcategory: "Toggleables",
     })
     jawbus_hp = false;
 
@@ -343,7 +338,6 @@ class Settings {
         name: "Display HP: Thunder",
         description: "Toggles health display for Thunder",
         category: "HP Display",
-        subcategory: "Toggleables",
     })
     thunder_hp = false;
 
@@ -351,7 +345,6 @@ class Settings {
         name: "Display HP: Great Whites",
         description: "Toggles health display for Great Whites",
         category: "HP Display",
-        subcategory: "Toggleables",
     })
     gwshark_hp = false;
 
@@ -359,7 +352,6 @@ class Settings {
         name: "Display HP: Carrot Kings",
         description: "Toggles health display for Carrot Kings",
         category: "HP Display",
-        subcategory: "Toggleables",
     })
     carrotking_hp = false;
 
@@ -367,7 +359,6 @@ class Settings {
         name: "Display HP: Water Hydras",
         description: "Toggles health display for Water Hydras",
         category: "HP Display",
-        subcategory: "Toggleables",
     })
     waterhydra_hp = false;
 
@@ -375,7 +366,6 @@ class Settings {
         name: "Display HP: Sea Emperors",
         description: "Toggles health display for Sea Emperors",
         category: "HP Display",
-        subcategory: "Toggleables",
     })
     sea_emp_hp = false;
 
@@ -383,7 +373,6 @@ class Settings {
         name: "Display HP: Grim Reapers",
         description: "Toggles health display for Grim Reapers",
         category: "HP Display",
-        subcategory: "Toggleables",
     })
     reaper_hp = false;
 
@@ -391,7 +380,6 @@ class Settings {
         name: "Display HP: Phantom Fishers",
         description: "Toggles health display for Phantom Fisher",
         category: "HP Display",
-        subcategory: "Toggleables",
     })
     phantom_fisher_hp = false;
 
@@ -461,15 +449,6 @@ class Settings {
     //////////////////////////////////////////////////////////////////////////////
     // FISHING QOL
     //////////////////////////////////////////////////////////////////////////////
-    // Hide Double Hook Messages
-    @SwitchProperty({
-        name: "Hide Double Hook Messages",
-        description: "Hides double hook messages.",
-        category: "Fishing QOL",
-        subcategory: "Message Hiders",
-    })
-    hideDHMessages = false;
-
     // Hide SC Messages
     @SwitchProperty({
         name: "Hide SC Messages",
@@ -481,12 +460,12 @@ class Settings {
     
     // Hide Blessing double drop messages
     @SwitchProperty({
-        name: "Hide Blessing Enchant Messages",
-        description: "Hides the double drop message proc'ed by the Blessing enchant.",
+        name: "Better Fishing messages",
+        description: `&7'Your Blessing enchant got you double drops!'&b -- hidden\n&7'GOOD CATCH! You found a &e(baitType)&7 Bait.'&b -- hidden\n&7'Your Blessing enchant got you double drops!'&b -- hidden\n&7"It's a Double Hook!"&b -- hidden\n&7`,
         category: "Fishing QOL",
         subcategory: "Message Hiders",
     })
-    hide_blessing_messages = false;
+    betterFishingMessages = false;
     
     // Full Thunder Bottle Ping
     @SwitchProperty({
@@ -724,10 +703,20 @@ class Settings {
     //////////////////////////////////////////////////////////////////////////////
     // COUNTER
     //////////////////////////////////////////////////////////////////////////////
+    @ButtonProperty({
+        name: "Edit Fishing Counter Location", 
+        description: "Click the button to move the Fishing Counter on your screen.", 
+        category: "Counter", 
+    })
+    openFishingCounterGUI() {
+        ChatLib.command('movefishcounter', true)
+    }
+
     @SwitchProperty({
         name: "Fishing Counter",
         description: "Fishing Counter\n&bOnly works for hub, crimson isles, and jerry island.",
         category: "Counter", 
+        subcategory: "Overlay",
     })
     fishing_counter = false;
 
@@ -735,6 +724,7 @@ class Settings {
         name: "Counter: Kills",
         description: "Shows kills for each category of sea creatures.\n&eDependent on loc/event.",
         category: "Counter", 
+        subcategory: "Overlay",
     })
     kills_fishingcounter = false;
 
@@ -742,6 +732,7 @@ class Settings {
         name: "Counter: Mob Since [RNG]",
         description: "Shows mobs fished up since rng drop.",
         category: "Counter", 
+        subcategory: "Overlay",
     })
     mob_since_fishingcounter = false;
 
@@ -749,6 +740,7 @@ class Settings {
         name: "Counter: Drops",
         description: "Shows drops for current session.",
         category: "Counter", 
+        subcategory: "Overlay",
     })
     drops_fishingcounter = false;
 
@@ -756,6 +748,7 @@ class Settings {
         name: "Counter: Trackers",
         description: "Shows sea creatues fished since rare sea creature.",
         category: "Counter", 
+        subcategory: "Overlay",
     })
     tracker_fishingcounter = false;
 
@@ -763,6 +756,7 @@ class Settings {
         name: "Counter: Averages",
         description: "Shows averages for sea creatues. For example: \n&e Average SC / Yeti: total winter kills / total yeti kills",
         category: "Counter", 
+        subcategory: "Overlay",
     })
     avgs_fishingcounter = false;
 
@@ -770,6 +764,7 @@ class Settings {
         name: "Counter: Time Elapsed since [RNG]",
         description: "Shows time elapsed since last rng drop.",
         category: "Counter", 
+        subcategory: "Overlay",
     })
     elapsed_sincefishingcounter = false;
 
@@ -777,6 +772,7 @@ class Settings {
         name: "Counter: Special Funny Counters",
         description: "For example: \n&bWinter: &rShows counter for ice rods and money earnt from selling to NPC.",
         category: "Counter", 
+        subcategory: "Overlay",
     })
     specials_fishingcounter = false;
 
@@ -802,14 +798,6 @@ class Settings {
     gardenContestOverlay = false;
 
     @SwitchProperty({
-        name: "Harbringer Potion Timer",
-        description: "Shows timer for Harbringer Potion.",
-        category: "Garden",
-        subcategory: "Overlays", 
-    })
-    harvPotionOverlay = false;
-
-    @SwitchProperty({
         name: "Sprayonator Display",
         description: "Shows display for selected material and possible pests for the Sprayonator.",
         category: "Garden",
@@ -826,10 +814,18 @@ class Settings {
     vinylDisplay = false;
 
     @SwitchProperty({
+        name: "Harbringer Potion Timer",
+        description: "Shows timer for Harbringer Potion.",
+        category: "Garden",
+        subcategory: "Timers", 
+    })
+    harvPotionOverlay = false;
+
+    @SwitchProperty({
         name: "Pest Repellent Timer",
         description: "Shows timer for Pest Repellent.",
         category: "Garden",
-        subcategory: "Overlays", 
+        subcategory: "Timers", 
     })
     pestRepellentDisplay = false;
 
@@ -837,7 +833,7 @@ class Settings {
         name: "Pest Exchange Timer",
         description: "Shows timer for Pest Exchange. Also shows # of pests exchanged and the bonus FF you were given.",
         category: "Garden",
-        subcategory: "Overlays", 
+        subcategory: "Timers", 
     })
     pestExchangeDisplay = false;
 
@@ -845,45 +841,45 @@ class Settings {
         name: "Pest QOL",
         description: "QOL Features for Pest Hunting.",
         category: "Garden",
-        subcategory: "QOL", 
+        subcategory: "Pest QOL", 
     })
     pestQOL = false;
 
     @SwitchProperty({
-        name: "Pest ESP",
-        description: "Highlights an outlined box around a pest. (not esp through walls)",
+        name: "Pest QOL: ESP",
+        description: "Highlights an outlined box around a pest. &c(not esp through walls)",
         category: "Garden",
-        subcategory: "QOL", 
+        subcategory: "Pest QOL", 
     })
     pestEsp = false;
 
     @SwitchProperty({
-        name: "Auto Set Home Pest",
+        name: "Pest QOL: Auto Set Home Pest",
         description: "Automatically sets home when a pest has spawned.\n&c This is a chat macro.",
         category: "Garden",
-        subcategory: "QOL", 
+        subcategory: "Pest QOL", 
     })
     autoSHPest = false;
 
     @SwitchProperty({
-        name: "Autowarp Pest",
-        description: "Automatically warps you to plot where the pest has spawned.\n&c This is a chat macro.\n&cThis feature is automatically disabled when a Jacob's contest is active.",
+        name: "Pest QOL: Autowarp Pest",
+        description: "Automatically warps you to plot where the pest has spawned.\n&cThis is a chat macro.\n&cThis feature is automatically disabled when a Jacob's contest is active.",
         category: "Garden",
-        subcategory: "QOL", 
+        subcategory: "Pest QOL", 
     })
     autoWarpPest = false;
 
     @SwitchProperty({
-        name: "Screen Pest Alert",
+        name: "Pest QOL: Screen Pest Alert",
         description: "Show Pest Alert on Screen",
         category: "Garden",
-        subcategory: "QOL", 
+        subcategory: "Pest QOL", 
     })
     titlePestAlert = false;
 
     @SwitchProperty({
         name: "Hide Sprayonator Expiry Message",
-        description: "&rHides the message '&cSPRAYONATOR! This will expire in 30m&r'.",
+        description: "&7'SPRAYONATOR! This will expire in 30m'&b -- hidden",
         category: "Garden",
         subcategory: "QOL", 
     })
@@ -899,7 +895,7 @@ class Settings {
 
     @SwitchProperty({
         name: "Sprayonator Selected Mat Message Hider",
-        description: "&7Hides the message: '&cSPRAYONATOR! Your selected material is now &e${material}&c!'",
+        description: "&7'SPRAYONATOR! Your selected material is now &e${material}&7!'&b -- hidden",
         category: "Garden",
         subcategory: "QOL", 
     })
@@ -907,7 +903,7 @@ class Settings {
 
     @SwitchProperty({
         name: "Better Garden Messages",
-        description: "Hides/Changes the message into something simpler.\n&7'WARNING! Blocks that you break on this plot will not drop items while using a custom preset!' &bmessage is hidden.\n&7'Remember, you have to be on the island for the resources to be planted!'&b message is hidden.\n&7'Started pasting &e${presetName}&7 preset on Garden Plot - &e${plotName}&7!'&b has been converted to &7'PASTING: Using Preset [&e${presetName}&7] on Plot &e${plotName}&7!'&b.",
+        description: "Hides/Changes the message into something simpler.\n&7'WARNING! Blocks that you break on this plot will not drop items while using a custom preset!'&b -- hidden\n&7'Remember, you have to be on the island for the resources to be planted!'&b -- hidden\n\n&7'Started pasting &e${presetName}&7 preset on Garden Plot - &e${plotName}&7!'\n&c.. converted to ..\n&7'PASTING: Using Preset [&e${presetName}&7] on Plot &e${plotName}&7!'",
         category: "Garden",
         subcategory: "QOL", 
     })
@@ -939,12 +935,22 @@ class Settings {
 
 
     ////////////////////////////////////////////////////////////////////////////////
-    // DRAGONS
+    // DRAGONSDragons/End
     ////////////////////////////////////////////////////////////////////////////////
+    @ButtonProperty({ 
+        name: 'Edit Dragon Counter Location', 
+        description: 'Edits the location of the Dragon Counter Overlay.', 
+        category: 'Dragons/End', 
+        subcategory: 'Edit Overlays', 
+    })
+    openDragonCounterGUI() { 
+        ChatLib.command('movedragoncounter', true); 
+    } 
+    
     @SwitchProperty({
         name: "Dragon Counter", 
         description: "Master Toggle for Dragon Counter.",
-        category: "Dragons",
+        category: "Dragons/End",
         subcategory: "Counter", 
     })
     showDragonCounter = false;
@@ -952,7 +958,7 @@ class Settings {
     @SwitchProperty({
         name: "Drag Counter: Spawns", 
         description: "Toggles the area that shows # of spawns per dragon type.",
-        category: "Dragons",
+        category: "Dragons/End",
         subcategory: "Counter", 
     })
     dragCounterSpawns = false;
@@ -960,7 +966,7 @@ class Settings {
     @SwitchProperty({
         name: "Drag Counter: Trackers", 
         description: "Toggles the area that shows stats like Dragons Since Superior Dragon or # of Crystals Broken.",
-        category: "Dragons",
+        category: "Dragons/End",
         subcategory: "Counter", 
     })
     dragCounterTrackers = false;
@@ -968,7 +974,7 @@ class Settings {
     @SwitchProperty({
         name: "Better End Messages", 
         description: "Master Toggle for all end message changes/deletions etc when you are in the end.",
-        category: "Dragons",
+        category: "Dragons/End",
         subcategory: "QOL", 
     })
     betterEndMessages = false;
@@ -976,10 +982,18 @@ class Settings {
     @SwitchProperty({
         name: "Alert Special Zealot", 
         description: "Sends a message to yourself/party that you got a special zealot.",
-        category: "Dragons",
+        category: "Dragons/End",
         subcategory: "QOL", 
     })
     sendZealotPing = false;
+
+    @SwitchProperty({
+        name: "End Protector Ping",
+        description: "Shows Ping when End Protector is about to spawn.",
+        category: "Dragons/End",
+        subcategory: "QOL"
+    })
+    end_protector_ping = false;
 
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -996,7 +1010,7 @@ class Settings {
     // hide 'leg griffin' errors
     @SwitchProperty({
         name: "Hide Leg Griffin Error",
-        description: "Hides the specific message: 'You need to equip a LEGENDARY griffin pet to fight this!'.",
+        description: "&7'You need to equip a LEGENDARY griffin pet to fight this!'&b -- hidden.",
         category: "Mythos",
         subcategory: "QOL",
     })
@@ -1072,24 +1086,6 @@ class Settings {
     ////////////////////////////////////////////////////////////////////////////////
     // MISC
     ////////////////////////////////////////////////////////////////////////////////
-    @SwitchProperty({
-        name: "Lobby Day Counter",
-        description: "Shows Lobby Day Counter.",
-        category: "Misc",
-        subcategory: "Mining"
-    })
-    lobbyDayCount = false;
-
-    @ButtonProperty({
-        name: "Edit Location of Lobby Day Counter", 
-        description: "Click to edit gui location of the lobby day counter.", 
-        category: "Misc", 
-        subcategory: "Mining"
-    })
-    openLobbyDayCounterEditGUI() {
-        ChatLib.command('movedaycount', true)
-    }
-
     @SwitchProperty({
         name: "Golden Goblin Alert",
         description: "Notification for when Golden Goblin Spawns",
@@ -1177,14 +1173,6 @@ class Settings {
         category: "Misc",
     })
     hide_royal_resident_messages = false;
-
-    @SwitchProperty({
-        name: "End Protector Ping",
-        description: "Shows Ping when End Protector is about to spawn.",
-        category: "Misc",
-        subcategory: "End"
-    })
-    end_protector_ping = false;
 
     @SwitchProperty({
         name: "Dye Pings", 
@@ -1301,7 +1289,8 @@ class Settings {
     @SelectorProperty({
         name: "RNG Sounds", 
         description: "Choose a sound to play when RNG Drops happen.", 
-        category: "Sound", 
+        category: "Sounds/Dev", 
+        subcategory: "Sounds", 
         options: ['Default', 'Disfigure - Blank', 'Persona4 - Specialist', 'TVB News Theme', 'Chipi Chipi Dubi Daba']
     })
     rng_sound_sel = 0;
@@ -1309,21 +1298,18 @@ class Settings {
     @ButtonProperty({
         name: "Test RNG Sound", 
         description: "click to test rng sound", 
-        category: "Sound", 
+        category: "Sounds/Dev", 
+        subcategory: "Sounds", 
     })
     testRNGSound() {
         ChatLib.command('rngtest', true);
     }
 
-
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // DEBUG
-    ////////////////////////////////////////////////////////////////////////////////
     @SwitchProperty({
         name: "Debug Mode", 
         description: "Toggle Debug Mode", 
-        category: "Debug"
+        category: "Sounds/Dev", 
+        subcategory: "Debug"
     })
     toggle_debug = false;
 
@@ -1350,8 +1336,6 @@ class Settings {
 
         // Display HP
         this.addDependency("Display HP: Vanquishers", "Mob HP Display Master Toggle")
-        this.addDependency("Display HP: Inquisitors", "Mob HP Display Master Toggle")
-        this.addDependency("Display HP: Champions", "Mob HP Display Master Toggle")
         this.addDependency("Display HP: Mythos Mobs", "Mob HP Display Master Toggle")
         this.addDependency("Display HP: Reindrakes", "Mob HP Display Master Toggle")
         this.addDependency("Display HP: Yeti", "Mob HP Display Master Toggle")
@@ -1374,10 +1358,10 @@ class Settings {
         this.addDependency("Counter: Special Funny Counters", "Fishing Counter")
 
         // Gardens
-        this.addDependency("Pest ESP", "Pest QOL")
-        this.addDependency("Auto Set Home Pest", "Pest QOL")
-        this.addDependency("Autowarp Pest", "Pest QOL")
-        this.addDependency("Screen Pest Alert", "Pest QOL")
+        this.addDependency("Pest QOL: ESP", "Pest QOL")
+        this.addDependency("Pest QOL: Auto Set Home Pest", "Pest QOL")
+        this.addDependency("Pest QOL: Autowarp Pest", "Pest QOL")
+        this.addDependency("Pest QOL: Screen Pest Alert", "Pest QOL")
 
         // this.addDependency(child name, parent name)
         // fishing.crimson_isles
@@ -1393,9 +1377,6 @@ class Settings {
         this.addDependency("Flying Fish Pet Drop Ping", "Sea Emperor Ping")
         this.addDependency("Lucky Clover Core Ping", "Carrot King Ping")
 
-
-        // misc - mining
-        this.addDependency("Edit Location of Lobby Day Counter", "Lobby Day Counter")
         // misc - mythos
         this.addDependency("General Mythos Info", "Mythos Counter")
         this.addDependency("Mythos Mob Kills Info", "Mythos Counter")
@@ -1415,7 +1396,7 @@ class Settings {
         this.addDependency("Toggle: System Notifications", "Better Dungeon Messages")
         this.addDependency("Toggle: Interactive Elements", "Better Dungeon Messages")
 
-        // dragons
+        // Dragons/End
         this.addDependency("Drag Counter: Spawns", "Dragon Counter")
         this.addDependency("Drag Counter: Trackers", "Dragon Counter")
     }   
