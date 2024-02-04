@@ -1,0 +1,16 @@
+{
+    "books": {
+        "flash": 3,
+        "chimera": 0
+    },
+    "skulls": {
+        "turtleShelmets": 1,
+        "tigerPlushies": 1,
+        "minosRelics": 0,
+        "mlFrags": 1,
+        "hydraHeads": 0
+    },
+    "flowers": {
+        "antiqueRemedies": 1
+    }
+}

@@ -1,11 +1,12 @@
 {
     "firstTime": false,
     "modPrefix": "&6[&3Bao&6]&r",
-    "currArea": "Garden",
-    "inSkyblock": true,
     "screenH": 240,
     "screenW": 427,
     "thickSep": "==================",
     "thinSep": "------------------",
-    "baseTextH": 10
+    "baseTextH": 10,
+    "currentTimestamp": 0,
+    "currArea": "Garden",
+    "inSkyblock": true
 }

@@ -33,5 +33,9 @@
         "burrowsSinceCOG": 0,
         "burrowsSinceWUS": 0,
         "championsSinceRelic": 0
-    }
+    },
+    "pos": [
+        5,
+        100
+    ]
 }

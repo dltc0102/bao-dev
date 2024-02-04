@@ -7,7 +7,7 @@ import { constrainX, constrainY } from '../utils/functions.js' // padding
 import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'; // gui
 import { sendMessage } from '../utils/party.js';
 import { showAlert } from '../utils/utils.js';
-import { getInSkyblock, getCurrArea } from '../utils/functions.js'; // sb, area
+import { getInSkyblock, getInHub } from '../utils/functions.js'; // sb, area
 import { baoUtils } from '../utils/utils.js';
 
 
@@ -20,6 +20,7 @@ createGuiCommand(moveMythosCounter, 'movemythoscounter', 'mmc');
 
 const mythosDragText = `&7|| MYTHOS ||\n&7==================\n&7||| Burros Dug: 0\n&7||| Feathers: 0\n&7||| Coins Dug Up: 0\n&7------------------\n&7\n&7|||MinosHunters: 0\n&7|||Lynxes: 0\n&7|||Gaias: 0\n&7|||Minotaurs: 0\n&7|||Champions: 0\n&7||| Inquisitors: 0\n&7------------------\n&7||| 0 0 0\n&7||| 0 0 0\n&7||| 0 0\n&7------------------\n&7|| Kills/Inq: 0\n&7|| Minotaurs/Dae Stick: 0\n&7|| Burrows/CoG: 0\n&7|| Burrows/WuS: 0\n&7|| Champs Since Relic: 0`;
 
+// pogobject
 export const baoMythos = new PogObject("bao-dev", {
     "allLines": '',
     "x": 5, 
@@ -47,12 +48,6 @@ export const baoMythos = new PogObject("bao-dev", {
         "WuS": 0, 
         "MR": 0, // check inventory pickup
         "CHIM": 0, // check inventory pickup and chat message
-        
-        "cachedMobsSinceInq": 0, 
-        "cachedMinotaursSinceDae": 0, 
-        "cachedBurrowsSinceCOG": 0, 
-        "cachedBurrowsSinceWUS": 0, 
-        "cachedChampionsSinceRelic": 0, 
 
         "mobsSinceInq": 0, 
         "minotaursSinceDae": 0, 
@@ -72,6 +67,10 @@ const wus_title = '&6Washed-up Souvenir'
 const dae_title = '&6Daedalus Stick'
 const chim_title = '&d&lCHIMERA I'
 
+
+////////////////////////////////////////////////////////////////////////////////
+// REGS
+////////////////////////////////////////////////////////////////////////////////
 register('chat', (event) => {
     cancel(event);
 }).setCriteria('Follow the arrows to find the treasure!');
@@ -96,7 +95,8 @@ register('chat', (amt, coins, event) => {
     baoMythos.stats.ancientClawCount += parseInt(amt);
     baoMythos.stats.ancientClawMoney += parseInt(coins.replace(',', ''), 10);
     baoMythos.save();
-}).setCriteria('You sold Ancient Claw x${amt} for ${coins} Coins! (2)');
+}).setCriteria('You sold Ancient Claw x${amt} for ${coins} Coins!');
+
 // burrow digging
 register('chat', (event) => {
     cancel(event);
@@ -259,8 +259,7 @@ register('chat', (event) => {
 
 
 register('step', () => {
-    if (getCurrArea() !== 'Hub') return;
-    if (!Settings.mythos_main_toggle) return;
+    if (!getInSkyblock() || !World.isLoaded() || !getInHub() || !Settings.mythos_main_toggle) return;
     const moneyText = formatMoney(baoMythos.stats.moneyCount)
 
     const mythosTitle = Settings.mythos_counter_general || Settings.mythos_counter_kills || Settings.mythos_counter_drops || Settings.mythos_counter_averages || Settings.mythos_counter_trackers ? `&3|| &6MYTHOS &3||\n${baoUtils.thickSep}` : '';
@@ -359,9 +358,7 @@ register('dragged', (dx, dy, x, y) => {
 });
 
 register('renderOverlay', () => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!Settings.mythos_main_toggle) return;
-    if (getCurrArea() !== 'Hub') return;
+    if (!getInSkyblock() || !World.isLoaded() || !Settings.mythos_main_toggle || !getInHub()) return;
     Renderer.drawStringWithShadow(baoMythos.allLines, baoMythos.x, baoMythos.y);
     renderGuiPosition(moveMythosCounter, baoMythos, mythosDragText);
 });
@@ -406,12 +403,6 @@ register('command', () => {
     baoMythos.stats.burrowsSinceCOG = 0;
     baoMythos.stats.burrowsSinceWUS = 0;
     baoMythos.stats.championsSinceRelic = 0;
-
-    baoMythos.stats.cachedMobsSinceInq = 0;
-    baoMythos.stats.cachedMinotaursSinceDae = 0;
-    baoMythos.stats.cachedBurrowsSinceCOG = 0;
-    baoMythos.stats.cachedBurrowsSinceWUS = 0;
-    baoMythos.stats.cachedChampionsSinceRelic = 0;
-
+ 
     ChatLib.chat('&aYour counter for mythological event has been resetted!');
 }).setName('resetmythosbao');

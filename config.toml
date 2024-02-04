@@ -16,6 +16,7 @@
 	"toggle:_interactive_elements" = true
 	full_inventory_alert = true
 	"toggle:_qol" = true
+	"class/cata_lvl_up_ping" = true
 	party_finder_message_shortener = true
 	melody_terminal_alert = true
 	better_dungeon_messages = true
@@ -31,7 +32,8 @@
 
 	["dragons/end".counter]
 		"drag_counter:_trackers" = true
-		dragon_counter = true
+		dragon_counter = false
+		dragon_damage_display = false
 		"drag_counter:_spawns" = true
 
 	["dragons/end".qol]
@@ -216,6 +218,11 @@
 		hide_leg_griffin_error = true
 
 [fishing_pings]
+	"toggle:_bronze" = false
+	"toggle:_silver" = false
+	"toggle:_diamond" = false
+	toggle_trophy_fish_messages = false
+	"toggle:_gold" = false
 
 	[fishing_pings.crimson_isles]
 		vanquisher_ping = true

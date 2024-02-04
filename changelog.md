@@ -1,4 +1,121 @@
-bao 1.0.4 release:
+check:
+dev.js - done
+
+displayHP.js - done
+
+dungeon_cleaner.js - done
+- check determineEss and determineMS funcs - done
+- TODO: L135 - add Settings.iceSprayPing
+- :204 - fixed 'ting' to 'thing'
+- used getInDungeon() instead of getCurrArea()
+
+toggle: player actions
+- abilities
+- revives and fairies
+- obtained item messages
+- decoys
+- essence
+- creeper veil actions
+
+toggle: message qol
+- npc sold items
+- friend join/leave message
+- gexp or hypixel exp messages
+- ability/terminal/puzzle errors
+- full inventory message
+
+toggle: system notifications
+- class stat change messages
+- wish/heal messages
+- orb pickups
+- sack messages
+- potion effects reminder message
+- mute fire sales
+
+toggle: interactive elements
+- npc dialogue
+- milestone messages
+- wither door messages
+- blood door messages
+- boss messages
+- statue messages
+- floor specific messages
+- blessings
+- puzzle comps and fails
+- mob damage messages
+- witherborn damage messages
+- bomb defusal messages
+- mute auto recombs
+
+dungeons.js
+- TODO: fix melody detector
+- TODO: add firefreeze toglge for scarf and professor
+- TODO: add class level up toggle
+- TODO: add cata level up toggle
+- TODO: add show blessings toggle
+- TODO: maybe make it so that showextrastats command only runs if gui is closed
+- TODO: move overlay for showing blessings
+- TODO: ff timers to be in 10 steps per second
+- used getInDungeon() and getInDHub() instead of getCurrArea()
+
+features:
+o melody detector
+o secrets per run (per session = 'resetsecretcounter' cmd)
+o secrets and deaths count shown after every run for you
+o m3 professor fire freeze timer
+o m2 scarf fire freeze timer (wip)
+o m2 scarf crypt timer (wip)
+o class level up pings
+o cata level up pings
+o show blessings in dungeon
+o dungeon routes saver (wip)
+o dungeon run counter w/ goals (wip)
+o accurate bc helper (wip)
+
+
+end_cleaner.js
+- fixed better namings
+- used getInEnd() instead of getCurrArea()
+- TODO: put sendZealotPing and endProtPing in betterEndMessages
+- TODO: check baoDragons.displayText
+- TODO: add weight calculation for chance of epic edrag, leg edrag, and reforge stones
+
+- golem level checker and beacon:
+-----
+end protector
+----
+o FRONT: -644 5 -269 (lvl 1), lvl 2 y+1, lvl 3 y+2, lvl 4 y+3
+o RIGHT: -678 5 -332 (lvl 1)
+
+features:
+o dragon counter
+o dragon fight message qol
+o special zealot ping
+
+fishing_overlays.js - done
+- used getInCI() and getInGarden() instead of getCurrArea()
+
+fishing_pings.js - done
+- added things for the 'togglefishingpings' command
+
+garden.js - 
+- TODO: make moveable overlays for arrow and plot map to sync at the same time
+- TODO: make moveable overlays for yaw and pitch
+- TODO: make moveabel overlays for vinyl info
+- TODO: make moveable overlays for garden timers
+- TODO: make moveable overlays for sprayonator info
+- TODO: color picker for plotmap color and arrow color and center plot color
+
+utils/utils.js
+- skyblock time
+- event tracker
+- counter for spooky
+- counter for shark fest
+- counter for oasis stuff
+
+
+
+
 
 
 

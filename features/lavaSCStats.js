@@ -1,8 +1,10 @@
 import Settings from '../settings.js';
 import PogObject from 'PogData';
-import { getInSkyblock, getCurrArea } from '../utils/functions.js'; // sb, area
+
+import { getInSkyblock } from '../utils/functions.js'; // sb, area
 import { baoUtils } from '../utils/utils.js';
 import { filterSeparators } from '../utils/functions.js';
+import { getInCI, getInCH } from '../utils/functions.js';
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP CONSTS
 ////////////////////////////////////////////////////////////////////////////////
@@ -48,10 +50,16 @@ baoLavaSCStats.autosave(5);
 
 ////////////////////////////////////////////////////////////////////////////
 // LAVA SEA CREATURES (CRIMSON ISLE) ---------------------------------------
-////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+// vanqs
+register('chat', (event) => {
+    if (!getInCI()) return;
+    if (Settings.hide_sc_msgs) cancel(event);
+}).setCriteria('A Vanquisher is spawning nearby!');
+
 // Phlegblast
 register('chat', (event) => {
-    if (getCurrArea() !== 'Crimson Isle') return;
+    if (!getInCI()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoLavaSCStats.phlegblastCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
@@ -62,7 +70,7 @@ register('chat', (event) => {
 
 // Magma Slug
 register('chat', (event) => {
-    if (getCurrArea() !== 'Crimson Isle') return;
+    if (!getInCI()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoLavaSCStats.magmaSlugCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
@@ -73,7 +81,7 @@ register('chat', (event) => {
 
 // Moogma
 register('chat', (event) => {
-    if (getCurrArea() !== 'Crimson Isle') return;
+    if (!getInCI()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoLavaSCStats.moogmaCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
@@ -84,7 +92,7 @@ register('chat', (event) => {
 
 // Lava Leech
 register('chat', (event) => {
-    if (getCurrArea() !== 'Crimson Isle') return;
+    if (!getInCI()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoLavaSCStats.lavaLeechCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
@@ -95,7 +103,7 @@ register('chat', (event) => {
 
 // Pyroclastic Worm
 register('chat', (event) => {
-    if (getCurrArea() !== 'Crimson Isle') return;
+    if (!getInCI()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoLavaSCStats.pyroclasticWormCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
@@ -106,7 +114,7 @@ register('chat', (event) => {
 
 // Lava Flame
 register('chat', (event) => {
-    if (getCurrArea() !== 'Crimson Isle') return;
+    if (!getInCI()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoLavaSCStats.lavaFlameCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
@@ -117,7 +125,7 @@ register('chat', (event) => {
 
 // Fire Eels
 register('chat', (event) => {
-    if (getCurrArea() !== 'Crimson Isle') return;
+    if (!getInCI()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoLavaSCStats.fireEelsCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
@@ -128,7 +136,7 @@ register('chat', (event) => {
 
 // Taurus
 register('chat', (event) => {
-    if (getCurrArea() !== 'Crimson Isle') return;
+    if (!getInCI()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoLavaSCStats.taurusCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
@@ -139,7 +147,7 @@ register('chat', (event) => {
 
 // Thunder
 register('chat', (event) => {
-    if (getCurrArea() !== 'Crimson Isle') return;
+    if (!getInCI()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoLavaSCStats.thunderCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
@@ -150,7 +158,7 @@ register('chat', (event) => {
 
 // Lord Jawbus
 register('chat', (event) => {
-    if (getCurrArea() !== 'Crimson Isle') return;
+    if (!getInCI()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoLavaSCStats.lordJawbusCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
@@ -162,7 +170,7 @@ register('chat', (event) => {
 
 // Radioactive Vial [Jawbus]
 register('chat', (mf, event) => {
-    if (getCurrArea() !== 'Crimson Isle') return;
+    if (!getInCI()) return;
     baoLavaSCStats.jawbusSinceLastVial = 0;
     baoLavaSCStats.save();
 }).setCriteria("RARE DROP! Radioactive Vial (+${mf}% ✯ Magic Find)")
@@ -172,7 +180,7 @@ register('chat', (mf, event) => {
 ////////////////////////////////////////////////////////////////////////////
 // Flaming Worm
 register('chat', (event) => {
-    if (getCurrArea() !== 'Crystal Hollows') return;
+    if (!getInCH()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoLavaSCStats.flamingWormCatches += 1;
     baoLavaSCStats.totalLavaCHSCCatches += 1;
@@ -182,7 +190,7 @@ register('chat', (event) => {
 
 // Lava Blaze
 register('chat', (event) => {
-    if (getCurrArea() !== 'Crystal Hollows') return;
+    if (!getInCH()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoLavaSCStats.lavaBlazeCatches += 1;
     baoLavaSCStats.totalLavaCHSCCatches += 1;
@@ -192,7 +200,7 @@ register('chat', (event) => {
 
 // Lava Pigman
 register('chat', (event) => {
-    if (getCurrArea() !== 'Crystal Hollows') return;
+    if (!getInCH()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoLavaSCStats.lavaPigmanCatches += 1;
     baoLavaSCStats.totalLavaCHSCCatches += 1;
@@ -205,7 +213,7 @@ register('chat', (event) => {
 ////////////////////////////////////////////////////////////////
 register('step', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
-    if (getCurrArea() !== 'Crimson Isle') return;
+    if (!getInCI()) return;
     const crimsonSepThick = `&3${baoUtils.thickSep}`;
     const crimsonSepThin = `&3${baoUtils.thinSep}`;
 

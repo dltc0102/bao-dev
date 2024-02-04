@@ -16,7 +16,7 @@ register('chat', (pet, event) => {
 }).setCriteria('You despawned your ${pet}!')
 
 register('chat', (lvlNum, petName, event) => {
-    if (Settings.hide_autopet_messages) cancel(event);
+    if (Settings.hideAutopetMessages) cancel(event);
     usingPet = true;
     activePetName = petName;
     debug(`usingPet: ${usingPet}, activePet: ${activePetName}, mainPet: ${petName}`)

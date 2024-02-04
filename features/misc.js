@@ -1,8 +1,7 @@
 import Settings from '../settings.js';
 import Audio from '../utils/audio.js';
-import PogObject from 'PogData';
 
-import { generateRandomStr, petDropPing, playSound, sendGuild, sendSelf } from '../utils/functions.js';
+import { generateRandomStr, petDropPing, playSound, sendGuild } from '../utils/functions.js';
 import { sendMessage } from '../utils/party.js';
 import { showAlert } from '../utils/utils.js';
 import { getInSkyblock, getCurrArea } from '../utils/functions.js'; // sb, area
@@ -12,25 +11,10 @@ import { baoUtils } from '../utils/utils.js';
 // SETUP CONSTS
 ////////////////////////////////////////////////////////////////////////////////
 const miscAudio = new Audio();
-export const baoMisc = new PogObject("bao-dev", {
-    "isFearAnnounced": false, 
-}, '/data/baoMisc.json');
 
-////////////////////////////////////////////////////////////////////////////////
-// JERRY TITLES ----------------------------------------------------------------
-////////////////////////////////////////////////////////////////////////////////
-const green_jerry = '&aGreen Jerry'
-const blue_jerry = '&9Blue Jerry'
-const purple_jerry = '&5Purple Jerry'
-const gold_jerry = '&6Golden Jerry'
-const sharing_is_caring = '&cHit for BE'
 const wildHorseTitle = '&6Horseman &r@ &2Wilderness'
 const graveHorseTitle = '&6Horseman &r@ &cGraveyard'
-const end_prot_title = '&8End Protector'
 
-////////////////////////////////////////////////////////////////////////////////
-// DYE TITLES ------------------------------------------------------------------
-////////////////////////////////////////////////////////////////////////////////
 const carmineInfo = {
     "title": '&3[&b&ka&3] &cCarmine Dye &3[&b&ka&3]', 
     "pattern": /&6&lRARE DROP! &5Carmine Dye/, 
@@ -75,14 +59,25 @@ const celesteDyeInfo = {
 // brick red dye
 // bone dye
 
-
 ////////////////////////////////////////////////////////////////////////////////
-// MINING ----------------------------------------------------------------------
+// FUNCTIONS
+////////////////////////////////////////////////////////////////////////////////
+function shouldHandlFearMsgs() {
+    return !getInSkyblock() || !World.isLoaded() || !Settings.primal_fear_main_toggle;
+}
+
+function solveFearMaths(problem) {
+    const question = problem.replace(/x/g, '*');
+    return eval(question).toFixed(0);
+}
+////////////////////////////////////////////////////////////////////////////////
+// MINING
 ////////////////////////////////////////////////////////////////////////////////
 // golden goblin alert
 register('chat', (event) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.golden_goblin_alert) return;
+    cancel(event);
     showAlert('&6Golden Goblin');
     miscAudio.playDefaultSound();
     sendMessage('[!] Golden Goblin [!]');
@@ -92,63 +87,53 @@ register('chat', (event) => {
 register('chat', (mf, event) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.scatha_pet_drop_ping) return;
+    cancel(event);
     const message = ChatLib.getChatMessage(event, true);
     petDropPing(message, 'PET DROP!', 'Scatha', mf);
 }).setCriteria('PET DROP! Scatha (+${mf}% ✯ Magic Find)');
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// JERRY PINGS -----------------------------------------------------------------
+// JERRY PINGS
 ////////////////////////////////////////////////////////////////////////////////
-register('chat', (event) => {
+function determineJerryColor(color) {
+    if (color === 'Green') return '&a';
+    if (color === 'Blue') return '&9';
+    if (color === 'Purple') return '&5';
+    if (color === 'Golden') return '&6';
+    return '&5';
+}
+
+function handleJerryPings(event, color) {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.jerry_ping) return;
-    const message = ChatLib.getChatMessage(event, true);
+    cancel(event);
+    ChatLib.chat(`[!] A ${color} Jerry has spawned [!]`);
+    showAlert(`${determineJerryColor(color)}${color} Jerry`);
+    color === 'Golden' ? playSound() : miscAudio.playDefaultSound();
+}
+register('chat', (color, event) => {
+    handleJerryPings(event, color);
+}).setCriteria(' ☺ You discovered a ${color} Jerry!');
 
-    // green jerry
-    if (message.includes('&aGreen Jerry&e')) {
-        sendSelf('[!] A Green Jerry has spawned [!]');
-        showAlert(green_jerry);
-        miscAudio.playDefaultSound();
-    }
+register('chat', (color, event) => {
+    handleJerryPings(event, color);
+}).setCriteria(' ☺ Some ${color} Jerry was hiding, but you found it!');
 
-    // blue jerry
-    if (message.includes('&9Blue Jerry&e')) {
-        sendSelf('[!] A Blue Jerry has spawned [!]');
-        showAlert(blue_jerry);
-        miscAudio.playDefaultSound();
-    }
+register('chat', (color, event) => {
+    handleJerryPings(event, color);
+}).setCriteria(' ☺ You located a hidden ${color} Jerry!');
 
-    // purple jerry
-    if (message.includes('&5Purple Jerry&e')) {
-        sendSelf('[!] A Purple Jerry has spawned [!]');
-        showAlert(purple_jerry);
-        miscAudio.playDefaultSound();
-    }
+register('chat', (color, event) => {
+    handleJerryPings(event, color);
+}).setCriteria(' ☺ A wild ${color} Jerry spawned!');
 
-    // golden jerry
-    if (message.includes('&6Golden Jerry&e')) {
-        sendSelf('[!] A Golden Jerry has spawned [!]');
-        showAlert(gold_jerry);
-        playSound();
-    }
-})
-
+register('chat', (color, event) => {
+    handleJerryPings(event, color);
+}).setCriteria(' ☺ Some ${color} Jerry was hiding, but you found it!');
 
 ////////////////////////////////////////////////////////////////////////////////
-// END PINGS -------------------------------------------------------------------
-////////////////////////////////////////////////////////////////////////////////
-register('chat', (event) => {
-    if (!Settings.end_protector_ping) return;
-    showAlert(end_prot_title);
-    sendMessage('Endstone Protector Spawning');
-    miscAudio.playDefaultSound();
-}).setCriteria('The ground begins to shake as an Endstone Protector rises from below!');
-
-// better end messages
-
-////////////////////////////////////////////////////////////////////////////////
-// DYE PINGS -------------------------------------------------------------------
+// DYE PINGS
 ////////////////////////////////////////////////////////////////////////////////
 register('chat', (event) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
@@ -210,82 +195,25 @@ register('chat', (event) => {
 })
 
 ////////////////////////////////////////////////////////////////////////////////
-// SPOOKY EVENT PINGS ----------------------------------------------------------
+// SPOOKY EVENT PINGS
 ////////////////////////////////////////////////////////////////////////////////
 // trick or treat mob pings
 register('chat', (spookyMob, event) => {
     if (!Settings.spooky_tot_ping) return;
-    if (Settings.hide_scc_msgs) cancel(event);
-    showAlert(sharing_is_caring);
+    cancel(event);
+    showAlert(`&8${spookyMob}`);
     sendMessage(`${spookyMob} has spawned.`)
     miscAudio.playDefaultSound();
 }).setCriteria('TRICK! A ${spookyMob} has tricked you!');
 
 // headless horseman ping
 register('chat', (spawner, location, event) => {
-    cancel(event);
     if (!Settings.horseman_ping) return;
+    cancel(event);
     location === 'Wilderness' ? showAlert(wildHorseTitle) : location === 'Graveyard' ? showAlert(graveHorseTitle) : null;
     sendMessage(`[!] Horseman @ ${location} [!]`);
     miscAudio.playDefaultSound();
 }).setCriteria("${spawner} has spawned the Headless Horseman boss in the ${location}!")
-
-/////////////////////////////////////////////////
-// PRIMAL FEARS
-////////////////////////////////////////////////
-// message hiders
-register('chat', (event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!Settings.primal_fear_main_toggle) return;
-    if (!Settings.hide_fear_messages) cancel(event);
-}).setCriteria('FEAR. You got some rewards from killing a Primal Fear!');
-
-register('chat', (event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!Settings.primal_fear_main_toggle) return;
-    if (!Settings.hide_fear_messages) cancel(event);
-}).setCriteria('[FEAR]').setContains();
-
-// primal fears spawn ping
-register('chat', (event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!Settings.primal_fear_main_toggle) return;
-    if (!Settings.primal_fear_spawn_ping) return;
-    miscAudio.playDefaultSound();
-    showAlert('&4PRIMAL FEAR');
-    sendMessage('[!] Primal Fear (not ls-able btw) [!]');
-}).setCriteria('FEAR. A Primal Fear has been summoned!');
-
-// quick maths lol
-register('chat', (problem, event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!Settings.primal_fear_main_toggle) return;
-    if (!Settings.fear_math_solver) return;
-    const question = problem.replace(/x/g, '*');
-    const result = eval(question);
-    setTimeout(() => {
-        ChatLib.chat(`${baoUtils.modPrefix} Answer: ${result.toFixed(0)}`);
-    }, 300);
-}).setCriteria('QUICK MATHS! Solve: ${problem}');
-
-// random blah blah
-register('chat', (name, event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!Settings.primal_fear_main_toggle) return;
-    if (!Settings.fear_karen_solver) return;
-    const randomMessage = generateRandomStr(18);
-    if (name !== Player.getName()) return;
-    if (!baoMisc.isFearAnnounced) {
-        baoMisc.isFearAnnounced = true;
-        setTimeout(() => {
-            ChatLib.chat(randomMessage);
-        }, 300);
-        setTimeout(() => {
-            baoMisc.isFearAnnounced = false;
-        }, 30000);
-    };
-}).setCriteria('[FEAR] Public Speaking Demon: Say something interesting ${name}!');
-
 
 // Royal Resident
 register('chat', (message, event) => {
@@ -294,4 +222,57 @@ register('chat', (message, event) => {
     if (Settings.hide_royal_resident_messages) cancel(event);
 }).setCriteria('[NPC] No Name: ${message}').setContains();
 
+
+
+////////////////////////////////////////////////////////////////////////////////
+// PRIMAL FEARS
+////////////////////////////////////////////////////////////////////////////////
+// message hiders
+register('chat', (event) => {
+    if (!shouldHandlFearMsgs()) return;
+    if (Settings.hide_fear_messages) cancel(event);
+}).setCriteria('FEAR. You got some rewards from killing a Primal Fear!');
+
+register('chat', (event) => {
+    if (!shouldHandlFearMsgs()) return;
+    if (Settings.hide_fear_messages) cancel(event);
+}).setCriteria('[FEAR]').setContains();
+
+// primal fears spawn ping
+register('chat', (event) => {
+    if (!shouldHandlFearMsgs()) return;
+    if (!Settings.primal_fear_spawn_ping) return;
+    if (Settings.hide_fear_messages) cancel(event);
+    miscAudio.playDefaultSound();
+    showAlert('&4PRIMAL FEAR');
+    ChatLib.chat('[!] Primal Fear [!]');
+}).setCriteria('FEAR. A Primal Fear has been summoned!');
+
+// quick maths lol
+register('chat', (problem, event) => {
+    if (!shouldHandlFearMsgs()) return;
+    if (!Settings.fear_math_solver) return;
+    let result = solveFearMaths(problem);
+    setTimeout(() => {
+        ChatLib.chat(`${baoUtils.modPrefix} &fAnswer: &b${result}`);
+    }, 300);
+}).setCriteria('QUICK MATHS! Solve: ${problem}');
+
+// random blah blah
+let isFearAnnounced = false;
+register('chat', (playerName, event) => {
+    if (!shouldHandlFearMsgs()) return;
+    if (!Settings.fear_karen_solver) return;
+    if (playerName !== Player.getName()) return;
+    const randomMessage = generateRandomStr(18);
+    if (!isFearAnnounced) {
+        isFearAnnounced = true;
+        setTimeout(() => {
+            ChatLib.chat(randomMessage);
+        }, 300);
+        setTimeout(() => {
+            isFearAnnounced = false;
+        }, 30000);
+    };
+}).setCriteria('[FEAR] Public Speaking Demon: Say something interesting ${playerName}!');
 

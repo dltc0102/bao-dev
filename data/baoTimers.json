@@ -1,5 +1,5 @@
 {
-    "displayText": "\n\n\n\n\n",
+    "displayText": "\n\n\n\n\n\n",
     "x": 847,
     "y": 3,
     "gummy": {
@@ -21,7 +21,7 @@
         "cd": 30,
         "timeLeft": 0,
         "used": false,
-        "target": null
+        "target": 0
     },
     "glowyTonic": {
         "name": "Glowy Tonic",
@@ -35,7 +35,7 @@
         "cd": 6,
         "timeLeft": 0,
         "used": false,
-        "target": null
+        "target": 0
     },
     "kingsScent": {
         "name": "King's Scent",
@@ -45,13 +45,20 @@
         "target": null
     },
     "orb": {
-        "registered": [],
-        "color": "",
+        "registered": [
+            "Overflux 24s"
+        ],
+        "color": "&5",
         "displayText": "",
-        "timeLeft": 0,
+        "timeLeft": 23,
         "type": 5,
         "found": false,
         "x": 400,
-        "y": 250
-    }
+        "y": 250,
+        "used": true
+    },
+    "pos": [
+        400,
+        240
+    ]
 }

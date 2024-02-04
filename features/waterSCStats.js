@@ -1,10 +1,13 @@
 import Settings from '../settings.js';
 import PogObject from 'PogData';
-import { getInSkyblock, getCurrArea } from '../utils/functions.js'; // sb, area
+
+import { getInSkyblock } from '../utils/functions.js'; // sb, area
 import { baoUtils } from '../utils/utils.js';
 import { formatMoney } from '../utils/functions.js';
 import { filterSeparators } from '../utils/functions.js';
 import { updateCDText } from '../utils/functions.js';
+import { filterSeparators } from '../utils/functions.js';
+import { getInJerry, getInHub, getInCH, getInDesert } from '../utils/functions.js';
 
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP CONSTS
@@ -134,7 +137,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
     
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -149,7 +152,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceCarrotKing += 1;
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -164,7 +167,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceCarrotKing += 1;
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -179,7 +182,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceCarrotKing += 1;
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -206,7 +209,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceCarrotKing += 1;
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -221,7 +224,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceCarrotKing += 1;
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -236,7 +239,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceCarrotKing += 1;
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -251,7 +254,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceCarrotKing += 1;
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -267,7 +270,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
     baoWaterSCStats.carrotKingSinceLastClover += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -290,7 +293,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceCarrotKing += 1;
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -305,7 +308,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceCarrotKing += 1;
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -320,7 +323,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceCarrotKing += 1;
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -335,7 +338,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceCarrotKing += 1;
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra = 0;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -350,7 +353,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceCarrotKing += 1;
     baoWaterSCStats.catchesSinceSeaEmperor = 0;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -385,7 +388,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceCarrotKing += 1;
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -399,7 +402,7 @@ register('chat', (event) => {
 ////////////////////////////////////////////////////////////////////////////
 // Oasis Rabbit
 register('chat', (event) => {
-    if (getCurrArea() !== 'The Farming Islands') return;
+    if (!getInDesert()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoWaterSCStats.oasisRabbitCatches += 1;
     baoWaterSCStats.totalOasisWaterSCCatches += 1;
@@ -411,7 +414,7 @@ register('chat', (event) => {
 
 // Oasis Sheep
 register('chat', (event) => {
-    if (getCurrArea() !== 'The Farming Islands') return;
+    if (!getInDesert()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoWaterSCStats.oasisSheepCatches += 1;
     baoWaterSCStats.totalOasisWaterSCCatches += 1;
@@ -427,7 +430,7 @@ register('chat', (event) => {
 ////////////////////////////////////////////////////////////////////////////
 // Water Worm
 register('chat', (event) => {
-    if (getCurrArea() !== 'Crystal Hollows') return;
+    if (!getInCH()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoWaterSCStats.waterWormCatches += 1;
     baoWaterSCStats.totalCHWaterSCCatches += 1;
@@ -440,7 +443,7 @@ register('chat', (event) => {
 
 // Poisoned Water Worm
 register('chat', (event) => {
-    if (getCurrArea() !== 'Crystal Hollows') return;
+    if (!getInCH()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoWaterSCStats.poisonedWaterWormCatches += 1;
     baoWaterSCStats.totalCHWaterSCCatches += 1;
@@ -453,7 +456,7 @@ register('chat', (event) => {
 
 // Abyssal Miner
 register('chat', (event) => {
-    if (getCurrArea() !== 'Crystal Hollows') return;
+    if (!getInCH()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoWaterSCStats.totalCHWaterSCCatches += 1;
     baoWaterSCStats.catchesSinceCarrotKing += 1;
@@ -477,7 +480,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceWaterHydra += 1;
     baoWaterSCStats.catchesSincePhantomFisher += 1;
     baoWaterSCStats.catchesSinceGrimReaper += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -495,7 +498,7 @@ register('chat', (event) => {
     data.catchesSinceWaterHydra += 1;
     data.catchesSincePhantomFisher += 1;
     data.catchesSinceGrimReaper += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -513,7 +516,7 @@ register('chat', (event) => {
     data.catchesSinceWaterHydra += 1;
     data.catchesSincePhantomFisher += 1;
     data.catchesSinceGrimReaper += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -531,7 +534,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceWaterHydra += 1;
     baoWaterSCStats.catchesSincePhantomFisher = 0;
     baoWaterSCStats.catchesSinceGrimReaper += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -549,7 +552,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceWaterHydra += 1;
     baoWaterSCStats.catchesSincePhantomFisher += 1;
     baoWaterSCStats.catchesSinceGrimReaper = 0;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -563,7 +566,7 @@ register('chat', (event) => {
 ////////////////////////////////////////////////////////////////////////////
 // Frozen Steve
 register('chat', (event) => {
-    if (getCurrArea() !== "Jerry's Workshop") return;
+    if (!getInJerry()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoWaterSCStats.frozenSteveCatches += 1;
     baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -577,7 +580,7 @@ register('chat', (event) => {
 
 // Frosty the Snowman
 register('chat', (event) => {
-    if (getCurrArea() !== "Jerry's Workshop") return;
+    if (!getInJerry()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoWaterSCStats.frostySnowmanCatches += 1;
     baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -591,7 +594,7 @@ register('chat', (event) => {
 
 // Grinch
 register('chat', (event) => {
-    if (getCurrArea() !== "Jerry's Workshop") return;
+    if (!getInJerry()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoWaterSCStats.grinchCatches += 1;
     baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -605,7 +608,7 @@ register('chat', (event) => {
 
 // Yeti
 register('chat', (event) => {
-    if (getCurrArea() !== "Jerry's Workshop") return;
+    if (!getInJerry()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoWaterSCStats.yetiCatches += 1;
     baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -623,7 +626,7 @@ register('chat', (event) => {
 
 // Baby Yeti Pet [Yeti]
 register('chat', (mf, event) => {
-    if (getCurrArea() !== "Jerry's Workshop") return;
+    if (!getInJerry()) return;
     const message = ChatLib.getChatMessage(event, true);
     if (message.includes('&5Baby Yeti')) {
         baoWaterSCStats.epicBabyYeti += 1;
@@ -641,7 +644,7 @@ register('chat', (mf, event) => {
 
 // Nutcracker
 register('chat', (event) => {
-    if (getCurrArea() !== "Jerry's Workshop") return;
+    if (!getInJerry()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoWaterSCStats.nutcrackerCatches += 1;
     baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -655,7 +658,7 @@ register('chat', (event) => {
 
 // Reindrake
 register('chat', (event) => {
-    if (getCurrArea() !== "Jerry's Workshop") return;
+    if (!getInJerry()) return;
     if (Settings.hide_sc_msgs) cancel(event);
     baoWaterSCStats.reindrakeCatches += 1;
     baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -671,9 +674,14 @@ register('chat', (event) => {
     baoWaterSCStats.save();
 }).setCriteria("A Reindrake forms from the depths.");
 
+register('chat', (event) => {
+    if (!getInJerry()) return;
+    if (Settings.hide_sc_msgs) cancel(event);
+}).setCriteria('WOAH! A Reindrake was summoned from the depths!');
+
 // ice rods
 register('chat', (event) => {
-    if (getCurrArea() !== "Jerry's Workshop") return;
+    if (!getInJerry()) return;
     baoWaterSCStats.iceRods += 1;
     baoWaterSCStats.save();
 }).setCriteria('You sold Ice Rod x1 for 20,000 Coins!');
@@ -690,7 +698,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
     baoWaterSCStats.catchesSinceGWShark += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -707,7 +715,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
     baoWaterSCStats.catchesSinceGWShark += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -724,7 +732,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
     baoWaterSCStats.catchesSinceGWShark += 1;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -741,7 +749,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
     baoWaterSCStats.catchesSinceGWShark = 0;
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         baoWaterSCStats.catchesSinceYeti += 1;
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
@@ -759,7 +767,7 @@ register('step', () => {
     const winterSepThin = `&7${baoUtils.thinSep}`;
 
 
-    if (getCurrArea() === "Hub") {
+    if (getInHub()) {
         const generalTitle = Settings.kills_fishingcounter || Settings.mob_since_fishingcounter || Settings.drops_fishingcounter || Settings.tracker_fishingcounter || Settings.avgs_fishingcounter ? `&r  <--]|| &fGENERAL &r||[-->\n${hubSepThick}` : '';
 
         // kills
@@ -817,7 +825,7 @@ register('step', () => {
         baoWaterSCStats.HUBDisplay = filterSeparators(HubDisplayRaw, hubSepThin)
         baoWaterSCStats.save();
     }
-    if (getCurrArea() === "Jerry's Workshop") {
+    if (getInJerry()) {
         const winterTitle = Settings.kills_fishingcounter || Settings.mob_since_fishingcounter || Settings.drops_fishingcounter || Settings.tracker_fishingcounter || Settings.avgs_fishingcounter || Settings.elapsed_sincefishingcounter || Settings.specials_fishingcounter ? `&8|&1|&9|&3|&b| &rWinter Island &b|&3|&9|&1|&8|\n${winterSepThick}` : '';
     
         // winter kills

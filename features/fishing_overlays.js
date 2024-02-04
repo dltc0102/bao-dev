@@ -6,8 +6,9 @@ import { showAlert } from '../utils/utils.js';
 import { constrainX, constrainY } from '../utils/functions.js' // padding
 import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'; // gui
 import { detectDH, displayEntityHP, getPlayerCount, getThunderBottle } from '../utils/functions.js'; // detecting DH
-import { getInSkyblock, getCurrArea } from '../utils/functions.js'; // sb, area
+import { getInSkyblock } from '../utils/functions.js'; // sb, area
 import { baoDisplayHP } from '../features/displayHP.js';
+import { getInCI, getInGarden } from '../utils/functions.js';
 
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP CONSTS
@@ -24,6 +25,7 @@ const moveNearbyJawbusCounter = new Gui(); // nearby jawbus
 const moveNearbyThunderCounter = new Gui(); // nearby thunder
 const moveChargesCounter = new Gui(); // charges
 const movedaycounter = new Gui();
+
 createGuiCommand(moveBobberCounter, 'movebobber', 'mbc');
 createGuiCommand(movePlayerCounter, 'moveplayer', 'mpc');
 createGuiCommand(moveNearbyJawbusCounter, 'movejawbus', 'mj');
@@ -79,7 +81,7 @@ baoFishOverlay.autosave(5);
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// FUNCTIONS
+// create info object for jawbus and thunder
 ////////////////////////////////////////////////////////////////////////////////
 function createInfoObject() {
     let resultObj = {
@@ -94,14 +96,12 @@ function createInfoObject() {
     return resultObj;
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-// CODE
-////////////////////////////////////////////////////////////////////////////////
 baoFishOverlay.nbJawbus.info = createInfoObject();
 baoFishOverlay.nbThunder.info = createInfoObject();
 
-// dragged events
+////////////////////////////////////////////////////////////////////////////////
+// REG DRAGGED
+////////////////////////////////////////////////////////////////////////////////
 register('dragged', (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveBobberCounter.isOpen()){
@@ -131,55 +131,92 @@ register('dragged', (dx, dy, x, y) => {
     baoFishOverlay.save();
 })
 
+////////////////////////////////////////////////////////////////////////////////
+// FUNCS FOR UPDATING LOGIC
+////////////////////////////////////////////////////////////////////////////////
+function updateBobberCount(hook) {
+    return World.getAllEntitiesOfType(hook).filter(dist => dist.distanceTo(Player.getPlayer()) < 31).length;
+}
+
+function updateEntityText(name, count) {
+    let colorF = count > 6 ? '&b&l' : '&b'
+    let nbEntitiesText = count > 0 ? Math.round(count) : '0';
+    return `&r${name}: ${colorF}${nbEntitiesText}`;
+}
+
+function updateNearbyText(name, givObject) {
+    let isNBFound = givObject.foundNearby ? 'YES' : 'NO';
+    let numNB = givObject.numNearby > 0 ? ` [x${givObject.numNearby}]` : '';
+    return `&rNearby ${name}: &b${isNBFound}  &6${numNB}`;
+}
+
+function updateChargeText(charges) {
+    let res = '';
+    if (charges === 50000) res = 'Thunder Bottle: &b&lFULL';
+    if (charges === null) res = 'Thunder Bottle: &cNo Bottle Available';
+    if (charges !== null && charges !== 50000) res = `Thunder Bottle: &b${charges}⚡`; 
+    return res;
+}
+
+function handleFullyCharged(alert, audioInst, flag) {
+    if (alert) showAlert(alert);
+    if (audioInst) audioInst.playDefaultSound();
+    flag = true;
+}
+
+function getLobbyDay() {
+    let lobbyTicks = World.getTime();
+    let day = (lobbyTicks / 24000).toFixed(2);
+    return `Day: &b${day}`;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// STEP
+////////////////////////////////////////////////////////////////////////////////
 register("step", () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     
     // bobber counter
-    baoFishOverlay.bobber.count = World.getAllEntitiesOfType(entityHook).filter(dist => dist.distanceTo(Player.getPlayer()) < 31).length;
-    let nearbyBobbers = baoFishOverlay.bobber.count > 0 ? Math.round(baoFishOverlay.bobber.count) : '0';
-    baoFishOverlay.bobber.text = `&rBobbers: &b${nearbyBobbers}`
+    if (Settings.bobberCount) { 
+        baoFishOverlay.bobber.count = updateBobberCount(entityHook);
+        baoFishOverlay.bobber.text = updateEntityText('Bobbers', baoFishOverlay.bobber.count);
+    }
     
-
     // player counter
-    baoFishOverlay.player.count = getPlayerCount(entityPlayer);
-    let playerCountColor = baoFishOverlay.player.count > 6 ? '&b&l' : '&b'
-    let nearbyPlayersText = baoFishOverlay.player.count > 0 ? baoFishOverlay.player.count : '0';
-    baoFishOverlay.player.text = `&rPlayers: ${playerCountColor}${nearbyPlayersText}`
+    if (Settings.playersNearbyCount) {
+        baoFishOverlay.player.count = getPlayerCount(entityPlayer);
+        baoFishOverlay.player.text = updateEntityText('Players', baoFishOverlay.player.count);
+    }
     
-    if (getCurrArea() === 'Crimson Isle')  {
+    // lobby day counter
+    if (Settings.lobbyDayCount) {
+        baoFishOverlay.lobbyDay.text = getLobbyDay();
+    }
+
+    // ONLY IF IN CRIMSON ISLE
+    if (getInCI())  {
         // detect doublehook jawbus
-        detectDH(entityArmorStand, 'Jawbus', '&4', 'Follower', baoFishOverlay.nbJawbus);
-        let isNBJawbusFound = baoFishOverlay.nbJawbus.foundNearby ? 'YES' : 'NO';
-        let numNBJawbus = baoFishOverlay.nbJawbus.numNearby > 0 ? ` [x${baoFishOverlay.nbJawbus.numNearby}]` : '';
-        baoFishOverlay.nbJawbus.text = `&rNearby Jawbus: &b${isNBJawbusFound}  &6${numNBJawbus}`
+        if (Settings.detectDoubleJawbus) {
+            detectDH(entityArmorStand, 'Jawbus', '&4', 'Follower', baoFishOverlay.nbJawbus.info);
+            baoFishOverlay.nbJawbus.text = updateNearbyText('Jawbus', baoFishOverlay.nbJawbus.info);
+        }
         
         // detect doublehook thunder
-        detectDH(entityArmorStand, 'Thunder', '&b', null, baoFishOverlay.nbThunder.info);
-        let isNBThunderFound = baoFishOverlay.nbThunder.info.foundNearby ? 'YES' : 'NO';
-        let numNBThunder = baoFishOverlay.nbThunder.info.numNearby > 0 ? `[x${baoFishOverlay.nbThunder.info.numNearby}]` : '';
-        baoFishOverlay.nbThunder.text = `&rNearby Thunder: &b${isNBThunderFound}  &6${numNBThunder}`
+        if (Settings.detectDoubleThunder) {
+            detectDH(entityArmorStand, 'Thunder', '&b', null, baoFishOverlay.nbThunder.info);
+            baoFishOverlay.nbThunder.text = updateNearbyText('Thunder', baoFishOverlay.nbThunder.info);
+        }
         
         // thunder bottle display
-        let charge = getThunderBottle();
-        if (charge === '50000') {
-            if (Settings.full_bottle_ping && !baoFishOverlay.charges.sentFullMsg) {
-                showAlert('&b&lTHUNDER BOTTLE FULL');
-                fishOverlayAudio.playDefaultSound();
-                baoFishOverlay.charges.sentFullMsg = true;
+        if (Settings.full_bottle_ping) {
+            let bottleCharge = getThunderBottle();
+    
+            if (bottleCharge === 50000 && !baoFishOverlay.charges.sentFullMsg) {
+                handleFullyCharged('&b&lTHUNDER BOTTLE FULL', fishOverlayAudio, baoFishOverlay.charges.sentFullMsg)
             }
-            baoFishOverlay.charges.text = `Thunder Bottle: &b&lFULL`
-        } else if (charge === 'No Bottle Available') {
-            baoFishOverlay.charges.text = `Thunder Bottle: &c${charge}`;
-            baoFishOverlay.charges.sentFullMsg = false;
-        } else {
-            baoFishOverlay.charges.text = `Thunder Bottle: &b${charge}`;
-            baoFishOverlay.charges.sentFullMsg = false;
+            baoFishOverlay.charges.text = updateChargeText(bottleCharge);
+            baoFishOverlay.charges.sentFullMsg = bottleCharge === 50000;
         }
-    }
-    if (Settings.lobbyDayCount) {
-        lobbyTicks = World.getTime();
-        lobbyDay = (lobbyTicks / 24000).toFixed(2);
-        baoFishOverlay.lobbyDay.text = `Day: &b${lobbyDay}`
     }
 
     baoFishOverlay.save();
@@ -194,39 +231,42 @@ register("step", () => {
 ////////////////////////////////////////////////////////////////////////////////
 register('renderOverlay', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
-    // bobber count
-    if (Settings.bobberCount && getCurrArea() !== 'Garden') {
-        Renderer.drawStringWithShadow(baoFishOverlay.bobber.text, baoFishOverlay.bobber.x, baoFishOverlay.bobber.y)
+    if (!getInGarden()) {
+        // bobber count
+        if (Settings.bobberCount) {
+            Renderer.drawStringWithShadow(baoFishOverlay.bobber.text, baoFishOverlay.bobber.x, baoFishOverlay.bobber.y)
+        }
+    
+        // nearby players
+        if (Settings.playersNearbyCount) {
+            Renderer.drawStringWithShadow(baoFishOverlay.player.text, baoFishOverlay.player.x, baoFishOverlay.player.y);
+        }
+        
+        // lobby day counter
+        if (Settings.lobbyDayCount) {
+            Renderer.drawStringWithShadow(baoFishOverlay.lobbyDay.text, baoFishOverlay.lobbyDay.x, baoFishOverlay.lobbyDay.y);
+        }
+    }
+    
+    if (getInCI()) {
+        // detect double/nearby jawbus
+        if (Settings.detectDoubleJawbus) {
+            Renderer.drawStringWithShadow(baoFishOverlay.nbJawbus.text, baoFishOverlay.nbJawbus.x, baoFishOverlay.nbJawbus.y);
+            if (Settings.jawbus_hp) displayEntityHP(baoFishOverlay.nbJawbus.names, baoFishOverlay.nbJawbus.found, baoDisplayHP.x, baoDisplayHP.y)
+        }
+        
+        // detect double/nearby thunder
+        if (Settings.detectDoubleThunder) {
+            Renderer.drawStringWithShadow(baoFishOverlay.nbThunder.text, baoFishOverlay.nbThunder.x, baoFishOverlay.nbThunder.y);
+            if (Settings.thunder_hp) displayEntityHP(baoFishOverlay.nbThunder.info.names, baoFishOverlay.nbThunder.info.found, baoDisplayHP.x, baoDisplayHP.y)
+        }
+        
+        // charge counter
+        if (Settings.chargeCounter) {
+            Renderer.drawStringWithShadow(baoFishOverlay.charges.text, baoFishOverlay.charges.x, baoFishOverlay.charges.y)
+        }
     }
 
-    // nearby players
-    if (Settings.playersNearbyCount && getCurrArea() !== 'Garden') {
-        Renderer.drawStringWithShadow(baoFishOverlay.player.text, baoFishOverlay.player.x, baoFishOverlay.player.y);
-    }
-    
-    // detect double/nearby jawbus
-    if (Settings.detectDoubleJawbus && getCurrArea() === 'Crimson Isle') {
-        Renderer.drawStringWithShadow(baoFishOverlay.nbJawbus.text, baoFishOverlay.nbJawbus.x, baoFishOverlay.nbJawbus.y);
-        if (Settings.jawbus_hp) displayEntityHP(baoFishOverlay.nbJawbus.names, baoFishOverlay.nbJawbus.found, baoDisplayHP.x, baoDisplayHP.y)
-    }
-    
-    // detect double/nearby thunder
-    if (Settings.detectDoubleThunder && getCurrArea() === 'Crimson Isle') {
-        Renderer.drawStringWithShadow(baoFishOverlay.nbThunder.text, baoFishOverlay.nbThunder.x, baoFishOverlay.nbThunder.y);
-        if (Settings.thunder_hp) displayEntityHP(baoFishOverlay.nbThunder.info.names, baoFishOverlay.nbThunder.info.found, baoDisplayHP.x, baoDisplayHP.y)
-    }
-    
-    // charge counter
-    if (Settings.chargeCounter && getCurrArea() === 'Crimson Isle') {
-        Renderer.drawStringWithShadow(baoFishOverlay.charges.text, baoFishOverlay.charges.x, baoFishOverlay.charges.y)
-    }
-
-    // lobby day counter
-    if (Settings.lobbyDayCount && getCurrArea() !== 'Garden') {
-        Renderer.drawStringWithShadow(baoFishOverlay.lobbyDay.text, baoFishOverlay.lobbyDay.x, baoFishOverlay.lobbyDay.y);
-    }
-    
-    
     // gui open
     renderGuiPosition(moveBobberCounter, baoFishOverlay.bobber, bobberDraggable);
     renderGuiPosition(movePlayerCounter, baoFishOverlay.player, playerDraggable);

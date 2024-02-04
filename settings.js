@@ -9,98 +9,79 @@ import { @ButtonProperty, @CheckboxProperty, Color, @ColorProperty, @PercentSlid
 
 class Settings {
 
-    // General QOL
+    // GENERAL QOL
     @SwitchProperty({
         name: "Auto Warp Command",
         description: "Use the command to get auto-warped by party leader.\nUsage: &b#warp&r or &b#w&r (in party chat)",
         category: "General QOL",
         subcategory: "Commands", 
     })
-    auto_warp_cmd = false;
+    autoWarp = false;
 
-    // Auto notify new party joiners to use the warp command when ready
-    // @SwitchProperty({
-    //     name: "Auto notify new party joiners",
-    //     description: "Notifies new party joiners to use &b#warp&r or &b#w&r command when ready",
-    //     category: "General QOL",
-    //     subcategory: "Commands", 
-    // })
-    // auto_notify_warp_cmd = false;
+    @SwitchProperty({
+        name: "Auto notify new party joiners",
+        description: "Notifies new party joiners to use &b#warp&r or &b#w&r command when ready",
+        category: "General QOL",
+        subcategory: "Commands", 
+    })
+    autoNotifyWarp = false;
 
-    // Warpexc command (/warpexc)
     @SwitchProperty({
         name: "Warpexc Command",
         description: "Warp all except given names.\nUsage: &b/warpexc&r &e[names ...]",
         category: "General QOL",
         subcategory: "Commands", 
     })
-    warp_exc_cmd = false;
+    warpExcept = false;
 
-    // Party Allinvite Shortcut (#pai)
     @SwitchProperty({
         name: "Party Allinvite Shortcut",
         description: "Gets the party to become all-invite if Party Leader is busy.\nUsage: &b#pai",
         category: "General QOL",
         subcategory: "Commands", 
     })
-    pai_cmd = false;
+    paiCommand = false;
 
-    // Party Allinvite Shortcut (#pai)
     @SwitchProperty({
         name: "Party Kickoffline Shortcut",
         description: "Kicks offline players in party.\nUsage: &b#ko",
         category: "General QOL",
         subcategory: "Commands", 
     })
-    pk_cmd = false;
+    koCommand = false;
 
-    // Kicked Notifier
     @SwitchProperty({
         name: "Kicked Notifier",
         description: "Tell your party that you're kicked and cooldown is 1 minute.",
         category: "General QOL",
         subcategory: "QOL", 
     })
-    kicked_notifier = false;
+    notifyKicked = false;
 
-
-    // Boop Notifier
     @SwitchProperty({
         name: "Boop Notifier",
         description: "Notifies you when you get booped.",
         category: "General QOL",
         subcategory: "QOL", 
     })
-    boop_notifier = false;
+    notifyBooped = false;
 
-    // auto command that opens baker gui to get cake when he arrives.
     @SwitchProperty({
         name: "Easy get Baker Cake",
         description: "Get Baker cake easily when he arrives.\n Runs &e/openbaker &r to open the baker's gui and let you get cake.",
         category: "General QOL", 
         subcategory: "QOL"
     })
-    get_baker_cake = false;
+    getBakerCake = false;
 
-    // hide lightning
-    @SwitchProperty({
-        name: "Hide Lightning",
-        description: "Hides lightning visual effects.",
-        category: "General QOL", 
-        subcategory: "Messages QOL"
-    })
-    hide_lightning = false;
-
-    // Hide Autopet Messages
     @SwitchProperty({
         name: "Hide Autopet Messages",
         description: "Hides autopet messages.",
         category: "General QOL",
         subcategory: "Messages QOL",
     })
-    hide_autopet_messages = false;
+    hideAutopetMessages = false;
 
-    // Hide Snow Cannon messages
     @SwitchProperty({
         name: "Hide Snow Cannon Messages",
         description: "Hides snow cannon messages.",
@@ -109,7 +90,6 @@ class Settings {
     })
     hide_snow_cannon_messages = false;
 
-    // Better Stash Messages
     @SwitchProperty({
         name: "Better Stash Messages",
         description: "&cHides/Simplifies Stash Messages.\n&7'From stash: &e${itemName}&f'&b -- hidden.\n&7'You picked up &e${numItems}&7 items from your material stash!'&b -- hidden.\n\n&7'You still have &e${matsRem}&7 materials totalling &e${numTypes}&7 types of materials in there!'&b -- will be hidden and simplified... \n&bTO: &7'From Sacks: &e${pickupMat}&7 x&e${numMats}&7 || R: &e${remMats}&7 || Types: &e${sackTypes}&f'",
@@ -118,7 +98,6 @@ class Settings {
     })
     betterStashMessages = false;
 
-    // Hide Click Stash Messages
     @SwitchProperty({
         name: "Hide Click Stash Messages",
         description: "&cHides Click Stash Messages:\n&fOld Messages:\n&7'You have &e${numMatsRem}&7 materials stashed away!'&b -- hidden.\n&7'(This totals &e${numTypes}&7 type of material stashed!)'&b -- hidden.\n&7'(This totals &e${numTypes}&7 types of materials stashed!)'&b -- hidden.\n&7'>>> CLICK HERE to pick them up! <<<'&b -- hidden.\n\n&cThese messages will be condensed into one message:\n&f'REMINDER: You have &e${reminderMatsRem}&f materials of &e${numTypesRem}&f type(s) in your sacks!'\n\n&cRequires 'Better Stash Messages' to be turned on.",
@@ -127,7 +106,6 @@ class Settings {
     })
     hideClickStashMessages = false;
 
-    // Hide AOTE/AOTV Message
     @SwitchProperty({
         name: "Hide AOTE/AOTV Message",
         description: "Hides '&cBlocks in the way&r' Message.",
@@ -136,7 +114,6 @@ class Settings {
     })
     aotvHider = false;
 
-    // Hide Soopy Unknown Command Message
     @SwitchProperty({
         name: "Hide Soopy Unknown Command Message",
         description: "Hides Soopy gibberish command showing up on screen.",
@@ -145,7 +122,6 @@ class Settings {
     })
     randomSoopyMessageHider = false;
 
-    // grandma wolf hider
     @SwitchProperty({
         name: "Grandma Hider",
         description: "Hides messages from Grandma Wolf Pet. &eExamples:\n&c+5 Kill Combo +3✯ Magic Find\n&c+10 Kill Combo +10 coins per kill\n&c+125 Kill Combo",
@@ -154,7 +130,6 @@ class Settings {
     })
     grandma_hider = false; 
 
-    // watchdog message hider
     @SwitchProperty({
         name: "Removed Watchdog Announcements",
         description: "Hides all messages from watchdog announcements.",
@@ -164,10 +139,7 @@ class Settings {
     betterWDA = false; 
 
 
-
-    //////////////////////////////////////////////////////////////////////////////
     // GUI
-    //////////////////////////////////////////////////////////////////////////////
     @SwitchProperty({
         name: "Bobber Count",
         description: "Shows bobbers near you in a 30 block radius for Bobbin' Time.",
@@ -175,7 +147,6 @@ class Settings {
     })
     bobberCount = false;
 
-    // Players Nearby
     @SwitchProperty({
         name: "Players Nearby Count",
         description: "Shows players near you in a 30 block radius.",
@@ -183,7 +154,6 @@ class Settings {
     })
     playersNearbyCount = false;
 
-    // Detect nearby/unpinged/double Jawbus
     @SwitchProperty({
         name: "Detect Double Jawbus",
         description: "Detects nearby unpinged Jawbus and Doublehook Jawbus Entities.",
@@ -191,7 +161,6 @@ class Settings {
     })
     detectDoubleJawbus = false;
 
-    // Detect nearby/unpinged/double Thunder
     @SwitchProperty({
         name: "Detect Double Thunder",
         description: "Detects nearby unpinged Thunder and Doublehook Thunder Entities.",
@@ -199,7 +168,6 @@ class Settings {
     })
     detectDoubleThunder = false;
 
-    // Detect Charges Counter
     @SwitchProperty({
         name: "Detect Charge Counter",
         description: "Detects Charge Amount in your Thunder Bottles of your Inventory.",
@@ -224,7 +192,6 @@ class Settings {
         ChatLib.command('movebobber', true)
     }
 
-    // Edit Player Count Location
     @ButtonProperty({
         name: "Edit Player Count Location", 
         description: "Click the button to move the Player Counter on your screen.", 
@@ -235,7 +202,6 @@ class Settings {
         ChatLib.command('moveplayer', true)
     }
 
-    // Edit Nearby Jawbus Location
     @ButtonProperty({
         name: "Edit Nearby Jawbus Location", 
         description: "Click the button to move the Nearby Jawbus Text on your screen.", 
@@ -246,7 +212,6 @@ class Settings {
         ChatLib.command('movejawbus', true)
     }
 
-    // Edit Nearby Thunder Location
     @ButtonProperty({
         name: "Edit Nearby Thunder Location", 
         description: "Click the button to move the Nearby Thunder Text on your screen.", 
@@ -257,7 +222,6 @@ class Settings {
         ChatLib.command('movethunder', true)
     }
 
-    // Edit Nearby Thunder Location
     @ButtonProperty({
         name: "Edit Charge Counter Location", 
         description: "Click the button to move the Charge Counter Text on your screen.", 
@@ -278,10 +242,7 @@ class Settings {
         ChatLib.command('movedaycount', true)
     }
     
-
-    //////////////////////////////////////////////////////////////////////////////
     // HP DISPLAY
-    //////////////////////////////////////////////////////////////////////////////
     @ButtonProperty({
         name: "Edit HP Display Location", 
         description: "Click the button to move the HP Display on your screen.", 
@@ -384,10 +345,7 @@ class Settings {
     phantom_fisher_hp = false;
 
 
-
-    //////////////////////////////////////////////////////////////////////////////
     // TIMERS
-    //////////////////////////////////////////////////////////////////////////////
     @ButtonProperty({
         name: "Edit Timers Location", 
         description: "Click the button to move the Timers on your screen.", 
@@ -404,7 +362,6 @@ class Settings {
     })
     rekindleAlert = false;
 
-    // Spirit Mask CD Timer
     @SwitchProperty({
         name: "Spirit Mask CD Timer",
         description: "Shows message when CD for Spirit Mask Second Wind is available.",
@@ -412,7 +369,6 @@ class Settings {
     })
     secondWindAlert = false;
 
-    // Mushy Timer
     @SwitchProperty({
         name: "Mushy Tonic Timer",
         description: "Shows Timer for Mushy Tonic.",
@@ -420,7 +376,6 @@ class Settings {
     })
     mushyTimer = false;
     
-    // Flux Timer
     @SwitchProperty({
         name: "Flux Countdown Timer",
         description: "Shows flux timer.",
@@ -428,7 +383,6 @@ class Settings {
     })
     flux_timer = false;
 
-    // King Scent Timer
     @SwitchProperty({
         name: "King's Scent Timer",
         description: "Countdown for King's Scent for Nucleus Runs",
@@ -436,7 +390,6 @@ class Settings {
     })
     kingScentTimer = false;
 
-    // Reheated Gummy Bear Timer
     @SwitchProperty({
         name: "Reheated Gummy Bear Timer",
         description: "Timer for reheated gummy bear. &7Note: this will be grouped with the timers for bonzo masks and spirit masks timers.",
@@ -445,11 +398,7 @@ class Settings {
     gummyTimer = false;
 
 
-
-    //////////////////////////////////////////////////////////////////////////////
     // FISHING QOL
-    //////////////////////////////////////////////////////////////////////////////
-    // Hide SC Messages
     @SwitchProperty({
         name: "Hide SC Messages",
         description: "Hides default catch messages for SC(s)",
@@ -458,7 +407,6 @@ class Settings {
     })
     hide_sc_msgs = false;
     
-    // Hide Blessing double drop messages
     @SwitchProperty({
         name: "Better Fishing messages",
         description: `&7'Your Blessing enchant got you double drops!'&b -- hidden\n&7'GOOD CATCH! You found a &e(baitType)&7 Bait.'&b -- hidden\n&7'Your Blessing enchant got you double drops!'&b -- hidden\n&7"It's a Double Hook!"&b -- hidden\n&7`,
@@ -467,7 +415,6 @@ class Settings {
     })
     betterFishingMessages = false;
     
-    // Full Thunder Bottle Ping
     @SwitchProperty({
         name: "Full Thunder Bottle Ping",
         description: "Shows Alert to Player when bottle of thunder is full.",
@@ -476,10 +423,7 @@ class Settings {
     full_bottle_ping = false;
 
 
-
-    //////////////////////////////////////////////////////////////////////////////
     // FISHING PINGS
-    //////////////////////////////////////////////////////////////////////////////
     @ButtonProperty({
         name: "Toggle All Fishing Pings",
         description: "Turns on/off all fishing pings",
@@ -490,12 +434,19 @@ class Settings {
     }
 
     @SwitchProperty({
+        name: "Toggle Trophy Fish Messages",
+        description: "Toggles all trophy fish messages except for Diamond. Plays RNG Sound for Diamonds.",
+        category: "Fishing Pings",
+    })
+    toggleTrophyFishMsgs = false;
+
+    @SwitchProperty({
         name: "Jawbus Ping",
         description: "Shows Jawbus Ping when fished up.",
         category: "Fishing Pings",
         subcategory: "Crimson Isles"
     })
-    jawbus_ping = false;
+    jawbusPing = false;
 
     @SwitchProperty({
         name: "Radioactive Vial Ping",
@@ -503,7 +454,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Crimson Isles"
     })
-    rvial_ping = false;
+    rvialPing = false;
 
     @SwitchProperty({
         name: "Thunder Ping",
@@ -511,7 +462,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Crimson Isles"
     })
-    thunder_ping = false;
+    thunderPing = false;
     
     @SwitchProperty({
         name: "Vanquisher Ping",
@@ -519,7 +470,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Crimson Isles"
     })
-    vanq_ping = false;
+    vanqPing = false;
     
     @SwitchProperty({
         name: "Phlegblast Ping",
@@ -527,7 +478,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Crimson Isles"
     })
-    phleg_ping = false;
+    phlegPing = false;
 
     @SwitchProperty({
         name: "Yeti Ping",
@@ -535,7 +486,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Winter Island"
     })
-    yeti_ping = false;
+    yetiPing = false;
     
     @SwitchProperty({
         name: "Baby Yeti Pet Drop Ping",
@@ -543,7 +494,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Winter Island"
     })
-    yeti_pet_drop_ping = false;
+    babyYetiPing = false;
     
     @SwitchProperty({
         name: "Nutcracker Ping",
@@ -551,7 +502,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Winter Island"
     })
-    nutcracker_ping = false;
+    nutcrackerPing = false;
     
     @SwitchProperty({
         name: "Reindrake Ping",
@@ -559,7 +510,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Winter Island"
     })
-    rein_ping = false;
+    reinPing = false;
 
     @SwitchProperty({
         name: "Great White Shark Ping",
@@ -567,7 +518,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Hub Shark"
     })
-    gw_ping = false;
+    gwPing = false;
 
     @SwitchProperty({
         name: "Meg Pet Drop Ping",
@@ -575,7 +526,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Hub Shark"
     })
-    meg_pet_drop_ping = false;
+    megPetPing = false;
 
     @SwitchProperty({
         name: "Phantom Fisher Ping",
@@ -583,7 +534,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Hub Spooky"
     })
-    phantom_fisher_ping = false;
+    phantomFisherPing = false;
 
     @SwitchProperty({
         name: "Grim Reaper Ping",
@@ -591,7 +542,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Hub Spooky"
     })
-    grim_reaper_ping = false;
+    grimReaperPing = false;
     
     @SwitchProperty({
         name: "Deep Sea Orb Ping",
@@ -599,7 +550,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Hub Spooky"
     })
-    dso_ping = false;
+    deepSeaOrbPing = false;
 
     @SwitchProperty({
         name: "Phantom Rod Ping",
@@ -607,7 +558,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Hub Spooky"
     })
-    phan_rod_ping = false;
+    phantomRodPing = false;
 
     @SwitchProperty({
         name: "Lucky Hoof Ping",
@@ -615,7 +566,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Hub Spooky"
     })
-    hoof_ping = false;
+    luckyHoofPing = false;
 
     @SwitchProperty({
         name: "Sea Emperor Ping",
@@ -623,7 +574,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Hub"
     })
-    sea_emp_ping = false;
+    seaEmpPing = false;
 
     @SwitchProperty({
         name: "Flying Fish Pet Drop Ping",
@@ -631,7 +582,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Hub"
     })
-    ff_pet_drop_ping = false;
+    flyingFishPing = false;
 
     @SwitchProperty({
         name: "Carrot King Ping",
@@ -639,7 +590,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Hub"
     })
-    carrot_king_ping = false;
+    carrotKingPing = false;
     
     @SwitchProperty({
         name: "Lucky Clover Core Ping",
@@ -647,7 +598,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Hub"
     })
-    lucky_core_ping = false;
+    luckyCloverCorePing = false;
     
     @SwitchProperty({
         name: "Water Hydra Ping",
@@ -655,7 +606,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Hub"
     })
-    hydra_ping = false;
+    waterHydraPing = false;
 
     @SwitchProperty({
         name: "Guardian Pet Drop Ping",
@@ -663,7 +614,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Hub"
     })
-    guardian_pet_drop_ping = false;
+    guardianPetPing = false;
 
     @SwitchProperty({
         name: "Dolphin Milestone Pet Drop Ping",
@@ -671,7 +622,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Hub"
     })
-    dolphin_ms_pet_drop_ping = false;
+    dolphinMSPetPing = false;
 
     @SwitchProperty({
         name: "Squid Pet Drop Ping",
@@ -679,7 +630,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "Hub"
     })
-    squid_pet_drop_ping = false;
+    squidPetPing = false;
     
     @SwitchProperty({
         name: "Zombie Miner Ping",
@@ -687,7 +638,7 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "zOthers"
     })
-    zb_miner_ping = false;
+    zombieMinerPing = false;
 
     // Fawe - v2.0.5
     @SwitchProperty({
@@ -696,13 +647,10 @@ class Settings {
         category: "Fishing Pings",
         subcategory: "zOthers"
     })
-    fawe_pings = false;
+    fawePings = false;
 
 
-
-    //////////////////////////////////////////////////////////////////////////////
     // COUNTER
-    //////////////////////////////////////////////////////////////////////////////
     @ButtonProperty({
         name: "Edit Fishing Counter Location", 
         description: "Click the button to move the Fishing Counter on your screen.", 
@@ -777,10 +725,7 @@ class Settings {
     specials_fishingcounter = false;
 
 
-
-    //////////////////////////////////////////////////////////////////////////////
     // GARDEN
-    //////////////////////////////////////////////////////////////////////////////
     @SwitchProperty({
         name: "Plot Map",
         description: "Shows the player's position on the map relative to the garden, shows the 5x5 plot Garden has.",
@@ -932,11 +877,7 @@ class Settings {
     showPlayerYawPitch = false;
 
 
-
-
-    ////////////////////////////////////////////////////////////////////////////////
-    // DRAGONSDragons/End
-    ////////////////////////////////////////////////////////////////////////////////
+    // Dragons/End
     @ButtonProperty({ 
         name: 'Edit Dragon Counter Location', 
         description: 'Edits the location of the Dragon Counter Overlay.', 
@@ -980,12 +921,12 @@ class Settings {
     betterEndMessages = false;
 
     @SwitchProperty({
-        name: "Alert Special Zealot", 
-        description: "Sends a message to yourself/party that you got a special zealot.",
+        name: "Dragon Damage Display", 
+        description: "Displays the top 3 damagers of the spawned dragon real-time.",
         category: "Dragons/End",
-        subcategory: "QOL", 
+        subcategory: "Counter", 
     })
-    sendZealotPing = false;
+    showDragonDamageDisplay = false;
 
     @SwitchProperty({
         name: "End Protector Ping",
@@ -996,9 +937,7 @@ class Settings {
     end_protector_ping = false;
 
 
-    ////////////////////////////////////////////////////////////////////////////////
     // MYTHOS
-    ////////////////////////////////////////////////////////////////////////////////
     @SwitchProperty({
         name: "Announce Inqs",
         description: "Announces inqs in party chat. Announces in coop if not in party.",
@@ -1007,7 +946,6 @@ class Settings {
     })
     announce_inqs = false;
 
-    // hide 'leg griffin' errors
     @SwitchProperty({
         name: "Hide Leg Griffin Error",
         description: "&7'You need to equip a LEGENDARY griffin pet to fight this!'&b -- hidden.",
@@ -1016,7 +954,6 @@ class Settings {
     })
     hide_griffin_error = false;
 
-    // edit mythos counter location
     @ButtonProperty({
         name: "Edit Mythos Counter Location", 
         description: "Click the button to move the Mythos Counter on your screen.", 
@@ -1027,7 +964,6 @@ class Settings {
         ChatLib.command('movemythoscounter', true)
     }
 
-    // mythos counter
     @SwitchProperty({
         name: "Mythos Counter",
         description: "Turns on/off the Mythological Counter",
@@ -1036,7 +972,6 @@ class Settings {
     })
     mythos_main_toggle = false;
 
-    // general mythos counter info
     @SwitchProperty({
         name: "General Mythos Info",
         description: "Shows Burrow Counter, Feather Counter and Money Dug Up Counter",
@@ -1045,7 +980,6 @@ class Settings {
     })
     mythos_counter_general = false;
 
-    // kills mythos counter info
     @SwitchProperty({
         name: "Mythos Mob Kills Info",
         description: "Shows Kills Info for Mythological Ritual Mobs",
@@ -1054,7 +988,6 @@ class Settings {
     })
     mythos_counter_kills = false;
 
-    // drops mythos counter info
     @SwitchProperty({
         name: "Mythos Mob Drops Info",
         description: "Shows info for Mob Drops for Mythological Ritual Mobs",
@@ -1063,7 +996,6 @@ class Settings {
     })
     mythos_counter_drops = false;
 
-    // average mythos counter info
     @SwitchProperty({
         name: "Mythos Mob Averages Info",
         description: "Shows info for Mob Averages/Rates for Mythological Ritual Mobs",
@@ -1072,7 +1004,6 @@ class Settings {
     })
     mythos_counter_averages = false;
 
-    // tracker mythos counter info
     @SwitchProperty({
         name: "Mythos Mob Trackers Info",
         description: "Shows info for Mob Trackers for Mythological Ritual Mobs",
@@ -1083,9 +1014,7 @@ class Settings {
 
 
 
-    ////////////////////////////////////////////////////////////////////////////////
     // MISC
-    ////////////////////////////////////////////////////////////////////////////////
     @SwitchProperty({
         name: "Golden Goblin Alert",
         description: "Notification for when Golden Goblin Spawns",
@@ -1102,7 +1031,6 @@ class Settings {
     })
     scatha_pet_drop_ping = false;
 
-    // Jerry Pings
     @SwitchProperty({
         name: "Hidden Jerry Ping",
         description: "Shows Jerry Pings for Jerries that spawn when Jerry is mayor.",
@@ -1192,9 +1120,7 @@ class Settings {
 
 
 
-    //////////////////////////////////////////////////////////////////////////////
     // DUNGEONS
-    //////////////////////////////////////////////////////////////////////////////
     @SwitchProperty({
         name: "Bonzo Mask CD Timer", 
         description: "Shows message when CD for Bonzo Mask Clownin' Around is available.",
@@ -1202,7 +1128,6 @@ class Settings {
     })
     bonzo_cd_timer = false;
 
-    // Melody Terminal
     @SwitchProperty({
         name: "Melody Terminal Alert", 
         description: "Tells your party you have a melody terminal.",
@@ -1210,7 +1135,6 @@ class Settings {
     })
     alert_melody = false;
 
-    // Secrets Per Run
     @SwitchProperty({
         name: "Display Secrets per Run (per session)", 
         description: "Shows your secrets per run per session.",
@@ -1229,7 +1153,6 @@ class Settings {
         ChatLib.command('movesecretcounter', true)
     }
 
-    // Better Dungeon Messages
     @SwitchProperty({
         name: "Better Dungeon Messages", 
         description: "Master Toggle for all dungeon message changes/deletions etc when you are in a dungeon.",
@@ -1239,33 +1162,32 @@ class Settings {
 
     @SwitchProperty({
         name: "Toggle: Player Actions", 
-        description: "o abilities\no revivies\no obtained item messages\no decoy deployed messages\no essence messages\no creeper veil messages",
+        description: "o abilities\no revives and fairies\no obtained item messages &bincluding Ice Spray Wand Ping\no decoys\no essence messages\no creeper veil actions",
         category: "Dungeons"
     })
     dungeonPlayerActions = false;
 
     @SwitchProperty({
         name: "Toggle: QOL", 
-        description: "o npc sold items\no friend join/left messages\no gexp/hypixel xp messages",
+        description: "o npc sold items\no friend join/leave messages\no gexp/hypixel xp messages\no ability/terminal/puzzle errors\no full inventory message",
         category: "Dungeons"
     })
     dungeonMessageQOL = false;
 
     @SwitchProperty({
         name: "Toggle: System Notifications", 
-        description: "o mort messages\no class stat change messages\no wish messages\no sacks messages",
+        description: "o mort messages\no class stat change messages\no wish/heal messages\no sack messages\no potion effects reminder message\no mute fire sales",
         category: "Dungeons"
     })
     dungeonSysNotifications = false;
 
     @SwitchProperty({
         name: "Toggle: Interactive Elements", 
-        description: "o milestones\no wither door messages\no blood door messages\no boss messages\no statue messages\no floor specific messages\no blessing messages\no puzzle messages\no mob damage messages\no witherborn damage messages",
+        description: "o npc dialogue\no milestone messages\no wither door messages\no blood door messages\no boss messages\no statue messages\no floor specific messages\no blessings\no puzzle comps and fails\no mob damage messages\no witherborn damage messages\no bomb defusal messages\no mute autorecombs",
         category: "Dungeons"
     })
     dungeonInteractiveElements = false;
 
-    // party finder shortener
     @SwitchProperty({
         name: "Party Finder Message Shortener", 
         description: "Changed 'Party Finder > (message) to 'PF > (message)'",
@@ -1273,7 +1195,6 @@ class Settings {
     })
     betterPFMessages = false;
 
-    // party finder shortener
     @SwitchProperty({
         name: "Full Inventory Alert", 
         description: "Checks if your inventory is full and alerts you (NOTE: QUITE ANNOYING)",
@@ -1281,11 +1202,14 @@ class Settings {
     })
     fullInventoryAlert = false;
 
+    @SwitchProperty({
+        name: "Class/Cata Lvl Up Ping", 
+        description: "Pings in chat when you level up a class/cata.",
+        category: "Dungeons"
+    })
+    cataLevelUpPing = false;
 
-
-    //////////////////////////////////////////////////////////////////////////////
-    // SOUND
-    //////////////////////////////////////////////////////////////////////////////
+    // SOUND/DEV
     @SelectorProperty({
         name: "RNG Sounds", 
         description: "Choose a sound to play when RNG Drops happen.", 
@@ -1314,15 +1238,15 @@ class Settings {
     toggle_debug = false;
 
 
-    ////////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
-    ////////////////////////////////////////////////////////////////////////////////
     constructor() {
         this.initialize(this);
+        // descriptions
         this.setCategoryDescription("General QOL", "General QOL Features and Commands")
-        this.setCategoryDescription("Fishing Pings", "Fishing Pings for Mobs and Drops")
+        this.setCategoryDescription("Fishing Pings", "Fishing Pings for Mobs and Drops\n&b/togglefishingpings&r to activate all fishing pings and pet drop pings")
         this.setCategoryDescription("Misc", "Miscellaneous Pings for Event Mobs")
         this.setCategoryDescription("Dungeon", "Dungeon Features")
+        this.setCategoryDescription("Mythos", "Mythological Counters and QOL Features\n&b/resetmythosbao&r to reset all mythos counter stats")
         
         // General QOL
         this.addDependency("Hide Click Stash Messages", "Better Stash Messages")
@@ -1376,6 +1300,12 @@ class Settings {
         // fishing.hub
         this.addDependency("Flying Fish Pet Drop Ping", "Sea Emperor Ping")
         this.addDependency("Lucky Clover Core Ping", "Carrot King Ping")
+
+        // // trophy stuff
+        // this.addDependency("Toggle: BRONZE", "Toggle Trophy Fish Messages")
+        // this.addDependency("Toggle: SILVER", "Toggle Trophy Fish Messages")
+        // this.addDependency("Toggle: GOLD", "Toggle Trophy Fish Messages")
+        // this.addDependency("Toggle: DIAMOND", "Toggle Trophy Fish Messages")
 
         // misc - mythos
         this.addDependency("General Mythos Info", "Mythos Counter")

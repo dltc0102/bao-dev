@@ -3,11 +3,11 @@
         "count": 0,
         "text": "&rBobbers: &b0",
         "x": 3,
-        "y": 14
+        "y": 13
     },
     "player": {
-        "count": 1,
-        "text": "&rPlayers: &b1",
+        "count": 11,
+        "text": "&rPlayers: &b&l11",
         "x": 3,
         "y": 24
     },
@@ -42,7 +42,17 @@
         },
         "text": "&rNearby Thunder: &bNO  &6",
         "x": 3,
-        "y": 53.5
+        "y": 53.5,
+        "found": false,
+        "numNearby": 0,
+        "titleShown": false,
+        "messageSent": false,
+        "foundNearby": false,
+        "names": [
+            "§8[§7Lv210§8] §cMoogma§r §e399k§f/§a2.5M§c❤"
+        ],
+        "currHealth": 399000,
+        "totalHealth": 2500000
     },
     "charges": {
         "sentFullMsg": false,
@@ -51,7 +61,7 @@
         "y": 63.5
     },
     "lobbyDay": {
-        "text": "Day: &b1.23",
+        "text": "Day: &b8.84",
         "x": 3,
         "y": 34
     }

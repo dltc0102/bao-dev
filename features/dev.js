@@ -5,7 +5,7 @@ register('command', (args) => {
 }).setName('titlesim').setAliases('tsim');
 
 // ah filter
-let attributeAliases = {
+export const attributeAliases = {
     "blazing_fortune": "bf", 
     "breeze": "brz", 
     "life_regeneration": "lr", 
@@ -22,5 +22,5 @@ let attributeAliases = {
     "fisherman": "fm", 
     "fishing_speed": "tfs", 
     "hunter": "ht", 
-    "trophy_hunter": "th"
+    "trophy_hunter": "th",
 }

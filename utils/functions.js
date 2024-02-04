@@ -14,7 +14,7 @@ export function getInSkyblock() {
 
 // currArea
 export function getCurrArea() {
-    if (!World.isLoaded()) return;
+    if (!getInSkyblock() || !World.isLoaded()) return;
     const rawArea = TabList.getNames()[41]
     if (rawArea) {
         const area = rawArea.removeFormatting().trim().split(': ')[1];
@@ -32,6 +32,56 @@ export function getPlayerCount(entityPlayer) {
         .filter(player => !regex.test(player.getName()))
         .map(player => player.getName())
         .filter(name => tabNames.includes(name)).length;
+}
+
+// dungeons
+export function getInDungeon() {
+    return getCurrArea() === 'Catacombs';
+}
+
+// dungon hub
+export function getInDHub() {
+    return getCurrArea() === 'Dungeon Hub';
+}
+
+// end
+export function getInEnd() {
+    return getCurrArea() === 'The End';
+}
+
+// crimson isles
+export function getInCI() {
+    return getCurrArea() === 'Crimson Isle';
+}
+
+// garden
+export function getInGarden() {
+    return getCurrArea() === 'Garden';
+}
+
+// jerry island
+export function getInJerry() {
+    return getCurrArea() === "Jerry's Workshop";
+}
+
+// crystal hollows
+export function getInCH() {
+    return getCurrArea() === 'Crystal Hollows';
+}
+
+// hub
+export function getInHub() {
+    return getCurrArea() === 'Hub';
+}
+
+// desert
+export function getInDesert() {
+    return getCurrArea() === 'The Farming Islands';
+}
+
+// island
+export function getInIsland() {
+    return getCurrArea() === 'Private Island';
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -363,32 +413,6 @@ export function generateRandomStr(length) {
     return result;
 }
 
-
-////////////////////////////////////////////////////////////////////////
-// CHARGE COUNTER ------------------------------------------------------
-////////////////////////////////////////////////////////////////////////
-export function closest(num, arr) {
-    if (arr.length === 0) return 'No Bottle Available';
-    let curr = arr[0];
-    arr.forEach(val => {
-        if (Math.abs(num - val) < Math.abs(num - curr)) {
-            curr = val;
-        }
-    });
-    return curr;
-}
-
-export function getCharges(chargeString) {
-    const chargeRegex = /^Charge: (\d{1,3}(?:,\d{3})*)\/50,000$/;
-    const chargeMatch = chargeString.match(chargeRegex);
-    let charges = '';
-    if (chargeMatch) {
-        charges = chargeMatch[1];
-    }
-    return charges.replace(/,/g, '');
-}
-
-
 // player pos
 export function getPlayerPos() {
     const playerX = Player.getX().toFixed(0);
@@ -455,41 +479,69 @@ export function timeToSeconds(hours, minutes, seconds) {
     return hours * 3600 + minutes * 60 + seconds;
 }
 
-export function getThunderBottle() {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    let skullItems = []; // list of slot number for skulls
-    const invItems = Player.getInventory().getItems();
-    for (let idx = 0; idx < invItems.length; idx++) {
-        if (invItems[idx] !== null && invItems[idx].toString().includes('item.skull')) {
-            skullItems.push(idx);
-        }
-    }
 
-    let allCharges = [];
-    skullItems.forEach(slotNum => {
-        // get name in slot
-        const slotItem = Player.getInventory().getStackInSlot(slotNum).getLore();
-        
-        // filter out for 'thunder in a bottle' or 'empty thunder bottle'
-        if (slotItem[0] && slotItem[0].toLowerCase().includes('thunder in a bottle') || slotItem[0].toLowerCase().includes('empty thunder bottle')) {
-            
-            // filter charges
-            if (slotItem[0].toLowerCase().includes('thunder in a bottle')) {
-                const fullCharge = getCharges(slotItem[6].removeFormatting());
-                allCharges.push(fullCharge)
-            }
-            if (slotItem[0].toLowerCase().includes('empty thunder bottle')) {
-                const partialCharge = getCharges(slotItem[5].removeFormatting());
-                allCharges.push(partialCharge)
-            }
+////////////////////////////////////////////////////////////////////////
+// CHARGE COUNTER ------------------------------------------------------
+////////////////////////////////////////////////////////////////////////
+export function getBiggestNum(arr) {
+    let biggestNum = 0;
+    arr.forEach(str => {
+        let parsedNum = parseInt(str);
+        // console.log(parsedNum, typeof parsedNum);
+        if (parsedNum && parsedNum > biggestNum) {
+            biggestNum = parsedNum;
         }
     })
-    // find closest one to 50,000
-    closestCharge = closest(50000, allCharges);
+    return biggestNum;
+}
+
+export function getCharges(chargeLore) {
+    // console.log(chargeLore)
+    const chargeRegex = /Charge: (\d{1,3}(?:,\d{3})*)\/50,000/;
+    let result = '';
+
+    chargeLore.forEach(chargeLine => {
+        let unformattedLine = chargeLine.removeFormatting();
+        let chargeMatch = unformattedLine.match(chargeRegex);
+        if (chargeMatch) {
+            result = chargeMatch[1].replace(/,/g, '');
+        }
+    })
+    return result;
+}
+
+
+
+export function getThunderBottle() {
+    const skullItems = Player.getInventory().getItems()
+        .map((item, idx) => (item !== null && item.toString().includes('item.skull')) ? idx : -1)
+        .filter(idx => idx !== -1);
+
+    let closestCharge = null;
+
+    let currentBottles = [];
+    skullItems.forEach(slotNum => {
+        const slotLore = Player.getInventory().getStackInSlot(slotNum).getLore(); // list of strings of lore
+        
+
+        if (slotLore[0].includes('Thunder in a Bottle')) {
+            const fullCharge = getCharges(slotLore);
+            // console.log(`fullCharge: ${fullCharge}`)
+            currentBottles.push(fullCharge);
+
+        } else if (slotLore[0].includes('Empty Thunder Bottle')) {
+            const partialCharge = getCharges(slotLore);
+            // console.log(`partialCharge: ${partialCharge}`)
+            currentBottles.push(partialCharge);
+        }
+
+    });
+    currentBottles = currentBottles.filter(element => element !== '');
+    closestCharge = currentBottles.length === 0 ? null : getBiggestNum(currentBottles);
     return closestCharge;
 }
 
-let rarityCode = {
+const rarityCode = {
     "1": "&r", 
     "2": "&a", 
     "3": "&9", 
@@ -498,7 +550,7 @@ let rarityCode = {
     "6": "&d", 
     "7": "&b", 
 }
-let rarityName = {
+const rarityName = {
     "1": "Common", 
     "2": "Uncommon", 
     "3": "Rare", 
@@ -509,6 +561,7 @@ let rarityName = {
 }
 
 export function pingDolphinMS(killCount) {
+    killCount = Number(killCount.replace(/,/g, ''));
     if (killCount === 250) rarity = 1;
     if (killCount === 1000) rarity = 2;
     if (killCount === 2500) rarity = 3;
@@ -553,14 +606,6 @@ export function petDropPing(message, exclamation, petName, mf) {
         mf === 0 ? sendMessage(noMFText) : sendMessage(withMFText);
         rarity > 4 ? playSound() : funcAudio.playDefaultSound();
     }
-}
-
-export function determinePlayerRankColor(rank) {
-    let rankColor = '&7'; // no rank 
-    if (rank === 'VIP' || rank === 'VIP+') rankColor = '&a';
-    if (rank === 'MVP' || rank === 'MVP+') rankColor = '&b';
-    if (rank === 'MVP++') rankColor = '&6';
-    return rankColor;
 }
 
 export function sendSelf(message) {
@@ -913,5 +958,33 @@ export function filterSeparators(rawString, sepThin) {
     if (lastIdx !== -1) {
         phraseArray.splice(lastIdx, 1);
     }
-    return phraseArray.join('\n');;
+    return phraseArray.join('\n');
+}
+
+export function romanToNumber(roman) {
+    const romanNumerals = {
+      'I': 1,
+      'V': 5,
+      'X': 10,
+      'L': 50,
+      'C': 100,
+      'D': 500,
+      'M': 1000
+    };
+  
+    let result = 0;
+  
+    for (let i = 0; i < roman.length; i++) {
+        const currentNumeral = romanNumerals[roman[i]];
+        const nextNumeral = romanNumerals[roman[i + 1]];
+    
+        if (nextNumeral > currentNumeral) {
+            result += (nextNumeral - currentNumeral);
+            i++; // Skip the next numeral since it's already considered
+        } else {
+            result += currentNumeral;
+        }
+    }
+  
+    return result;
 }
