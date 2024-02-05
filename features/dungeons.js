@@ -9,7 +9,7 @@ import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'; // 
 import { constrainX, constrainY } from '../utils/functions.js' // padding
 import { getInSkyblock } from '../utils/functions.js';
 import { getInDungeon, getInDHub } from '../utils/functions.js';
-import { romanToNumber } from '../utils/functions.js';
+import { romanToNumeral } from '../utils/functions.js';
 
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP CONSTS
@@ -17,6 +17,12 @@ import { romanToNumber } from '../utils/functions.js';
 const dungeonAudio = new Audio();
 const movesecretcounter = new Gui();
 createGuiCommand(movesecretcounter, 'movesecretcounter', 'msc');
+const secretCounterDraggable = `&7Runs: 0 | Secrets: 0 | Avg: 0/run`
+
+const moveblessingscounter = new Gui();
+createGuiCommand(moveblessingscounter, 'moveblessingscounter', 'mbless');
+
+const typesOfBlessings = ['wisdom', 'power', 'life', 'stone', 'time'];
 
 // pogObject
 export const baoDungeons = new PogObject("bao-dev", {
@@ -27,7 +33,6 @@ export const baoDungeons = new PogObject("bao-dev", {
     "totalSecretStats": 0,
     "numRunsStats": 0, 
     "secretOverviewText": '',
-    "draggableText": `&7Runs: 0 | Secrets: 0 | Avg: 0/run`,
     "secretCounter": {
         "x": 400, // arbituary random number, replaced by padding function 
         "y": 40,
@@ -39,6 +44,9 @@ export const baoDungeons = new PogObject("bao-dev", {
         "stone": 0, 
         "time": 0,
         "text": '',
+        "draggable": '',
+        "x": 400, 
+        "y": 400,
     }, 
 }, '/data/baoDungeons.json');
 baoDungeons.autosave(5);
@@ -129,6 +137,14 @@ register('chat', (leader, catacombType, floorNum, event) => {
     baoDungeons.secretStats = 0;
     baoDungeons.extraStatsFlag = false;
     baoDungeons.powerLvl = 0;
+
+    baoDungeons.blessings.wisdom = 0;
+    baoDungeons.blessings.power = 0;
+    baoDungeons.blessings.life = 0;
+    baoDungeons.blessings.stone = 0;
+    baoDungeons.blessings.time = 0;
+    baoDungeons.blessings.text = '';
+
     baoDungeons.save();
 }).setCriteria('${leader} entered ${catacombType} Catacombs, Floor ${floorNum}!').setContains();
 
@@ -177,69 +193,106 @@ register('chat', (lvl1, lvl2, event) => {
     ChatLib.chat(`DUNGEON LEVEL UP The Catacombs ${lvl1}➜${lvl2}`);
 }).setCriteria(' DUNGEON LEVEL UP The Catacombs ${lvl1}➜${lvl2}');
 
+function getTabDungeonBuffs() {
+    let blessingsList = TabList.getFooter().removeFormatting().split('\n');
+    let dungeonBuffsIdx = blessingsList.indexOf('Dungeon Buffs');
+    return blessingsList.slice(dungeonBuffsIdx + 1, -2);
+}
+
+function getBlessings(blessings, blessingsObj) {
+    blessingsObj.text = '';
+    blessingsObj.draggable = '';
+    let blessingsAvailable = [];
+    let draggableEntries = [];
+    blessings.forEach(blessing => {
+        // console.log(blessing);
+        let powerRegex = /^Blessing of (Wisdom|Power|Life|Stone|Time) ([IVX]+)$/;
+        let powerMatch = blessing.match(powerRegex);
+        if (powerMatch) {
+            let powerType = powerMatch[1];
+            let powerLevel = romanToNumeral(powerMatch[2]);
+            blessingsAvailable.push(powerType);
+
+            if (powerType === 'Wisdom') {
+                blessingsObj.wisdom = powerLevel;
+            } else if (powerType === 'Life') {
+                blessingsObj.life = powerLevel;
+            } else if (powerType === 'Stone') {
+                blessingsObj.stone = powerLevel;
+            } else if (powerType === 'Power') {
+                blessingsObj.power = powerLevel;
+            } else if (powerType === 'Time') {
+                blessingsObj.time = powerLevel;
+            }
+        }
+    })
+
+    blessingsAvailable = [... new Set(blessingsAvailable)];
+    blessingsAvailable.forEach(blessing => {
+        draggableEntries.push(`&7&l[Blessing] ${blessing}: 0`)
+    })
+    // console.log(blessingsAvailable);
+    // console.log(draggableEntries);
+    blessingsObj.draggable = draggableEntries.join('\n');
+    
+    return Object.entries(blessingsObj)
+        .filter(([type, level]) => level !== 0 && typesOfBlessings.includes(type.toLowerCase()) && type !== 'draggable' && type !== 'text')
+        .map(([type, level]) => `&6&l[&r&lBlessing&6&l] ${type.charAt(0).toUpperCase() + type.slice(1)}: &b&l${level}`)
+        .join('\n');
+}
+
+function isPlayerInvFull() {
+    return !Player.getInventory().getItems().includes(null);
+}
+
+
 // reg step
 register('step', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
-
-    baoDungeons.secretOverviewText = `Runs: &b${baoDungeons.numRunsStats}&r | Secrets: &b${baoDungeons.totalSecretStats}&r | Avg: &b${(baoDungeons.totalSecretStats / baoDungeons.numRunsStats).toFixed(2)}&r/&brun`
+    if (getInDungeon() || getInDHub()) {
+        const { numRunsStats, totalSecretStats } = baoDungeons;
+        baoDungeons.secretOverviewText = `Runs: &b${numRunsStats}&r | Secrets: &b${totalSecretStats}&r | Avg: &b${(totalSecretStats / numRunsStats).toFixed(2)}&r/&brun`
+    } 
 
     if (getInDungeon()) {
-        let powerList = [];
-        baoDungeons.blessings.text = '';
-    
-        powerList = TabList.getFooter().removeFormatting().split('\n');
-        let dungeonBuffIdx = powerList.indexOf('Dungeon Buffs');
-        powerList = powerList.slice(dungeonBuffIdx + 1, -2);
-        powerList.forEach(powerName => {
-            const powerRegex = /^Blessing of (Wisdom|Power|Life|Stone|Time) ([IVX]+)$/
-            let powerMatch = powerName.match(powerRegex);
-            if (powerMatch) {
-                let powerType = powerMatch[1];
-                let powerLevel = powerMatch[2];
-                if (powerType === 'Wisdom') baoDungeons.blessings.wisdom = romanToNumber(powerLevel);
-                if (powerType === 'Power') baoDungeons.blessings.power = romanToNumber(powerLevel);
-                if (powerType === 'Life') baoDungeons.blessings.life = romanToNumber(powerLevel);
-                if (powerType === 'Stone') baoDungeons.blessings.stone = romanToNumber(powerLevel);
-                if (powerType === 'Time') baoDungeons.blessings.time = romanToNumber(powerLevel);
-            }
-        })
-        baoDungeons.blessings.text = Object.entries(baoDungeons.blessings)
-            .filter(([type, level]) => level !== 0)
-            .map(([type, level]) => `&6&l[&r&lBlessing&6&l] ${type.charAt(0).toUpperCase() + type.slice(1)}: &b&l${level}`)
-            .slice(0, -1)
-            .join('\n');
+        let blessings = [];
+        blessings = getTabDungeonBuffs();
+        // console.log(blessings);
+        baoDungeons.blessings.text = getBlessings(blessings, baoDungeons.blessings);
 
-        
-        let playerInv = Player.getInventory().getItems();
-        if (Settings.fullInventoryAlert && !playerInv.includes(null)) {
+        if (Settings.fullInventoryAlert && isPlayerInvFull()) {
             showAlert('&4&lFull Inv');
             dungeonAudio.playDefaultSound();
         }
     }
     baoDungeons.save();
-
 }).setFps(1);
 
 register('dragged', (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (movesecretcounter.isOpen()) {
-        // baoDungeons.secretCounter.x = (baoUtils.screenW - Renderer.getStringWidth(baoDungeons.secretOverviewText)) / 2;
-        baoDungeons.secretCounter.x = constrainX(x, 3, baoDungeons.draggableText);
-        baoDungeons.secretCounter.y = constrainY(y, 3, baoDungeons.draggableText);
+        baoDungeons.secretCounter.x = constrainX(x, 3, secretCounterDraggable);
+        baoDungeons.secretCounter.y = constrainY(y, 3, secretCounterDraggable);
     };
+    if (moveblessingscounter.isOpen()) {
+        baoDungeons.blessings.x = constrainX(x, 3, baoDungeons.blessings.draggable);
+        baoDungeons.blessings.y = constrainY(y, 3, baoDungeons.blessings.draggable);
+    }
     baoDungeons.save();
 });
 
 register('renderOverlay', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
+
     if (Settings.secretsPerSession && (getInDungeon() || getInDHub())) {
         Renderer.drawStringWithShadow(baoDungeons.secretOverviewText, baoDungeons.secretCounter.x, baoDungeons.secretCounter.y);
     }
-    if (/* Settings.showBlessings && */ getInDungeon()) {
-        Renderer.drawStringWithShadow(baoDungeons.blessings.text, 500, 600);
+    if (getInDungeon()) {
+        Renderer.drawStringWithShadow(baoDungeons.blessings.text, baoDungeons.blessings.x, baoDungeons.blessings.y);
     }
     
-    renderGuiPosition(movesecretcounter, baoDungeons.secretCounter, baoDungeons.draggableText);
+    renderGuiPosition(movesecretcounter, baoDungeons.secretCounter, secretCounterDraggable);
+    renderGuiPosition(moveblessingscounter, baoDungeons.blessings, baoDungeons.blessings.draggable)
     baoDungeons.save();
 })
 

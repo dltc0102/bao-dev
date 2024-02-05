@@ -2,13 +2,23 @@ import { @ButtonProperty, @CheckboxProperty, Color, @ColorProperty, @PercentSlid
 
 @Vigilant("bao-dev", "§3bao-dev", {
     getCategoryComparator: () => (a, b) => {
-        const categories = ['General QOL', 'GUI', 'HP Display', 'Timers', 'Fishing QOL', 'Fishing Pings', 'Counter', 'Garden', 'Dragons/End', 'Mythos', 'Misc', 'Dungeons', 'Sounds/Dev']
+        const categories = ['Information', 'General QOL', 'GUI', 'HP Display', 'Timers', 'Fishing QOL', 'Fishing Pings', 'Counter', 'Garden', 'Dragons/End', 'Mythos', 'Misc', 'Dungeons', 'Sounds/Dev']
         return categories.indexOf(a.name) - categories.indexOf(b.name);
     }
 })
 
 class Settings {
-
+    // information
+    @ButtonProperty({
+        name: "Discord", 
+        description: "Join the discord to suggest new features and ask questions!", 
+        category: "Information", 
+        placeholder: "Join Us!"
+    })
+    baoDiscordInvite() {
+        java.awt.Desktop.getDesktop().browse(new java.net.URI("https://discord.gg/JdNQqzPb"));
+    }
+    
     // GENERAL QOL
     @SwitchProperty({
         name: "Auto Warp Command",
@@ -57,14 +67,6 @@ class Settings {
         subcategory: "QOL", 
     })
     notifyKicked = false;
-
-    @SwitchProperty({
-        name: "Boop Notifier",
-        description: "Notifies you when you get booped.",
-        category: "General QOL",
-        subcategory: "QOL", 
-    })
-    notifyBooped = false;
 
     @SwitchProperty({
         name: "Easy get Baker Cake",
@@ -1021,7 +1023,7 @@ class Settings {
         category: "Misc",
         subcategory: "Mining"
     })
-    golden_goblin_alert = false;
+    goldenGoblinAlert = false;
 
     @SwitchProperty({
         name: "Scatha Pet Drop Alert",
@@ -1029,7 +1031,15 @@ class Settings {
         category: "Misc",
         subcategory: "Mining"
     })
-    scatha_pet_drop_ping = false;
+    scathaPetPing = false;
+
+    @SwitchProperty({
+        name: "Bal Pet Drop Alert",
+        description: "Notification for Bal Pet Drops.",
+        category: "Misc",
+        subcategory: "Mining"
+    })
+    balPetPing = false;
 
     @SwitchProperty({
         name: "Hidden Jerry Ping",

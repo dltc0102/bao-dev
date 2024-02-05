@@ -46,12 +46,12 @@
     },
     "orb": {
         "registered": [
-            "Overflux 24s"
+            "Plasmaflux 34s"
         ],
-        "color": "&5",
+        "color": "&d",
         "displayText": "",
-        "timeLeft": 23,
-        "type": 5,
+        "timeLeft": "34",
+        "type": 6,
         "found": false,
         "x": 400,
         "y": 250,

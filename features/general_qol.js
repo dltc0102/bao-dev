@@ -130,18 +130,6 @@ register('chat', (event) => {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Boop Notifier 
-///////////////////////////////////////////////////////////////////////////////
-register('chat', (rank, player, event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!Settings.notifyBooped) return
-    const rankColor = determinePlayerRankColor(rank);
-    showAlert(`${rankColor}${player} &dBooped &ryou!`);
-    generalAudio.playDefaultSound();
-}).setCriteria("From [${rank}] ${player}: Boop!")
-
-
-///////////////////////////////////////////////////////////////////////////////
 // /warpexc 
 ///////////////////////////////////////////////////////////////////////////////
 register("command", (...args) => {

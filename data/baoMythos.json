@@ -6,7 +6,7 @@
         "featherCount": 0,
         "moneyCount": 0,
         "burrowCount": 0,
-        "ancientClawCount": 0,
+        "ancientClawCount": 10,
         "anicentClawMoney": 0,
         "minosHunterKills": 0,
         "siaLynxKills": 0,
@@ -32,7 +32,8 @@
         "minotaursSinceDae": 0,
         "burrowsSinceCOG": 0,
         "burrowsSinceWUS": 0,
-        "championsSinceRelic": 0
+        "championsSinceRelic": 0,
+        "ancientClawMoney": 600
     },
     "pos": [
         5,

@@ -164,10 +164,9 @@ register('chat', (status, event) => {
 
 
 // Dungeon Chest 'obtained xxx' actions 
-register('chat', (name, essType, event) => {
+register('chat', (name, essType, amt, event) => {
     handleDungeonMessage(event, Settings.dungeonPlayerActions);
-}).setCriteria('${name} unlocked ${essType} Essence!');
-
+}).setCriteria('${name} unlocked ${essType} Essence x${amt}!');
 
 
 ///////////////////////////////////////////////////////////////////////////////

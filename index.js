@@ -13,7 +13,7 @@ import './features/fishing_overlays.js' // done
 import './features/general_qol.js' // done
 import './features/garden.js' // done
 import './features/mythos.js' // done
-// import './features/misc.js' // done
+import './features/misc.js' // done
 import './features/timers.js' // done
 import './features/fishing_pings.js' // done
 
@@ -27,6 +27,7 @@ import './utils/inventoryLog.js'
 register("gameLoad", () => {
     ChatLib.chat(`${baoUtils.modPrefix} &rUpdated!`)
     ChatLib.command('pl');
+    console.log(`------------------------------------------------------------------------------------`);
     console.log(`[Bao] Updated!`);
 });
 
@@ -51,13 +52,5 @@ if (baoUtils.firstTime) {
 register("command", () => 
     Settings.openGUI()
 ).setName("biscuitaddons").setAliases('bao');
-
-register('command', () => {
-    baoUtils.firstTime = true;
-}).setName('resetft');
-
-register('command', () => {
-    ChatLib.chat(`ft: ${baoUtils.firstTime}`)
-}).setName('checkft');
 
 baoUtils.autosave(1);

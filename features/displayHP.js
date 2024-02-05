@@ -1,7 +1,9 @@
 import Settings from '../settings.js';
 import PogObject from 'PogData';
 
-import { checkLSRange, constrainX, constrainY, createGuiCommand, renderGuiPosition } from '../utils/functions.js';
+import { checkLSRange } from '../utils/functions.js';
+import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'; // gui
+import { constrainX, constrainY } from '../utils/functions.js' // padding
 import { getInSkyblock } from '../utils/functions.js'; // sb, area
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -1,13 +1,13 @@
 {
     "bobber": {
-        "count": 0,
-        "text": "&rBobbers: &b0",
+        "count": 1,
+        "text": "&rBobbers: &b1",
         "x": 3,
         "y": 13
     },
     "player": {
-        "count": 11,
-        "text": "&rPlayers: &b&l11",
+        "count": 16,
+        "text": "&rPlayers: &b&l16",
         "x": 3,
         "y": 24
     },
@@ -61,7 +61,7 @@
         "y": 63.5
     },
     "lobbyDay": {
-        "text": "Day: &b8.84",
+        "text": "Day: &b27.56",
         "x": 3,
         "y": 34
     }

@@ -293,6 +293,7 @@
 		end_protector_ping = false
 
 	[misc.mining]
+		bal_pet_drop_alert = false
 		lobby_day_counter = false
 		scatha_pet_drop_alert = true
 		golden_goblin_alert = true

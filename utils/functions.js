@@ -84,6 +84,11 @@ export function getInIsland() {
     return getCurrArea() === 'Private Island';
 }
 
+// dwarven mines
+export function getInMines() {
+    return getCurrArea() === 'Dwarven Mines';
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // SOUND ----------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
@@ -97,25 +102,6 @@ export function playSound() {
     if (Settings.rng_sound_sel == 2) funcAudio.playNitroSong();
     if (Settings.rng_sound_sel == 3) funcAudio.playBisSong();
     if (Settings.rng_sound_sel == 4) funcAudio.playChipiSong();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// GET CHAT LIINES -------------------------------------------------------------
-////////////////////////////////////////////////////////////////////////////////
-/**
- * @function containsMobNameLine - Detects noping entities 
- * @param {number} numLines - Number of lines to search for the mob's name in
- * @param {string} givenMobName - A string param of the mob's name for detection
- * @returns {*} true if the mob's name matches line in chatHistory 
- */
-export function containsMobNameLine(numLines, givenMobName) {
-    const chatHistory = ChatLib.getChatLines().slice(0, numLines);
-    for (let cx = 0; cx < chatHistory.length; cx++) {
-        if (chatHistory[cx] && chatHistory[cx].includes(givenMobName) && !chatHistory[cx].includes(`killed by ${givenMobName}`)) {
-            return true;
-        }
-        return false;
-    }
 }
 
 
@@ -153,6 +139,7 @@ export function detectEntity(entityType, givenMobName, givenInfo) {
     }
 }
 
+
 ////////////////////////////////////////////////////////////////////////
 // DISPLAY HEALTH OF ENTITY --------------------------------------------
 ////////////////////////////////////////////////////////////////////////
@@ -163,7 +150,20 @@ export function displayEntity(entityFound, entityNames, x, y) {
     }
 }
 
-export function getHealth(healthStr) {
+/**
+ * getHealth() takes in a string parameter that ends in 'M' or 'k' and returns the unabbreviated number of the string passed in.
+ * 
+ * @function getHealth
+ * @param {string} healthStr - A string param of the health of a mob that 
+ * @returns {number} unabbreviated version of the string parameter
+ * 
+ * @example 
+ *      getHealth('400k') returns 400000;
+ *      getHealth('1M') returns 1000000;
+ * 
+ * @usedbyfunction detectDH()
+ */
+function getHealth(healthStr) {
     const multipliers = {
         k: 1000,
         M: 1000000,
@@ -171,11 +171,12 @@ export function getHealth(healthStr) {
     const match = healthStr.match(/^(\d+(?:\.\d+)?)\s*([kM]?)$/);
     const numericPart = parseFloat(match[1]);
     const multiplier = match[2] || ''; // Default to empty string if no multiplier
-
+    
     if (multipliers.hasOwnProperty(multiplier)) {
         return numericPart * multipliers[multiplier];
     }
 }
+
 
 ////////////////////////////////////////////////////////////////////////
 // DETECT DOUBLE HOOK ENTITIES -----------------------------------------
@@ -244,6 +245,7 @@ export function detectDH(entityType, givenMobName, givenFormatCode, nameExceptio
     givenMobInfo.foundNearby = givenMobInfo.numNearby > 0;
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////
 // CREATE GUI COMMAND ----------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
@@ -309,6 +311,7 @@ export function constrainX(x, margin, text) {
 export function constrainY(y, margin, text) {
     const screenH = Renderer.screen.getHeight();
     let stringH = getNumLines(text) * 10;
+    stringH = stringH > 50 ? stringH-20 : stringH;
     let result = 0;
     if (y < margin) {
         result = margin;
@@ -399,19 +402,6 @@ export function registerSettingContains(settingName, criteria, title) {
 ////////////////////////////////////////////////////////////////////////
 // PUBLIC SPEAKING DEMON -----------------------------------------------
 ////////////////////////////////////////////////////////////////////////
-export function generateRandomStr(length) {
-    const characters = 'abcdefghijklmnopqrstuvwxyz';
-    let result = '';
-
-    for (let i = 0; i < length; i++) {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        result += characters.charAt(randomIndex);
-    }
-
-    // Shuffle the characters in the result string
-    result = result.split('').sort(function() { return 0.5 - Math.random() }).join('');
-    return result;
-}
 
 // player pos
 export function getPlayerPos() {
@@ -961,7 +951,7 @@ export function filterSeparators(rawString, sepThin) {
     return phraseArray.join('\n');
 }
 
-export function romanToNumber(roman) {
+export function romanToNumeral(romanStr) {
     const romanNumerals = {
       'I': 1,
       'V': 5,
@@ -974,9 +964,9 @@ export function romanToNumber(roman) {
   
     let result = 0;
   
-    for (let i = 0; i < roman.length; i++) {
-        const currentNumeral = romanNumerals[roman[i]];
-        const nextNumeral = romanNumerals[roman[i + 1]];
+    for (let i = 0; i < romanStr.length; i++) {
+        const currentNumeral = romanNumerals[romanStr[i]];
+        const nextNumeral = romanNumerals[romanStr[i + 1]];
     
         if (nextNumeral > currentNumeral) {
             result += (nextNumeral - currentNumeral);
