@@ -46,7 +46,6 @@ register('renderOverlay', () => {
     if (!getInCI() && !getInJerry() && !getInIsland()) Renderer.drawStringWithShadow(baoWaterSCStats.HUBDisplay, baoFishStats.x, baoFishStats.y);
 
     renderGuiPosition(movefishcounter, baoFishStats, fishCounterDraggable);
-    baoFishStats.save();
 });
 
 ////////////////////////////////////////////////////////////////////////////

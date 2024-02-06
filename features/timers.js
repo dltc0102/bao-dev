@@ -293,5 +293,4 @@ register('renderOverlay', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     Renderer.drawStringWithShadow(baoTimers.displayText, baoTimers.x, baoTimers.y);
     renderGuiPosition(moveTimerDisplay, baoTimers, timerDraggableText);
-    baoTimers.save();
 });

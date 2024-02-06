@@ -1,27 +1,27 @@
 {
     "sentMelody": false,
-    "extraStatsFlag": false,
     "deathStats": 0,
-    "secretStats": 0,
-    "totalSecretStats": 604,
-    "numRunsStats": 339,
-    "secretOverviewText": "Runs: &b339&r | Secrets: &b604&r | Avg: &b1.78&r/&brun",
+    "secretStats": 1,
+    "totalSecretStats": 878,
+    "numRunsStats": 365,
+    "secretOverviewText": "Runs: &b365&r | Secrets: &b878&r | Avg: &b2.41&r/&brun",
     "secretCounter": {
-        "x": 384.5,
-        "y": 21
+        "x": 379,
+        "y": 17.5
     },
     "blessings": {
-        "wisdom": 5,
-        "power": 5,
-        "life": 0,
-        "stone": 5,
+        "wisdom": 10,
+        "power": 20,
+        "life": 10,
+        "stone": 0,
         "time": 0,
-        "text": "&6&l[&r&lBlessing&6&l] Wisdom: &b&l5\n&6&l[&r&lBlessing&6&l] Power: &b&l5\n&6&l[&r&lBlessing&6&l] Stone: &b&l5",
-        "x": 586,
-        "y": 503,
-        "draggable": "&7&l[Blessing] Power: 0\n&7&l[Blessing] Wisdom: 0\n&7&l[Blessing] Stone: 0"
+        "text": "&6&l[&r&lBlessing&6&l] Power: &b&l20\n&6&l[&r&lBlessing&6&l] Wisdom: &b&l10\n&6&l[&r&lBlessing&6&l] Life: &b&l10",
+        "x": 589.5,
+        "y": 485,
+        "draggable": "&7&l[Blessing] Life: 0\n&7&l[Blessing] Wisdom: 0\n&7&l[Blessing] Power: 0"
     },
+    "extraStatsFlag": false,
     "draggableText": "&7Runs: 0 | Secrets: 0 | Avg: 0/run",
     "powerLvl": 0,
-    "numRunStats": 338
+    "numRunStats": 364
 }

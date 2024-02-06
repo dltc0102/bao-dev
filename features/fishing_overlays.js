@@ -274,6 +274,5 @@ register('renderOverlay', () => {
     renderGuiPosition(moveNearbyThunderCounter, baoFishOverlay.nbThunder, thunderDraggable);
     renderGuiPosition(moveChargesCounter, baoFishOverlay.charges, chargesDraggable);
     renderGuiPosition(movedaycounter, baoFishOverlay.lobbyDay, dayDraggable);
-    baoFishOverlay.save();
 })
 

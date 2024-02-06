@@ -4,7 +4,7 @@ import { baoUtils } from './utils/utils.js';
 
 export const baoAudio = new Audio();
 
-import './features/dev.js'
+// import './features/dev.js'
 import './features/displayHP.js' // done
 import './features/dungeon_cleaner.js' // done
 import './features/dungeons.js' // done
@@ -21,8 +21,8 @@ import './features/mainSCStats.js' // done
 import './features/waterSCStats.js'
 import './features/lavaSCStats.js'
 
-import './utils/cake.js';
-import './utils/inventoryLog.js'
+// import './utils/cake.js';
+// import './utils/inventoryLog.js'
 
 register("gameLoad", () => {
     ChatLib.chat(`${baoUtils.modPrefix} &rUpdated!`)

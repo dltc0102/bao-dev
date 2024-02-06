@@ -7,6 +7,49 @@ import { showAlert } from '../utils/utils.js';
 
 const funcAudio = new Audio();
 
+const rarityCode = {
+    "1": "&r", 
+    "2": "&a", 
+    "3": "&9", 
+    "4": "&5", 
+    "5": "&6", 
+    "6": "&d", 
+    "7": "&b", 
+}
+const rarityName = {
+    "1": "Common", 
+    "2": "Uncommon", 
+    "3": "Rare", 
+    "4": "Epic", 
+    "5": "Legendary", 
+    "6": "Mythic", 
+    "7": "Divine"
+}
+
+const colorNames = {
+    red: 'FF0000',
+    green: '00FF00',
+    blue: '0000FF',
+    light_blue: '00FFFB',
+    teal: '00FFBB',
+    purple: 'A200FF', 
+    pink: 'FF00E1', 
+    light_purple: 'FF99CC', 
+    white: 'FFFFFF', 
+    black: '000000', 
+    gray: '858585'
+};
+
+const romanNumerals = {
+    'I': 1,
+    'V': 5,
+    'X': 10,
+    'L': 50,
+    'C': 100,
+    'D': 500,
+    'M': 1000
+};
+
 // inSkyblock
 export function getInSkyblock() {
     return ChatLib.removeFormatting(Scoreboard.getTitle()).includes("SKYBLOCK");
@@ -97,17 +140,33 @@ export function getInMines() {
  * @returns played sound for RNG drops
  */
 export function playSound() {
-    if (Settings.rng_sound_sel == 0) funcAudio.playDefaultSound();
-    if (Settings.rng_sound_sel == 1) funcAudio.playCatSong();
-    if (Settings.rng_sound_sel == 2) funcAudio.playNitroSong();
-    if (Settings.rng_sound_sel == 3) funcAudio.playBisSong();
-    if (Settings.rng_sound_sel == 4) funcAudio.playChipiSong();
+    if (Settings.rng_sound_sel === 0) funcAudio.playDefaultSound();
+    if (Settings.rng_sound_sel === 1) funcAudio.playCatSong();
+    if (Settings.rng_sound_sel === 2) funcAudio.playNitroSong();
+    if (Settings.rng_sound_sel === 3) funcAudio.playBisSong();
+    if (Settings.rng_sound_sel === 4) funcAudio.playChipiSong();
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // ENTITIES --------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
+/**
+ * @function containsMobNameLine - Detects noping entities 
+ * @param {number} numLines - Number of lines to search for the mob's name in
+ * @param {string} givenMobName - A string param of the mob's name for detection
+ * @returns {*} true if the mob's name matches line in chatHistory 
+ */
+export function containsMobNameLine(numLines, givenMobName) {
+    const chatHistory = ChatLib.getChatLines().slice(0, numLines);
+    for (let cx = 0; cx < chatHistory.length; cx++) {
+        if (chatHistory[cx] && chatHistory[cx].includes(givenMobName) && !chatHistory[cx].includes(`killed by ${givenMobName}`)) {
+            return true;
+        }
+        return false;
+    }
+}
+
 /**
  * @function detectEntity - Detects noping entities 
  * @param {string} givenMobName - A string param of the mob's name for detection
@@ -185,7 +244,7 @@ export function detectDH(entityType, givenMobName, givenFormatCode, nameExceptio
     let nearbyMobEntities = World.getAllEntitiesOfType(entityType)
         .filter(mobEntity => {
             const mobName = mobEntity.getName().removeFormatting();
-            return mobName.includes(givenMobName) && (!nameException || !nameException === null || !mobName.includes(nameException));
+            return mobName.includes(givenMobName) && (!nameException || nameException !== null || !mobName.includes(nameException));
         });
     if (nearbyMobEntities.length > 0) {
         givenMobInfo.found = true;
@@ -236,7 +295,7 @@ export function detectDH(entityType, givenMobName, givenFormatCode, nameExceptio
         funcAudio.playDefaultSound();
         if (!hasDoubleMob) { 
             setTimeout(() => {
-                sendMessage(`Doublehook ${givenMobName} Detected!`) 
+                sendMessage(`Doublehook ${givenMobName} Detected!`);
                 givenMobInfo.messageSent = true;
             }, 150);
         }
@@ -290,7 +349,7 @@ export function getLongestStrWidth(text) {
         if (width > maxWidth) {
             maxWidth = width;
         }
-    })
+    });
     if (maxWidth === 0) maxWidth = Renderer.getStringWidth(text);
     return maxWidth;
 }
@@ -331,22 +390,6 @@ export function getNumLines(givString) {
     return lines;
 }
 
-
-export function centerCoords(givenString, x, y) {
-    let screenW = Renderer.screen.getWidth();
-    let screenH = Renderer.screen.getHeight();
-    x = screenW - (Renderer.getStringWidth(givenString) / 2);
-    y = screenH - 5;
-}
-
-
-////////////////////////////////////////////////////////////////////////
-// CONVERT SECONDS TO MS -----------------------------------------------
-////////////////////////////////////////////////////////////////////////
-export function sToMs(seconds) {
-    return seconds * 1000;
-}
-
 ////////////////////////////////////////////////////////////////////////
 // UPDATE CD TEXT FOR TIMERS --------------------------------------------
 ////////////////////////////////////////////////////////////////////////
@@ -370,26 +413,8 @@ export function updateCDText(colorCode, displayName, cd) {
     return timerText + '\n';
 }
 
-export function updatePlotTimerText(cd) {
-    let timerText = cd;
-    return timerText;
-}
-
-
-// get current location of player
-export function getPlayerLocation() {
-    const scoreboardLines = Scoreboard.getLines();
-    for (const line of scoreboardLines) {
-        const formattedLine = line.toString();
-        if (formattedLine.includes('⏣')) {
-            const matchChar = new RegExp(formattedLine[16], 'g');
-            const noFormatLine = formattedLine.replace(matchChar, '');
-            return noFormatLine.trim();
-        }
-    }
-}
-
 // register setting -- contains
+// fishing pings.js
 export function registerSettingContains(settingName, criteria, title) {
     register('chat', (event) => {
         if (!getInSkyblock() || !World.isLoaded()) return;
@@ -399,11 +424,8 @@ export function registerSettingContains(settingName, criteria, title) {
     }).setCriteria(criteria).setContains();
 }
 
-////////////////////////////////////////////////////////////////////////
-// PUBLIC SPEAKING DEMON -----------------------------------------------
-////////////////////////////////////////////////////////////////////////
 
-// player pos
+// player pos -- mythos.js
 export function getPlayerPos() {
     const playerX = Player.getX().toFixed(0);
     const playerY = Player.getY().toFixed(0);
@@ -413,7 +435,7 @@ export function getPlayerPos() {
 }
 
 
-// player area
+// player area -- mythos.js
 export function getPlayerPOI() {
     let playerLocation = '';
     const scoreboard_lines = Scoreboard.getLines();
@@ -424,7 +446,7 @@ export function getPlayerPOI() {
 		const noform_line = formLine.replace(matchChar, '');
 		if (noform_line.includes('⏣')) { 
             const loc = noform_line.trim().removeFormatting(); 
-            const rmChar2 = loc[11]
+            const rmChar2 = loc[11];
             const matchChar2 = new RegExp(rmChar2, 'g');
             playerLocation = loc.replace(matchChar2, '');
         }
@@ -432,26 +454,27 @@ export function getPlayerPOI() {
     return playerLocation;
 }
 
+// delaymessage -- mythos.js
 export function delayMessage(prefix, message, ms) {
     if (prefix === 'client') {
         setTimeout(() => {
             ChatLib.chat(message);
-        }, ms)
+        }, ms);
     }
     if (prefix === 'announce') {
         setTimeout(() => {
             ChatLib.command(`ac ${message}`);
-        }, ms)
+        }, ms);
     }
     if (prefix === 'auto') {
         setTimeout(() => {
-            sendMessage(message)
-        }, ms)
+            sendMessage(message);
+        }, ms);
     }
     if (prefix === 'console') {
         setTimeout(() => {
-            console.log(message)
-        }, ms)
+            console.log(message);
+        }, ms);
     }
 }
 
@@ -481,12 +504,11 @@ export function getBiggestNum(arr) {
         if (parsedNum && parsedNum > biggestNum) {
             biggestNum = parsedNum;
         }
-    })
+    });
     return biggestNum;
 }
 
 export function getCharges(chargeLore) {
-    // console.log(chargeLore)
     const chargeRegex = /Charge: (\d{1,3}(?:,\d{3})*)\/50,000/;
     let result = '';
 
@@ -496,10 +518,9 @@ export function getCharges(chargeLore) {
         if (chargeMatch) {
             result = chargeMatch[1].replace(/,/g, '');
         }
-    })
+    });
     return result;
 }
-
 
 
 export function getThunderBottle() {
@@ -531,24 +552,6 @@ export function getThunderBottle() {
     return closestCharge;
 }
 
-const rarityCode = {
-    "1": "&r", 
-    "2": "&a", 
-    "3": "&9", 
-    "4": "&5", 
-    "5": "&6", 
-    "6": "&d", 
-    "7": "&b", 
-}
-const rarityName = {
-    "1": "Common", 
-    "2": "Uncommon", 
-    "3": "Rare", 
-    "4": "Epic", 
-    "5": "Legendary", 
-    "6": "Mythic", 
-    "7": "Divine"
-}
 
 export function pingDolphinMS(killCount) {
     killCount = Number(killCount.replace(/,/g, ''));
@@ -558,13 +561,13 @@ export function pingDolphinMS(killCount) {
     if (killCount === 5000) rarity = 4;
     if (killCount === 10000) rarity = 5;
 
-    showAlert(`${rarityCode[rarity]}Dolphin`)
-    sendMessage(`gg ${rarityName[rarity]} Dolphin @ ${killCount} kills`)
+    showAlert(`${rarityCode[rarity]}Dolphin`);
+    sendMessage(`gg ${rarityName[rarity]} Dolphin @ ${killCount} kills`);
     if (rarity === 5) {
         playSound();
     } else {
         funcAudio.playDefaultSound();
-    }
+    };
 }
 export function petDropPing(message, exclamation, petName, mf) {
     let rarity = '';
@@ -579,31 +582,23 @@ export function petDropPing(message, exclamation, petName, mf) {
     showAlert(`${rarityCode[rarity]}${petName}`);
 
     if (petName === 'Rat' || petName === 'Slug') {
-        sendMessage(`${exclamation} ${rarityName[rarity]} ${petName} (+${mf}☘)`)
+        sendMessage(`${exclamation} ${rarityName[rarity]} ${petName} (+${mf}☘)`);
         rarity > 4 ? playSound() : funcAudio.playDefaultSound();
     }
     if (petName === 'Scatha') {
-        sendMessage(`${exclamation} ${rarityName[rarity]} ${petName} (+${mf})% ✯ Magic Find)`)
+        sendMessage(`${exclamation} ${rarityName[rarity]} ${petName} (+${mf})% ✯ Magic Find)`);
         playSound();
     }
     if (petName === 'Baby Yeti') {
-        sendMessage(`${exclamation} ${rarityName[rarity]} ${petName} (+${mf})% ✯ Magic Find)`)
+        sendMessage(`${exclamation} ${rarityName[rarity]} ${petName} (+${mf})% ✯ Magic Find)`);
         rarity > 4 ? playSound() : funcAudio.playDefaultSound();
 
     } else {
-        let noMFText = `${exclamation} You caught a ${rarityName[rarity]} [Lvl 1] ${petName}`
-        let withMFText = `${exclamation} ${rarityName[rarity]} ${petName} (+${mf})% ✯ Magic Find)`
+        let noMFText = `${exclamation} You caught a ${rarityName[rarity]} [Lvl 1] ${petName}`;
+        let withMFText = `${exclamation} ${rarityName[rarity]} ${petName} (+${mf})% ✯ Magic Find)`;
         mf === 0 ? sendMessage(noMFText) : sendMessage(withMFText);
         rarity > 4 ? playSound() : funcAudio.playDefaultSound();
     }
-}
-
-export function sendSelf(message) {
-    ChatLib.command(`cc ${message}`);
-}
-
-export function sendGuild(message) {
-    ChatLib.command(`gc ${message}`)
 }
 
 export function drawBonzoBox(x, y, z, givColor, seethru) {
@@ -613,13 +608,13 @@ export function drawBonzoBox(x, y, z, givColor, seethru) {
 
 export function drawBeacon(x, y, z, givColor, alpha, seethru) {
     let colorCode = colorToRgb(givColor);
-    RenderLib.drawInnerEspBox(x, y, z, 1, 1, colorCode.red, colorCode.green, colorCode.blue, alpha, seethru)
+    RenderLib.drawInnerEspBox(x, y, z, 1, 1, colorCode.red, colorCode.green, colorCode.blue, alpha, seethru);
     // RenderLib.drawinnerEspBox(x, y, z, 1, 1, colorCode.red, colorCode.green, colorCode.blue, .5, seethru)
 }
 
 export function drawOutlineBeacon(x, y, z, givColor, alpha, seethru) {
     let colorCode = colorToRgb(givColor);
-    RenderLib.drawEspBox(x, y, z, 1, 1, colorCode.red, colorCode.green, colorCode.blue, alpha, seethru)
+    RenderLib.drawEspBox(x, y, z, 1, 1, colorCode.red, colorCode.green, colorCode.blue, alpha, seethru);
 }
 
 export function drawLine(x1, y1, z1, x2, y2, z2, givColor, seethru) {
@@ -644,20 +639,6 @@ export function colorToRgb(input) {
 
         return { red, green, blue };
     }
-
-    const colorNames = {
-        red: 'FF0000',
-        green: '00FF00',
-        blue: '0000FF',
-        light_blue: '00FFFB',
-        teal: '00FFBB',
-        purple: 'A200FF', 
-        pink: 'FF00E1', 
-        light_purple: 'FF99CC', 
-        white: 'FFFFFF', 
-        black: '000000', 
-        gray: '858585'
-    };
 
     const normalizedInput = input.toLowerCase();
     if (colorNames[normalizedInput]) {
@@ -727,15 +708,15 @@ export function getSkyBlockTime() {
 
 /** regex for plot name: https://regex101.com/r/hq04eN/1 */
 export function getCell(plotConfigGui, index) {
-    const slotIdx = plotConfigGui.getStackInSlot(index)
+    const slotIdx = plotConfigGui.getStackInSlot(index);
     // console.log(slotIdx)
     if (slotIdx){
-        const slotName = slotIdx.getLore()[0].removeFormatting()
+        const slotName = slotIdx.getLore()[0].removeFormatting();
         // console.log(slotName)
         const slotMatch = slotName.match(/Plot - (.+?) \(\#\d+(?:\/\d+)?\)/);
         const barnMatch = slotName.match(/^(The Barn)\s\(#(\d+)\)$/i);
         if (barnMatch) {
-            return barnMatch[1]
+            return barnMatch[1];
         }
         if (slotMatch) {
             return slotMatch[1];
@@ -763,7 +744,7 @@ export function drawScaledString(displayString, x, y, scale, shadow=false) {
     if (shadow) {
         Renderer.drawStringWithShadow(displayString, x, y);
     } else {
-        Renderer.drawString(displayString, x, y)
+        Renderer.drawString(displayString, x, y);
     }
 }
 
@@ -804,7 +785,7 @@ export function colorPlot(plotObj) {
 }
 
 export function startSprayTimer(array, plotName) {
-    let plotObj = getPlotInst(array, plotName)
+    let plotObj = getPlotInst(array, plotName);
     if (plotObj.spray === false) return;
     // plotObj.sprayDateEnd = new Date();
     plotObj.sprayDateEnd.setMinutes(plotObj.sprayDateEnd.getMinutes() + 30); // 30 minutes (spray duration)
@@ -822,17 +803,17 @@ export function updateInterval(array, plotName) {
     if (timeLeft === 0 || timeLeft < 0) {
         plotObj.spray = false;
         plotObj.sprayTimerText = '';
-        ChatLib.chat(`&eSpray in &c${plotName}&e has expired!`)
+        ChatLib.chat(`&eSpray in &c${plotName}&e has expired!`);
         funcAudio.playDefaultSound();
 
     } else {
         timeLeft -= 1;
         register("renderOverlay", () => {
-            Renderer.drawString(plotObj.sprayTimerText, plotObj.sprayDisPos[0], plotObj.sprayDisPos[1])
+            Renderer.drawString(plotObj.sprayTimerText, plotObj.sprayDisPos[0], plotObj.sprayDisPos[1]);
         });
         setTimeout(() => {
-            updateInterval(array, plotName)
-        }, 1000)
+            updateInterval(array, plotName);
+        }, 1000);
     }
 }
 
@@ -911,7 +892,7 @@ export function checkTimeLeft(timerObj, name, ability) {
             showAlert(`&a${ability} Available`);
         } else {
             if (name === 'Glowy Tonic') ChatLib.chat(`&eYour &2${name}&e has expired.`);
-            if (name === 'Gummy Bear') ChatLib.chat(`&eYour &cReheated ${name}&e has expired.`)
+            if (name === 'Gummy Bear') ChatLib.chat(`&eYour &cReheated ${name}&e has expired.`);
             showAlert(`&a${ability} Expired`);
 
         }
@@ -952,16 +933,6 @@ export function filterSeparators(rawString, sepThin) {
 }
 
 export function romanToNumeral(romanStr) {
-    const romanNumerals = {
-      'I': 1,
-      'V': 5,
-      'X': 10,
-      'L': 50,
-      'C': 100,
-      'D': 500,
-      'M': 1000
-    };
-  
     let result = 0;
   
     for (let i = 0; i < romanStr.length; i++) {

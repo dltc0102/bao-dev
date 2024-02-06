@@ -46,11 +46,11 @@
     },
     "orb": {
         "registered": [
-            "Plasmaflux 34s"
+            "Plasmaflux 45s"
         ],
         "color": "&d",
         "displayText": "",
-        "timeLeft": "34",
+        "timeLeft": "45",
         "type": 6,
         "found": false,
         "x": 400,

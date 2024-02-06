@@ -8,9 +8,10 @@ import { getActivePet } from '../utils/pet.js'
 import { showAlert } from '../utils/utils.js'
 import { baoUtils } from '../utils/utils.js';
 import { updateCDText, setTimer } from '../utils/functions.js'
-import { getInSkyblock, getCurrArea } from '../utils/functions.js'; // sb, area
+import { getInSkyblock } from '../utils/functions.js'; // sb, area
 import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'; // gui
 import { constrainX, constrainY } from '../utils/functions.js' // padding
+import { getInGarden } from '../utils/functions.js';
 
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP CONSTS
@@ -159,7 +160,7 @@ baoGardens.autosave(5);
 // Reminder for getting desk config
 ////////////////////////////////////////////////////////////////////
 register('step', () => {
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
     if (baoGardens.sentDeskReminder) return;
     if (baoGardens.plots = []) {
         gardenAudio.playDefaultSound();
@@ -174,7 +175,7 @@ register('step', () => {
 ////////////////////////////////////////////////////////////////////
 // alert message: You don't have any ${materialName}!
 register('chat', (materialName, event) => {
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
     if (Settings.alertNoMatSprayonator) {
         gardenAudio.playDefaultSound();
         showAlert(`&cNeed &e${materialName}&c!`)
@@ -183,7 +184,7 @@ register('chat', (materialName, event) => {
 
 // selected mat for sprayonator
 register('chat', (material, event) => {
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
     if (Settings.hideSelSprayMatMsg) cancel(event);
     baoGardens.sprayonatorOverlay.selectedSprayMaterial = material;
 }).setCriteria('SPRAYONATOR! Your selected material is now ${material}!');
@@ -244,7 +245,7 @@ for (let i=0; i <5; i++) {
 
 // creating data for baoGardens.playerPlotInfo.names
 register('guiRender', () => {
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
     if (baoGardens.playerPlotInfo.configMsg) return;
     if (Player.getPlayer() === null || Player.getOpenedInventory() === null || Player.getContainer().getName() !== 'Configure Plots') return;
 
@@ -290,7 +291,7 @@ register('guiRender', () => {
 // PEST APPEARS REG CHAT
 ////////////////////////////////////////////////////////////////////
 register('chat', (exclamation, userPlotName, event) => {
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
     if (!Settings.pestQOL) return;
     //  GROSS! A Pest has appeared in Plot - money 1!
     updatePlots(baoGardens.plots, userPlotName, 'pest', true);
@@ -311,7 +312,7 @@ register('chat', (exclamation, userPlotName, event) => {
 }).setCriteria('${exclamation}! A Pest has appeared in Plot - ${userPlotName}!');
 
 register('chat', (exclamation, numPests, userPlotName, event) => {
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
     if (!Settings.pestQOL) return;
     // EWW! 2 Pests have spawned in Plot - kacktoos 2!
     updatePlots(baoGardens.plots, userPlotName, 'pest', true);
@@ -336,12 +337,12 @@ register('chat', (exclamation, numPests, userPlotName, event) => {
 // PLOT SPRAYED REG CHAT
 ////////////////////////////////////////////////////////////////////
 register('chat', (event) => {
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
     if (Settings.hideSprayonatorExpiryMsg) cancel(event);
 }).setCriteria('SPRAYONATOR! This will expire in 30m!');
 
 register('chat', (userPlotName, mat, event) => {
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
     // SPRAYONATOR! You sprayed Plot - melon 2 with Compost!
     updatePlots(baoGardens.plots, userPlotName, 'spray', false);
     updatePlots(baoGardens.plots, userPlotName, 'spray', true);
@@ -356,7 +357,7 @@ register('chat', (userPlotName, mat, event) => {
 // VINYL SELECTOR CHAT REG
 ////////////////////////////////////////////////////////////////////
 register('chat', (vinylName, event) => {
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
     if (!Settings.vinylDisplay) return;
     if (!allVinylNames.includes(vinylName)) return;
     baoGardens.vinylInfo.isPlaying = false;
@@ -365,7 +366,7 @@ register('chat', (vinylName, event) => {
 }).setCriteria('You are no longer playing ${vinylName}!');
 
 register('chat', (vinylName, event) => {
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
     if (!Settings.vinylDisplay) return;
     if (!allVinylNames.includes(vinylName)) return;
     baoGardens.vinylInfo.isPlaying = true;
@@ -379,7 +380,7 @@ register('chat', (vinylName, event) => {
 // HARVEST HARBRINGER POTION CD TIMER
 ////////////////////////////////////////////////////////////////////
 register('chat', (event) => {
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
     if (!Settings.harvPotionOverlay) return;
     baoGardens.harbringer.cd = getActivePet().includes('Parrot') ? 35 : 25;
     gardenAudio.playDrinkSound();
@@ -393,7 +394,7 @@ register('chat', (event) => {
 // PEST REPELLENT TIMER
 ////////////////////////////////////////////////////////////////////
 register('chat', (typeOfPestRepellent, event) => {
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
     if (!Settings.pestRepellentDisplay) return;
     if (typeOfPestRepellent === '2x') baoGardens.pestRepellent.is2x = true; 
     if (typeOfPestRepellent === '4x') baoGardens.pestRepellent.is4x = true; 
@@ -410,7 +411,7 @@ register('chat', (typeOfPestRepellent, event) => {
 // PEST EXCHANGE 
 ////////////////////////////////////////////////////////////////////
 register('chat', (numPests, ff, duration, event) => {
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
     if (!Settings.pestExchangeDisplay) return;
     // [NPC] Phillip: In exchange for 1 Pest, I've given you +10☘ Farming Fortune for 30m!
     baoGardens.pestExchange.bonusFF = parseInt(ff.replace(',', ''), 10)
@@ -464,7 +465,7 @@ register('gameLoad', () => {
 ////////////////////////////////////////////////////////////////////
 register('step', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
 
     if (Settings.harvPotionOverlay && baoGardens.harbringer.used) {
         if (baoGardens.harbringer.timeLeft > 0) {
@@ -526,7 +527,7 @@ register('step', () => {
 
 register('step', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
 
     // player yaw and pitch
     if (Settings.showPlayerYawPitch) {
@@ -600,11 +601,11 @@ register('step', () => {
 }).setFps(5);
 
 // render overlay
+const paddingText = (text) => {
+    return baoUtils.screenW - 5 - Renderer.getStringWidth(text);
+}
 register('renderOverlay', () => {
-    if (getCurrArea() !== 'Garden') return;
-    const paddingText = (text) => {
-        return baoUtils.screenW - 5 - Renderer.getStringWidth(text);
-    }
+    if (!getInGarden()) return;
 
     // yaw and pitch
     if (Settings.showPlayerYawPitch) {
@@ -660,7 +661,7 @@ register('renderOverlay', () => {
 // SHOW PEST ENTITY BOX (ESP)
 ////////////////////////////////////////////////////////////////////
 register("renderWorld", () => {
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
     if (!Settings.pestQOL) return;
     if (!Settings.pestEsp) return;
     World.getAllEntities().forEach(entity => {if (entity.getName().removeFormatting().includes("ൠ")) drawOutlineBeacon(entity.x, entity.y-0.65, entity.z, givColor='white', alpha=1, seethru=false)})
@@ -672,7 +673,7 @@ register("renderWorld", () => {
 // PEST DROP PINGS
 ////////////////////////////////////////////////////////////////////
 register('chat', (event) => {
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
     if (!Settings.gardenRareDropPings) return;
     showAlert('&dBurrowing Spores')
     sendMessage('VERY RARE DROP! Burrowing Spores');
@@ -681,7 +682,7 @@ register('chat', (event) => {
 
 register('chat', (ff, event) => {
     // RARE DROP! Atmospheric Filter (+4949☘)
-    if (getCurrArea() !== 'Garden')return;
+    if (!getInGarden())return;
     if (!Settings.gardenRareDropPings) return;
     showAlert('&6Atmospheric Filter');
     sendMessage(`RARE DROP! Atmospheric Filter (+${ff}☘)`)
@@ -690,7 +691,7 @@ register('chat', (ff, event) => {
 
 register('chat', (ff, event) => {
     // RARE DROP! Pesterminator I Book (+4949☘)
-    if (getCurrArea() !== 'Garden')return;
+    if (!getInGarden())return;
     if (!Settings.gardenRareDropPings) return;
     showAlert('&6Pesterminator I Book');
     sendMessage(`RARE DROP! Pesterminator I Book (+${ff}☘)`)
@@ -703,7 +704,7 @@ register('chat', (ff, event) => {
 register('chat', (ff, event) => {
     // PET DROP! &5Rat&r (+1000☘)
     // PET DROP! &6Rat&r (+1000☘)
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
     if (!Settings.gardenPetDropPings) return;
     const message = ChatLib.getChatMessage(event, true);
     petDropPing(message, 'PET DROP!', 'Rat', ff, gardenAudio)
@@ -712,7 +713,7 @@ register('chat', (ff, event) => {
 register('chat', (ff, event) => {
     // PET DROP! &5Slug&r (+1000☘)
     // PET DROP! &6Slug&r (+1000☘)
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
     if (!Settings.gardenPetDropPings) return;
     const message = ChatLib.getChatMessage(event, true);
     petDropPing(message, 'PET DROP!', 'Slug', ff, gardenAudio)
@@ -742,11 +743,11 @@ register('chat', (presetName, plotName, event) => {
 
 // mutes jacob contest messages if not on garden
 register('chat', (event) => {
-    if (getCurrArea() !== 'Garden') cancel(event);
+    if (!getInGarden()) cancel(event);
 }).setCriteria('[NPC] Jacob: My contest has started!');
 
 register('chat', (taliphase, ff, cropName, event) => {
-    if (getCurrArea() !== 'Garden') cancel(event);
+    if (!getInGarden()) cancel(event);
 }).setCriteria("[NPC] Jacob: Your Anita's ${taliphase} is giving you +${ff}☘ ${cropName} Fortune during the contest!");
 
 
@@ -754,7 +755,7 @@ register('chat', (taliphase, ff, cropName, event) => {
 // DEBUGS
 ////////////////////////////////////////////////////////////////////
 register('chat', (event) => {
-    if (getCurrArea() !== 'Garden') return;
+    if (!getInGarden()) return;
     baoGardens.plots.forEach((row, i) => row.forEach((plot, j) => 
     // console.log("props: ", Object.getOwnPropertyNames(Object.getPrototypeOf(plot)))));
     console.log(`Plot ${i * row.length + j + 1}: Name: ${plot.name}, TL: [${plot.tl.join(', ')}], BR: [${plot.br.join(', ')}], Pest: ${plot.pest}, Spray: ${plot.spray}, Color: ${colorPlot(plot)}`)));

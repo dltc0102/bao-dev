@@ -71,8 +71,7 @@ register('chat', (playerName, event) => {
 // Auto notifier for #warp when player joins 
 ///////////////////////////////////////////////////////////////////////////////
 register('chat', (playerName, event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!Settings.autoNotifyWarp) return
+    if (!getInSkyblock() || !Settings.autoNotifyWarp) return;
     if (getIsPL()) {
         sendMessage('[!] type #warp or #w for warp when r [!]')
         generalAudio.playDefaultSound();
@@ -84,11 +83,8 @@ register('chat', (playerName, event) => {
 // #pai 
 ///////////////////////////////////////////////////////////////////////////////
 register('chat', (rank, name, event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!Settings.paiCommand) return
-    const message = ChatLib.getChatMessage(event, true);
-    const paiMatch = message.match(paiPattern);
-    if (getIsPL() && paiMatch) { 
+    if (!getInSkyblock() || !Settings.paiCommand) return;
+    if (getIsPL()) { 
         ChatLib.command('p settings allinvite'); 
         generalAudio.playDefaultSound();
     }
@@ -327,13 +323,3 @@ register('chat', (event) => {
 register('command', () => {
     sendMessage(`currarea: ${getCurrArea()}`);
 }).setName('currarea');
-
-
-////////////////////////////////////////////////////////////////////////////////
-// TEMPORARY THINGS
-////////////////////////////////////////////////////////////////////////////////
-register('chat', (event) => {
-    setTimeout(() => {
-        ChatLib.command('party accept MLGPlush')
-    }, 1000)
-}).setCriteria("[MVP+] MLGPlush has invited you to join their party!").setContains();

@@ -17,7 +17,7 @@ import { romanToNumeral } from '../utils/functions.js';
 const dungeonAudio = new Audio();
 const movesecretcounter = new Gui();
 createGuiCommand(movesecretcounter, 'movesecretcounter', 'msc');
-const secretCounterDraggable = `&7Runs: 0 | Secrets: 0 | Avg: 0/run`
+const secretCounterDraggable = `&7Runs: 0 | Secrets: 0 | Avg: 0/run`;
 
 const moveblessingscounter = new Gui();
 createGuiCommand(moveblessingscounter, 'moveblessingscounter', 'mbless');
@@ -27,7 +27,6 @@ const typesOfBlessings = ['wisdom', 'power', 'life', 'stone', 'time'];
 // pogObject
 export const baoDungeons = new PogObject("bao-dev", {
     "sentMelody": false, 
-    "extraStatsFlag": false,
     "deathStats": 0, 
     "secretStats": 0, 
     "totalSecretStats": 0,
@@ -52,6 +51,33 @@ export const baoDungeons = new PogObject("bao-dev", {
 baoDungeons.autosave(5);
 
 // take out extraStatsFlag from pogobject
+function getPower() {
+    return baoDungeons.blessings.power;
+}
+
+function getTime() {
+    return baoDungeons.blessings.time;
+}
+
+function getTruePower() {
+    if (getTime() === 0) return;
+    return getPower() + (getTime() / 2);
+}
+
+// drag priorities
+function getPlayerClass() {
+    if (!getInDungeon()) return;
+    let tabInfo = TabList.getNames();
+    for (let i = 0; i < tabInfo.length; i++) {
+        let tabName = tabInfo[i].removeFormatting();
+        // console.log(tabName)
+        let playerRegex = /\[\d+\] (\w+)\s?(\S+)? \(([^)]+) .+\)/;
+        let tabLineMatch = tabName.match(playerRegex);
+        if (tabLineMatch && tabLineMatch[1].includes(Player.getName())) {
+            return tabLineMatch[3].trim();
+        }
+    }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // MELODY DETECTOR 
@@ -90,18 +116,19 @@ register('gameLoad', () => {
 ////////////////////////////////////////////////////////////////////////////////
 // Secrets - Per Run - Counter for Average Secrets Per Session
 ////////////////////////////////////////////////////////////////////////////////
+let extraStatsFlag = false;
 register('chat', (event) => {
     if (!getInDungeon()) return;
-    if (baoDungeons.extraStatsFlag) return;
+    if (extraStatsFlag) return;
 
     baoDungeons.numRunStats += 1;
     setTimeout(() => {
         ChatLib.command('showextrastats');
-        baoDungeons.extraStatsFlag = true;
+        extraStatsFlag = true;
     }, 1000);
     baoDungeons.save();
 
-    debug(`numRunStats: ${baoDungeons.numRunStats} | extraStatsFlag: ${baoDungeons.extraStatsFlag}`);
+    debug(`numRunStats: ${baoDungeons.numRunStats} | extraStatsFlag: ${extraStatsFlag}`);
 }).setCriteria('> EXTRA STATS <').setContains();
 
 register('chat', (playerDeaths, event) => {
@@ -132,21 +159,24 @@ register('chat', (cataType, floor, event) => {
 }).setCriteria('${cataType} Catacombs - Floor ${floor} Stats').setContains();
 
 register('chat', (leader, catacombType, floorNum, event) => {
-    if (!getInDungeon()) return;
+    // ChatLib.chat('criteria received.')
     baoDungeons.deathStats = 0;
     baoDungeons.secretStats = 0;
-    baoDungeons.extraStatsFlag = false;
+    extraStatsFlag = false;
     baoDungeons.powerLvl = 0;
+    baoDungeons.save();
+}).setCriteria('${leader} entered ${catacombType} Catacombs, Floor ${floorNum}!').setContains();
 
+register('chat', (event) => {
+    if (!getInSkyblock() || !World.isLoaded()) return;
     baoDungeons.blessings.wisdom = 0;
     baoDungeons.blessings.power = 0;
     baoDungeons.blessings.life = 0;
     baoDungeons.blessings.stone = 0;
     baoDungeons.blessings.time = 0;
-    baoDungeons.blessings.text = '';
 
     baoDungeons.save();
-}).setCriteria('${leader} entered ${catacombType} Catacombs, Floor ${floorNum}!').setContains();
+}).setCriteria(/.+ is now ready!/);
 
 // reset secret counter command
 register('command', () => {
@@ -193,8 +223,7 @@ register('chat', (lvl1, lvl2, event) => {
     ChatLib.chat(`DUNGEON LEVEL UP The Catacombs ${lvl1}➜${lvl2}`);
 }).setCriteria(' DUNGEON LEVEL UP The Catacombs ${lvl1}➜${lvl2}');
 
-function getTabDungeonBuffs() {
-    let blessingsList = TabList.getFooter().removeFormatting().split('\n');
+function getTabDungeonBuffs(blessingsList) {
     let dungeonBuffsIdx = blessingsList.indexOf('Dungeon Buffs');
     return blessingsList.slice(dungeonBuffsIdx + 1, -2);
 }
@@ -206,22 +235,30 @@ function getBlessings(blessings, blessingsObj) {
     let draggableEntries = [];
     blessings.forEach(blessing => {
         // console.log(blessing);
+        // console.log(`input before func romantonumerals: ${blessing}`)
         let powerRegex = /^Blessing of (Wisdom|Power|Life|Stone|Time) ([IVX]+)$/;
         let powerMatch = blessing.match(powerRegex);
         if (powerMatch) {
             let powerType = powerMatch[1];
+            // console.log(`match[2] before func: ${JSON.stringify(powerMatch[2])}`)
             let powerLevel = romanToNumeral(powerMatch[2]);
+            // console.log(`func: getBlessings: ${powerType}: ${powerLevel}`)
             blessingsAvailable.push(powerType);
 
             if (powerType === 'Wisdom') {
+                blessingsObj.wisdom = 0;
                 blessingsObj.wisdom = powerLevel;
             } else if (powerType === 'Life') {
+                blessingsObj.life = 0;
                 blessingsObj.life = powerLevel;
             } else if (powerType === 'Stone') {
+                blessingsObj.stone = 0;
                 blessingsObj.stone = powerLevel;
             } else if (powerType === 'Power') {
+                blessingsObj.power = 0;
                 blessingsObj.power = powerLevel;
             } else if (powerType === 'Time') {
+                blessingsObj.time = 0;
                 blessingsObj.time = powerLevel;
             }
         }
@@ -237,6 +274,7 @@ function getBlessings(blessings, blessingsObj) {
     
     return Object.entries(blessingsObj)
         .filter(([type, level]) => level !== 0 && typesOfBlessings.includes(type.toLowerCase()) && type !== 'draggable' && type !== 'text')
+        .sort((a, b) => b[1] - a[1])
         .map(([type, level]) => `&6&l[&r&lBlessing&6&l] ${type.charAt(0).toUpperCase() + type.slice(1)}: &b&l${level}`)
         .join('\n');
 }
@@ -250,15 +288,21 @@ function isPlayerInvFull() {
 register('step', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (getInDungeon() || getInDHub()) {
-        const { numRunsStats, totalSecretStats } = baoDungeons;
+        let { numRunsStats, totalSecretStats } = baoDungeons;
         baoDungeons.secretOverviewText = `Runs: &b${numRunsStats}&r | Secrets: &b${totalSecretStats}&r | Avg: &b${(totalSecretStats / numRunsStats).toFixed(2)}&r/&brun`
     } 
 
     if (getInDungeon()) {
-        let blessings = [];
-        blessings = getTabDungeonBuffs();
+        let blessings = TabList.getFooter().removeFormatting().split('\n');
         // console.log(blessings);
-        baoDungeons.blessings.text = getBlessings(blessings, baoDungeons.blessings);
+        // console.log('');
+        let hasBlessings = blessings.includes('Dungeon Buffs');
+        if (hasBlessings) {
+            // console.log(`hasBlessings: ${hasBlessings}`)
+            blessings = getTabDungeonBuffs(blessings);
+            // console.log(`redefined blessings:\n${blessings}`)
+            baoDungeons.blessings.text = getBlessings(blessings, baoDungeons.blessings);
+        }
 
         if (Settings.fullInventoryAlert && isPlayerInvFull()) {
             showAlert('&4&lFull Inv');
@@ -293,9 +337,23 @@ register('renderOverlay', () => {
     
     renderGuiPosition(movesecretcounter, baoDungeons.secretCounter, secretCounterDraggable);
     renderGuiPosition(moveblessingscounter, baoDungeons.blessings, baoDungeons.blessings.draggable)
-    baoDungeons.save();
 })
 
+register('chat', (name, message, event) => {
+    if (!getInSkyblock() || !World.isLoaded() || !getInDungeon()) return;
+    if (getPlayerClass() !== 'Healer') return;
+    if (message.toLowerCase().includes('wish')) {
+        showAlert('&f&lWISH!');
+        dungeonAudio.playDefaultSound();
+    }
+}).setCriteria('Party > ${name}: ${message}');
+register('command', () => {
+    ChatLib.chat(`Wisdom: ${baoDungeons.blessings.wisdom}`)
+    ChatLib.chat(`Life: ${baoDungeons.blessings.life}`)
+    ChatLib.chat(`Power: ${baoDungeons.blessings.power}`)
+    ChatLib.chat(`Stone: ${baoDungeons.blessings.stone}`)
+    ChatLib.chat(`Time: ${baoDungeons.blessings.time}`)
+}).setName('currbless');
 // dungeon routes saver
 // settings to start at p3 for 1/2/3/4/devs
 // starts recording line
@@ -313,3 +371,51 @@ register('renderOverlay', () => {
 // drawskullbox
 // bloodcamp timer
 
+// drag prio
+// archer team w/ tank -- pbrgo
+// bers team w/ healer -- ogrbp
+// difficulty of dragons from highest diff -> lowest diff :: blue > red > green > orange
+// p1/p5 remove armorstand and falling blocks
+
+
+// join dungeon commands
+const wordToNumber = {
+    '1': 'one', 
+    '2': 'two', 
+    '3': 'three', 
+    '4': 'four', 
+    '5': 'five', 
+    '6': 'six', 
+    '7': 'seven'
+}
+register('chat', (name, cataType, floorNum, event) => {
+    let floorLevel = wordToNumber[floorNum];
+    if (cataType.toLowerCase() === 'f') {
+        ChatLib.command(`joininstance catacombs_floor_${floorLevel}`)
+    }
+    if (cataType.toLowerCase() === 'm') {
+        ChatLib.command(`joininstance mastermode_floor_${floorLevel}`)
+    }
+}).setCriteria('Party > ${name}: #${cataType}${floorNum}');
+
+// healer specific pings
+register('chat', (event) => {
+    if (!getInSkyblock() || !World.isLoaded() || !getInDungeon()) return;
+    if (getPlayerClass() === 'Healer') {
+        showAlert(`&f&lWISH`);
+        dungeonAudio.playDefaultSound();
+    }
+}).setCriteria('⚠ Maxor is enraged! ⚠').setContains();
+
+register('chat', (event) => {
+    if (!getInSkyblock() || !World.isLoaded() || !getInDungeon()) return;
+    if (getPlayerClass() === 'Healer') {
+        showAlert(`&f&lWISH`);
+        dungeonAudio.playDefaultSound();
+    }
+}).setCriteria("[BOSS] Goldor: You can't damage me, you can barely slow me down!");
+
+// bers specific pings for m7
+// mage specific pings for m7
+// archer specific pings for m7
+// tank specific pings for m7

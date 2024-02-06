@@ -34,7 +34,7 @@ export const baoDragons = new PogObject("bao-dev", {
     "spawned": false,
     "eyesPlaced": 0,
     "crystalsBroken": 0, 
-    "supWeight": 0, 
+    // "supWeight": 0, 
     "counter": {
         "old": 0, 
         "protector": 0, 

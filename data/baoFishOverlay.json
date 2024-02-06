@@ -1,7 +1,7 @@
 {
     "bobber": {
-        "count": 1,
-        "text": "&rBobbers: &b1",
+        "count": 0,
+        "text": "&rBobbers: &b0",
         "x": 3,
         "y": 13
     },
@@ -61,7 +61,7 @@
         "y": 63.5
     },
     "lobbyDay": {
-        "text": "Day: &b27.56",
+        "text": "Day: &b25.00",
         "x": 3,
         "y": 34
     }

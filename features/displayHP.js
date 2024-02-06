@@ -25,24 +25,33 @@ export const baoDisplayHP = new PogObject("bao-dev", {
 }, '/data/baoDisplayHP.json');
 baoDisplayHP.autosave(5);
 
+const mobSettings = [
+    { condition: Settings.vanq_hp, mob: 'Vanquisher' },
+    { condition: Settings.rein_hp, mob: 'Reindrake' },
+    { condition: Settings.yeti_hp, mob: 'Yeti' },
+    { condition: Settings.gwshark_hp, mob: 'Great White Shark' },
+    { condition: Settings.carrotking_hp, mob: 'Carrot King' },
+    { condition: Settings.waterhydra_hp, mob: 'Water Hydra' },
+    { condition: Settings.sea_emp_hp, mob: 'Sea Emperor' },
+    { condition: Settings.reaper_hp, mob: 'Grim Reaper' },
+    { condition: Settings.phantom_fisher_hp, mob: 'Phantom Fisher' },
+    { condition: Settings.rein_hp, mob: 'Reindrake' },
+];
+
+
+////////////////////////////////////////////////////////////////////////////////
+// FUNCTIONS
+////////////////////////////////////////////////////////////////////////////////
+function distCheck(entity, player, maxDistance) {
+    return entity.distanceTo(player) < maxDistance;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP LIST OF TOGGLED MOBS FOR HP
 ////////////////////////////////////////////////////////////////////////////////
 register('tick', () => {
     if (Settings.master_displayHP) {
         baoDisplayHP.specifiedMobs = []; // init empty list to remove duplicates
-        const mobSettings = [
-            { condition: Settings.vanq_hp, mob: 'Vanquisher' },
-            { condition: Settings.rein_hp, mob: 'Reindrake' },
-            { condition: Settings.yeti_hp, mob: 'Yeti' },
-            { condition: Settings.gwshark_hp, mob: 'Great White Shark' },
-            { condition: Settings.carrotking_hp, mob: 'Carrot King' },
-            { condition: Settings.waterhydra_hp, mob: 'Water Hydra' },
-            { condition: Settings.sea_emp_hp, mob: 'Sea Emperor' },
-            { condition: Settings.reaper_hp, mob: 'Grim Reaper' },
-            { condition: Settings.phantom_fisher_hp, mob: 'Phantom Fisher' },
-            { condition: Settings.rein_hp, mob: 'Reindrake' },
-        ];
     
         if (Settings.toggle_debug) {
             mobSettings.push(
@@ -66,10 +75,6 @@ register('tick', () => {
     }
 });
 
-
-function distCheck(entity, player, maxDistance) {
-    return entity.distanceTo(player) < maxDistance;
-}
 
 register('step', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
@@ -110,5 +115,4 @@ register('renderOverlay', () => {
         Renderer.drawStringWithShadow(baoDisplayHP.displayText, baoDisplayHP.x, baoDisplayHP.y);
     }
     renderGuiPosition(moveHpDisplay, baoDisplayHP, baoDisplayHP.draggableText);
-    baoDisplayHP.save();
 });
