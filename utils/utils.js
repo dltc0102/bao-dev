@@ -30,8 +30,13 @@ export function removeFromArray(array, value) {
 }
 
 // pogObject
-export const baoUtils = new PogObject("bao-dev", {
-    "firstTime": true, 
+export const baoFirstTime = new PogObject("bao-dev", {
+    "firstTime": true,
+}, './data/baoFirstTime.json');
+baoFirstTime.autosave(5);
+
+// export const baoUtils = new PogObject("bao-dev", {
+export const baoUtils = {
     "modPrefix": '&6[&3Bao&6]&r', 
     "screenH": Renderer.screen.getHeight(), 
     "screenW": Renderer.screen.getWidth(), 
@@ -39,7 +44,8 @@ export const baoUtils = new PogObject("bao-dev", {
     "thinSep": '------------------',
     "baseTextH": 10,
     "currentTimestamp": 0,
-}, './data/baoUtils.json');
+};
+// }, './data/baoUtils.json');
 
 // dungeon classes
 export const importantItems = ['Hyperion', 'Dark Claymore', 'Terminator', "Giant's Sword", 'Infinileap', 'Diamond Pickaxe', 'Stonk', 'Ragnarock Axe', 'Spring Boots', 'Abiphone'];
@@ -53,6 +59,30 @@ export function determinePlayerRankColor(rank) {
     if (rank === '[MVP++]') rankColor = '&6';
     return rankColor;
 }
+
+// render triggers unreg/reg 
+const checkingRenderTrigs = []; 
+
+/**
+ * Registers and unregisters the trigger depending on the result of the checkFunc. Use with render triggers to reduce lag when they are not being used.
+ * @param {() => void} trigger 
+ * @param {Function} checkFunc 
+ * @returns 
+ */
+export const renderWhen = (trigger, checkFunc) => checkingRenderTrigs.push([trigger.unregister(), checkFunc])
+
+register('tick', () => {
+    for (let i = 0; i < checkingRenderTrigs.length; i++) {
+        let [trigger, func] = checkingRenderTrigs[i];
+        func() ? trigger.register() : trigger.unregister();
+    }
+});
+
+
+
+
+
+
 
 // SKYBLOCK TIME
 function convertEpochTime(epochTimeInSeconds) {

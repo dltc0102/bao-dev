@@ -949,3 +949,8 @@ export function romanToNumeral(romanStr) {
   
     return result;
 }
+
+export function drawDragonHitBox(x, y, z, colorStr) {
+    let colorCode = colorToRgb(colorStr);
+    RenderLib.drawEspBox(x, y, z, 16, 8, colorCode.red, colorCode.green, colorCode.blue, 1, false);
+}

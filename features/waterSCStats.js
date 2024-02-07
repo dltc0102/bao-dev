@@ -12,7 +12,8 @@ import { getInJerry, getInHub, getInCH, getInDesert } from '../utils/functions.j
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP CONSTS
 ////////////////////////////////////////////////////////////////////////////////
-export const baoWaterSCStats = new PogObject("bao-dev", {
+// export const baoWaterSCStats = new PogObject("bao-dev", {
+export const baoWaterSCStats = {
     "HUBDisplay": '',
     "WIDisplay": '',
 
@@ -122,8 +123,9 @@ export const baoWaterSCStats = new PogObject("bao-dev", {
 
     // FISHING FESTIVAL AVGS
     "catchesSinceGWShark": 0,
-}, '/data/baoWaterSCStats.json');
-baoWaterSCStats.autosave(5);
+};
+// }, '/data/baoWaterSCStats.json');
+// baoWaterSCStats.autosave(5);
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -142,7 +144,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria('A Squid appeared.');
 
 // Sea Walker
@@ -157,7 +159,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria('You caught a Sea Walker.');
 
 // Night Squid
@@ -172,7 +174,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria('Pitch darkness reveals a Night Squid.');
 
 // Sea Guardian
@@ -187,7 +189,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria('You stumbled upon a Sea Guardian.');
 
 // guardian pet drop
@@ -198,7 +200,7 @@ register('chat', (event) => {
     if (message.includes('&9Guardian')) baoWaterSCStats.rareGD += 1;
     if (message.includes('&5Guardian')) baoWaterSCStats.epicGD += 1;
     if (message.includes('&6Guardian')) baoWaterSCStats.legGD += 1;
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria('GREAT CATCH! You found a [Lvl 1] Guardian.')
 
 
@@ -214,7 +216,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("It looks like you've disrupted the Sea Witch's brewing session. Watch out, she's furious!");
 
 // Sea Archer
@@ -229,7 +231,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria('You reeled in a Sea Archer.');
 
 // Rider of the Deep
@@ -244,7 +246,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria('The Rider of the Deep has emerged.');
 
 // Catfish
@@ -259,7 +261,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria('Huh? A Catfish!');
 
 // Carrot King
@@ -275,14 +277,14 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("Is this even a fish? It's the Carrot King!");
 
 // lucky Clovert Core [Carrot King]
 register('chat', (mf, event) => {
     baoWaterSCStats.carrotKingSinceLastClover = 0;
     baoWaterSCStats.clover += 1;
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("RARE DROP! Lucky Clover Core (+${mf}% ✯ Magic Find)")
 
 
@@ -298,7 +300,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria('Gross! A Sea Leech!');
  
 // Guardian Defender
@@ -313,7 +315,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("You've discovered a Guardian Defender of the sea.");
  
 // Deep Sea Protector
@@ -328,7 +330,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria('You have awoken the Deep Sea Protector, prepare for a battle!');
  
 // Water Hydra
@@ -343,7 +345,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria('The Water Hydra has come to test your strength.');
  
 // Sea Emperor
@@ -358,7 +360,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria('Sea Emperor arises from the depths.');
 
 // Flying Fish Pet [Sea Emperor]
@@ -369,7 +371,7 @@ register('chat', (mf, event) => {
     if (message.includes('&9Flying Fish')) baoWaterSCStats.rareFF += 1;
     if (message.includes('&5Flying Fish')) baoWaterSCStats.epicFF += 1;
     if (message.includes('&6Flying Fish')) baoWaterSCStats.legFF += 1;
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria('PET DROP! Flying Fish (+${mf}% ✯ Magic Find)')
 
 
@@ -393,7 +395,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("Your Chumcap Bucket trembles, it's an Agarimoo.");
 
 
@@ -409,7 +411,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceCarrotKing += 1;
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("An Oasis Rabbit appears from the water.");
 
 // Oasis Sheep
@@ -421,7 +423,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceCarrotKing += 1;
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("An Oasis Sheep appears from the water.");
 
 
@@ -438,7 +440,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
     baoWaterSCStats.abyssalMinerCatches += 1;
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("A Water Worm surfaces!");
 
 // Poisoned Water Worm
@@ -451,7 +453,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
     baoWaterSCStats.abyssalMinerCatches += 1;
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("A Poisoned Water Worm surfaces!");
 
 // Abyssal Miner
@@ -463,7 +465,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceSeaEmperor += 1;
     baoWaterSCStats.catchesSinceWaterHydra += 1;
     baoWaterSCStats.abyssalMinerCatches = 0;
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("An Abyssal Miner breaks out of the water!");
 
 
@@ -485,7 +487,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("Phew! It's only a Scarecrow.");
 
 // Nightmare
@@ -503,7 +505,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("You hear trotting from beneath the waves, you caught a Nightmare.");
 
 // Werewolf
@@ -521,7 +523,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("It must be a full moon, a Werewolf appears.");
 
 // Phantom Fisher
@@ -539,7 +541,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("The spirit of a long lost Phantom Fisherman has come to haunt you.");
 
 // Grim Reaper
@@ -557,7 +559,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("This can't be! The manifestation of death himself!");
 
 
@@ -575,7 +577,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceWaterHydra += 1;
     baoWaterSCStats.catchesSinceYeti += 1;
     baoWaterSCStats.catchesSinceReindrake += 1;
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("Frozen Steve fell into the pond long ago, never to resurface...until now!");
 
 // Frosty the Snowman
@@ -589,7 +591,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceWaterHydra += 1;
     baoWaterSCStats.catchesSinceYeti += 1;
     baoWaterSCStats.catchesSinceReindrake += 1;
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("It's a snowman! He looks harmless.").setContains();
 
 // Grinch
@@ -603,7 +605,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceWaterHydra += 1;
     baoWaterSCStats.catchesSinceYeti += 1;
     baoWaterSCStats.catchesSinceReindrake += 1;
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("The Grinch stole Jerry's Gifts...get them back!");
 
 // Yeti
@@ -621,7 +623,7 @@ register('chat', (event) => {
     setTimeout(() => {
         baoWaterSCStats.catchesSinceYeti = 0;
     }, 500);
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("What is this creature!?");
 
 // Baby Yeti Pet [Yeti]
@@ -638,7 +640,7 @@ register('chat', (mf, event) => {
         baoWaterSCStats.yetiSinceLegPet = 0;
         baoWaterSCStats.timeSinceLegPet = 0;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria('PET DROP! Baby Yeti (+${mf}% ✯ Magic Find)')
 
 
@@ -653,7 +655,7 @@ register('chat', (event) => {
     baoWaterSCStats.catchesSinceWaterHydra += 1;
     baoWaterSCStats.catchesSinceYeti += 1;
     baoWaterSCStats.catchesSinceReindrake += 1;
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("You found a forgotten Nutcracker laying beneath the ice.");
 
 // Reindrake
@@ -671,7 +673,7 @@ register('chat', (event) => {
     setTimeout(() => {
         baoWaterSCStats.catchesSinceReindrake = 0;
     }, 500);
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("A Reindrake forms from the depths.");
 
 register('chat', (event) => {
@@ -683,7 +685,7 @@ register('chat', (event) => {
 register('chat', (event) => {
     if (!getInJerry()) return;
     baoWaterSCStats.iceRods += 1;
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria('You sold Ice Rod x1 for 20,000 Coins!');
 
 ////////////////////////////////////////////////////////////////////////////
@@ -703,7 +705,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("A tiny fin emerges from the water, you've caught a Nurse Shark.");
 
 // Blue Shark
@@ -720,7 +722,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("You spot a fin as blue as the water it came from, it's a Blue Shark.");
 
 // Tiger Shark
@@ -737,7 +739,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("A striped beast bounds from the depths, the wild Tiger Shark!");
 
 // Great White Shark
@@ -754,7 +756,7 @@ register('chat', (event) => {
         baoWaterSCStats.catchesSinceReindrake += 1;
         baoWaterSCStats.totalWinterWaterSCCatches += 1;
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setCriteria("Hide no longer, a Great White Shark has tracked your scent and thirsts for your blood!");
 
 // reg steps 
@@ -823,7 +825,7 @@ register('step', () => {
         const HubDisplayRaw = [generalTitle, showHubKills, showHubDrops, showMobSinceTrackers, showHubTrackers, showHubAverages].join('\n').replace(/\n{6,}/g, '\n');
 
         baoWaterSCStats.HUBDisplay = filterSeparators(HubDisplayRaw, hubSepThin)
-        baoWaterSCStats.save();
+        // baoWaterSCStats.save();
     }
     if (getInJerry()) {
         const winterTitle = Settings.kills_fishingcounter || Settings.mob_since_fishingcounter || Settings.drops_fishingcounter || Settings.tracker_fishingcounter || Settings.avgs_fishingcounter || Settings.elapsed_sincefishingcounter || Settings.specials_fishingcounter ? `&8|&1|&9|&3|&b| &rWinter Island &b|&3|&9|&1|&8|\n${winterSepThick}` : '';
@@ -884,7 +886,7 @@ register('step', () => {
         const WIDisplayRaw = [winterTitle, showWIKills, showWITrackers, showMobSinceTrackers, showWIDrops, showWIAverages, timeSincePetLine, showIceRodCounter].join('\n').replace(/\n{6,}/g, '\n');
 
         baoWaterSCStats.WIDisplay = filterSeparators(WIDisplayRaw, winterSepThin);
-        baoWaterSCStats.save();
+        // baoWaterSCStats.save();
     }
-    baoWaterSCStats.save();
+    // baoWaterSCStats.save();
 }).setFps(1);

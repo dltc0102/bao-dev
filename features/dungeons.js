@@ -3,7 +3,7 @@ import Audio from '../utils/audio.js';
 import PogObject from 'PogData';
 
 import { sendMessage } from '../utils/party.js';
-import { baoUtils, dungeonClasses } from '../utils/utils.js';
+import { baoUtils, dungeonClasses, renderWhen } from '../utils/utils.js';
 import { debug, showAlert } from '../utils/utils.js';
 import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'; // gui
 import { constrainX, constrainY } from '../utils/functions.js' // padding
@@ -25,7 +25,8 @@ createGuiCommand(moveblessingscounter, 'moveblessingscounter', 'mbless');
 const typesOfBlessings = ['wisdom', 'power', 'life', 'stone', 'time'];
 
 // pogObject
-export const baoDungeons = new PogObject("bao-dev", {
+// export const baoDungeons = new PogObject("bao-dev", {?
+export const baoDungeons = {
     "sentMelody": false, 
     "deathStats": 0, 
     "secretStats": 0, 
@@ -47,8 +48,9 @@ export const baoDungeons = new PogObject("bao-dev", {
         "x": 400, 
         "y": 400,
     }, 
-}, '/data/baoDungeons.json');
-baoDungeons.autosave(5);
+};
+// }, '/data/baoDungeons.json');
+// baoDungeons.autosave(5);
 
 // take out extraStatsFlag from pogobject
 function getPower() {
@@ -94,21 +96,21 @@ register('guiOpened', () => {
             debug(`sentMelody:  ${baoDungeons.sentMelody}`);
         }
     }, 1);
-    baoDungeons.save();
+    // baoDungeons.save();
 })
 
 register('chat', (playerName, curr, total, event) => {
     if (!getInDungeon()) return;
     if (playerName !== Player.getName()) return;
     baoDungeons.sentMelody = false;
-    baoDungeons.save();
+    // baoDungeons.save();
     debug(`baoDungeons.sentMelody:  ${baoDungeons.sentMelody}`);
 }).setCriteria('${playerName} activated a terminal! (${curr}/${total})');
 
 // gameload
 register('gameLoad', () => {
     baoDungeons.sentMelody = false;
-    baoDungeons.save();
+    // baoDungeons.save();
     debug(`baoDungeons.sentMelody:  ${baoDungeons.sentMelody}`);
 });
 
@@ -126,7 +128,7 @@ register('chat', (event) => {
         ChatLib.command('showextrastats');
         extraStatsFlag = true;
     }, 1000);
-    baoDungeons.save();
+    // baoDungeons.save();
 
     debug(`numRunStats: ${baoDungeons.numRunStats} | extraStatsFlag: ${extraStatsFlag}`);
 }).setCriteria('> EXTRA STATS <').setContains();
@@ -134,7 +136,7 @@ register('chat', (event) => {
 register('chat', (playerDeaths, event) => {
     if (!getInDungeon()) return;
     baoDungeons.deathStats += Number(playerDeaths);
-    baoDungeons.save();
+    // baoDungeons.save();
 
     debug(`deathStats: ${baoDungeons.deathStats} | ${typeof baoDungeons.deathStats}`);
 }).setCriteria('Deaths: ${playerDeaths}').setContains();
@@ -143,7 +145,7 @@ register('chat', (secretCount, event) => {
     if (!getInDungeon()) return;
     baoDungeons.secretStats += Number(secretCount);
     baoDungeons.totalSecretStats += Number(secretCount);
-    baoDungeons.save();
+    // baoDungeons.save();
     
     debug(typeof Number(secretCount));
     debug(`secretStats: ${baoDungeons.secretStats} | ${typeof baoDungeons.secretStats}`);
@@ -155,7 +157,7 @@ register('chat', (cataType, floor, event) => {
     setTimeout(() => {
         ChatLib.chat(`${baoUtils.modPrefix} &3${Player.getName()} &7Secrets: &b${baoDungeons.secretStats}&7, Deaths: &b${baoDungeons.deathStats}`)
     }, 1000)
-    baoDungeons.save();
+    // baoDungeons.save();
 }).setCriteria('${cataType} Catacombs - Floor ${floor} Stats').setContains();
 
 register('chat', (leader, catacombType, floorNum, event) => {
@@ -164,7 +166,7 @@ register('chat', (leader, catacombType, floorNum, event) => {
     baoDungeons.secretStats = 0;
     extraStatsFlag = false;
     baoDungeons.powerLvl = 0;
-    baoDungeons.save();
+    // baoDungeons.save();
 }).setCriteria('${leader} entered ${catacombType} Catacombs, Floor ${floorNum}!').setContains();
 
 register('chat', (event) => {
@@ -175,7 +177,7 @@ register('chat', (event) => {
     baoDungeons.blessings.stone = 0;
     baoDungeons.blessings.time = 0;
 
-    baoDungeons.save();
+    // baoDungeons.save();
 }).setCriteria(/.+ is now ready!/);
 
 // reset secret counter command
@@ -183,7 +185,7 @@ register('command', () => {
     baoDungeons.deathStats = 0;
     baoDungeons.totalSecretStats = 0;
     baoDungeons.numRunsStats = 0;
-    baoDungeons.save();
+    // baoDungeons.save();
 }).setName('resetsecretcounter');
 
 // party finder shortener
@@ -309,7 +311,7 @@ register('step', () => {
             dungeonAudio.playDefaultSound();
         }
     }
-    baoDungeons.save();
+    // baoDungeons.save();
 }).setFps(1);
 
 register('dragged', (dx, dy, x, y) => {
@@ -322,31 +324,23 @@ register('dragged', (dx, dy, x, y) => {
         baoDungeons.blessings.x = constrainX(x, 3, baoDungeons.blessings.draggable);
         baoDungeons.blessings.y = constrainY(y, 3, baoDungeons.blessings.draggable);
     }
-    baoDungeons.save();
+    // baoDungeons.save();
 });
 
-register('renderOverlay', () => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
+renderWhen(register('renderOverlay', () => {
+    Renderer.drawStringWithShadow(baoDungeons.secretOverviewText, baoDungeons.secretCounter.x, baoDungeons.secretCounter.y);
+}), () => Settings.secretsPerSession && (getInDungeon() || getInDHub()) && getInSkyblock() && World.isLoaded());
 
-    if (Settings.secretsPerSession && (getInDungeon() || getInDHub())) {
-        Renderer.drawStringWithShadow(baoDungeons.secretOverviewText, baoDungeons.secretCounter.x, baoDungeons.secretCounter.y);
-    }
-    if (getInDungeon()) {
-        Renderer.drawStringWithShadow(baoDungeons.blessings.text, baoDungeons.blessings.x, baoDungeons.blessings.y);
-    }
-    
+renderWhen(register('renderOverlay', () => {
+    Renderer.drawStringWithShadow(baoDungeons.blessings.text, baoDungeons.blessings.x, baoDungeons.blessings.y);
+}), () => Settings.showBlessingsDisplay && getInDungeon() && getInSkyblock() && World.isLoaded());
+
+renderWhen(register('renderOverlay', () => {
     renderGuiPosition(movesecretcounter, baoDungeons.secretCounter, secretCounterDraggable);
-    renderGuiPosition(moveblessingscounter, baoDungeons.blessings, baoDungeons.blessings.draggable)
-})
+    renderGuiPosition(moveblessingscounter, baoDungeons.blessings, baoDungeons.blessings.draggable);
+}), () => getInSkyblock() && World.isLoaded());
 
-register('chat', (name, message, event) => {
-    if (!getInSkyblock() || !World.isLoaded() || !getInDungeon()) return;
-    if (getPlayerClass() !== 'Healer') return;
-    if (message.toLowerCase().includes('wish')) {
-        showAlert('&f&lWISH!');
-        dungeonAudio.playDefaultSound();
-    }
-}).setCriteria('Party > ${name}: ${message}');
+
 register('command', () => {
     ChatLib.chat(`Wisdom: ${baoDungeons.blessings.wisdom}`)
     ChatLib.chat(`Life: ${baoDungeons.blessings.life}`)
@@ -354,6 +348,7 @@ register('command', () => {
     ChatLib.chat(`Stone: ${baoDungeons.blessings.stone}`)
     ChatLib.chat(`Time: ${baoDungeons.blessings.time}`)
 }).setName('currbless');
+
 // dungeon routes saver
 // settings to start at p3 for 1/2/3/4/devs
 // starts recording line

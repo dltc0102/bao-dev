@@ -6,8 +6,8 @@
         "y": 13
     },
     "player": {
-        "count": 16,
-        "text": "&rPlayers: &b&l16",
+        "count": 3,
+        "text": "&rPlayers: &b3",
         "x": 3,
         "y": 24
     },
@@ -61,7 +61,7 @@
         "y": 63.5
     },
     "lobbyDay": {
-        "text": "Day: &b25.00",
+        "text": "Day: &b0.89",
         "x": 3,
         "y": 34
     }

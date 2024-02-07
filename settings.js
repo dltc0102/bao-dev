@@ -1120,15 +1120,6 @@ class Settings {
     })
     dye_pings = false;
 
-    @SwitchProperty({
-        name: "Announce Dye Pings in Guild", 
-        description: "Announces Dye pings in guild",
-        category: "Misc",
-        subcategory: "Dyes"
-    })
-    guild_announce_dye_pings = false;
-
-
 
     // DUNGEONS
     @SwitchProperty({
@@ -1162,6 +1153,13 @@ class Settings {
     openSecretCounterGUI() {
         ChatLib.command('movesecretcounter', true)
     }
+
+    @SwitchProperty({
+        name: "Display Dungeon Blessings", 
+        description: "Shows blessings.",
+        category: "Dungeons", 
+    })
+    showBlessingsDisplay = false;
 
     @SwitchProperty({
         name: "Better Dungeon Messages", 

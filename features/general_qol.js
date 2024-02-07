@@ -12,8 +12,8 @@ import { getInSkyblock, getCurrArea } from '../utils/functions.js'; // sb, area
 // SETUP CONSTS
 ////////////////////////////////////////////////////////////////////////////////
 const generalAudio = new Audio();
-const paiPattern = /\#pai/;
-export const baoGeneral = new PogObject("bao-dev", {
+// export const baoGeneral = new PogObject("bao-dev", {
+export const baoGeneral = {
     "stashes": {
         "numMats": 0, 
         "remMats": 0, 
@@ -25,7 +25,9 @@ export const baoGeneral = new PogObject("bao-dev", {
         "reminderMatsRem": 0,
         "numTypesRem": 0, 
     }, 
-})
+}
+// }, '/data/baoGeneral.json')
+// baoGeneral.autosave(5);
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -179,11 +181,13 @@ register('chat', (numItems, itemOrItems, timeS, event) => {
 register('chat', (itemName, event) => {
     if (Settings.betterStashMessages) cancel(event);
     baoGeneral.stashes.pickupMat = itemName;
+    // baoGeneral.save();
 }).setCriteria('From stash: ${itemName}');
 
 register('chat', (numItems, event) => {
     if (Settings.betterStashMessages) cancel(event);
     baoGeneral.stashes.numMats = Number(numItems);
+    // baoGeneral.save();
 }).setCriteria('You picked up ${numItems} items from your material stash!');
 
 register('chat', (matsRem, numTypes, event) => {
@@ -192,6 +196,7 @@ register('chat', (matsRem, numTypes, event) => {
     baoGeneral.stashes.sackTypes = Number(numTypes);
 
     if (Settings.betterStashMessages) ChatLib.chat(`&eFrom Sacks: &b${baoGeneral.stashes.pickupMat} x${baoGeneral.stashes.numMats} &7|| &cR: &b${baoGeneral.stashes.remMats} &7|| &aTypes: ${baoGeneral.stashes.sackTypes}`)
+    // baoGeneral.save();
 }).setCriteria('You still have ${matsRem} materials totalling ${numTypes} types of materials in there!');
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -201,18 +206,21 @@ register('chat', (numMatsRem, event) => {
     if (!Settings.betterStashMessages) return;
     if (Settings.hideClickStashMessages) cancel(event);
     baoGeneral.clickStash.reminderMatsRem = parseInt(numMatsRem.replace(',', ''), 10);
+    // baoGeneral.save();
 }).setCriteria('You have ${numMatsRem} materials stashed away!').setContains();
 
 register('chat', (numTypes, event) => {
     if (!Settings.betterStashMessages) return;
     if (Settings.hideClickStashMessages) cancel(event);
     baoGeneral.clickStash.numTypesRem = Number(numTypes);
+    // baoGeneral.save();
 }).setCriteria('(This totals ${numTypes} type of material stashed!)').setContains();
 
 register('chat', (numTypes, event) => {
     if (!Settings.betterStashMessages) return;
     if (Settings.hideClickStashMessages) cancel(event);
     baoGeneral.clickStash.numTypesRem = Number(numTypes);
+    // baoGeneral.save();
 }).setCriteria('(This totals ${numTypes} types of materials stashed!)').setContains();
 
 let numTillReminder = 10;
@@ -227,6 +235,7 @@ register('chat', (event) => {
         cancel(event);
         numTillReminder -= 1;
     }
+    // baoGeneral.save();
 }).setCriteria('>>> CLICK HERE to pick them up! <<<').setContains();
 
 ////////////////////////////////////////////////////////////////////////////////

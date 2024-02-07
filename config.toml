@@ -20,6 +20,7 @@
 	party_finder_message_shortener = true
 	melody_terminal_alert = true
 	better_dungeon_messages = true
+	display_dungeon_blessings = false
 	bonzo_mask_cd_timer = true
 
 	[dungeons.secrets]
@@ -32,8 +33,8 @@
 
 	["dragons/end".counter]
 		"drag_counter:_trackers" = true
-		dragon_counter = false
-		dragon_damage_display = false
+		dragon_counter = true
+		dragon_damage_display = true
 		"drag_counter:_spawns" = true
 
 	["dragons/end".qol]

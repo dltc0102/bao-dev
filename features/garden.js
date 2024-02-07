@@ -5,7 +5,7 @@ import PogObject from 'PogData';
 import { colorPlot, drawArrow, drawOutlineBeacon, drawScaledString, getCell, petDropPing, playSound, startSprayTimer, updatePlots } from '../utils/functions.js'
 import { sendMessage } from '../utils/party.js'
 import { getActivePet } from '../utils/pet.js'
-import { showAlert } from '../utils/utils.js'
+import { showAlert, renderWhen } from '../utils/utils.js'
 import { baoUtils } from '../utils/utils.js';
 import { updateCDText, setTimer } from '../utils/functions.js'
 import { getInSkyblock } from '../utils/functions.js'; // sb, area
@@ -35,8 +35,12 @@ const matAttracts =  {
 
 const allVinylNames = ["Pretty Fly", "Cricket Choir", "Earthworm Ensemble", "Slow and Groovy", "Not Just a Pest", "Cicada Symphony", "DynaMITES", "Rodent Revolution", "Wings of Harmony", "Buzzin' Beats"];
 
+const paddingText = (text) => {
+    return baoUtils.screenW - 5 - Renderer.getStringWidth(text);
+}
 
-export const baoGardens = new PogObject("bao-dev", {
+// export const baoGardens = new PogObject("bao-dev", {
+export const baoGardens = {
     "sentDeskReminder": false,
     "arrow": {
         "x": 0, 
@@ -152,8 +156,9 @@ export const baoGardens = new PogObject("bao-dev", {
         "x": 600, // arbituary random number, replaced by padding function 
         "y": 40,
     },
-}, '/data/baoGardens.json');
-baoGardens.autosave(5);
+};
+// }, '/data/baoGardens.json');
+// baoGardens.autosave(5);
 
 
 ////////////////////////////////////////////////////////////////////
@@ -187,6 +192,7 @@ register('chat', (material, event) => {
     if (!getInGarden()) return;
     if (Settings.hideSelSprayMatMsg) cancel(event);
     baoGardens.sprayonatorOverlay.selectedSprayMaterial = material;
+    // baoGardens.save();
 }).setCriteria('SPRAYONATOR! Your selected material is now ${material}!');
 
 
@@ -283,7 +289,7 @@ register('guiRender', () => {
         ChatLib.chat('&6[&3Bao&6] &bDesk Config Saved.')
         baoGardens.playerPlotInfo.configMsg = true;
     }
-    baoGardens.save();
+    // baoGardens.save();
 });
 
 
@@ -308,7 +314,7 @@ register('chat', (exclamation, userPlotName, event) => {
         }, 200)
     };
     gardenAudio.playDefaultSound();
-    baoGardens.save();
+    // baoGardens.save();
 }).setCriteria('${exclamation}! A Pest has appeared in Plot - ${userPlotName}!');
 
 register('chat', (exclamation, numPests, userPlotName, event) => {
@@ -329,7 +335,7 @@ register('chat', (exclamation, numPests, userPlotName, event) => {
         }, 200)
     };
     gardenAudio.playDefaultSound();
-    baoGardens.save();
+    // baoGardens.save();
 }).setCriteria('${exclamation}! ${numPests} Pests have spawned in Plot - ${userPlotName}!');
 
 
@@ -349,7 +355,7 @@ register('chat', (userPlotName, mat, event) => {
     updatePlots(baoGardens.plots, userPlotName, 'sprayDateEnd', new Date());
     if (Settings.gardenPlotMap) startSprayTimer(baoGardens.plots, userPlotName);
     gardenAudio.playProcSound();
-    baoGardens.save();
+    // baoGardens.save();
 }).setCriteria('SPRAYONATOR! You sprayed Plot - ${userPlotName} with ${mat}!');
 
 
@@ -362,7 +368,7 @@ register('chat', (vinylName, event) => {
     if (!allVinylNames.includes(vinylName)) return;
     baoGardens.vinylInfo.isPlaying = false;
     baoGardens.vinylInfo.currentVinyl = '&cNo Vinyl Playing';
-    baoGardens.save();
+    // baoGardens.save();
 }).setCriteria('You are no longer playing ${vinylName}!');
 
 register('chat', (vinylName, event) => {
@@ -372,7 +378,7 @@ register('chat', (vinylName, event) => {
     baoGardens.vinylInfo.isPlaying = true;
     baoGardens.vinylInfo.currentVinyl = vinylName;
     gardenAudio.playDefaultSound();
-    baoGardens.save();
+    // baoGardens.save();
 }).setCriteria('You are now playing ${vinylName}!');
 
 
@@ -386,7 +392,7 @@ register('chat', (event) => {
     gardenAudio.playDrinkSound();
 
     setTimer(baoGardens.harbringer);
-    baoGardens.save();
+    // baoGardens.save();
 }).setCriteria('BUFF! You have gained Harvest Harbinger V! Press TAB or type /effects to view your active effects!');
 
 
@@ -403,7 +409,7 @@ register('chat', (typeOfPestRepellent, event) => {
     gardenAudio.playDrinkSound();
 
     setTimer(baoGardens.pestRepellent);
-    baoGardens.save();
+    // baoGardens.save();
 }).setCriteria('YUM! Pests will now spawn ${typeOfPestRepellent}x less while you break crops for the next 60m!');
 
 
@@ -421,7 +427,7 @@ register('chat', (numPests, ff, duration, event) => {
 
 
     setTimer(baoGardens.pestExchange);
-    baoGardens.save();
+    // baoGardens.save();
 }).setCriteria("[NPC] Phillip: In exchange for ${numPests} Pest, I've given you +${ff}☘ Farming Fortune for ${duration}m!");
 
 
@@ -457,7 +463,7 @@ register('gameLoad', () => {
     } else {
         baoGardens.pestRepellent.timeLeft = 0;
     }
-    baoGardens.save();
+    // baoGardens.save();
 });
 
 ////////////////////////////////////////////////////////////////////
@@ -521,7 +527,7 @@ register('step', () => {
 
         baoGardens.pestExchange.text = baoGardens.pestExchange.used ? `&2Pest Exchange: &r${Math.floor(baoGardens.pestExchange.timeLeft / 60)}m ${Math.floor(baoGardens.pestExchange.timeLeft % 60)}s &6(+${baoGardens.pestExchange.bonusFF === null || isNaN(baoGardens.pestExchange.bonusFF) ? 0 : baoGardens.pestExchange.bonusFF}☘ &7|&6 ${baoGardens.pestExchange.donatedPests === null || isNaN(baoGardens.pestExchange.donatedPests) ? 0 : baoGardens.pestExchange.donatedPests} Pests )` : '';
     }
-    baoGardens.save();
+    // baoGardens.save();
 }).setFps(1);
 
 
@@ -597,76 +603,55 @@ register('step', () => {
         baoGardens.vinylInfo.displayText = baoGardens.vinylInfo.isPlaying ? `Current Vinyl: &a${baoGardens.vinylInfo.currentVinyl}𝅘𝅥𝅮𝅘𝅥𝅮` : `Current Vinyl: &c No Vinyl Playing`;
     }
 
-    baoGardens.save();
+    baoGardens.contestInfo.x = paddingText(contestText);
+    baoGardens.pestRepellent.x = paddingText(baoGardens.pestRepellent.text);
+    baoGardens.pestExchange.x = paddingText(baoGardens.pestExchange.text);
+    baoGardens.harbringer.x = paddingText(baoGardens.harbringer.text);
+    // baoGardens.save();
 }).setFps(5);
 
-// render overlay
-const paddingText = (text) => {
-    return baoUtils.screenW - 5 - Renderer.getStringWidth(text);
-}
-register('renderOverlay', () => {
-    if (!getInGarden()) return;
+// renders
+renderWhen(register('renderOverlay', () => {
+    Renderer.drawStringWithShadow(lookingAtText, baoGardens.playerInfo.x, baoGardens.playerInfo.y);
+}), () => Settings.showPlayerYawPitch && getInGarden() && getInSkyblock() && World.isLoaded());
 
-    // yaw and pitch
-    if (Settings.showPlayerYawPitch) {
-        Renderer.drawStringWithShadow(lookingAtText, baoGardens.playerInfo.x, baoGardens.playerInfo.y) ;
-    }
+renderWhen(register('renderOverlay', () => {
+    Renderer.drawStringWithShadow(contestText, baoGardens.contestInfo.x, baoGardens.contestInfo.y);
+}), () => Settings.gardenContestOverlay && getInGarden() && getInSkyblock() && World.isLoaded());
 
-    // draw contest
-    if (Settings.gardenContestOverlay) {
-        baoGardens.contestInfo.x = paddingText(contestText);
-        Renderer.drawStringWithShadow(contestText, baoGardens.contestInfo.x, baoGardens.contestInfo.y);
-    }
-    
-    // Sprayonator selected material
-    if (Settings.sprayonatorDisplay) {
-        Renderer.drawStringWithShadow(baoGardens.sprayonatorOverlay.displayText, baoGardens.sprayonatorOverlay.x, baoGardens.sprayonatorOverlay.y);
-    }
+renderWhen(register('renderOverlay', () => {
+    Renderer.drawStringWithShadow(baoGardens.sprayonatorOverlay.displayText, baoGardens.sprayonatorOverlay.x, baoGardens.sprayonatorOverlay.y);
+}), () => Settings.sprayonatorDisplay && getInGarden() && getInSkyblock() && World.isLoaded());
 
-    // draws vinyl display
-    if (Settings.vinylDisplay) {
-        Renderer.drawStringWithShadow(baoGardens.vinylInfo.displayText, baoGardens.vinylInfo.x, baoGardens.vinylInfo.y);
-    }
+renderWhen(register('renderOverlay', () => {
+    Renderer.drawStringWithShadow(baoGardens.vinylInfo.displayText, baoGardens.vinylInfo.x, baoGardens.vinylInfo.y);
+}), () => Settings.vinylDisplay && getInGarden() && getInSkyblock() && World.isLoaded());
 
-    // draws plot map and player arrow
-    if (Settings.gardenPlotMap) {
-        drawScaledString(baoGardens.plotMapText, baoGardens.gardenPlotMap.x, baoGardens.gardenPlotMap.y, 2);
-        drawArrow(playerArrowImg, 0.8, Player.getYaw() + 180, baoGardens.arrow.x, baoGardens.arrow.y);
-    }
-    
+renderWhen(register('renderOverlay', () => {
+    drawScaledString(baoGardens.plotMapText, baoGardens.gardenPlotMap.x, baoGardens.gardenPlotMap.y, 2);
+    drawArrow(playerArrowImg, 0.8, Player.getYaw() + 180, baoGardens.arrow.x, baoGardens.arrow.y);
+}), () => Settings.gardenPlotMap && getInGarden() && getInSkyblock() && World.isLoaded());
 
-    // draws harbringer potion timer
-    if (Settings.harvPotionOverlay) {
-        baoGardens.harbringer.x = paddingText(baoGardens.harbringer.text);
-        Renderer.drawStringWithShadow(baoGardens.harbringer.text, baoGardens.harbringer.x, baoGardens.harbringer.y);
-    }
+renderWhen(register('renderOverlay', () => {
+    Renderer.drawStringWithShadow(baoGardens.harbringer.text, baoGardens.harbringer.x, baoGardens.harbringer.y);
+}), () => Settings.harvPotionOverlay && getInGarden() && getInSkyblock() && World.isLoaded());
 
+renderWhen(register('renderOverlay', () => {
+    Renderer.drawStringWithShadow(baoGardens.pestRepellent.text, baoGardens.pestRepellent.x, baoGardens.pestRepellent.y);
+}), () => Settings.pestRepellentDisplay && getInGarden() && getInSkyblock() && World.isLoaded());
 
-    // draws pest repellent timer
-    if (Settings.pestRepellentDisplay) {
-        baoGardens.pestRepellent.x = paddingText(baoGardens.pestRepellent.text);
-        Renderer.drawStringWithShadow(baoGardens.pestRepellent.text, baoGardens.pestRepellent.x, baoGardens.pestRepellent.y);
-    }
-    
-    // pest exchange text
-    if (Settings.pestExchangeDisplay) {
-        baoGardens.pestExchange.x = paddingText(baoGardens.pestExchange.text);
-        Renderer.drawStringWithShadow(baoGardens.pestExchange.text, baoGardens.pestExchange.x, baoGardens.pestExchange.y);
-    }
+renderWhen(register('renderOverlay', () => {
+    Renderer.drawStringWithShadow(baoGardens.pestExchange.text, baoGardens.pestExchange.x, baoGardens.pestExchange.y);
+}), () => Settings.pestExchangeDisplay && getInGarden() && getInSkyblock() && World.isLoaded());
 
-})
 
 
 ////////////////////////////////////////////////////////////////////
 // SHOW PEST ENTITY BOX (ESP)
 ////////////////////////////////////////////////////////////////////
-register("renderWorld", () => {
-    if (!getInGarden()) return;
-    if (!Settings.pestQOL) return;
-    if (!Settings.pestEsp) return;
+renderWhen(register('renderWorld', () => {
     World.getAllEntities().forEach(entity => {if (entity.getName().removeFormatting().includes("ൠ")) drawOutlineBeacon(entity.x, entity.y-0.65, entity.z, givColor='white', alpha=1, seethru=false)})
-    baoGardens.save();
-})
+}), () => Settings.pestQOL && Settings.pestEsp && getInGarden() && getInSkyblock() && World.isLoaded());
 
 
 ////////////////////////////////////////////////////////////////////
@@ -721,7 +706,7 @@ register('chat', (ff, event) => {
 
 register("guiClosed", () => {
     baoGardens.playerPlotInfo.configMsg = false;
-    baoGardens.save();
+    // baoGardens.save();
 });
 
 // garden message hiders

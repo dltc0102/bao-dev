@@ -8,6 +8,7 @@ import { updateCDText } from '../utils/functions.js'
 import { getActivePet } from '../utils/pet.js'
 import { setTimer, checkTimeLeft, regNearbyOrbs } from '../utils/functions.js';
 import { getInSkyblock, getCurrArea } from '../utils/functions.js'; // sb, area
+import { renderWhen } from '../utils/utils.js';
 
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP CONSTS
@@ -16,7 +17,9 @@ const timerAudio = new Audio();
 const moveTimerDisplay = new Gui(); 
 createGuiCommand(moveTimerDisplay, 'movetimerdisplay', 'mtm');
 const timerDraggableText = "&2Mushy Tonic: &r00m 00s\n&2King's Scent: &r00m 00s\n&6Bonzo's Mask: &r00m 00s\n&6Rekindle: &r00m 00s\n&6Second Wind: &r00m 00s\n&aGummy Bear: &r00m00s\n[Flux]: 00s";
-export const baoTimers = new PogObject("bao-dev", {
+
+// export const baoTimers = new PogObject("bao-dev", {
+export const baoTimers = {
     "displayText": '', 
     "x": 400, 
     "y": 240,
@@ -73,8 +76,9 @@ export const baoTimers = new PogObject("bao-dev", {
         "x": 400, 
         "y": 250,
     },
-}, '/data/baoTimers.json');
-baoTimers.autosave(5);
+};
+// }, '/data/baoTimers.json');
+// baoTimers.autosave(5);
 
 ////////////////////////////////////////////////////////////////////////////////
 // GUMMY --------------------------------------------------------------------
@@ -84,7 +88,7 @@ register('chat', (event) => {
     if (!Settings.gummyTimer) return;
     timerAudio.playDrinkSound();
     setTimer(baoTimers.gummy);
-    baoTimers.save();
+    // baoTimers.save();
 }).setCriteria('You ate a Re-heated Gummy Polar Bear!');
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -95,7 +99,7 @@ register('chat', (event) => {
     if (!Settings.rekindleAlert) return;
     timerAudio.playProcSound();
     setTimer(baoTimers.rekindle);
-    baoTimers.save();
+    // baoTimers.save();
 }).setCriteria('Your Phoenix Pet saved you from certain death!');
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -106,7 +110,7 @@ register('chat', (event) => {
     if (!Settings.secondWindAlert) return;
     timerAudio.playProcSound();
     setTimer(baoTimers.secondWind);
-    baoTimers.save();
+    // baoTimers.save();
 }).setCriteria('Second Wind Activated! Your Spirit Mask saved your life!');
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -116,7 +120,7 @@ register("step", () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.flux_timer) return;
     regNearbyOrbs(baoTimers.orb);
-    baoTimers.save();
+    // baoTimers.save();
 }).setFps(10);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -128,7 +132,7 @@ register('chat', (event) => {
     timerAudio.playDrinkSound();
     baoTimers.glowyTonic.cd = getActivePet().includes('Parrot') ? 84 : 60;
     setTimer(baoTimers.glowyTonic);
-    baoTimers.save();
+    // baoTimers.save();
 }).setCriteria('BUFF! You splashed yourself with Mushed Glowy Tonic I! Press TAB or type /effects to view your active effects!');
 
 register('chat', (name, event) => {
@@ -137,7 +141,7 @@ register('chat', (name, event) => {
     timerAudio.playDrinkSound();
     baoTimers.glowyTonic.cd = getActivePet().includes('Parrot') ? 84 : 60;
     setTimer(baoTimers.glowyTonic);
-    baoTimers.save();
+    // baoTimers.save();
 }).setCriteria('BUFF! You were splashed by ${name} with Mushed Glowy Tonic I! Press TAB or type /effects to view your active effects!')
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -148,7 +152,7 @@ register('chat', (event) => {
     if (!Settings.bonzo_cd_timer) return;
     timerAudio.playProcSound();
     setTimer(baoTimers.bonzo);
-    baoTimers.save();
+    // baoTimers.save();
 }).setCriteria("Your Bonzo's Mask saved your life!");
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -159,7 +163,7 @@ register('chat', (event) => {
     if (!Settings.kingScentTimer) return;
     timerAudio.playDrinkSound();
     setTimer(baoTimers.kingsScent);
-    baoTimers.save();
+    // baoTimers.save();
 }).setCriteria("[NPC] King Yolkar: I'm covering you in my foul stench as we speak. It won't last long before it dissipates!");
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -226,7 +230,7 @@ register('gameLoad', () => {
             baoTimers.gummy.timeLeft = 0;
         }
     };
-    baoTimers.save();
+    // baoTimers.save();
 })
 
 
@@ -277,7 +281,7 @@ register('step', () => {
     timerValues.sort((a, b) => b.timeLeft - a.timeLeft);
 
     baoTimers.displayText = timerValues.map(entry => updateCDText(entry.color, entry.name, entry.timeLeft)).join('');
-    baoTimers.save();
+    // baoTimers.save();
 }).setFps(1);
 
 register('dragged', (dx, dy, x, y) => {
@@ -286,11 +290,11 @@ register('dragged', (dx, dy, x, y) => {
         baoTimers.x = constrainX(x, 3, timerDraggableText);
         baoTimers.y = constrainY(y, 3, timerDraggableText);
     }
-    baoTimers.save();
+    // baoTimers.save();
 });
 
-register('renderOverlay', () => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
+renderWhen(register('renderOverlay', () => {
     Renderer.drawStringWithShadow(baoTimers.displayText, baoTimers.x, baoTimers.y);
     renderGuiPosition(moveTimerDisplay, baoTimers, timerDraggableText);
-});
+}), () => (Settings.gummyTimer || Settings.rekindleAlert || Settings.secondWindAlert || Settings.flux_timer || Settings.mushyTimer || Settings.bonzo_cd_timer || Settings.kingScentTimer) && getInSkyblock() && World.isLoaded());
+

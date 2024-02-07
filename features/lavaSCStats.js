@@ -8,7 +8,8 @@ import { getInCI, getInCH } from '../utils/functions.js';
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP CONSTS
 ////////////////////////////////////////////////////////////////////////////////
-export const baoLavaSCStats = new PogObject("bao-dev", {
+// export const baoLavaSCStats = new PogObject("bao-dev", {
+export const baoLavaSCStats = {
     "CIDisplay": '',
     // LAVA SEA CREATURES (CRIMSON ISLE)
     "phlegblastCatches": 0, 
@@ -44,8 +45,9 @@ export const baoLavaSCStats = new PogObject("bao-dev", {
 
     // CRYSTAL HOLLOWS AVGS
     "catchesSinceFlamingWorm": 0, 
-}, '/data/baoLavaSCStats.json');
-baoLavaSCStats.autosave(5);
+};
+// }, '/data/baoLavaSCStats.json');
+// baoLavaSCStats.autosave(5);
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -65,7 +67,7 @@ register('chat', (event) => {
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder += 1;
     baoLavaSCStats.catchesSinceJawbus += 1;
-    baoLavaSCStats.save();
+    // baoLavaSCStats.save();
 }).setCriteria("WOAH! A Plhlegblast appeared.");
 
 // Magma Slug
@@ -76,7 +78,7 @@ register('chat', (event) => {
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder += 1;
     baoLavaSCStats.catchesSinceJawbus += 1;
-    baoLavaSCStats.save();
+    // baoLavaSCStats.save();
 }).setCriteria("From beneath the lava appears a Magma Slug.");
 
 // Moogma
@@ -87,7 +89,7 @@ register('chat', (event) => {
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder += 1;
     baoLavaSCStats.catchesSinceJawbus += 1;
-    baoLavaSCStats.save();
+    // baoLavaSCStats.save();
 }).setCriteria("You hear a faint Moo from the lava... A Moogma appears.");
 
 // Lava Leech
@@ -98,7 +100,7 @@ register('chat', (event) => {
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder += 1;
     baoLavaSCStats.catchesSinceJawbus += 1;
-    baoLavaSCStats.save();
+    // baoLavaSCStats.save();
 }).setCriteria("A small but fearsome Lava Leech emerges.");
 
 // Pyroclastic Worm
@@ -109,7 +111,7 @@ register('chat', (event) => {
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder += 1;
     baoLavaSCStats.catchesSinceJawbus += 1;
-    baoLavaSCStats.save();
+    // baoLavaSCStats.save();
 }).setCriteria("You feel the heat radiating as a Pyroclastic Worm surfaces.");
 
 // Lava Flame
@@ -120,7 +122,7 @@ register('chat', (event) => {
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder += 1;
     baoLavaSCStats.catchesSinceJawbus += 1;
-    baoLavaSCStats.save();
+    // baoLavaSCStats.save();
 }).setCriteria("A Lava Flame flies out from beneath the lava.");
 
 // Fire Eels
@@ -131,7 +133,7 @@ register('chat', (event) => {
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder += 1;
     baoLavaSCStats.catchesSinceJawbus += 1;
-    baoLavaSCStats.save();
+    // baoLavaSCStats.save();
 }).setCriteria("A Fire Eel slithers out from the depths.");
 
 // Taurus
@@ -142,7 +144,7 @@ register('chat', (event) => {
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder += 1;
     baoLavaSCStats.catchesSinceJawbus += 1;
-    baoLavaSCStats.save();
+    // baoLavaSCStats.save();
 }).setCriteria("Taurus and his steed emerge.");
 
 // Thunder
@@ -153,7 +155,7 @@ register('chat', (event) => {
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder = 0;
     baoLavaSCStats.catchesSinceJawbus += 1;
-    baoLavaSCStats.save();
+    // baoLavaSCStats.save();
 }).setCriteria("You hear a massive rumble as Thunder emerges.");
 
 // Lord Jawbus
@@ -165,14 +167,14 @@ register('chat', (event) => {
     baoLavaSCStats.catchesSinceThunder += 1;
     baoLavaSCStats.catchesSinceJawbus = 0;
     baoLavaSCStats.jawbusSinceLastVial += 1;
-    baoLavaSCStats.save();
+    // baoLavaSCStats.save();
 }).setCriteria("You have angered a legendary creature... Lord Jawbus has arrived.");
 
 // Radioactive Vial [Jawbus]
 register('chat', (mf, event) => {
     if (!getInCI()) return;
     baoLavaSCStats.jawbusSinceLastVial = 0;
-    baoLavaSCStats.save();
+    // baoLavaSCStats.save();
 }).setCriteria("RARE DROP! Radioactive Vial (+${mf}% ✯ Magic Find)")
 
 ////////////////////////////////////////////////////////////////////////////
@@ -185,7 +187,7 @@ register('chat', (event) => {
     baoLavaSCStats.flamingWormCatches += 1;
     baoLavaSCStats.totalLavaCHSCCatches += 1;
     baoLavaSCStats.catchesSinceFlamingWorm = 0;
-    baoLavaSCStats.save();
+    // baoLavaSCStats.save();
 }).setCriteria("A flaming worm surfaces from the depths!");
 
 // Lava Blaze
@@ -195,7 +197,7 @@ register('chat', (event) => {
     baoLavaSCStats.lavaBlazeCatches += 1;
     baoLavaSCStats.totalLavaCHSCCatches += 1;
     baoLavaSCStats.catchesSinceFlamingWorm += 1;
-    baoLavaSCStats.save();
+    // baoLavaSCStats.save();
 }).setCriteria("A Lava Blaze has surfaced from the depths!");
 
 // Lava Pigman
@@ -205,7 +207,7 @@ register('chat', (event) => {
     baoLavaSCStats.lavaPigmanCatches += 1;
     baoLavaSCStats.totalLavaCHSCCatches += 1;
     baoLavaSCStats.catchesSinceFlamingWorm += 1;
-    baoLavaSCStats.save();
+    // baoLavaSCStats.save();
 }).setCriteria("A Lava Pigman arose from the depths!");
 
 ////////////////////////////////////////////////////////////////
@@ -259,5 +261,5 @@ register('step', () => {
     const CIDisplayRaw = [crimsonTitle, showCIKills, showCITrackers, showCIAverages].join('\n').replace(/\n{6,}/g, '\n');
     
     baoLavaSCStats.CIDisplay = filterSeparators(CIDisplayRaw, crimsonSepThin);
-    baoLavaSCStats.save();
+    // baoLavaSCStats.save();
 }).setFps(1);

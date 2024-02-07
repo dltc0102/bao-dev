@@ -1,7 +1,7 @@
 import Settings from '../settings.js';
 import Audio from '../utils/audio.js';
 
-import { importantItems, dungeonClasses } from '../utils/utils.js';
+import { importantItems } from '../utils/utils.js';
 import { playSound } from '../utils/functions.js';
 import { getInDungeon } from '../utils/functions.js';
 

@@ -6,7 +6,7 @@ import { delayMessage, formatMoney, getPlayerPOI, getPlayerPos, playSound } from
 import { constrainX, constrainY } from '../utils/functions.js' // padding
 import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'; // gui
 import { sendMessage } from '../utils/party.js';
-import { showAlert } from '../utils/utils.js';
+import { showAlert, renderWhen } from '../utils/utils.js';
 import { getInSkyblock, getInHub } from '../utils/functions.js'; // sb, area
 import { baoUtils } from '../utils/utils.js';
 
@@ -21,7 +21,8 @@ createGuiCommand(moveMythosCounter, 'movemythoscounter', 'mmc');
 const mythosDragText = `&7|| MYTHOS ||\n&7==================\n&7||| Burros Dug: 0\n&7||| Feathers: 0\n&7||| Coins Dug Up: 0\n&7------------------\n&7\n&7|||MinosHunters: 0\n&7|||Lynxes: 0\n&7|||Gaias: 0\n&7|||Minotaurs: 0\n&7|||Champions: 0\n&7||| Inquisitors: 0\n&7------------------\n&7||| 0 0 0\n&7||| 0 0 0\n&7||| 0 0\n&7------------------\n&7|| Kills/Inq: 0\n&7|| Minotaurs/Dae Stick: 0\n&7|| Burrows/CoG: 0\n&7|| Burrows/WuS: 0\n&7|| Champs Since Relic: 0`;
 
 // pogobject
-export const baoMythos = new PogObject("bao-dev", {
+// export const baoMythos = new PogObject("bao-dev", {
+export const baoMythos = {
     "allLines": '',
     "x": 5, 
     "y": 100,
@@ -55,8 +56,9 @@ export const baoMythos = new PogObject("bao-dev", {
         "burrowsSinceWUS": 0, 
         "championsSinceRelic": 0, 
     }, 
-}, '/data/baoMythos.json');
-baoMythos.autosave(5);
+};
+// }, '/data/baoMythos.json');
+// baoMythos.autosave(5);
 
 const dts_title = '&2Dwarf Turtle Shelmet' 
 const ar_title = '&5Antique Remedies'
@@ -79,7 +81,7 @@ register('chat', (event) => {
 register('chat', (event) => {
     cancel(event);
     baoMythos.stats.featherCount += 1;
-    baoMythos.save();
+    // baoMythos.save();
 }).setCriteria('RARE DROP! You dug out a Griffin Feather!');
 
 // coins dug up
@@ -87,14 +89,14 @@ register('chat', (money, event) => {
     cancel(event);
     const moneyNoCom = money.toString().replace(/,/g, '');;
     baoMythos.stats.moneyCount += Number(moneyNoCom);
-    baoMythos.save();
+    // baoMythos.save();
 }).setCriteria('Wow! You dug out ${money} coins!');
 
 // ancient claws sold to npc
 register('chat', (amt, coins, event) => {
     baoMythos.stats.ancientClawCount += parseInt(amt);
     baoMythos.stats.ancientClawMoney += parseInt(coins.replace(',', ''), 10);
-    baoMythos.save();
+    // baoMythos.save();
 }).setCriteria('You sold Ancient Claw x${amt} for ${coins} Coins!');
 
 // burrow digging
@@ -103,7 +105,7 @@ register('chat', (event) => {
     baoMythos.stats.burrowCount +=1;
     baoMythos.stats.burrowsSinceCOG += 1;
     baoMythos.stats.burrowsSinceWUS += 1;
-    baoMythos.save();
+    // baoMythos.save();
 }).setCriteria('You dug out a Griffin Burrow!').setContains();
 
 register('chat', (event) => { 
@@ -111,7 +113,7 @@ register('chat', (event) => {
     baoMythos.stats.burrowCount +=1;
     baoMythos.stats.burrowsSinceCOG += 1;
     baoMythos.stats.burrowsSinceWUS += 1;
-    baoMythos.save();
+    // baoMythos.save();
 }).setCriteria('You finished the Griffin burrow chain! (4/4)');
 
 // dwarf turtle shelmet
@@ -120,7 +122,7 @@ register('chat', (event) => {
     mythosAudio.playDefaultSound();
     if (baoMythos.stats.DTS === undefined) baoMythos.stats.DTS += 2;
     baoMythos.stats.DTS += 1;
-    baoMythos.save();
+    // baoMythos.save();
 }).setCriteria('[SBE] RARE DROP! Dwarf Turtle Shelmet');
 
 // antique remedies
@@ -129,7 +131,7 @@ register('chat', (event) => {
     mythosAudio.playDefaultSound();
     if (baoMythos.stats.AR === undefined) baoMythos.stats.AR += 2;
     baoMythos.stats.AR += 1;
-    baoMythos.save();
+    // baoMythos.save();
 }).setCriteria('[SBE] RARE DROP! Antique Remedies');
 
 // crochet tiger plushie
@@ -138,7 +140,7 @@ register('chat', (event) => {
     mythosAudio.playDefaultSound();
     if (baoMythos.stats.CTP === undefined) baoMythos.stats.CTP += 2;
     baoMythos.stats.CTP += 1;
-    baoMythos.save();
+    // baoMythos.save();
 }).setCriteria('[SBE] RARE DROP! Crochet Tiger Plushie');
 
 // minos relic
@@ -148,7 +150,7 @@ register('chat', (event) => {
     playSound();
     if (baoMythos.stats.MR === undefined) baoMythos.stats.MR += 2;
     baoMythos.stats.MR += 1;
-    baoMythos.save();
+    // baoMythos.save();
 }).setCriteria('[SBE] RARE DROP! Minos Relic');
 
 // crown of greed
@@ -159,7 +161,7 @@ register('chat', (event) => {
     if (baoMythos.stats.CoG === undefined) baoMythos.stats.CoG += 2;
     baoMythos.stats.CoG += 1;
     baoMythos.stats.burrowsSinceCOG = 0;
-    baoMythos.save();
+    // baoMythos.save();
 }).setCriteria('RARE DROP! You dug out a Crown of Greed!');
 
 // washed up souvenir
@@ -170,7 +172,7 @@ register('chat', (event) => {
     if (baoMythos.stats.WuS === undefined) baoMythos.stats.WuS += 2;
     baoMythos.stats.WuS += 1;
     baoMythos.stats.burrowsSinceWUS = 0;
-    baoMythos.save();
+    // baoMythos.save();
 }).setCriteria('RARE DROP! You dug out a Washed-up Souvenir!');
 
 // daedalus stick
@@ -181,7 +183,7 @@ register('chat', (mf, event) => {
     if (baoMythos.stats.DS === undefined) baoMythos.stats.DS += 2;
     baoMythos.stats.DS += 1;
     baoMythos.stats.minotaursSinceDae = 0;
-    baoMythos.save();
+    // baoMythos.save();
 }).setCriteria('RARE DROP! Daedalus Stick (+${mf}% ✯ Magic Find)');
 
 // chimera book
@@ -192,7 +194,7 @@ register('chat', (event) => {
     baoMythos.stats.CHIM += 1;
     // baoMythos.stats.inqsSinceChim = 0;
     mythosAudio.playDefaultSound();
-    baoMythos.save();
+    // baoMythos.save();
 }).setCriteria('RARE DROP! Enchanted Book');
 
 // Minos Hunter
@@ -201,7 +203,7 @@ register('chat', (event) => {
     baoMythos.stats.minosHunterKills += 1; 
     baoMythos.stats.mobsSinceInq += 1; 
     baoMythos.stats.totalMythosKills += 1;
-    baoMythos.save();
+    // baoMythos.save();
 }).setCriteria('You dug out a Minos Hunter!').setContains();
 
 // Siamese Lynxes
@@ -210,7 +212,7 @@ register('chat', (event) => {
     baoMythos.stats.siaLynxKills += 1; 
     baoMythos.stats.mobsSinceInq += 1; 
     baoMythos.stats.totalMythosKills += 1;
-    baoMythos.save();
+    // baoMythos.save();
 }).setCriteria('You dug out Siamese Lynxes!').setContains();
 
 // Gaia Construct
@@ -219,7 +221,7 @@ register('chat', (event) => {
     baoMythos.stats.gaiaConsKills += 1; 
     baoMythos.stats.mobsSinceInq += 1; 
     baoMythos.stats.totalMythosKills += 1;
-    baoMythos.save();
+    // baoMythos.save();
 }).setCriteria('You dug out a Gaia Construct!').setContains();
 
 // Minotaur
@@ -229,7 +231,7 @@ register('chat', (event) => {
     baoMythos.stats.mobsSinceInq += 1; 
     baoMythos.stats.minotaursSinceDae += 1; 
     baoMythos.stats.totalMythosKills += 1;
-    baoMythos.save();
+    // baoMythos.save();
 }).setCriteria('You dug out a Minotaur!').setContains();
 
 // Minos Champion
@@ -239,7 +241,7 @@ register('chat', (event) => {
     baoMythos.stats.minosChampKills += 1; 
     baoMythos.stats.mobsSinceInq += 1; 
     baoMythos.stats.totalMythosKills += 1;
-    baoMythos.save();
+    // baoMythos.save();
 }).setCriteria('You dug out a Minos Champion!').setContains();
 
 // Minos Inquisitor
@@ -252,7 +254,7 @@ register('chat', (event) => {
     baoMythos.stats.minosInqKills += 1; 
     baoMythos.stats.mobsSinceInq = 0; 
     baoMythos.stats.totalMythosKills += 1;
-    baoMythos.save();
+    // baoMythos.save();
 }).setCriteria('You dug out a Minos Inquisitor!').setContains();
 
 
@@ -356,12 +358,14 @@ register('dragged', (dx, dy, x, y) => {
         baoMythos.y = constrainY(y, 3, mythosDragText);
     }
 });
-
-register('renderOverlay', () => {
-    if (!getInSkyblock() || !World.isLoaded() || !Settings.mythos_main_toggle || !getInHub()) return;
+renderWhen(register('renderOverlay', () => {
     Renderer.drawStringWithShadow(baoMythos.allLines, baoMythos.x, baoMythos.y);
+}), () => Settings.mythos_main_toggle && getInHub() && getInSkyblock() && World.isLoaded());
+
+renderWhen(register('renderOverlay', () => {
     renderGuiPosition(moveMythosCounter, baoMythos, mythosDragText);
-});
+}), () => getInSkyblock() && World.isLoaded());
+
 
 register('chat', (event) => {
     if (!getInSkyblock() || !World.isLoaded()) return;

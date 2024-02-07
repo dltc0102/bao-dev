@@ -4,12 +4,14 @@ import PogObject from 'PogData';
 
 import { sendMessage } from '../utils/party.js';
 import { getInSkyblock } from '../utils/functions.js'; // sb, area
-import { baoUtils, showAlert } from '../utils/utils.js';
+import { baoUtils, renderWhen, showAlert } from '../utils/utils.js';
 import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'; // gui
 import { constrainX, constrainY } from '../utils/functions.js' // padding
 import { filterSeparators } from '../utils/functions.js';
 import { getInEnd } from '../utils/functions.js';
 import { showAlert } from '../utils/utils.js';
+import { drawDragonHitBox } from '../utils/functions.js';
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP CONSTS
@@ -30,7 +32,8 @@ const damagersDraggable = 'Top Damagers: \n${baoUtils.thickSep}\nName1: 00❤\nN
 const endProtTitle = '&8End Protector'
 
 // pogobject
-export const baoDragons = new PogObject("bao-dev", {
+// export const baoDragons = new PogObject("bao-dev", {
+export const baoDragons = {
     "spawned": false,
     "eyesPlaced": 0,
     "crystalsBroken": 0, 
@@ -52,8 +55,9 @@ export const baoDragons = new PogObject("bao-dev", {
         "y": 50, 
     }, 
     "displayText": '',
-}, '/data/baoDragons.json');
-baoDragons.autosave(5);
+};
+// }, '/data/baoDragons.json');
+// baoDragons.autosave(5);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -90,7 +94,7 @@ function getTopDragDamagers() {
 register('chat', (playerName, numEyes, event) => {
     if (!shouldHandleEndMsgs()) return;
     if (playerName === Player.getName()) baoDragons.eyesPlaced++;
-    baoDragons.save();
+    // baoDragons.save();
 }).setCriteria('☬ ${playerName} placed a Summoning Eye! (${numEyes}/8)');
 
 register('chat', (drag, event) => {
@@ -98,7 +102,7 @@ register('chat', (drag, event) => {
     baoDragons.eyesPlaced = 0;
     baoDragons.spawned = false;
     damagers = [];
-    baoDragons.save();
+    // baoDragons.save();
 }).setCriteria('☬ The Dragon Egg has spawned!');
 
 register('chat', (event) => {
@@ -119,7 +123,7 @@ register('chat', (dragName, event) => {
     };
     baoDragons.spawned = true;
     damagers = [];
-    baoDragons.save();
+    // baoDragons.save();
 }).setCriteria('☬ The ${dragName} Dragon has spawned!');
 
 register('chat', (player, event) => {
@@ -173,7 +177,7 @@ register('step', () => {
     const dragDisplayRaw = [dragTitle, showDragSpawns, showDragTrackers].join('\n').replace(/\n{6,}/g, '\n');
     
     baoDragons.displayText = filterSeparators(dragDisplayRaw, dragThin);
-    baoDragons.save();
+    // baoDragons.save();
 }).setFps(1);
 
 register('dragged', (dx, dy, x, y) => {
@@ -186,7 +190,7 @@ register('dragged', (dx, dy, x, y) => {
         baoDragons.damage.x = constrainX(x, 3, damagersDraggable);
         baoDragons.damage.y = constrainY(y, 3, damagersDraggable);
     };
-    baoDragons.save();
+    // baoDragons.save();
 }); 
 
 
@@ -200,21 +204,18 @@ register('step', () => {
     damagersText =  baoDragons.spawned ? `&bTop Damagers: \n&9${baoUtils.thickSep}\n${damagers}` : '';
 }).setFps(3);
 
+renderWhen(register('renderOverlay', () => {
+    Renderer.drawStringWithShadow(baoDragons.displayText, baoDragons.counter.x, baoDragons.counter.y);
+}), () => Settings.showDragonCounter && getInEnd() && getInSkyblock() && World.isLoaded())
 
+renderWhen(register('renderOverlay', () => {
+    Renderer.drawStringWithShadow(damagersText, baoDragons.damage.x, baoDragons.damage.y);
+}), () => Settings.showDragonDamageDisplay && getInEnd() && baoDragons.spawned && getInSkyblock() && World.isLoaded());
 
-register('renderOverlay', () => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (getInEnd()) {
-        if (Settings.showDragonCounter) {
-            Renderer.drawStringWithShadow(baoDragons.displayText, baoDragons.counter.x, baoDragons.counter.y);
-        }
-        if (Settings.showDragonDamageDisplay && baoDragons.spawned) {
-            Renderer.drawStringWithShadow(damagersText, baoDragons.damage.x, baoDragons.damage.y);
-        }
-    }
+renderWhen(register('renderOverlay', () => {
     renderGuiPosition(moveDragonCounter, baoDragons.counter, dragonDraggable);
     renderGuiPosition(moveDamageCounter, baoDragons.damage, damagersDraggable);
-});
+}), () => getInSkyblock() && World.isLoaded());
 
 ////////////////////////////////////////////////////////////////////////////////
 // OTHERS
@@ -224,3 +225,11 @@ register('chat', (event) => {
     endAudio.playDefaultSound();
     handleEndMessage(event, Settings.end_protector_ping, 'Endstone Protector Spawning', endProtTitle);
 }).setCriteria('The ground begins to shake as an Endstone Protector rises from below!');
+
+// box for dragon hitbox
+const entityDrag = Java.type("net.minecraft.entity.boss.EntityDragon");
+renderWhen(register('renderWorld', () => {
+    World.getAllEntitiesOfType(entityDrag).forEach(dragon => {
+        drawDragonHitBox(dragon.getX(), dragon.getY(), dragon.getZ(), 'white');
+    });
+}), () => getInEnd() && getInSkyblock() && World.isLoaded());

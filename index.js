@@ -1,6 +1,7 @@
 import Settings from './settings.js';
 import Audio from './utils/audio.js';
 import { baoUtils } from './utils/utils.js';
+import { baoFirstTime } from './utils/utils.js';
 
 export const baoAudio = new Audio();
 
@@ -32,9 +33,9 @@ register("gameLoad", () => {
 });
 
 // firstTime
-if (baoUtils.firstTime) {
-    baoUtils.firstTime = false;
-    baoUtils.save();
+if (baoFirstTime.firstTime) {
+    baoFirstTime.firstTime = false;
+    baoFirstTime.save();
 
     const messages = [
         `${baoUtils.modPrefix} has been installed!`, 
@@ -53,4 +54,4 @@ register("command", () =>
     Settings.openGUI()
 ).setName("biscuitaddons").setAliases('bao');
 
-baoUtils.autosave(1);
+// baoUtils.autosave(1);

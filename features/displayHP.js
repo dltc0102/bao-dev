@@ -1,6 +1,7 @@
 import Settings from '../settings.js';
 import PogObject from 'PogData';
 
+import { renderWhen } from '../utils/utils.js';
 import { checkLSRange } from '../utils/functions.js';
 import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'; // gui
 import { constrainX, constrainY } from '../utils/functions.js' // padding
@@ -14,7 +15,8 @@ const moveHpDisplay = new Gui(); // display hp of mobs
 createGuiCommand(moveHpDisplay, 'movehp', 'mhp');
 
 // pogObject
-export const baoDisplayHP = new PogObject("bao-dev", {
+// export const baoDisplayHP = new PogObject("bao-dev", {
+export const baoDisplayHP = {
     "inLSRange": false,
     "specifiedMobs": [],
     "mobInfos": [],
@@ -22,8 +24,9 @@ export const baoDisplayHP = new PogObject("bao-dev", {
     "draggableText": '[Lv000] SomeMobName 10M/10M ❤ -- [✖]',
     "x": 400,
     "y": 40,
-}, '/data/baoDisplayHP.json');
-baoDisplayHP.autosave(5);
+// }, '/data/baoDisplayHP.json');
+}
+// baoDisplayHP.autosave(5);
 
 const mobSettings = [
     { condition: Settings.vanq_hp, mob: 'Vanquisher' },
@@ -71,7 +74,7 @@ register('tick', () => {
             }
         });
     
-        baoDisplayHP.save();
+        // baoDisplayHP.save();
     }
 });
 
@@ -97,7 +100,7 @@ register('step', () => {
         .filter(Boolean); // Remove undefined entries
 
     baoDisplayHP.displayText = baoDisplayHP.mobInfos.join('\n');
-    baoDisplayHP.save();
+    // baoDisplayHP.save();
 }).setFps(10);
 
 register('dragged', (dx, dy, x, y) => {
@@ -106,13 +109,10 @@ register('dragged', (dx, dy, x, y) => {
         baoDisplayHP.x = constrainX(x, 3, baoDisplayHP.draggableText);
         baoDisplayHP.y = constrainY(y, 3, baoDisplayHP.draggableText);
     };
-    baoDisplayHP.save();
+    // baoDisplayHP.save();
 })
 
-register('renderOverlay', () => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (Settings.master_displayHP) {
-        Renderer.drawStringWithShadow(baoDisplayHP.displayText, baoDisplayHP.x, baoDisplayHP.y);
-    }
+renderWhen(register('renderOverlay', () => {
+    Renderer.drawStringWithShadow(baoDisplayHP.displayText, baoDisplayHP.x, baoDisplayHP.y);
     renderGuiPosition(moveHpDisplay, baoDisplayHP, baoDisplayHP.draggableText);
-});
+}), () => Settings.master_displayHP && getInSkyblock() && World.isLoaded());

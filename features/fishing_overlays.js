@@ -2,7 +2,7 @@ import Settings from '../settings.js';
 import Audio from '../utils/audio.js';
 import PogObject from 'PogData';
 
-import { showAlert } from '../utils/utils.js';
+import { renderWhen, showAlert } from '../utils/utils.js';
 import { constrainX, constrainY } from '../utils/functions.js' // padding
 import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'; // gui
 import { detectDH, displayEntityHP, getPlayerCount, getThunderBottle } from '../utils/functions.js'; // detecting DH
@@ -40,7 +40,8 @@ const thunderDraggable = '&7Nearby Thunder: NO [x0]'
 const chargesDraggable = '&7Thunder Bottle: 0'
 const dayDraggable = '&7Day: 0.00'
 
-export const baoFishOverlay = new PogObject("bao-dev", {
+// export const baoFishOverlay = new PogObject("bao-dev", {
+export const baoFishOverlay = {
     "bobber": {
         "count": 0,
         "text": '', 
@@ -76,8 +77,9 @@ export const baoFishOverlay = new PogObject("bao-dev", {
         "x": 3, 
         "y": 34
     }
-}, '/data/baoFishOverlay.json');
-baoFishOverlay.autosave(5);
+};
+// }, '/data/baoFishOverlay.json');
+// baoFishOverlay.autosave(5);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -128,7 +130,7 @@ register('dragged', (dx, dy, x, y) => {
         baoFishOverlay.lobbyDay.x = constrainX(x, 3, dayDraggable);
         baoFishOverlay.lobbyDay.y = constrainY(y, 3, dayDraggable);
     }
-    baoFishOverlay.save();
+    // baoFishOverlay.save();
 })
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -219,7 +221,7 @@ register("step", () => {
         }
     }
 
-    baoFishOverlay.save();
+    // baoFishOverlay.save();
 }).setFps(5);
 
 
@@ -229,50 +231,44 @@ register("step", () => {
 * nearby jawbus and nearby thunder
  ------------------------------------------------------------------------------*/
 ////////////////////////////////////////////////////////////////////////////////
-register('renderOverlay', () => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!getInGarden()) {
-        // bobber count
-        if (Settings.bobberCount) {
-            Renderer.drawStringWithShadow(baoFishOverlay.bobber.text, baoFishOverlay.bobber.x, baoFishOverlay.bobber.y)
-        }
-    
-        // nearby players
-        if (Settings.playersNearbyCount) {
-            Renderer.drawStringWithShadow(baoFishOverlay.player.text, baoFishOverlay.player.x, baoFishOverlay.player.y);
-        }
-        
-        // lobby day counter
-        if (Settings.lobbyDayCount) {
-            Renderer.drawStringWithShadow(baoFishOverlay.lobbyDay.text, baoFishOverlay.lobbyDay.x, baoFishOverlay.lobbyDay.y);
-        }
-    }
-    
-    if (getInCI()) {
-        // detect double/nearby jawbus
-        if (Settings.detectDoubleJawbus) {
-            Renderer.drawStringWithShadow(baoFishOverlay.nbJawbus.text, baoFishOverlay.nbJawbus.x, baoFishOverlay.nbJawbus.y);
-            if (Settings.jawbus_hp) displayEntityHP(baoFishOverlay.nbJawbus.names, baoFishOverlay.nbJawbus.found, baoDisplayHP.x, baoDisplayHP.y)
-        }
-        
-        // detect double/nearby thunder
-        if (Settings.detectDoubleThunder) {
-            Renderer.drawStringWithShadow(baoFishOverlay.nbThunder.text, baoFishOverlay.nbThunder.x, baoFishOverlay.nbThunder.y);
-            if (Settings.thunder_hp) displayEntityHP(baoFishOverlay.nbThunder.info.names, baoFishOverlay.nbThunder.info.found, baoDisplayHP.x, baoDisplayHP.y)
-        }
-        
-        // charge counter
-        if (Settings.chargeCounter) {
-            Renderer.drawStringWithShadow(baoFishOverlay.charges.text, baoFishOverlay.charges.x, baoFishOverlay.charges.y)
-        }
-    }
+// not in garden
+renderWhen(register('renderOverlay', () => {
+    Renderer.drawStringWithShadow(baoFishOverlay.bobber.text, baoFishOverlay.bobber.x, baoFishOverlay.bobber.y);
+}), () => Settings.bobberCount && !getInGarden() && getInSkyblock() && World.isLoaded());
 
-    // gui open
+renderWhen(register('renderOverlay', () => {
+    Renderer.drawStringWithShadow(baoFishOverlay.player.text, baoFishOverlay.player.x, baoFishOverlay.player.y);
+}), () => Settings.playersNearbyCount && !getInGarden() && getInSkyblock() && World.isLoaded());
+
+renderWhen(register('renderOverlay', () => {
+    Renderer.drawStringWithShadow(baoFishOverlay.lobbyDay.text, baoFishOverlay.lobbyDay.x, baoFishOverlay.lobbyDay.y);
+}), () => Settings.lobbyDayCount && !getInGarden() && getInSkyblock() && World.isLoaded());
+
+// in ci only
+renderWhen(register('renderOverlay', () => {
+    Renderer.drawStringWithShadow(baoFishOverlay.nbJawbus.text, baoFishOverlay.nbJawbus.x, baoFishOverlay.nbJawbus.y);
+    if (Settings.jawbus_hp) displayEntityHP(baoFishOverlay.nbJawbus.names, baoFishOverlay.nbJawbus.found, baoDisplayHP.x, baoDisplayHP.y);
+}), () => Settings.detectDoubleJawbus && getInCI() && getInSkyblock() && World.isLoaded());
+
+renderWhen(register('renderOverlay', () => {
+    Renderer.drawStringWithShadow(baoFishOverlay.nbThunder.text, baoFishOverlay.nbThunder.x, baoFishOverlay.nbThunder.y);
+    if (Settings.thunder_hp) displayEntityHP(baoFishOverlay.nbThunder.info.names, baoFishOverlay.nbThunder.info.found, baoDisplayHP.x, baoDisplayHP.y);
+}), () => Settings.detectDoubleThunder && getInCI() && getInSkyblock() && World.isLoaded());
+
+renderWhen(register('renderOverlay', () => {
+    Renderer.drawStringWithShadow(baoFishOverlay.charges.text, baoFishOverlay.charges.x, baoFishOverlay.charges.y);
+}), () => Settings.chargeCounter && getInCI() && getInSkyblock() && World.isLoaded());
+
+// if guis are open
+renderWhen(register('renderOverlay', () => {
     renderGuiPosition(moveBobberCounter, baoFishOverlay.bobber, bobberDraggable);
     renderGuiPosition(movePlayerCounter, baoFishOverlay.player, playerDraggable);
     renderGuiPosition(moveNearbyJawbusCounter, baoFishOverlay.nbJawbus, jawbusDraggable);
     renderGuiPosition(moveNearbyThunderCounter, baoFishOverlay.nbThunder, thunderDraggable);
     renderGuiPosition(moveChargesCounter, baoFishOverlay.charges, chargesDraggable);
     renderGuiPosition(movedaycounter, baoFishOverlay.lobbyDay, dayDraggable);
-})
+}), () => getInSkyblock() && World.isLoaded());
+
+
+
 
