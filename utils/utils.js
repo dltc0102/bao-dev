@@ -61,8 +61,7 @@ export function determinePlayerRankColor(rank) {
 }
 
 // render triggers unreg/reg 
-const checkingRenderTrigs = []; 
-
+let checkingRenderTrigs = []; 
 /**
  * Registers and unregisters the trigger depending on the result of the checkFunc. Use with render triggers to reduce lag when they are not being used.
  * @param {() => void} trigger 
@@ -78,9 +77,22 @@ register('tick', () => {
     }
 });
 
+// chat triggers unreg/reg
+let checkingChatTrigs = [];
+/**
+ * Registers and unregisters the trigger depending on the result of the checkFunc. Use with render triggers to reduce lag when they are not being used.
+ * @param {() => void} trigger 
+ * @param {Function} checkFunc 
+ * @returns 
+ */
+export const registerChatWhen = (trigger, checkFunc) => checkingChatTrigs.push([trigger.unregister(), checkFunc])
 
-
-
+register('tick', () => {
+    for (let i = 0; i < checkingChatTrigs.length; i++) {
+        let [trigger, func] = checkingChatTrigs[i];
+        func() ? trigger.register() : trigger.unregister();
+    }
+});
 
 
 

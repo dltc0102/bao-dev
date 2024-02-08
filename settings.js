@@ -61,6 +61,14 @@ class Settings {
     koCommand = false;
 
     @SwitchProperty({
+        name: "Party Transfer Randomly",
+        description: "Transfers the party to a random person in the party.\nUsage: &b#pta",
+        category: "General QOL",
+        subcategory: "Commands", 
+    })
+    ptaCommand = false;
+
+    @SwitchProperty({
         name: "Kicked Notifier",
         description: "Tell your party that you're kicked and cooldown is 1 minute.",
         category: "General QOL",
@@ -115,14 +123,6 @@ class Settings {
         subcategory: "Messages QOL"
     })
     aotvHider = false;
-
-    @SwitchProperty({
-        name: "Hide Soopy Unknown Command Message",
-        description: "Hides Soopy gibberish command showing up on screen.",
-        category: "General QOL",
-        subcategory: "Messages QOL"
-    })
-    randomSoopyMessageHider = false;
 
     @SwitchProperty({
         name: "Grandma Hider",
@@ -850,7 +850,7 @@ class Settings {
 
     @SwitchProperty({
         name: "Better Garden Messages",
-        description: "Hides/Changes the message into something simpler.\n&7'WARNING! Blocks that you break on this plot will not drop items while using a custom preset!'&b -- hidden\n&7'Remember, you have to be on the island for the resources to be planted!'&b -- hidden\n\n&7'Started pasting &e${presetName}&7 preset on Garden Plot - &e${plotName}&7!'\n&c.. converted to ..\n&7'PASTING: Using Preset [&e${presetName}&7] on Plot &e${plotName}&7!'",
+        description: "Hides/Changes the message into something simpler.\n&7[NPC] Jacob: &b messages about contest starting and anita accessory's stats will be hidden if player is not in &cGarden&b.\n&7'WARNING! Blocks that you break on this plot will not drop items while using a custom preset!'&b -- hidden\n&7'Remember, you have to be on the island for the resources to be planted!'&b -- hidden\n\n&7'Started pasting &e${presetName}&7 preset on Garden Plot - &e${plotName}&7!'\n&c.. converted to ..\n&7'PASTING: Using Preset [&e${presetName}&7] on Plot &e${plotName}&7!'",
         category: "Garden",
         subcategory: "QOL", 
     })

@@ -276,3 +276,6 @@ register('chat', (playerName, event) => {
     };
 }).setCriteria('[FEAR] Public Speaking Demon: Say something interesting ${playerName}!');
 
+register('chat', (event) => {
+    cancel(event);
+}).setCriteria('Timer for 60 has ended!');

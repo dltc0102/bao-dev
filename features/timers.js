@@ -233,7 +233,6 @@ register('gameLoad', () => {
     // baoTimers.save();
 })
 
-
 register('step', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     const timerValues = [];
@@ -293,8 +292,10 @@ register('dragged', (dx, dy, x, y) => {
     // baoTimers.save();
 });
 
-renderWhen(register('renderOverlay', () => {
+register('renderOverlay', () => {
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    if (!(Settings.gummyTimer || Settings.rekindleAlert || Settings.secondWindAlert || Settings.flux_timer || Settings.mushyTimer || Settings.bonzo_cd_timer || Settings.kingScentTimer)) return;
     Renderer.drawStringWithShadow(baoTimers.displayText, baoTimers.x, baoTimers.y);
     renderGuiPosition(moveTimerDisplay, baoTimers, timerDraggableText);
-}), () => (Settings.gummyTimer || Settings.rekindleAlert || Settings.secondWindAlert || Settings.flux_timer || Settings.mushyTimer || Settings.bonzo_cd_timer || Settings.kingScentTimer) && getInSkyblock() && World.isLoaded());
+});
 

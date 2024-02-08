@@ -31,6 +31,9 @@ let damagersText = '';
 const damagersDraggable = 'Top Damagers: \n${baoUtils.thickSep}\nName1: 00❤\nName2: 00❤\nName3: 00❤'
 const endProtTitle = '&8End Protector'
 
+// render dragon hitbox
+const entityDrag = Java.type("net.minecraft.entity.boss.EntityDragon");
+
 // pogobject
 // export const baoDragons = new PogObject("bao-dev", {
 export const baoDragons = {
@@ -87,38 +90,47 @@ function getTopDragDamagers() {
     return names;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // BETTER END MESSAGES
 ////////////////////////////////////////////////////////////////////////////////
+const someEndMessages = [
+    /Your Sleeping Eyes have been awoken by the magic of the Dragon\. They are now Remnants of the Eye!/, 
+    /☬ The .+ Dragon has spawned!/, 
+    /☬ The Dragon's Gate is .+!/, 
+    /☬ .+ Dragon used .+ on you for .+ damage\./, 
+    /☬ .+ destroyed an Ender Crystal!/, 
+    / ☠ .+ was killed by .+ Dragon./, 
+];
+
+someEndMessages.forEach(msg => {{
+    register('chat', (event) => {
+        handleEndMessage(event, Settings.betterEndMessages);
+    }).setCriteria(msg);
+}});
+
 register('chat', (playerName, numEyes, event) => {
-    if (!shouldHandleEndMsgs()) return;
     if (playerName === Player.getName()) baoDragons.eyesPlaced++;
     // baoDragons.save();
 }).setCriteria('☬ ${playerName} placed a Summoning Eye! (${numEyes}/8)');
 
 register('chat', (drag, event) => {
-    if (!shouldHandleEndMsgs()) return;
+    endAudio.playDefaultSound();
     baoDragons.eyesPlaced = 0;
     baoDragons.spawned = false;
     damagers = [];
     // baoDragons.save();
 }).setCriteria('☬ The Dragon Egg has spawned!');
 
-register('chat', (event) => {
-    handleEndMessage(event);
-}).setCriteria('Your Sleeping Eyes have been awoken by the magic of the Dragon. They are now Remnants of the Eye!');
-
 register('chat', (dragName, event) => {
-    handleEndMessage(event);
     if (Settings.betterEndMessages) {
-        if (dragName === 'Old') baoDragons.counter.old += 1; baoDragons.counterdragsSinceSuperior += 1;
-        if (dragName === 'Protector') baoDragons.counter.protector += 1; baoDragons.counterdragsSinceSuperior += 1;
-        if (dragName === 'Strong') baoDragons.counter.strong += 1; baoDragons.counterdragsSinceSuperior += 1;
-        if (dragName === 'Unstable') baoDragons.counter.unstable += 1; baoDragons.counterdragsSinceSuperior += 1;
-        if (dragName === 'Wise') baoDragons.counter.wise += 1; baoDragons.counterdragsSinceSuperior += 1;
-        if (dragName === 'Young') baoDragons.counter.young += 1; baoDragons.counterdragsSinceSuperior += 1;
-        if (dragName === 'Superior') baoDragons.counter.superior += 1; baoDragons.counterdragsSinceSuperior = 0;
+        let dragNameLower = dragName.toLowerCase();
+        if (dragNameLower !== 'superior') {
+            baoDragons.counter[dragNameLower] += 1;
+            baoDragons.counter.dragsSinceSuperior += 1;
+        } else if (dragNameLower === 'superior') {
+            baoDragons.counter[dragNameLower] += 1;
+            baoDragons.counter.dragsSinceSuperior = 0;
+        }
         baoDragons.counter.dragsSinceSuperior += 1;
     };
     baoDragons.spawned = true;
@@ -127,31 +139,114 @@ register('chat', (dragName, event) => {
 }).setCriteria('☬ The ${dragName} Dragon has spawned!');
 
 register('chat', (player, event) => {
-    handleEndMessage(event);
     if (player === Player.getName()) baoDragons.crystalsBroken += 1;
 }).setCriteria('☬ ${player} destroyed an Ender Crystal!');
 
-register('chat', (phase, event) => {
-    handleEndMessage(event);
-}).setCriteria("☬ The Dragon's Gate is ${phase}!");
-
-register('chat', (dragType, ability, damage, event) => {
-    handleEndMessage(event);
-}).setCriteria('☬ ${dragType} Dragon used ${ability} on you for ${damage} damage.');
-
-register('chat', (player, dragType, event) => {
-    handleEndMessage(event);
-}).setCriteria(' ☠ ${player} was killed by ${dragType} Dragon.');
 
 register('chat', (dragType, event) => {
     baoDragons.spawned = false;
 }).setCriteria('${dragType} DRAGON DOWN!').setContains();
 
+register('chat', (event) => {
+    endAudio.playDefaultSound();
+    handleEndMessage(event, Settings.end_protector_ping, 'Endstone Protector Spawning', endProtTitle);
+}).setCriteria('The ground begins to shake as an Endstone Protector rises from below!');
 
-// dragon counter
-register('step', () => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!Settings.showDragonCounter) return;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// DRAGON WEIGHT
+////////////////////////////////////////////////////////////////////////////////
+function getQuality(pbq, pDamage, fDamage, pEyes) {
+    let quality = pbq + (100 * (pDamage/fDamage)) + (100 * pEyes);
+    return quality;
+}
+
+let dragonDamage = 0;
+let firstDragDamage = 0;
+let damagePos = 0;
+let playerBaseQuality = 0;
+let playerResultQuality = 0;
+let canDropPet = false;
+register('chat', (playerName, damage, event) => {
+    firstDragDamage = parseInt(damage.replace(/,/g, ''));
+}).setCriteria('1st Damager - ${playerName} - ${damage}').setContains();
+
+register('command', () => {
+    setTimeout(() => {
+        ChatLib.chat(`☬ oBiscuit placed a Summoning Eye! (1/8)`);
+        setTimeout(() => {
+            ChatLib.chat(`☬ oBiscuit placed a Summoning Eye! (2/8)`);
+            setTimeout(() => {
+                ChatLib.chat(`☬ oBiscuit placed a Summoning Eye! (3/8)`);
+                setTimeout(() => {
+                    ChatLib.chat(`☬ oBiscuit placed a Summoning Eye! (4/8)`)
+                    setTimeout(() => {
+                        ChatLib.chat(`UNSTABLE DRAGON DOWN!`);
+                        setTimeout(() => {
+                            ChatLib.chat(`1st Damager - [MVP+] oBiscuit - 4,804,251`);
+                            setTimeout(() => {
+                                ChatLib.chat(`Your Damage: 4,804,251 (Position #1)`);
+                            }, 1000)
+                        }, 1000)
+                    }, 1000)
+                }, 1000)
+            }, 1000)
+        }, 1000)
+    }, 1000)
+    // code goes here
+}).setName('fakedrag');
+
+register('chat', (damage, pos, event) => {
+    if (baoDragons.spawned) return;
+    playerResultQuality = 0;
+    dragonDamage = parseInt(damage.replace(/,/g, ''));
+    damagePos = parseInt(pos);
+    const qualityLookup = {
+        1: 200,
+        2: 175,
+        3: 150,
+        4: 125,
+        5: 110,
+        6: 100,
+        7: 100,
+        8: 100,
+        9: 90,
+        10: 90,
+        11: 80,
+        12: 80
+    };
+    
+    if (damagePos <= 25) {
+        playerBaseQuality = qualityLookup[damagePos] || 70;
+    } else {
+        playerBaseQuality = dragonDamage > 1 ? 70 : 10;
+    }
+}).setCriteria('Your Damage: ${damage} (Position #${pos})').setContains();
+
+
+// WIP
+register('command', () => {
+    playerResultQuality = getQuality(playerBaseQuality, dragonDamage, firstDragDamage, baoDragons.eyesPlaced);
+    console.log(`eyesplaced: ${baoDragons.eyesPlaced}`)
+    console.log(`input: ${playerBaseQuality}`)
+    console.log(`output: ${playerResultQuality}`)
+
+    canDropPet = playerResultQuality >= 450;
+    if (canDropPet) {
+        console.log(`pet possible? YES`)
+        let chanceEpic = 0.05 * baoDragons.eyesPlaced;
+        let chanceLeg = 0.01 * baoDragons.eyesPlaced;
+        console.log(`epic edrag chance: ${chanceEpic}`);
+        console.log(`leg edrag chance: ${chanceLeg}`)
+    }
+}).setName('calcquality');
+
+
+////////////////////////////////////////////////////////////////////////////////
+// DRAGON COUNTER
+////////////////////////////////////////////////////////////////////////////////
+renderWhen(register('step', () => {
     const dragThick = `&9${baoUtils.thickSep}`;
     const dragThin = `&9${baoUtils.thinSep}`
 
@@ -177,8 +272,7 @@ register('step', () => {
     const dragDisplayRaw = [dragTitle, showDragSpawns, showDragTrackers].join('\n').replace(/\n{6,}/g, '\n');
     
     baoDragons.displayText = filterSeparators(dragDisplayRaw, dragThin);
-    // baoDragons.save();
-}).setFps(1);
+}).setFps(1), () => Settings.showDragonCounter && getInSkyblock() && World.isLoaded());
 
 register('dragged', (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
@@ -197,37 +291,28 @@ register('dragged', (dx, dy, x, y) => {
 ////////////////////////////////////////////////////////////////////////////////
 // TOP DAMAGE FOR DRAGONS
 ////////////////////////////////////////////////////////////////////////////////
-register('step', () => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!getInEnd() || !Settings.showDragonDamageDisplay) return;
+renderWhen(register('step', () => {
     damagers = getTopDragDamagers().join('\n');
     damagersText =  baoDragons.spawned ? `&bTop Damagers: \n&9${baoUtils.thickSep}\n${damagers}` : '';
-}).setFps(3);
+}).setFps(3), () => Settings.showDragonDamageDisplay && getInEnd() && getInSkyblock() && World.isLoaded());
 
+////////////////////////////////////////////////////////////////////////////////
+// RENDER TRIGGERS
+////////////////////////////////////////////////////////////////////////////////
 renderWhen(register('renderOverlay', () => {
     Renderer.drawStringWithShadow(baoDragons.displayText, baoDragons.counter.x, baoDragons.counter.y);
 }), () => Settings.showDragonCounter && getInEnd() && getInSkyblock() && World.isLoaded())
 
 renderWhen(register('renderOverlay', () => {
     Renderer.drawStringWithShadow(damagersText, baoDragons.damage.x, baoDragons.damage.y);
-}), () => Settings.showDragonDamageDisplay && getInEnd() && baoDragons.spawned && getInSkyblock() && World.isLoaded());
+}), () => Settings.showDragonDamageDisplay && getInEnd() && getInSkyblock() && World.isLoaded());
 
 renderWhen(register('renderOverlay', () => {
     renderGuiPosition(moveDragonCounter, baoDragons.counter, dragonDraggable);
     renderGuiPosition(moveDamageCounter, baoDragons.damage, damagersDraggable);
 }), () => getInSkyblock() && World.isLoaded());
 
-////////////////////////////////////////////////////////////////////////////////
-// OTHERS
-////////////////////////////////////////////////////////////////////////////////
-// end protector ping
-register('chat', (event) => {
-    endAudio.playDefaultSound();
-    handleEndMessage(event, Settings.end_protector_ping, 'Endstone Protector Spawning', endProtTitle);
-}).setCriteria('The ground begins to shake as an Endstone Protector rises from below!');
-
 // box for dragon hitbox
-const entityDrag = Java.type("net.minecraft.entity.boss.EntityDragon");
 renderWhen(register('renderWorld', () => {
     World.getAllEntitiesOfType(entityDrag).forEach(dragon => {
         drawDragonHitBox(dragon.getX(), dragon.getY(), dragon.getZ(), 'white');

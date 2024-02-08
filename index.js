@@ -6,21 +6,21 @@ import { baoFirstTime } from './utils/utils.js';
 export const baoAudio = new Audio();
 
 // import './features/dev.js'
-import './features/displayHP.js' // done
+// import './features/displayHP.js' // done
 import './features/dungeon_cleaner.js' // done
-import './features/dungeons.js' // done
-import './features/end_cleaner.js' // done
-import './features/fishing_overlays.js' // done
-import './features/general_qol.js' // done
-import './features/garden.js' // done
-import './features/mythos.js' // done
-import './features/misc.js' // done
-import './features/timers.js' // done
-import './features/fishing_pings.js' // done
+// import './features/dungeons.js' // done
+// import './features/end_cleaner.js' // done
+// import './features/fishing_overlays.js' // done
+// import './features/generalQOL.js' // done
+// import './features/garden.js' // done
+// import './features/mythos.js' // done
+// import './features/misc.js' // done
+// import './features/timers.js' // done
+// import './features/fishing_pings.js' // done
 
-import './features/mainSCStats.js' // done
-import './features/waterSCStats.js'
-import './features/lavaSCStats.js'
+// import './features/mainSCStats.js' // done
+// import './features/waterSCStats.js'
+// import './features/lavaSCStats.js'
 
 // import './utils/cake.js';
 // import './utils/inventoryLog.js'

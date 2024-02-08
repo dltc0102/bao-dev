@@ -20,7 +20,7 @@
 	party_finder_message_shortener = true
 	melody_terminal_alert = true
 	better_dungeon_messages = true
-	display_dungeon_blessings = false
+	display_dungeon_blessings = true
 	bonzo_mask_cd_timer = true
 
 	[dungeons.secrets]
@@ -90,6 +90,7 @@
 		hide_lightning = false
 
 	[general_qol.commands]
+		party_transfer_randomly = true
 		auto_warp_command = true
 		warpexc_command = true
 		auto_notify_new_party_joiners = true

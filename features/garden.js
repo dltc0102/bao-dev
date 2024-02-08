@@ -728,11 +728,11 @@ register('chat', (presetName, plotName, event) => {
 
 // mutes jacob contest messages if not on garden
 register('chat', (event) => {
-    if (!getInGarden()) cancel(event);
+    if (Settings.betterGardenMessages && !getInGarden()) cancel(event);
 }).setCriteria('[NPC] Jacob: My contest has started!');
 
 register('chat', (taliphase, ff, cropName, event) => {
-    if (!getInGarden()) cancel(event);
+    if (Settings.betterGardenMessages && !getInGarden()) cancel(event);
 }).setCriteria("[NPC] Jacob: Your Anita's ${taliphase} is giving you +${ff}☘ ${cropName} Fortune during the contest!");
 
 

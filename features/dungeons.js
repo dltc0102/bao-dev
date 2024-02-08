@@ -1,3 +1,12 @@
+// dungeon cleaning
+// import './dungeons/dungeonIntEles.js';
+// import './dungeons/dungeonMsgQOL.js';
+// import './dungeons/dungeonPlayerActions.js';
+// import './dungeons/dungeonSysNotis.js';
+
+// dungeon qol
+
+
 import Settings from '../settings.js';
 import Audio from '../utils/audio.js';
 import PogObject from 'PogData';
@@ -24,8 +33,37 @@ createGuiCommand(moveblessingscounter, 'moveblessingscounter', 'mbless');
 
 const typesOfBlessings = ['wisdom', 'power', 'life', 'stone', 'time'];
 
-// pogObject
 // export const baoDungeons = new PogObject("bao-dev", {?
+const blessingAddOn = '&6&l[&f&lBlessings&6&l]&r';
+export const baoBlessings = {
+    power: {
+        display: `${blessingAddOn} &6&lPower`,
+        regex: /Blessing of Power (.+)/,
+        lvl: 0,
+    },
+    time: {
+        display: `${blessingAddOn} &6&lTime`,
+        regex: /Blessing of Time (.+)/,
+        lvl: 0,
+    },
+    life: {
+        display: `${blessingAddOn} &6&lLife`,
+        regex: /Blessing of Life (.+)/,
+        lvl: 0,
+    },
+    wisdom: {
+        display: `${blessingAddOn} &6&lWisdom`,
+        regex: /Blessing of Wisdom (.+)/,
+        lvl: 0,
+    },
+    stone: {
+        display: `${blessingAddOn} &6&lStone`,
+        regex: /Blessing of Stone (.+)/,
+        lvl: 0,
+    },
+    
+}
+
 export const baoDungeons = {
     "sentMelody": false, 
     "deathStats": 0, 
@@ -38,12 +76,6 @@ export const baoDungeons = {
         "y": 40,
     }, 
     "blessings": {
-        "wisdom": 0, 
-        "power": 0, 
-        "life": 0, 
-        "stone": 0, 
-        "time": 0,
-        "text": '',
         "draggable": '',
         "x": 400, 
         "y": 400,
@@ -52,7 +84,9 @@ export const baoDungeons = {
 // }, '/data/baoDungeons.json');
 // baoDungeons.autosave(5);
 
-// take out extraStatsFlag from pogobject
+////////////////////////////////////////////////////////////////////////////////
+// FUNCTIONS
+////////////////////////////////////////////////////////////////////////////////
 function getPower() {
     return baoDungeons.blessings.power;
 }
@@ -80,6 +114,17 @@ function getPlayerClass() {
         }
     }
 }
+
+function resetBlessings() {
+    for (let blessing in baoBlessings) {
+        baoBlessings[blessing].lvl = 0;
+    }
+}
+
+function isPlayerInvFull() {
+    return !Player.getInventory().getItems().includes(null);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // MELODY DETECTOR 
@@ -123,14 +168,14 @@ register('chat', (event) => {
     if (!getInDungeon()) return;
     if (extraStatsFlag) return;
 
-    baoDungeons.numRunStats += 1;
+    baoDungeons.numRunsStats += 1;
     setTimeout(() => {
         ChatLib.command('showextrastats');
         extraStatsFlag = true;
     }, 1000);
     // baoDungeons.save();
 
-    debug(`numRunStats: ${baoDungeons.numRunStats} | extraStatsFlag: ${extraStatsFlag}`);
+    debug(`numRunsStats: ${baoDungeons.numRunsStats} | extraStatsFlag: ${extraStatsFlag}`);
 }).setCriteria('> EXTRA STATS <').setContains();
 
 register('chat', (playerDeaths, event) => {
@@ -168,17 +213,6 @@ register('chat', (leader, catacombType, floorNum, event) => {
     baoDungeons.powerLvl = 0;
     // baoDungeons.save();
 }).setCriteria('${leader} entered ${catacombType} Catacombs, Floor ${floorNum}!').setContains();
-
-register('chat', (event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    baoDungeons.blessings.wisdom = 0;
-    baoDungeons.blessings.power = 0;
-    baoDungeons.blessings.life = 0;
-    baoDungeons.blessings.stone = 0;
-    baoDungeons.blessings.time = 0;
-
-    // baoDungeons.save();
-}).setCriteria(/.+ is now ready!/);
 
 // reset secret counter command
 register('command', () => {
@@ -225,68 +259,28 @@ register('chat', (lvl1, lvl2, event) => {
     ChatLib.chat(`DUNGEON LEVEL UP The Catacombs ${lvl1}➜${lvl2}`);
 }).setCriteria(' DUNGEON LEVEL UP The Catacombs ${lvl1}➜${lvl2}');
 
-function getTabDungeonBuffs(blessingsList) {
-    let dungeonBuffsIdx = blessingsList.indexOf('Dungeon Buffs');
-    return blessingsList.slice(dungeonBuffsIdx + 1, -2);
-}
-
-function getBlessings(blessings, blessingsObj) {
-    blessingsObj.text = '';
-    blessingsObj.draggable = '';
-    let blessingsAvailable = [];
-    let draggableEntries = [];
-    blessings.forEach(blessing => {
-        // console.log(blessing);
-        // console.log(`input before func romantonumerals: ${blessing}`)
-        let powerRegex = /^Blessing of (Wisdom|Power|Life|Stone|Time) ([IVX]+)$/;
-        let powerMatch = blessing.match(powerRegex);
-        if (powerMatch) {
-            let powerType = powerMatch[1];
-            // console.log(`match[2] before func: ${JSON.stringify(powerMatch[2])}`)
-            let powerLevel = romanToNumeral(powerMatch[2]);
-            // console.log(`func: getBlessings: ${powerType}: ${powerLevel}`)
-            blessingsAvailable.push(powerType);
-
-            if (powerType === 'Wisdom') {
-                blessingsObj.wisdom = 0;
-                blessingsObj.wisdom = powerLevel;
-            } else if (powerType === 'Life') {
-                blessingsObj.life = 0;
-                blessingsObj.life = powerLevel;
-            } else if (powerType === 'Stone') {
-                blessingsObj.stone = 0;
-                blessingsObj.stone = powerLevel;
-            } else if (powerType === 'Power') {
-                blessingsObj.power = 0;
-                blessingsObj.power = powerLevel;
-            } else if (powerType === 'Time') {
-                blessingsObj.time = 0;
-                blessingsObj.time = powerLevel;
-            }
+// blessings display
+let shouldShowBlessings = false;
+register('step', () => {
+    if (!getInSkyblock() || !World.isLoaded() || !getInDungeon()) return;
+    const tabInfo = TabList.getFooter().removeFormatting();
+    for (let blessing in baoBlessings) {
+        let match = tabInfo.match(baoBlessings[blessing].regex);
+        if (match) {
+            shouldShowBlessings = true;
+            baoBlessings[blessing].lvl = romanToNumeral(match[1]);
+            // console.log(baoBlessings[blessing].display, baoBlessings[blessing].lvl)
         }
-    })
+    }
+}).setFps(1);
 
-    blessingsAvailable = [... new Set(blessingsAvailable)];
-    blessingsAvailable.forEach(blessing => {
-        draggableEntries.push(`&7&l[Blessing] ${blessing}: 0`)
-    })
-    // console.log(blessingsAvailable);
-    // console.log(draggableEntries);
-    blessingsObj.draggable = draggableEntries.join('\n');
-    
-    return Object.entries(blessingsObj)
-        .filter(([type, level]) => level !== 0 && typesOfBlessings.includes(type.toLowerCase()) && type !== 'draggable' && type !== 'text')
-        .sort((a, b) => b[1] - a[1])
-        .map(([type, level]) => `&6&l[&r&lBlessing&6&l] ${type.charAt(0).toUpperCase() + type.slice(1)}: &b&l${level}`)
-        .join('\n');
-}
-
-function isPlayerInvFull() {
-    return !Player.getInventory().getItems().includes(null);
-}
-
+register('worldUnload', (event) => {
+    resetBlessings();
+    shouldShowBlessings = false;
+});
 
 // reg step
+let blessingText = '';
 register('step', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (getInDungeon() || getInDHub()) {
@@ -295,15 +289,20 @@ register('step', () => {
     } 
 
     if (getInDungeon()) {
-        let blessings = TabList.getFooter().removeFormatting().split('\n');
-        // console.log(blessings);
-        // console.log('');
-        let hasBlessings = blessings.includes('Dungeon Buffs');
-        if (hasBlessings) {
-            // console.log(`hasBlessings: ${hasBlessings}`)
-            blessings = getTabDungeonBuffs(blessings);
-            // console.log(`redefined blessings:\n${blessings}`)
-            baoDungeons.blessings.text = getBlessings(blessings, baoDungeons.blessings);
+        if (shouldShowBlessings) {
+            blessingText = '';
+            if (baoBlessings.power.lvl > 0) blessingText += `\n${baoBlessings.power.display}: &b${baoBlessings.power.lvl}`
+            
+            if (baoBlessings.time.lvl > 0) blessingText += `\n${baoBlessings.time.display}: &b${baoBlessings.time.lvl}`
+            
+            if (baoBlessings.life.lvl > 0) blessingText += `\n${baoBlessings.life.display}: &b${baoBlessings.life.lvl}`
+            
+            if (baoBlessings.wisdom.lvl > 0) blessingText += `\n${baoBlessings.wisdom.display}: &b${baoBlessings.wisdom.lvl}`
+            
+            if (baoBlessings.stone.lvl > 0) blessingText += `\n${baoBlessings.stone.display}: &b${baoBlessings.stone.lvl}`
+            // console.log(blessingText)
+        } else {
+            blessingText = '';
         }
 
         if (Settings.fullInventoryAlert && isPlayerInvFull()) {
@@ -332,7 +331,7 @@ renderWhen(register('renderOverlay', () => {
 }), () => Settings.secretsPerSession && (getInDungeon() || getInDHub()) && getInSkyblock() && World.isLoaded());
 
 renderWhen(register('renderOverlay', () => {
-    Renderer.drawStringWithShadow(baoDungeons.blessings.text, baoDungeons.blessings.x, baoDungeons.blessings.y);
+    Renderer.drawStringWithShadow(`${blessingText}`, baoDungeons.blessings.x, baoDungeons.blessings.y);
 }), () => Settings.showBlessingsDisplay && getInDungeon() && getInSkyblock() && World.isLoaded());
 
 renderWhen(register('renderOverlay', () => {

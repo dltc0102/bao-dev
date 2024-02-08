@@ -492,6 +492,10 @@ export function timeToSeconds(hours, minutes, seconds) {
     return hours * 3600 + minutes * 60 + seconds;
 }
 
+export function secsToMS(seconds) {
+    return seconds * 1000;
+}
+
 
 ////////////////////////////////////////////////////////////////////////
 // CHARGE COUNTER ------------------------------------------------------
@@ -933,20 +937,15 @@ export function filterSeparators(rawString, sepThin) {
 }
 
 export function romanToNumeral(romanStr) {
+    let letters = romanStr.split("");
     let result = 0;
-  
-    for (let i = 0; i < romanStr.length; i++) {
-        const currentNumeral = romanNumerals[romanStr[i]];
-        const nextNumeral = romanNumerals[romanStr[i + 1]];
-    
-        if (nextNumeral > currentNumeral) {
-            result += (nextNumeral - currentNumeral);
-            i++; // Skip the next numeral since it's already considered
+    for (var i = 0; i < letters.length; i++) {
+        if (romanNumerals[letters[i]] < romanNumerals[letters[i + 1]]) {
+            result -= romanNumerals[letters[i]]
         } else {
-            result += currentNumeral;
+            result += romanNumerals[letters[i]]
         }
     }
-  
     return result;
 }
 
