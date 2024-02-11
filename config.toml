@@ -217,6 +217,7 @@
 
 	[mythos.qol]
 		announce_inqs = true
+		better_mythos_event_messages = false
 		hide_leg_griffin_error = true
 
 [fishing_pings]
@@ -289,7 +290,9 @@
 		primal_fear_main_toggle = false
 		headless_horseman_ping = true
 		solver_for_karen_fear = false
+		primal_fear_spawning_ping = false
 		solver_for_mathematician_fear = false
+		primal_fear_qol = false
 
 	[misc.end]
 		end_protector_ping = false

@@ -1,7 +1,7 @@
 import Settings from "../../settings.js";
 
 import { getInSkyblock, getInDungeon } from "../../utils/functions.js";
-import { registerChatWhen, importantItems } from "../../utils/utils";
+import { registerWhen } from "../../utils/utils";
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -31,28 +31,39 @@ const messageQOLMessages = [
 ]
 
 messageQOLMessages.forEach(msg => {{
-    registerChatWhen(register('chat', (event) => {
+    registerWhen('chat', (event) => {
         cancel(event);
-    }).setCriteria(msg), () => Settings.dungeonMessageQOL && getInDungeon() && getInSkyblock() && World.isLoaded());
+    }, () => Settings.dungeonMessageQOL && getInDungeon() && getInSkyblock() && World.isLoaded()).setCriteria(msg);
 }});
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // MUTE NPC SOLD ITEMS
 ///////////////////////////////////////////////////////////////////////////////
-registerChatWhen(register('chat', (thing, amt, coins, event) => {
-    if (!importantItems.includes(thing)) cancel(event);
-}).setCriteria('You sold ${thing} x${amt} for ${coins} coin!'), () => getInDungeon() && getInSkyblock() && World.isLoaded());
+const importantItems = ["Giant's Sword", "Infinileap", "Diamond Pickaxe", "Stonk", "Ragnarock Axe", "Spring Boots", "Abiphone", "Rabbit Hat", "Treecapitator"];
 
-registerChatWhen(register('chat', (thing, amt, coins, event) => {
+registerWhen('chat', (item, amt, coins, event) => {
+    if (!importantItems.includes(item)) cancel(event);
+}, () => getInDungeon() && getInSkyblock() && World.isLoaded()).setCriteria('You sold ${item} x${amt} for ${coins} Coin!');
+
+registerWhen('chat', (thing, amt, coins, event) => {
     if (!importantItems.includes(thing)) cancel(event);
-}).setCriteria('You sold ${thing} x${amt} for ${coins} coins!'), () => getInDungeon() && getInSkyblock() && World.isLoaded());
+}, () => getInDungeon() && getInSkyblock() && World.isLoaded()).setCriteria('You sold ${thing} x${amt} for ${coins} Coins!');
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // LEVER USED NOTI
 ///////////////////////////////////////////////////////////////////////////////
-registerChatWhen(register('chat', (event) => {
+registerWhen('chat', (event) => {
     ChatLib.chat('&c&lLEVER USED');
-}).setCriteria('This lever has already been used.'), () => getInDungeon() && getInSkyblock() && World.isLoaded());
+}, () => getInDungeon() && getInSkyblock() && World.isLoaded()).setCriteria('This lever has already been used.');
 
+
+///////////////////////////////////////////////////////////////////////////////
+// RARE REWARD FROM CHEST IN DUNGEON HUB MESSAGES
+///////////////////////////////////////////////////////////////////////////////
+const importantDrops = ["Necron's Handle", "Implosion", "Shadow Warp", "Wither Shield", "Dark Claymore", "Necron Dye", "Recombobulator 3000"];
+
+registerWhen('chat', (playerName, drop, chestType, event) => {
+    if (!importantDrops.includes(drop) || playerName !== Player.getName()) cancel(event);
+}, () => getInSkyblock() && World.isLoaded()).setCriteria('RARE REWARD! ${playerName} found a ${drop} in their ${chestType} Chest!');

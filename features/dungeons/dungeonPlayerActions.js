@@ -1,13 +1,16 @@
 import Settings from "../../settings.js";
+import Audio from "../../utils/audio.js";
 
 import { getInSkyblock, getInDungeon, playSound } from "../../utils/functions.js";
-import { registerChatWhen, showAlert } from "../../utils/utils";
+import { registerWhen, showAlert } from "../../utils/utils";
 import { sendMessage, stripRank } from "../../utils/party.js";
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
 ///////////////////////////////////////////////////////////////////////////////
+const paAudio = new Audio();
+
 const essenceFormat = {
     'Diamond': '&b', 
     'Gold': '&e', 
@@ -72,37 +75,40 @@ const playerActionsMsgs = [
 ]
 
 playerActionsMsgs.forEach(msg => {{
-    registerChatWhen(register('chat', (event) => {
+    registerWhen('chat', (event) => {
         cancel(event);
-    }).setCriteria(msg), () => shouldHandlePlayerActions());
+    }, () => shouldHandlePlayerActions()).setCriteria(msg);
 }});
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // ICE SPRAY PING
 ///////////////////////////////////////////////////////////////////////////////
-registerChatWhen(register('chat', (playerName, reforge, event) => {
+
+registerWhen('chat', (playerName, reforge, event) => {
     sendMessage(`${playerName} has obtained ${reforge} Ice Spray Wand!`);
     showAlert('&3[!] &fIce Spray Wand &3[!]');
-    stripRank(playerName) === Player.getName() ? playSound() : dungeonCleanAudio.playDefaultSound();
-}).setCriteria('${playerName} has obtained ${reforge} Ice Spray Wand!'), () => shouldHandlePlayerActions());
+    playerName === Player.getName() ? playSound() : paAudio.playDefaultSound();
+}, () => shouldHandlePlayerActions()).setCriteria('${playerName} has obtained ${reforge} Ice Spray Wand!');
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // ESSENCE MESSAGES
 ///////////////////////////////////////////////////////////////////////////////
-registerChatWhen(register('chat', (playerName, event) => {
+registerWhen('chat', (playerName, event) => {
     ChatLib.chat('&8&l+1 Essence');
-}).setCriteria('${playerName} found a Wither Essence! Everyone gains an extra essence!'), () => shouldHandlePlayerActions());
+}, () => shouldHandlePlayerActions()).setCriteria('${playerName} found a Wither Essence! Everyone gains an extra essence!');
 
-registerChatWhen(register('chat', (playerName, numEss, typeEss, event) => {
+registerWhen('chat', (playerName, numEss, typeEss, event) => {
     ChatLib.chat(`${determineEss(typeEss)}&l+${numEss} Essence`);
-}).setCriteria('ESSENCE! ${playerName} found x${numEss} ${typeEss} Essence!'), () => shouldHandlePlayerActions());
+}, () => shouldHandlePlayerActions()).setCriteria('ESSENCE! ${playerName} found x${numEss} ${typeEss} Essence!');
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // CREEPER VEIL ACTIONS
 ///////////////////////////////////////////////////////////////////////////////
-registerChatWhen(register('chat', (status, event) => {
+registerWhen('chat', (status, event) => {
     if (status === 'Activated') ChatLib.chat('&aCreeper Veil: &r&lON');
     if (status === 'De-activated') ChatLib.chat('&aCreeper Veil: &7&lOFF');
-}).setCriteria('Creeper Veil ${status}!'), () => shouldHandlePlayerActions());
+}, () => shouldHandlePlayerActions()).setCriteria('Creeper Veil ${status}!');
+

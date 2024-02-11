@@ -1,7 +1,7 @@
 import Settings from '../../settings.js';
 
 import { getInSkyblock } from '../../utils/functions.js'
-import { registerChatWhen } from '../../utils/utils.js';
+import { registerWhen } from '../../utils/utils.js';
 
 ////////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
@@ -21,7 +21,7 @@ const wdaMessages = [
 ]
 
 wdaMessages.forEach(msg => {{
-    registerChatWhen(register('chat', (event) => {
+    registerWhen('chat', (event) => {
         cancel(event);
-    }), () => shouldHandleWDAMsgs());
+    }, () => shouldHandleWDAMsgs()).setCriteria(msg);
 }});

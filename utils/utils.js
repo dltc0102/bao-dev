@@ -35,7 +35,6 @@ export const baoFirstTime = new PogObject("bao-dev", {
 }, './data/baoFirstTime.json');
 baoFirstTime.autosave(5);
 
-// export const baoUtils = new PogObject("bao-dev", {
 export const baoUtils = {
     "modPrefix": '&6[&3Bao&6]&r', 
     "screenH": Renderer.screen.getHeight(), 
@@ -45,10 +44,8 @@ export const baoUtils = {
     "baseTextH": 10,
     "currentTimestamp": 0,
 };
-// }, './data/baoUtils.json');
 
 // dungeon classes
-export const importantItems = ['Hyperion', 'Dark Claymore', 'Terminator', "Giant's Sword", 'Infinileap', 'Diamond Pickaxe', 'Stonk', 'Ragnarock Axe', 'Spring Boots', 'Abiphone'];
 export const dungeonClasses = ['Berserk', 'Archer', 'Tank', 'Healer', 'Mage'];
 
 // player ranks
@@ -61,91 +58,27 @@ export function determinePlayerRankColor(rank) {
 }
 
 // render triggers unreg/reg 
-let checkingRenderTrigs = []; 
+let checkingTrigs = []; 
 /**
  * Registers and unregisters the trigger depending on the result of the checkFunc. Use with render triggers to reduce lag when they are not being used.
- * @param {() => void} trigger 
- * @param {Function} checkFunc 
- * @returns 
+ * @param {string} eventName 
+ * @param {idek} callback
+ * @param {() => boolean} checkFunc 
+ * @returns {Trigger}
  */
-export const renderWhen = (trigger, checkFunc) => checkingRenderTrigs.push([trigger.unregister(), checkFunc])
+export function registerWhen(eventName, callback, checkFunc) {
+    const trigger = register(eventName, (...args) => {
+        return checkFunc() && callback(...args);
+    });
+    checkingTrigs.push([trigger, checkFunc]);
+    return trigger;
+}
 
 register('tick', () => {
-    for (let i = 0; i < checkingRenderTrigs.length; i++) {
-        let [trigger, func] = checkingRenderTrigs[i];
-        func() ? trigger.register() : trigger.unregister();
-    }
+    checkingTrigs.forEach(([trigger, func]) =>
+        func() ? trigger.register() : trigger.unregister()
+    );
 });
-
-// chat triggers unreg/reg
-let checkingChatTrigs = [];
-/**
- * Registers and unregisters the trigger depending on the result of the checkFunc. Use with render triggers to reduce lag when they are not being used.
- * @param {() => void} trigger 
- * @param {Function} checkFunc 
- * @returns 
- */
-export const registerChatWhen = (trigger, checkFunc) => checkingChatTrigs.push([trigger.unregister(), checkFunc])
-
-register('tick', () => {
-    for (let i = 0; i < checkingChatTrigs.length; i++) {
-        let [trigger, func] = checkingChatTrigs[i];
-        func() ? trigger.register() : trigger.unregister();
-    }
-});
-
 
 
 // SKYBLOCK TIME
-function convertEpochTime(epochTimeInSeconds) {
-    const milliseconds = epochTimeInSeconds * 1000;
-  
-    const dateObject = new Date(milliseconds);
-  
-    const year = dateObject.getFullYear();
-    const month = dateObject.getMonth() + 1;
-    const day = dateObject.getDate();
-    const hours = dateObject.getHours();
-    const minutes = dateObject.getMinutes();
-    const seconds = dateObject.getSeconds();
-  
-    const readableTime = `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day} ${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  
-    return readableTime;
-}
-
-const sbEpoch = 1560275700;
-const result = convertEpochTime(sbEpoch);
-// console.log(result);
-
-
-
-
-// 1 sbMins = 60 sbSecs
-// 1 sbHour = 60 sbMins
-// 1 sbDay = 24 sbHours
-// 1 sbMonth = 31 sbDays
-// 1 sbSeason = 3 sbMonths (first: early, second: mid, third: late)
-// 1 sbYear = 12 sbMonths
-
-// jan 
-// feb 
-// mar 
-// apr
-// may
-// jun
-// jul
-// aug
-// sep
-// oct
-// nov
-// dec
-
-// 1 sbDecade = 10 sbYears
-// 1 sbCentury = 100 sbYears
-// 6am to 7pm = daytime
-// 7pm to 6am = nighttime
-// ghasts spawn between 9pm and 5am
-// spooky mobs spawn at nighttime
-// headless horseman can be spawned at nighttime
-// rats can spawn at nighttime

@@ -1,7 +1,7 @@
 import Settings from '../../settings.js';
 
 import { getInSkyblock } from '../../utils/functions.js'; // sb, area
-import { registerChatWhen } from '../../utils/utils.js';
+import { registerWhen } from '../../utils/utils.js';
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ const grandmaMessages = [
 ]
 
 grandmaMessages.forEach(msg => {{
-    registerChatWhen(register('chat', (event) => {
+    registerWhen('chat', (event) => {
         cancel(event);
-    }), () => shouldHandleGrandmaMsgs());
+    }, () => shouldHandleGrandmaMsgs()).setCriteria(msg);
 }});

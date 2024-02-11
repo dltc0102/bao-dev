@@ -1,18 +1,17 @@
 import Settings from '../settings.js';
 import Audio from '../utils/audio.js';
-import PogObject from 'PogData';
 
-import { delayMessage, formatMoney, getPlayerPOI, getPlayerPos, playSound } from '../utils/functions.js';
+import { delayMessage, filterSeparators, formatMoney, getPlayerPOI, getPlayerPos, playSound } from '../utils/functions.js';
 import { constrainX, constrainY } from '../utils/functions.js' // padding
 import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'; // gui
 import { sendMessage } from '../utils/party.js';
-import { showAlert, renderWhen } from '../utils/utils.js';
+import { showAlert, registerWhen } from '../utils/utils.js';
 import { getInSkyblock, getInHub } from '../utils/functions.js'; // sb, area
 import { baoUtils } from '../utils/utils.js';
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// SETUP CONSTS
+// CONSTS
 ////////////////////////////////////////////////////////////////////////////////
 const mythosAudio = new Audio();
 const moveMythosCounter = new Gui(); // bobber count
@@ -20,8 +19,6 @@ createGuiCommand(moveMythosCounter, 'movemythoscounter', 'mmc');
 
 const mythosDragText = `&7|| MYTHOS ||\n&7==================\n&7||| Burros Dug: 0\n&7||| Feathers: 0\n&7||| Coins Dug Up: 0\n&7------------------\n&7\n&7|||MinosHunters: 0\n&7|||Lynxes: 0\n&7|||Gaias: 0\n&7|||Minotaurs: 0\n&7|||Champions: 0\n&7||| Inquisitors: 0\n&7------------------\n&7||| 0 0 0\n&7||| 0 0 0\n&7||| 0 0\n&7------------------\n&7|| Kills/Inq: 0\n&7|| Minotaurs/Dae Stick: 0\n&7|| Burrows/CoG: 0\n&7|| Burrows/WuS: 0\n&7|| Champs Since Relic: 0`;
 
-// pogobject
-// export const baoMythos = new PogObject("bao-dev", {
 export const baoMythos = {
     "allLines": '',
     "x": 5, 
@@ -31,7 +28,7 @@ export const baoMythos = {
         "moneyCount": 0, 
         "burrowCount": 0, 
         "ancientClawCount": 0, 
-        "anicentClawMoney": 0,
+        "ancientClawMoney": 0,
 
         "minosHunterKills": 0, 
         "siaLynxKills": 0, 
@@ -57,8 +54,6 @@ export const baoMythos = {
         "championsSinceRelic": 0, 
     }, 
 };
-// }, '/data/baoMythos.json');
-// baoMythos.autosave(5);
 
 const dts_title = '&2Dwarf Turtle Shelmet' 
 const ar_title = '&5Antique Remedies'
@@ -69,288 +64,336 @@ const wus_title = '&6Washed-up Souvenir'
 const dae_title = '&6Daedalus Stick'
 const chim_title = '&d&lCHIMERA I'
 
+// mythosCounterGeneral
+const burrowLine = `&4|&3|| &rBurrows Dug: &b${baoMythos.stats.burrowCount}`;
+const featherLine = `&4|&3|| &rFeathers: &b${baoMythos.stats.featherCount}`;
+
+// mythosCounterKills
+const hunterLine = `&4|&3|| &rMinos Hunters: &b${baoMythos.stats.minosHunterKills}`;
+const lynxLine = `&4|&3|| &rLynxes: &b${baoMythos.stats.siaLynxKills}`;
+const gaiaLine = `&4|&3|| &rGaias: &b${baoMythos.stats.gaiaConsKills}`;
+const minotaurLine = `&4|&3|| &rMinotaurs: &b${baoMythos.stats.minotaurKills}`;
+const championLine = `&4|&3|| &rChampions: &b${baoMythos.stats.minosChampKills}`;
+const inquisitorLine = `&4|&3|| &rInquisitors: &b${baoMythos.stats.minosInqKills}`
+
+// mythosCounterDrops
+const dtsAmt = baoMythos.stats.DTS > 0 ? baoMythos.stats.DTS : 0;
+const arAmt = baoMythos.stats.AR > 0 ? baoMythos.stats.AR : 0;
+const ctpAmt = baoMythos.stats.CTP > 0 ? baoMythos.stats.CTP : 0;
+const dsAmt = baoMythos.stats.DS > 0 ? baoMythos.stats.DS : 0;
+const cogAmt = baoMythos.stats.CoG > 0 ? baoMythos.stats.CoG : 0;
+const wusAmt = baoMythos.stats.WuS > 0 ? baoMythos.stats.WuS : 0;
+const mrAmt = baoMythos.stats.MR > 0 ? baoMythos.stats.MR : 0;
+const chimAmt = baoMythos.stats.CHIM > 0 ? baoMythos.stats.CHIM : 0;
+
+const dtsLine = `&rDTS: &b${dtsAmt}`;
+const arLine = `&rAR: &b${arAmt}`;
+const ctpLine = `&rCTP: &b${ctpAmt}`;
+const dsLine = `&rDS: &b${dsAmt}`;
+const cogLine = `&rCoG: &b${cogAmt}`;
+const wusLine = `&rWuS: &b${wusAmt}`;
+const mrLine = `&rMR: &b${mrAmt}`;
+const chimLine = `&rCHIMERA: &b${chimAmt}`;
+
+const dropsLine1 = `&4|&3|| &r${dtsLine} ${arLine} ${ctpLine}`;
+const dropsLine2 = `&4|&3|| &r${dsLine} ${cogLine} ${wusLine}`;
+const dropsLine3 = `&4|&3|| &r${mrLine} ${chimLine}`;
+
+// mythosCounterAvgs
+const avgInq = (isNaN(baoMythos.stats.totalMythosKills) || isNaN(baoMythos.stats.minosInqKills) || baoMythos.stats.minosInqKills === 0) ? 0 : (baoMythos.stats.totalMythosKills / baoMythos.stats.minosInqKills).toFixed(0);
+const avgDae = (isNaN(baoMythos.stats.minotaurKills) || isNaN(baoMythos.stats.DS) || baoMythos.stats.DS === 0) ? 0 : (baoMythos.stats.minotaurKills / baoMythos.stats.DS).toFixed(0);
+const avgCoG = (isNaN(baoMythos.stats.burrowCount) || isNaN(baoMythos.stats.CoG) || baoMythos.stats.CoG === 0) ? 0 : (baoMythos.stats.burrowCount / baoMythos.stats.CoG).toFixed(2);
+const avgWuS = (isNaN(baoMythos.stats.burrowCount) || isNaN(baoMythos.stats.WuS) || baoMythos.stats.WuS === 0) ? 0 : (baoMythos.stats.burrowCount / baoMythos.stats.WuS).toFixed(2);
+const avgRelic = (isNaN(baoMythos.stats.minosChampKills) || isNaN(baoMythos.stats.MR) || baoMythos.stats.MR === 0) ? 0 : (baoMythos.stats.minosChampKills / baoMythos.stats.MR).toFixed(0);
+
+const averageInqLine = `&4|&3|| &rKills/Inq: &b${avgInq}`;
+const averageDaeLine = `&4|&3|| &rMinotaurs/Dae Stick: &b${avgDae}`;
+const averageCOGLine = `&4|&3|| &rBurrows/CoG: &b${avgCoG}`;
+const averageWUSLine = `&4|&3|| &rBurrows/WuS: &b${avgWuS}`;
+const averageRelicLine = `&4|&3|| &rChamps/Relic: &b${avgRelic}`;
+
+// mythosCounterTrackers
+const mobsSinceInqLine = `&6|| &rMobs Since Inq: &c${baoMythos.stats.mobsSinceInq}`;
+const minotaursSinceDaeLine = `&6|| &rMinotaurs Since Dae: &c${baoMythos.stats.minotaursSinceDae}`;
+const burrowsSinceCOGLine = `&6|| &rBurrows Since CoG: &c${baoMythos.stats.burrowsSinceCOG}`;
+const burrowsSinceWUSLine = `&6|| &rMinotaurs Since WuS: &c${baoMythos.stats.burrowsSinceWUS}`;
+const champsSinceRelicLine = `&6|| &rChamps Since Relic: &c${baoMythos.stats.championsSinceRelic}`;
+
 
 ////////////////////////////////////////////////////////////////////////////////
-// REGS
+// FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
-register('chat', (event) => {
-    cancel(event);
-}).setCriteria('Follow the arrows to find the treasure!');
+function shouldHandleMythosRegs() {
+    return getInHub() && getInSkyblock() && World.isLoaded();
+}
 
-// feathers dug up
-register('chat', (event) => {
-    cancel(event);
+
+////////////////////////////////////////////////////////////////////////////////
+// BETTER MYTHOS EVENT MESSAGES
+////////////////////////////////////////////////////////////////////////////////
+const mythosMessages = [
+    // sift
+    /Follow the arrows to find the treasure!/, 
+    /You need to equip a LEGENDARY griffin pet to fight this!/, 
+
+    // items
+    /RARE DROP! You dug out a Griffin Feather!/, 
+    /Wow! You dug out .+ coins!/, 
+    /You sold Ancient Claw x.+ for .+ Coins!/,
+    /You sold Ancient Claw x.+ for .+ Coin!/,
+    /You gut out a Griffin Burrow!/, 
+    /You finished the Griffin burrow chain! (4\/4)/, 
+
+    // mob stats
+    /You dug out a Minos Hunter!/, 
+    /You dug out Siamese Lynxes!/, 
+    /You dug out a Gaia Construct!/, 
+    /You dug out a Minotaur!/, 
+    /You dug out a Minos Champion!/, 
+    /You dug out a Minos Inquisitor!/, 
+]
+
+mythosMessages.forEach(msg => {
+    registerWhen('chat', (event) => {
+        cancel(event);
+    }, () => Settings.betterMythosMessages && shouldHandleMythosRegs()).setCriteria(msg);
+});
+
+
+////////////////////////////////////////////////////////////////////////////////
+// FEATHERS
+////////////////////////////////////////////////////////////////////////////////
+registerWhen('chat', (event) => {
     baoMythos.stats.featherCount += 1;
-    // baoMythos.save();
-}).setCriteria('RARE DROP! You dug out a Griffin Feather!');
+}, () => shouldHandleMythosRegs()).setCriteria('RARE DROP! You dug out a Griffin Feather!');
 
-// coins dug up
-register('chat', (money, event) => {
-    cancel(event);
+
+////////////////////////////////////////////////////////////////////////////////
+// COINS
+////////////////////////////////////////////////////////////////////////////////
+registerWhen('chat', (money, event) => {
     const moneyNoCom = money.toString().replace(/,/g, '');;
     baoMythos.stats.moneyCount += Number(moneyNoCom);
-    // baoMythos.save();
-}).setCriteria('Wow! You dug out ${money} coins!');
+}, () => shouldHandleMythosRegs()).setCriteria('Wow! You dug out ${money} coins!');
 
-// ancient claws sold to npc
-register('chat', (amt, coins, event) => {
+
+////////////////////////////////////////////////////////////////////////////////
+// ANCIENT CLAWS
+////////////////////////////////////////////////////////////////////////////////
+registerWhen('chat', (amt, coins, event) => {
     baoMythos.stats.ancientClawCount += parseInt(amt);
     baoMythos.stats.ancientClawMoney += parseInt(coins.replace(',', ''), 10);
-    // baoMythos.save();
-}).setCriteria('You sold Ancient Claw x${amt} for ${coins} Coins!');
+}, () => shouldHandleMythosRegs()).setCriteria('You sold Ancient Claw x${amt} for ${coins} Coins!');
 
-// burrow digging
-register('chat', (event) => {
-    cancel(event);
+
+////////////////////////////////////////////////////////////////////////////////
+// BURROWS
+////////////////////////////////////////////////////////////////////////////////
+registerWhen('chat', (event) => {
     baoMythos.stats.burrowCount +=1;
     baoMythos.stats.burrowsSinceCOG += 1;
     baoMythos.stats.burrowsSinceWUS += 1;
-    // baoMythos.save();
-}).setCriteria('You dug out a Griffin Burrow!').setContains();
+}, () => shouldHandleMythosRegs()).setCriteria('You dug out a Griffin Burrow!').setContains();
 
-register('chat', (event) => { 
-    cancel(event);
+registerWhen('chat', (event) => {
     baoMythos.stats.burrowCount +=1;
     baoMythos.stats.burrowsSinceCOG += 1;
     baoMythos.stats.burrowsSinceWUS += 1;
-    // baoMythos.save();
-}).setCriteria('You finished the Griffin burrow chain! (4/4)');
+}, () => shouldHandleMythosRegs()).setCriteria('You finished the Griffin burrow chain! (4/4)');
 
-// dwarf turtle shelmet
-register('chat', (event) => {
+
+////////////////////////////////////////////////////////////////////////////////
+// DWARF TURTLE SHELMET
+////////////////////////////////////////////////////////////////////////////////
+registerWhen('chat', (event) => {
     showAlert(dts_title);
     mythosAudio.playDefaultSound();
     if (baoMythos.stats.DTS === undefined) baoMythos.stats.DTS += 2;
     baoMythos.stats.DTS += 1;
-    // baoMythos.save();
-}).setCriteria('[SBE] RARE DROP! Dwarf Turtle Shelmet');
+}, () => shouldHandleMythosRegs()).setCriteria('[SBE] RARE DROP! Dwarf Turtle Shelmet');
 
-// antique remedies
-register('chat', (event) => {
+
+////////////////////////////////////////////////////////////////////////////////
+// ANTIQUE REMEDIES
+////////////////////////////////////////////////////////////////////////////////
+registerWhen('chat', (event) => {
     showAlert(ar_title);
     mythosAudio.playDefaultSound();
     if (baoMythos.stats.AR === undefined) baoMythos.stats.AR += 2;
     baoMythos.stats.AR += 1;
-    // baoMythos.save();
-}).setCriteria('[SBE] RARE DROP! Antique Remedies');
+}, () => shouldHandleMythosRegs()).setCriteria('[SBE] RARE DROP! Antique Remedies');
 
-// crochet tiger plushie
-register('chat', (event) => {
+
+////////////////////////////////////////////////////////////////////////////////
+// CROCHET TIGER PLUSHIE
+////////////////////////////////////////////////////////////////////////////////
+registerWhen('chat', (event) => {
     showAlert(ctp_title);
     mythosAudio.playDefaultSound();
     if (baoMythos.stats.CTP === undefined) baoMythos.stats.CTP += 2;
     baoMythos.stats.CTP += 1;
-    // baoMythos.save();
-}).setCriteria('[SBE] RARE DROP! Crochet Tiger Plushie');
+}, () => shouldHandleMythosRegs()).setCriteria('[SBE] RARE DROP! Crochet Tiger Plushie');
 
-// minos relic
-register('chat', (event) => {
+
+////////////////////////////////////////////////////////////////////////////////
+// MINOS RELIC
+////////////////////////////////////////////////////////////////////////////////
+registerWhen('chat', (event) => {
     showAlert(relic_title);
     sendMessage(`RARE DROP! Minos Relic [${baoMythos.stats.championsSinceRelic} Champ kills]`);
     playSound();
     if (baoMythos.stats.MR === undefined) baoMythos.stats.MR += 2;
     baoMythos.stats.MR += 1;
-    // baoMythos.save();
-}).setCriteria('[SBE] RARE DROP! Minos Relic');
+}, () => shouldHandleMythosRegs()).setCriteria('[SBE] RARE DROP! Minos Relic');
 
-// crown of greed
-register('chat', (event) => {
+
+////////////////////////////////////////////////////////////////////////////////
+// CROWN OF GREED
+////////////////////////////////////////////////////////////////////////////////
+registerWhen('chat', (event) => {
     sendMessage(`RARE DROP! You dug out a Crown of Greed! [${baoMythos.stats.burrowsSinceCOG} burrows]`);
     showAlert(cog_title);
     mythosAudio.playDefaultSound();
     if (baoMythos.stats.CoG === undefined) baoMythos.stats.CoG += 2;
     baoMythos.stats.CoG += 1;
     baoMythos.stats.burrowsSinceCOG = 0;
-    // baoMythos.save();
-}).setCriteria('RARE DROP! You dug out a Crown of Greed!');
+}, () => shouldHandleMythosRegs()).setCriteria('RARE DROP! You dug out a Crown of Greed!');
 
-// washed up souvenir
-register('chat', (event) => {
+
+////////////////////////////////////////////////////////////////////////////////
+// WASHED UP SOUVENIR
+////////////////////////////////////////////////////////////////////////////////
+registerWhen('chat', (event) => {
     sendMessage(`RARE DROP! You dug out a Washed-up Souvenir! [${baoMythos.stats.burrowsSinceWUS} burrows]`);
     showAlert(wus_title);
     mythosAudio.playDefaultSound();
     if (baoMythos.stats.WuS === undefined) baoMythos.stats.WuS += 2;
     baoMythos.stats.WuS += 1;
     baoMythos.stats.burrowsSinceWUS = 0;
-    // baoMythos.save();
-}).setCriteria('RARE DROP! You dug out a Washed-up Souvenir!');
+}, () => shouldHandleMythosRegs()).setCriteria('RARE DROP! You dug out a Washed-up Souvenir!');
 
-// daedalus stick
-register('chat', (mf, event) => {
+
+////////////////////////////////////////////////////////////////////////////////
+// DAEDALUS STICK
+////////////////////////////////////////////////////////////////////////////////
+registerWhen('chat', (mf, event) => {
     sendMessage(`RARE DROP! Daedalus Stick (+${mf}% ✯ Magic Find) [${baoMythos.stats.minotaursSinceDae} Minotaur kills]`)
     showAlert(dae_title);
     playSound();
     if (baoMythos.stats.DS === undefined) baoMythos.stats.DS += 2;
     baoMythos.stats.DS += 1;
     baoMythos.stats.minotaursSinceDae = 0;
-    // baoMythos.save();
-}).setCriteria('RARE DROP! Daedalus Stick (+${mf}% ✯ Magic Find)');
+}, () => shouldHandleMythosRegs()).setCriteria('RARE DROP! Daedalus Stick (+${mf}% ✯ Magic Find)');
 
-// chimera book
-register('chat', (event) => {
+
+////////////////////////////////////////////////////////////////////////////////
+// CHIMERA I
+////////////////////////////////////////////////////////////////////////////////
+registerWhen('chat', (mf, event) => {
     showAlert(chim_title)
     sendMessage('RARE DROP! Enchanted Book');
     if (baoMythos.stats.CHIM === undefined) baoMythos.stats.CHIM += 2;
     baoMythos.stats.CHIM += 1;
-    // baoMythos.stats.inqsSinceChim = 0;
     mythosAudio.playDefaultSound();
-    // baoMythos.save();
-}).setCriteria('RARE DROP! Enchanted Book');
+}, () => shouldHandleMythosRegs()).setCriteria('RARE DROP! Enchanted Book');
 
-// Minos Hunter
-register('chat', (event) => {
-    cancel(event);
+
+////////////////////////////////////////////////////////////////////////////////
+// MINOS HUNTER
+////////////////////////////////////////////////////////////////////////////////
+registerWhen('chat', (mf, event) => {
     baoMythos.stats.minosHunterKills += 1; 
     baoMythos.stats.mobsSinceInq += 1; 
     baoMythos.stats.totalMythosKills += 1;
-    // baoMythos.save();
-}).setCriteria('You dug out a Minos Hunter!').setContains();
+}, () => shouldHandleMythosRegs()).setCriteria('You dug out a Minos Hunter!').setContains();
 
-// Siamese Lynxes
-register('chat', (event) => {
-    cancel(event);
+
+////////////////////////////////////////////////////////////////////
+// STATS: SIAMESE LYNXES
+////////////////////////////////////////////////////////////////////
+registerWhen('chat', (mf, event) => {
     baoMythos.stats.siaLynxKills += 1; 
     baoMythos.stats.mobsSinceInq += 1; 
     baoMythos.stats.totalMythosKills += 1;
-    // baoMythos.save();
-}).setCriteria('You dug out Siamese Lynxes!').setContains();
+}, () => shouldHandleMythosRegs()).setCriteria('You dug out a Siamese Lynxes!').setContains();
 
-// Gaia Construct
-register('chat', (event) => {
-    cancel(event);
+
+////////////////////////////////////////////////////////////////////
+// STATS: GAIA CONSTRUCT
+////////////////////////////////////////////////////////////////////
+registerWhen('chat', (mf, event) => {
     baoMythos.stats.gaiaConsKills += 1; 
     baoMythos.stats.mobsSinceInq += 1; 
     baoMythos.stats.totalMythosKills += 1;
-    // baoMythos.save();
-}).setCriteria('You dug out a Gaia Construct!').setContains();
+}, () => shouldHandleMythosRegs()).setCriteria('You dug out a Gaia Construct!').setContains();
 
-// Minotaur
-register('chat', (event) => {
-    cancel(event);
+
+////////////////////////////////////////////////////////////////////
+// STATS: MINOTAUR
+////////////////////////////////////////////////////////////////////
+registerWhen('chat', (mf, event) => {
     baoMythos.stats.minotaurKills += 1; 
     baoMythos.stats.mobsSinceInq += 1; 
     baoMythos.stats.minotaursSinceDae += 1; 
     baoMythos.stats.totalMythosKills += 1;
-    // baoMythos.save();
-}).setCriteria('You dug out a Minotaur!').setContains();
+}, () => shouldHandleMythosRegs()).setCriteria('You dug out a Minotaur!').setContains();
 
-// Minos Champion
-register('chat', (event) => {
-    cancel(event);
+
+////////////////////////////////////////////////////////////////////
+// STATS: MINOS CHAMPION
+////////////////////////////////////////////////////////////////////
+registerWhen('chat', (mf, event) => {
     baoMythos.stats.championsSinceRelic += 1;
     baoMythos.stats.minosChampKills += 1; 
     baoMythos.stats.mobsSinceInq += 1; 
     baoMythos.stats.totalMythosKills += 1;
-    // baoMythos.save();
-}).setCriteria('You dug out a Minos Champion!').setContains();
+}, () => shouldHandleMythosRegs()).setCriteria('You dug out a Minos Champion!').setContains();
 
-// Minos Inquisitor
-register('chat', (event) => {
-    cancel(event);
+
+////////////////////////////////////////////////////////////////////
+// STATS: MINOS INQUISITOR
+////////////////////////////////////////////////////////////////////
+registerWhen('chat', (mf, event) => {
     if (Settings.announce_inqs) sendMessage(`${getPlayerPos()} || ${getPlayerPOI()} || Inquisitor`);
-    delayMessage('client', `Mobs Since Last Inq: &b${baoMythos.stats.mobsSinceInq} &ckills`, 100);
+    setTimeout(() => { ChatLib.chat(`Mobs Since Last Inq: &b${baoMythos.stats.mobsSinceInq} &ckills`)}, 100);
     playSound();
 
     baoMythos.stats.minosInqKills += 1; 
     baoMythos.stats.mobsSinceInq = 0; 
     baoMythos.stats.totalMythosKills += 1;
-    // baoMythos.save();
-}).setCriteria('You dug out a Minos Inquisitor!').setContains();
+}, () => shouldHandleMythosRegs()).setCriteria('You dug out a Minos Inquisitor!').setContains();
 
 
-
-
+////////////////////////////////////////////////////////////////////
+// REG: STEP
+////////////////////////////////////////////////////////////////////
 register('step', () => {
-    if (!getInSkyblock() || !World.isLoaded() || !getInHub() || !Settings.mythos_main_toggle) return;
-    const moneyText = formatMoney(baoMythos.stats.moneyCount)
-
-    const mythosTitle = Settings.mythos_counter_general || Settings.mythos_counter_kills || Settings.mythos_counter_drops || Settings.mythos_counter_averages || Settings.mythos_counter_trackers ? `&3|| &6MYTHOS &3||\n${baoUtils.thickSep}` : '';
-
-    // mythos_counter_general
-    let burrowLine = `&4|&3|| &rBurrows Dug: &b${baoMythos.stats.burrowCount}`;
-    let featherLine = `&4|&3|| &rFeathers: &b${baoMythos.stats.featherCount}`;
-    let moneyLine = `&4|&3|| &rCoins Dug Up: &b${moneyText}`;
-
-    // mythos_counter_kills
-    let hunterLine = `&4|&3|| &rMinos Hunters: &b${baoMythos.stats.minosHunterKills}`;
-    let lynxLine = `&4|&3|| &rLynxes: &b${baoMythos.stats.siaLynxKills}`;
-    let gaiaLine = `&4|&3|| &rGaias: &b${baoMythos.stats.gaiaConsKills}`;
-    let minotaurLine = `&4|&3|| &rMinotaurs: &b${baoMythos.stats.minotaurKills}`;
-    let championLine = `&4|&3|| &rChampions: &b${baoMythos.stats.minosChampKills}`;
-    let inquisitorLine = `&4|&3|| &rInquisitors: &b${baoMythos.stats.minosInqKills}`
-
-    // mythos_counter_drops
-    let dtsAmt = baoMythos.stats.DTS > 0 ? baoMythos.stats.DTS : 0;
-    let arAmt = baoMythos.stats.AR > 0 ? baoMythos.stats.AR : 0;
-    let ctpAmt = baoMythos.stats.CTP > 0 ? baoMythos.stats.CTP : 0;
-    let dsAmt = baoMythos.stats.DS > 0 ? baoMythos.stats.DS : 0;
-    let cogAmt = baoMythos.stats.CoG > 0 ? baoMythos.stats.CoG : 0;
-    let wusAmt = baoMythos.stats.WuS > 0 ? baoMythos.stats.WuS : 0;
-    let mrAmt = baoMythos.stats.MR > 0 ? baoMythos.stats.MR : 0;
-    let chimAmt = baoMythos.stats.CHIM > 0 ? baoMythos.stats.CHIM : 0;
-
-    let dtsLine = `&rDTS: &b${dtsAmt}`;
-    let arLine = `&rAR: &b${arAmt}`;
-    let ctpLine = `&rCTP: &b${ctpAmt}`;
-    let dsLine = `&rDS: &b${dsAmt}`;
-    let cogLine = `&rCoG: &b${cogAmt}`;
-    let wusLine = `&rWuS: &b${wusAmt}`;
-    let mrLine = `&rMR: &b${mrAmt}`;
-    let chimLine = `&rCHIMERA: &b${chimAmt}`;
-
-    let dropsLine1 = `&4|&3|| &r${dtsLine} ${arLine} ${ctpLine}`;
-    let dropsLine2 = `&4|&3|| &r${dsLine} ${cogLine} ${wusLine}`;
-    let dropsLine3 = `&4|&3|| &r${mrLine} ${chimLine}`;
-
-    // mythos_counter_averages
-    let avgInq = (isNaN(baoMythos.stats.totalMythosKills) || isNaN(baoMythos.stats.minosInqKills) || baoMythos.stats.minosInqKills === 0) ? 0 : (baoMythos.stats.totalMythosKills / baoMythos.stats.minosInqKills).toFixed(0);
-    let avgDae = (isNaN(baoMythos.stats.minotaurKills) || isNaN(baoMythos.stats.DS) || baoMythos.stats.DS === 0) ? 0 : (baoMythos.stats.minotaurKills / baoMythos.stats.DS).toFixed(0);
-    let avgCoG = (isNaN(baoMythos.stats.burrowCount) || isNaN(baoMythos.stats.CoG) || baoMythos.stats.CoG === 0) ? 0 : (baoMythos.stats.burrowCount / baoMythos.stats.CoG).toFixed(2);
-    let avgWuS = (isNaN(baoMythos.stats.burrowCount) || isNaN(baoMythos.stats.WuS) || baoMythos.stats.WuS === 0) ? 0 : (baoMythos.stats.burrowCount / baoMythos.stats.WuS).toFixed(2);
-    let avgRelic = (isNaN(baoMythos.stats.minosChampKills) || isNaN(baoMythos.stats.MR) || baoMythos.stats.MR === 0) ? 0 : (baoMythos.stats.minosChampKills / baoMythos.stats.MR).toFixed(0);
-
-    let averageInqLine = `&4|&3|| &rKills/Inq: &b${avgInq}`;
-    let averageDaeLine = `&4|&3|| &rMinotaurs/Dae Stick: &b${avgDae}`;
-    let averageCOGLine = `&4|&3|| &rBurrows/CoG: &b${avgCoG}`;
-    let averageWUSLine = `&4|&3|| &rBurrows/WuS: &b${avgWuS}`;
-    let averageRelicLine = `&4|&3|| &rChamps/Relic: &b${avgRelic}`;
-
-    // mythos_counter_trackers
-    let mobsSinceInqLine = `&6|| &rMobs Since Inq: &c${baoMythos.stats.mobsSinceInq}`;
-    let minotaursSinceDaeLine = `&6|| &rMinotaurs Since Dae: &c${baoMythos.stats.minotaursSinceDae}`;
-    let burrowsSinceCOGLine = `&6|| &rBurrows Since CoG: &c${baoMythos.stats.burrowsSinceCOG}`;
-    let burrowsSinceWUSLine = `&6|| &rMinotaurs Since WuS: &c${baoMythos.stats.burrowsSinceWUS}`;
-    let champsSinceRelicLine = `&6|| &rChamps Since Relic: &c${baoMythos.stats.championsSinceRelic}`
-
+    if (!getInSkyblock() || !World.isLoaded() || !getInHub() || !Settings.mythosCounterMainToggle) return;
+    
+    const mythosTitle = Settings.mythosCounterGeneral || Settings.mythosCounterKills || Settings.mythosCounterDrops || Settings.mythosCounterAvgs || Settings.mythosCounterTrackers ? `&3|| &6MYTHOS &3||\n${baoUtils.thickSep}` : '';
+    
     // lines
-    const showGeneral = Settings.mythos_counter_general ? [burrowLine, featherLine, moneyLine, baoUtils.thinSep].join('\n') : '';
+    const moneyLine = `&4|&3|| &rCoins Dug Up: &b${formatMoney(baoMythos.stats.moneyCount)}`;
+    
+    const showGeneral = Settings.mythosCounterGeneral ? [burrowLine, featherLine, moneyLine, baoUtils.thinSep].join('\n') : '';
 
-    const showKills = Settings.mythos_counter_kills ? [hunterLine, lynxLine, gaiaLine, minotaurLine, championLine, inquisitorLine, baoUtils.thinSep].join('\n') : '';
+    const showKills = Settings.mythosCounterKills ? [hunterLine, lynxLine, gaiaLine, minotaurLine, championLine, inquisitorLine, baoUtils.thinSep].join('\n') : '';
 
-    const showDrops = Settings.mythos_counter_drops ? [dropsLine1, dropsLine2, dropsLine3, baoUtils.thinSep].join('\n') : '';
+    const showDrops = Settings.mythosCounterDrops ? [dropsLine1, dropsLine2, dropsLine3, baoUtils.thinSep].join('\n') : '';
 
-    const showAverages = Settings.mythos_counter_averages ? [averageInqLine, averageDaeLine, averageCOGLine, averageWUSLine, averageRelicLine, baoUtils.thinSep].join('\n') : '';
+    const showAverages = Settings.mythosCounterAvgs ? [averageInqLine, averageDaeLine, averageCOGLine, averageWUSLine, averageRelicLine, baoUtils.thinSep].join('\n') : '';
 
-    const showTrackers = Settings.mythos_counter_trackers ? [mobsSinceInqLine, minotaursSinceDaeLine, burrowsSinceCOGLine, burrowsSinceWUSLine, champsSinceRelicLine, baoUtils.thinSep].join('\n') : '';
+    const showTrackers = Settings.mythosCounterTrackers ? [mobsSinceInqLine, minotaursSinceDaeLine, burrowsSinceCOGLine, burrowsSinceWUSLine, champsSinceRelicLine, baoUtils.thinSep].join('\n') : '';
 
     const mythosDisplayRaw = [mythosTitle, showGeneral, showKills, showDrops, showAverages, showTrackers].join('\n');
-    let mythosDisplayFilter = mythosDisplayRaw.replace(/\n{2,}/g, '\n');
 
-    let phraseArray = mythosDisplayFilter.split('\n');
-    let lastIdx = -1;
-    for (let i = phraseArray.length - 1; i >= 0; i--) {
-        if (phraseArray[i].includes(baoUtils.thinSep)) {
-            lastIdx = i;
-            break;
-        }
-    }
-
-    if (lastIdx !== -1) {
-        phraseArray.splice(lastIdx, 1);
-    }
-    baoMythos.allLines = phraseArray.join('\n')
+    baoMythos.allLines = filterSeparators(mythosDisplayRaw, baoUtils.thinSep);
 }).setFps(1)
 
+
+////////////////////////////////////////////////////////////////////
+// REG: DRAG
+////////////////////////////////////////////////////////////////////
 register('dragged', (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveMythosCounter.isOpen()){
@@ -358,20 +401,23 @@ register('dragged', (dx, dy, x, y) => {
         baoMythos.y = constrainY(y, 3, mythosDragText);
     }
 });
-renderWhen(register('renderOverlay', () => {
+
+
+////////////////////////////////////////////////////////////////////
+// REG: OVERLAY
+////////////////////////////////////////////////////////////////////
+registerWhen('renderOverlay', () => {
     Renderer.drawStringWithShadow(baoMythos.allLines, baoMythos.x, baoMythos.y);
-}), () => Settings.mythos_main_toggle && getInHub() && getInSkyblock() && World.isLoaded());
+}, () => Settings.mythosCounterMainToggle && getInHub() && getInSkyblock() && World.isLoaded());
 
-renderWhen(register('renderOverlay', () => {
+registerWhen('renderOverlay', () => {
     renderGuiPosition(moveMythosCounter, baoMythos, mythosDragText);
-}), () => getInSkyblock() && World.isLoaded());
+}, () => getInSkyblock() && World.isLoaded());
 
 
-register('chat', (event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (Settings.hide_griffin_error) cancel(event);
-}).setCriteria('You need to equip a LEGENDARY griffin pet to fight this!');
-
+////////////////////////////////////////////////////////////////////
+// INFO: COMMANDS
+////////////////////////////////////////////////////////////////////
 register('command', () => {
     ChatLib.chat(`&6|| &rMobs Since Inq: &c${baoMythos.stats.mobsSinceInq}`);
     ChatLib.chat(`&6|| &rMinotaurs Since Dae: &c${baoMythos.stats.minotaursSinceDae}`);

@@ -1,26 +1,23 @@
 import Settings from './settings.js';
-import Audio from './utils/audio.js';
 import { baoUtils } from './utils/utils.js';
 import { baoFirstTime } from './utils/utils.js';
 
-export const baoAudio = new Audio();
+// splitted
+import './features/dungeons.js'
+import './features/end.js'
+import './features/fishing_overlays.js'
+import './features/displayHP.js'
+import './features/generalQOL.js'
+import './features/fishing_pings.js'
+// import './features/garden.js' // not splitted
+import './features/mythos.js' // not splitted
+import './features/misc.js'
+import './features/timers.js' // not splitted ( i dont think theres a reason to )
+import './features/mainSCStats.js'
+import './features/waterSCStats.js'
+import './features/lavaSCStats.js'
 
 // import './features/dev.js'
-// import './features/displayHP.js' // done
-import './features/dungeon_cleaner.js' // done
-// import './features/dungeons.js' // done
-// import './features/end_cleaner.js' // done
-// import './features/fishing_overlays.js' // done
-// import './features/generalQOL.js' // done
-// import './features/garden.js' // done
-// import './features/mythos.js' // done
-// import './features/misc.js' // done
-// import './features/timers.js' // done
-// import './features/fishing_pings.js' // done
-
-// import './features/mainSCStats.js' // done
-// import './features/waterSCStats.js'
-// import './features/lavaSCStats.js'
 
 // import './utils/cake.js';
 // import './utils/inventoryLog.js'
@@ -43,7 +40,6 @@ if (baoFirstTime.firstTime) {
         `&eThis version is v1.0.4 -- &bStart by doing /bao`
     ]
 
-    baoAudio.playDefaultSound();
     ChatLib.chat(`&b&m${ChatLib.getChatBreak(" ")}`);
     messages.forEach(idx => ChatLib.chat(ChatLib.getCenteredText(idx)));
     ChatLib.chat(`&b&m${ChatLib.getChatBreak(" ")}`);
@@ -54,4 +50,6 @@ register("command", () =>
     Settings.openGUI()
 ).setName("biscuitaddons").setAliases('bao');
 
-// baoUtils.autosave(1);
+register('command', (args) => {
+    Client.showTitle(args, '', 1, 30,   1);
+}).setName('titlesim').setAliases('tsim');

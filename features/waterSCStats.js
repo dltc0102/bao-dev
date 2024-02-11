@@ -547,7 +547,7 @@ register('chat', (event) => {
 // Grim Reaper
 register('chat', (event) => {
     if (Settings.hide_sc_msgs) cancel(event);
-    datawaterSC.grimReaperCatches += 1;
+    baoWaterSCStats.grimReaperCatches += 1;
     baoWaterSCStats.totalSpookyWaterSCCatches += 1;
     baoWaterSCStats.catchesSinceCarrotKing += 1;
     baoWaterSCStats.catchesSinceSeaEmperor += 1;

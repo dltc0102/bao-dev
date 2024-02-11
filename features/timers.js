@@ -8,7 +8,7 @@ import { updateCDText } from '../utils/functions.js'
 import { getActivePet } from '../utils/pet.js'
 import { setTimer, checkTimeLeft, regNearbyOrbs } from '../utils/functions.js';
 import { getInSkyblock, getCurrArea } from '../utils/functions.js'; // sb, area
-import { renderWhen } from '../utils/utils.js';
+import { registerWhen } from '../utils/utils.js';
 
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP CONSTS
@@ -81,95 +81,79 @@ export const baoTimers = {
 // baoTimers.autosave(5);
 
 ////////////////////////////////////////////////////////////////////////////////
-// GUMMY --------------------------------------------------------------------
+// GUMMY TIMER
 ////////////////////////////////////////////////////////////////////////////////
-register('chat', (event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!Settings.gummyTimer) return;
+registerWhen('chat', (event) => {
     timerAudio.playDrinkSound();
     setTimer(baoTimers.gummy);
-    // baoTimers.save();
-}).setCriteria('You ate a Re-heated Gummy Polar Bear!');
+}, () => Settings.gummyTimer && getInSkyblock() && World.isLoaded()).setCriteria('You ate a Re-heated Gummy Polar Bear!');
+
 
 ////////////////////////////////////////////////////////////////////////////////
-// REKINDLE --------------------------------------------------------------------
+// REKINDLE TIMER
 ////////////////////////////////////////////////////////////////////////////////
-register('chat', (event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!Settings.rekindleAlert) return;
+registerWhen('chat', (event) => {
     timerAudio.playProcSound();
     setTimer(baoTimers.rekindle);
-    // baoTimers.save();
-}).setCriteria('Your Phoenix Pet saved you from certain death!');
+}, () => Settings.rekindleAlert && getInSkyblock() && World.isLoaded()).setCriteria('Your Phoenix Pet saved you from certain death!');
+
 
 ////////////////////////////////////////////////////////////////////////////////
-// SPIRIT MASK -----------------------------------------------------------------
+// SPIRIT MASK TIMER
 ////////////////////////////////////////////////////////////////////////////////
-register('chat', (event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!Settings.secondWindAlert) return;
+registerWhen('chat', (event) => {
     timerAudio.playProcSound();
     setTimer(baoTimers.secondWind);
-    // baoTimers.save();
-}).setCriteria('Second Wind Activated! Your Spirit Mask saved your life!');
+}, () => Settings.secondWindAlert && getInSkyblock() && World.isLoaded()).setCriteria('Second Wind Activated! Your Spirit Mask saved your life!');
+
 
 ///////////////////////////////////////////////////////////////////////////////
-// Flux Countdown Timer -----------------------------------------------------------
+// FLUX TIMER
 ///////////////////////////////////////////////////////////////////////////////
 register("step", () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.flux_timer) return;
     regNearbyOrbs(baoTimers.orb);
-    // baoTimers.save();
 }).setFps(10);
 
 ////////////////////////////////////////////////////////////////////////////////
-// MUSHY TIMER -----------------------------------------------------------------
+// MUSHY TIMER 
 ////////////////////////////////////////////////////////////////////////////////
-register('chat', (event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!Settings.mushyTimer) return;
-    timerAudio.playDrinkSound();
-    baoTimers.glowyTonic.cd = getActivePet().includes('Parrot') ? 84 : 60;
-    setTimer(baoTimers.glowyTonic);
-    // baoTimers.save();
-}).setCriteria('BUFF! You splashed yourself with Mushed Glowy Tonic I! Press TAB or type /effects to view your active effects!');
+const mushyMessages = [
+    /BUFF! You splashed yourself with Mushed Glowy Tonic I! Press TAB or type \/effects to view your active effects!/, 
+    /BUFF! You were splashed by .+ with Mushed Glowy Tonic I! Press TAB or type \/effects to view your active effects!/,
+];
 
-register('chat', (name, event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!Settings.mushyTimer) return;
-    timerAudio.playDrinkSound();
-    baoTimers.glowyTonic.cd = getActivePet().includes('Parrot') ? 84 : 60;
-    setTimer(baoTimers.glowyTonic);
-    // baoTimers.save();
-}).setCriteria('BUFF! You were splashed by ${name} with Mushed Glowy Tonic I! Press TAB or type /effects to view your active effects!')
+mushyMessages.forEach(msg => {
+    registerWhen('chat', (event) => {
+        timerAudio.playDrinkSound();
+        baoTimers.glowyTonic.cd = getActivePet().includes('Parrot') ? 84 : 60;
+        setTimer(baoTimers.glowyTonic);
+    }, () => Settings.mushyTimer && getInSkyblock() && World.isLoaded()).setCriteria(msg);
+})
+
 
 ////////////////////////////////////////////////////////////////////////////////
-// BONZO MASK -----------------------------------------------------------------
+// BONZO MASK TIMER
 ////////////////////////////////////////////////////////////////////////////////
-register('chat', (event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!Settings.bonzo_cd_timer) return;
+registerWhen('chat', (event) => {
     timerAudio.playProcSound();
     setTimer(baoTimers.bonzo);
-    // baoTimers.save();
-}).setCriteria("Your Bonzo's Mask saved your life!");
+}, () => Settings.bonzo_cd_timer && getInSkyblock() && World.isLoaded()).setCriteria("Your Bonzo's Mask saved your life!");
+
 
 ////////////////////////////////////////////////////////////////////////////////
-// KINGS SCENT TIMER -----------------------------------------------------------
+// KINGS SCENT TIMER 
 ////////////////////////////////////////////////////////////////////////////////
-register('chat', (event) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!Settings.kingScentTimer) return;
+registerWhen('chat', (event) => {
     timerAudio.playDrinkSound();
     setTimer(baoTimers.kingsScent);
-    // baoTimers.save();
-}).setCriteria("[NPC] King Yolkar: I'm covering you in my foul stench as we speak. It won't last long before it dissipates!");
+}, () => Settings.kingScentTimer && getInSkyblock() && World.isLoaded()).setCriteria("[NPC] King Yolkar: I'm covering you in my foul stench as we speak. It won't last long before it dissipates!");
+
 
 ////////////////////////////////////////////////////////////////////////////////
-// RENDER OVERLAY
+// REG: GAMELOAD
 ////////////////////////////////////////////////////////////////////////////////
-
 register('gameLoad', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (Settings.rekindleAlert) {
@@ -233,6 +217,10 @@ register('gameLoad', () => {
     // baoTimers.save();
 })
 
+
+////////////////////////////////////////////////////////////////////////////////
+// REG: STEP
+////////////////////////////////////////////////////////////////////////////////
 register('step', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     const timerValues = [];
@@ -283,19 +271,25 @@ register('step', () => {
     // baoTimers.save();
 }).setFps(1);
 
+
+////////////////////////////////////////////////////////////////////////////////
+// REG: DRAG
+////////////////////////////////////////////////////////////////////////////////
 register('dragged', (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveTimerDisplay.isOpen()) {
         baoTimers.x = constrainX(x, 3, timerDraggableText);
         baoTimers.y = constrainY(y, 3, timerDraggableText);
     }
-    // baoTimers.save();
 });
 
-register('renderOverlay', () => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!(Settings.gummyTimer || Settings.rekindleAlert || Settings.secondWindAlert || Settings.flux_timer || Settings.mushyTimer || Settings.bonzo_cd_timer || Settings.kingScentTimer)) return;
+
+////////////////////////////////////////////////////////////////////////////////
+// REG: OVERLAY
+////////////////////////////////////////////////////////////////////////////////
+registerWhen('renderOverlay', () => {
     Renderer.drawStringWithShadow(baoTimers.displayText, baoTimers.x, baoTimers.y);
     renderGuiPosition(moveTimerDisplay, baoTimers, timerDraggableText);
-});
+}, () => (Settings.gummyTimer || Settings.rekindleAlert || Settings.secondWindAlert || Settings.flux_timer || Settings.mushyTimer || Settings.bonzo_cd_timer || Settings.kingScentTimer) && getInSkyblock() && World.isLoaded());
+
 

@@ -1,6 +1,11 @@
-// test commands
+import Audio from "../utils/audio.js";
 
-register('command', (args) => {
-    Client.showTitle(args, '', 1, 30,   1);
-}).setName('titlesim').setAliases('tsim');
+import { registerWhen } from "../utils/utils";
+import { getInSkyblock, getInDHub } from '../utils/functions.js';
 
+const devAudio = new Audio();
+
+registerWhen('chat', (event) => {
+    ChatLib.chat('yes booga');
+    devAudio.playDefaultSound();
+}, () => getInDHub() && getInSkyblock() && World.isLoaded()).setCriteria('hello booga');

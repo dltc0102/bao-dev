@@ -949,12 +949,12 @@ class Settings {
     announce_inqs = false;
 
     @SwitchProperty({
-        name: "Hide Leg Griffin Error",
+        name: "Better Mythos Event Messages",
         description: "&7'You need to equip a LEGENDARY griffin pet to fight this!'&b -- hidden.",
         category: "Mythos",
         subcategory: "QOL",
     })
-    hide_griffin_error = false;
+    betterMythosMessages = false;
 
     @ButtonProperty({
         name: "Edit Mythos Counter Location", 
@@ -972,7 +972,7 @@ class Settings {
         category: "Mythos",
         subcategory: "Counter",
     })
-    mythos_main_toggle = false;
+    mythosCounterMainToggle = false;
 
     @SwitchProperty({
         name: "General Mythos Info",
@@ -980,7 +980,7 @@ class Settings {
         category: "Mythos",
         subcategory: "Counter",
     })
-    mythos_counter_general = false;
+    mythosCounterGeneral = false;
 
     @SwitchProperty({
         name: "Mythos Mob Kills Info",
@@ -988,7 +988,7 @@ class Settings {
         category: "Mythos",
         subcategory: "Counter",
     })
-    mythos_counter_kills = false;
+    mythosCounterKills = false;
 
     @SwitchProperty({
         name: "Mythos Mob Drops Info",
@@ -996,7 +996,7 @@ class Settings {
         category: "Mythos",
         subcategory: "Counter",
     })
-    mythos_counter_drops = false;
+    mythosCounterDrops = false;
 
     @SwitchProperty({
         name: "Mythos Mob Averages Info",
@@ -1004,7 +1004,7 @@ class Settings {
         category: "Mythos",
         subcategory: "Counter",
     })
-    mythos_counter_averages = false;
+    mythosCounterAvgs = false;
 
     @SwitchProperty({
         name: "Mythos Mob Trackers Info",
@@ -1012,7 +1012,7 @@ class Settings {
         category: "Mythos",
         subcategory: "Counter",
     })
-    mythos_counter_trackers = false;
+    mythosCounterTrackers = false;
 
 
 
@@ -1066,28 +1066,20 @@ class Settings {
     horseman_ping = false;
 
     @SwitchProperty({
-        name: "Primal Fear Main Toggle",
-        description: "Main toggle for Primal Fear Event QOL Features.",
+        name: "Primal Fear QOL",
+        description: "Main toggle for Primal Fear Event QOL Features.\nActivating this will hide Fear Messages as well.",
         category: "Misc",
         subcategory: "Spooky"
     })
-    primal_fear_main_toggle = false;
-
-    @SwitchProperty({
-        name: "Hide Fear Messages",
-        description: "Hides Fear Messages from fears.",
-        category: "Misc",
-        subcategory: "Spooky"
-    })
-    hide_fear_messages = false;
+    primalFearQOL = false;
     
     @SwitchProperty({
-        name: "Primal Fear Ping",
+        name: "Primal Fear Spawning Ping",
         description: "Shows ping when Primal Fear is spawning.",
         category: "Misc",
         subcategory: "Spooky"
     })
-    primal_fear_spawn_ping = false;
+    spawningFearPing = false;
 
     @SwitchProperty({
         name: "Solver for Mathematician Fear",
@@ -1095,22 +1087,14 @@ class Settings {
         category: "Misc",
         subcategory: "Spooky"
     })
-    fear_math_solver = false;
-
-    @SwitchProperty({
-        name: "Solver for Karen Fear",
-        description: "Answers Public Speaking Demon's rants.",
-        category: "Misc",
-        subcategory: "Spooky"
-    })
-    fear_karen_solver = false;
+    mathFearSolver = false;
 
     @SwitchProperty({
         name: "Mute the Sheep",
         description: "Mutes messages from Royal Resident.",
         category: "Misc",
     })
-    hide_royal_resident_messages = false;
+    hideRoyalResident = false;
 
     @SwitchProperty({
         name: "Dye Pings", 
@@ -1223,7 +1207,7 @@ class Settings {
         description: "Choose a sound to play when RNG Drops happen.", 
         category: "Sounds/Dev", 
         subcategory: "Sounds", 
-        options: ['Default', 'Disfigure - Blank', 'Persona4 - Specialist', 'TVB News Theme', 'Chipi Chipi Dubi Daba']
+        options: ['Disfigure - Blank', 'Persona4 - Specialist', 'TVB News Theme', 'Chipi Chipi Dubi Daba', 'Default']
     })
     rng_sound_sel = 0;
 
@@ -1323,10 +1307,8 @@ class Settings {
         this.addDependency("Mythos Mob Trackers Info", "Mythos Counter")
 
         // misc - primal fears
-        this.addDependency("Hide Fear Messages", "Primal Fear Main Toggle")
-        this.addDependency("Primal Fear Ping", "Primal Fear Main Toggle")
-        this.addDependency("Solver for Mathematician Fear", "Primal Fear Main Toggle")
-        this.addDependency("Solver for Karen Fear", "Primal Fear Main Toggle")
+        this.addDependency("Primal Fear Spawning Ping", "Primal Fear QOL")
+        this.addDependency("Solver for Mathematician Fear", "Primal Fear QOL")
         
         // dungeons
         this.addDependency("Toggle: QOL", "Better Dungeon Messages")

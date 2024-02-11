@@ -65,18 +65,6 @@ export function getCurrArea() {
     }
 }
 
-// fishing_overlay.js -- player count
-export function getPlayerCount(entityPlayer) {
-    const regex = /taurus/i;
-    let nbPlayers = World.getAllEntitiesOfType(entityPlayer).filter(player => player.distanceTo(Player.getPlayer()) < 31);
-    let tabNames = TabList.getNames().filter(name => /\[.*\]/.test(name)).map(name => name.split(' ')[1].removeFormatting());
-
-    return nbPlayers
-        .filter(player => !regex.test(player.getName()))
-        .map(player => player.getName())
-        .filter(name => tabNames.includes(name)).length;
-}
-
 // dungeons
 export function getInDungeon() {
     return getCurrArea() === 'Catacombs';
@@ -145,8 +133,12 @@ export function playSound() {
     if (Settings.rng_sound_sel === 2) funcAudio.playNitroSong();
     if (Settings.rng_sound_sel === 3) funcAudio.playBisSong();
     if (Settings.rng_sound_sel === 4) funcAudio.playChipiSong();
+    
 }
 
+register('command', () => {
+    playSound();
+}).setName('rngtest', true);
 
 ////////////////////////////////////////////////////////////////////////////////
 // ENTITIES --------------------------------------------------------------------
@@ -328,17 +320,6 @@ export function renderGuiPosition(gui, position, infoText) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// DISPLAY ENTITY HP -----------------------------------------------------------
-////////////////////////////////////////////////////////////////////////////////
-export function displayEntityHP(names, foundEntity, x, y) {
-    if (names && names.length > 0 && foundEntity) {
-        const stringOfNames = names.join('\n');
-        Renderer.drawString(stringOfNames, x, y);
-    }
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
 // CONSTRAIN COORDS ------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 export function getLongestStrWidth(text) {
@@ -495,67 +476,6 @@ export function timeToSeconds(hours, minutes, seconds) {
 export function secsToMS(seconds) {
     return seconds * 1000;
 }
-
-
-////////////////////////////////////////////////////////////////////////
-// CHARGE COUNTER ------------------------------------------------------
-////////////////////////////////////////////////////////////////////////
-export function getBiggestNum(arr) {
-    let biggestNum = 0;
-    arr.forEach(str => {
-        let parsedNum = parseInt(str);
-        // console.log(parsedNum, typeof parsedNum);
-        if (parsedNum && parsedNum > biggestNum) {
-            biggestNum = parsedNum;
-        }
-    });
-    return biggestNum;
-}
-
-export function getCharges(chargeLore) {
-    const chargeRegex = /Charge: (\d{1,3}(?:,\d{3})*)\/50,000/;
-    let result = '';
-
-    chargeLore.forEach(chargeLine => {
-        let unformattedLine = chargeLine.removeFormatting();
-        let chargeMatch = unformattedLine.match(chargeRegex);
-        if (chargeMatch) {
-            result = chargeMatch[1].replace(/,/g, '');
-        }
-    });
-    return result;
-}
-
-
-export function getThunderBottle() {
-    const skullItems = Player.getInventory().getItems()
-        .map((item, idx) => (item !== null && item.toString().includes('item.skull')) ? idx : -1)
-        .filter(idx => idx !== -1);
-
-    let closestCharge = null;
-
-    let currentBottles = [];
-    skullItems.forEach(slotNum => {
-        const slotLore = Player.getInventory().getStackInSlot(slotNum).getLore(); // list of strings of lore
-        
-
-        if (slotLore[0].includes('Thunder in a Bottle')) {
-            const fullCharge = getCharges(slotLore);
-            // console.log(`fullCharge: ${fullCharge}`)
-            currentBottles.push(fullCharge);
-
-        } else if (slotLore[0].includes('Empty Thunder Bottle')) {
-            const partialCharge = getCharges(slotLore);
-            // console.log(`partialCharge: ${partialCharge}`)
-            currentBottles.push(partialCharge);
-        }
-
-    });
-    currentBottles = currentBottles.filter(element => element !== '');
-    closestCharge = currentBottles.length === 0 ? null : getBiggestNum(currentBottles);
-    return closestCharge;
-}
-
 
 export function pingDolphinMS(killCount) {
     killCount = Number(killCount.replace(/,/g, ''));
@@ -937,13 +857,15 @@ export function filterSeparators(rawString, sepThin) {
 }
 
 export function romanToNumeral(romanStr) {
-    let letters = romanStr.split("");
     let result = 0;
-    for (var i = 0; i < letters.length; i++) {
-        if (romanNumerals[letters[i]] < romanNumerals[letters[i + 1]]) {
-            result -= romanNumerals[letters[i]]
-        } else {
-            result += romanNumerals[letters[i]]
+    if (romanStr) {
+        let letters = romanStr.split("");
+        for (var i = 0; i < letters.length; i++) {
+            if (romanNumerals[letters[i]] < romanNumerals[letters[i + 1]]) {
+                result -= romanNumerals[letters[i]]
+            } else {
+                result += romanNumerals[letters[i]]
+            }
         }
     }
     return result;

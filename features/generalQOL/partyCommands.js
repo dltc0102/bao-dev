@@ -3,7 +3,7 @@ import Audio from '../../utils/audio.js';
 
 import { getInSkyblock } from '../../utils/functions.js'; // sb, area
 import { sendMessage, stripRank, getPList, getIsPL } from '../../utils/party.js';
-import { registerChatWhen } from '../../utils/utils.js';
+import { registerWhen } from '../../utils/utils.js';
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -31,30 +31,32 @@ register('command', () => {
 ///////////////////////////////////////////////////////////////////////////////
 // #warp 
 ///////////////////////////////////////////////////////////////////////////////
-registerChatWhen(register('chat', (playerName, event) => {
-    ChatLib.command('p warp');
-    partyAudio.playDefaultSound();
-}).setCriteria('Party > ${playerName}: #warp'), () => Settings.autoWarp && shouldHandlePartyCommands());
+const warpMessages = [
+    /Party > .+: #warp/, 
+    /Party > .+: #w/, 
+];
 
-registerChatWhen(register('chat', (playerName, event) => {
-    ChatLib.command('p warp');
-    partyAudio.playDefaultSound();
-}).setCriteria('Party > ${playerName}: #w'), () => Settings.autoWarp && shouldHandlePartyCommands());
+warpMessages.forEach(msg => {
+    registerWhen('chat', (event) => {
+        ChatLib.command('p warp');
+        partyAudio.playDefaultSound();
+    }, () => Settings.autoWarp && shouldHandlePartyCommands()).setCriteria(msg);
+});
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // Auto notifier for #warp when player joins 
 ///////////////////////////////////////////////////////////////////////////////
-registerChatWhen(register('chat', (playerName, event) => {
+registerWhen('chat', (playerName, event) => {
     sendMessage('[!] type #warp or #w for warp when r [!]')
     partyAudio.playDefaultSound();
-}).setCriteria('${playerName} joined the party.'), () => Settings.autoNotifyWarp && shouldHandlePartyCommands());
+}, () => Settings.autoNotifyWarp && shouldHandlePartyCommands()).setCriteria('${playerName} joined the party.');
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // #pta
 ///////////////////////////////////////////////////////////////////////////////
-registerChatWhen(register('chat', (playerName, event) => {
+registerWhen('chat', (playerName, event) => {
     let partyList = getPList();
     if (partyList.length === 1) { 
         setTimeout(() => {
@@ -71,43 +73,34 @@ registerChatWhen(register('chat', (playerName, event) => {
         randomIdx = Math.floor(Math.random() * partyList.length);
     } while (partyList[randomIdx] === excludedName);
     ChatLib.command(`p transfer ${partyList[randomIdx]}`);
-}).setCriteria('Party > ${playerName}: #pta'), () => Settings.ptaCommand && shouldHandlePartyCommands());
-
-
-///////////////////////////////////////////////////////////////////////////////
-// Auto notifier for #warp when player joins 
-///////////////////////////////////////////////////////////////////////////////
-registerChatWhen(register('chat', (playerName, event) => {
-    sendMessage('[!] type #warp or #w for warp when r [!]')
-    partyAudio.playDefaultSound();
-}).setCriteria('${playerName} joined the party.'), () => Settings.autoNotifyWarp && shouldHandlePartyCommands());
+}, () => Settings.ptaCommand && shouldHandlePartyCommands()).setCriteria('Party > ${playerName}: #pta');
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // #pai 
 ///////////////////////////////////////////////////////////////////////////////
-registerChatWhen(register('chat', (playerName, event) => {
+registerWhen('chat', (playerName, event) => {
     ChatLib.command('p settings allinvite'); 
     partyAudio.playDefaultSound();
-}).setCriteria('Party > ${playerName}: #pai'), () => Settings.paiCommand && shouldHandlePartyCommands());
+}, () => Settings.paiCommand && shouldHandlePartyCommands()).setCriteria('Party > ${playerName}: #pai');
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // #ko 
 ///////////////////////////////////////////////////////////////////////////////
-registerChatWhen(register('chat', (playerName, event) => {
+registerWhen('chat', (playerName, event) => {
     ChatLib.command('p kickoffline');
     partyAudio.playDefaultSound();
-}).setCriteria('Party > ${playerName}: #ko'), () => Settings.koCommand && shouldHandlePartyCommands());
+}, () => Settings.koCommand && shouldHandlePartyCommands()).setCriteria('Party > ${playerName}: #ko');
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // #pt / #transfer 
 ///////////////////////////////////////////////////////////////////////////////
-registerChatWhen(register('chat', (playerName, event) => {
+registerWhen('chat', (playerName, event) => {
     ChatLib.command(`p transfer ${stripRank(playerName)}`);
     partyAudio.playDefaultSound();
-}).setCriteria('Party > ${playerName}: #pt'), () => shouldHandlePartyCommands());
+}, () => shouldHandlePartyCommands()).setCriteria('Party > ${playerName}: #pt');
 
 
 ///////////////////////////////////////////////////////////////////////////////

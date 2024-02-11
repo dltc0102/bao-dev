@@ -1,7 +1,7 @@
 import Settings from "../../settings.js";
 
 import { getInSkyblock, getInDungeon } from "../../utils/functions.js";
-import { registerChatWhen } from "../../utils/utils";
+import { registerWhen } from "../../utils/utils";
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,11 +16,11 @@ function shouldHandleSysNotis() {
 const sysNotiMessages = [
     // class stats
     /Your .+ stats are doubled because you are the only player using this class!/,
-    /\[Berserk]/, 
-    /\[Archer]/, 
-    /\[Healer]/, 
-    /\[Tank]/, 
-    /\[Mage]/, 
+    /\[Berserk] .+/, 
+    /\[Archer] .+/, 
+    /\[Healer] .+/, 
+    /\[Tank] .+/, 
+    /\[Mage] .+/, 
 
     // wish/heals
     /.+'s Wish healed you for .+ health and granted you an absorption shield with .+ health!/, 
@@ -38,7 +38,7 @@ const sysNotiMessages = [
 ]
 
 sysNotiMessages.forEach(msg => {{
-    registerChatWhen(register('chat', (event) => {
+    registerWhen('chat', (event) => {
         cancel(event);
-    }).setCriteria(msg), () => shouldHandleSysNotis());
+    }, () => shouldHandleSysNotis()).setCriteria(msg);
 }});
