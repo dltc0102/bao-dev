@@ -3,6 +3,8 @@ import Settings from '../../settings.js';
 import { getInSkyblock, getInJerry } from '../../utils/functions.js'; // sb, area
 import { registerWhen } from '../../utils/utils.js';
 
+const Instant = Java.type('java.time.Instant');
+
 ////////////////////////////////////////////////////////////////////////////////
 // SNOW CANNON MESSAGE HIDER
 ////////////////////////////////////////////////////////////////////////////////

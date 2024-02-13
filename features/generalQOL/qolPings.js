@@ -4,6 +4,8 @@ import { getInSkyblock } from '../../utils/functions.js'; // sb, area
 import { sendMessage } from '../../utils/party';
 import { registerWhen } from '../../utils/utils.js';
 
+const Instant = Java.type('java.time.Instant');
+
 ///////////////////////////////////////////////////////////////////////////////
 // Kicked from SB Alert 
 ///////////////////////////////////////////////////////////////////////////////

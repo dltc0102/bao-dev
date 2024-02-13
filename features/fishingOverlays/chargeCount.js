@@ -1,9 +1,10 @@
 import Settings from "../../settings.js";
+import PogObject from 'PogData';
 
 import { constrainX, constrainY } from '../../utils/functions.js' // padding
 import { createGuiCommand, renderGuiPosition } from '../../utils/functions.js'; // gui
-import { registerWhen } from "../../utils/utils.js";
-import { getInSkyblock, getInCI } from "../../utils/functions.js";
+import { registerWhen, timeThis } from "../../utils/utils.js";
+import { getInSkyblock, getInGarden } from "../../utils/functions.js";
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -11,14 +12,14 @@ import { getInSkyblock, getInCI } from "../../utils/functions.js";
 ////////////////////////////////////////////////////////////////////////////////
 const moveChargesCounter = new Gui(); // charges
 createGuiCommand(moveChargesCounter, 'movecharge', 'mcc');
-const chargesDraggable = '&7Thunder Bottle: 0';
+const chargesDraggable = '&7Thunder Bottle: 00000⚡';
 
 let sentFullMsg = false;
-const counterInfo = {
+export const chargeCounterInfo = new PogObject("bao-dev", {
     'text': 0, 
     'x': 3,
     'y': 64,
-};
+}, '/data/chargeCounterInfo.json');
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -98,16 +99,14 @@ function getThunderBottle() {
 register('step', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (Settings.full_bottle_ping) {
-        if (getInCI()) {
-            let bottleCharge = getThunderBottle();
-    
-            if (bottleCharge === 50000 && !sentFullMsg) {
-                handleFullyCharged('&b&lTHUNDER BOTTLE FULL', fishOverlayAudio, sentFullMsg)
-            }
-            counterInfo.text = updateChargeText(bottleCharge);
-            sentFullMsg = bottleCharge === 50000;
-        } 
-    }
+        let bottleCharge = getThunderBottle();
+
+        if (bottleCharge === 50000 && !sentFullMsg) {
+            handleFullyCharged('&b&lTHUNDER BOTTLE FULL', fishOverlayAudio, sentFullMsg)
+        }
+        chargeCounterInfo.text = updateChargeText(bottleCharge);
+        sentFullMsg = bottleCharge === 50000;
+    } 
 }).setFps(3);
 
 
@@ -117,8 +116,8 @@ register('step', () => {
 register('dragged', (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveChargesCounter.isOpen()){
-        counterInfo.x = constrainX(x, 3, chargesDraggable);
-        counterInfo.y = constrainY(y, 3, chargesDraggable);
+        chargeCounterInfo.x = constrainX(x, 3, chargesDraggable);
+        chargeCounterInfo.y = constrainY(y, 3, chargesDraggable);
     }
 })
 
@@ -126,11 +125,11 @@ register('dragged', (dx, dy, x, y) => {
 ////////////////////////////////////////////////////////////////////////////////
 // REG: OVERLAY
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('renderOverlay', () => {
-    Renderer.drawStringWithShadow(counterInfo.text, counterInfo.x, counterInfo.y);
-}, () => Settings.chargeCounter && getInCI() && getInSkyblock() && World.isLoaded());
+registerWhen('renderOverlay', timeThis("renderOverlay chargeCounterText", () => {
+    Renderer.drawStringWithShadow(chargeCounterInfo.text, chargeCounterInfo.x, chargeCounterInfo.y);
+}), () => Settings.chargeCounter && !getInGarden() && getInSkyblock() && World.isLoaded());
 
-registerWhen('renderOverlay', () => {
-    renderGuiPosition(moveChargesCounter, counterInfo, chargesDraggable);
-}, () => getInSkyblock() && World.isLoaded());
+registerWhen('renderOverlay', timeThis("renderOverlay chargeCounterText draggable", () => {
+    renderGuiPosition(moveChargesCounter, chargeCounterInfo, chargesDraggable);
+}), () => getInSkyblock() && World.isLoaded());
 

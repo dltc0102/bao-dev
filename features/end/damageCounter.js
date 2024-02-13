@@ -1,8 +1,8 @@
 import Settings from "../../settings.js";
+import PogObject from 'PogData';
 
-import { baoUtils } from "../../utils/utils";
 import { baoEnd } from "./endStats";
-import { registerWhen } from "../../utils/utils";
+import { baoUtils, registerWhen, timeThis } from "../../utils/utils";
 import { getInSkyblock, getInEnd } from "../../utils/functions.js";
 import { constrainX, constrainY } from '../../utils/functions.js' // padding
 import { createGuiCommand, renderGuiPosition } from '../../utils/functions.js'; // gui
@@ -10,6 +10,8 @@ import { createGuiCommand, renderGuiPosition } from '../../utils/functions.js'; 
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTS
 ////////////////////////////////////////////////////////////////////////////////
+const Instant = Java.type('java.time.Instant');
+
 const moveDamageCounter = new Gui();
 createGuiCommand(moveDamageCounter, 'movedamagecounter', 'mdmg');
 const damagersDraggable = `&7Top Damagers: \n&7${baoUtils.thickSep}\n&7Name1: 00❤\n&7Name2: 00❤\n&7Name3: 00❤`
@@ -18,10 +20,11 @@ let damagersText = '';
 let damagers = [];
 
 
-const damageCounter = {
+export const damageCounter = new PogObject("bao-dev", {
     "x": 3, 
     "y": 50,
-}
+}, '/data/damageCounter.json');
+damageCounter.autosave(5);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -76,17 +79,18 @@ register('dragged', (dx, dy, x, y) => {
         damageCounter.x = constrainX(x, 3, damagersDraggable);
         damageCounter.y = constrainY(y, 3, damagersDraggable);
     };
+    damageCounter.save();
 }); 
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: OVERLAY
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('renderOverlay', () => {
+registerWhen('renderOverlay', timeThis("renderOverlay dragon damagersText", () => {
     Renderer.drawStringWithShadow(damagersText, damageCounter.x, damageCounter.y);
-}, () => Settings.showDragonDamageDisplay && getInEnd() && getInSkyblock() && World.isLoaded());
+}), () => Settings.showDragonDamageDisplay && getInEnd() && getInSkyblock() && World.isLoaded());
 
-registerWhen('renderOverlay', () => {
+registerWhen('renderOverlay', timeThis("renderOverlay dragon damagersText draggable", () => {
     renderGuiPosition(moveDamageCounter, damageCounter, damagersDraggable);
-}, () => getInSkyblock() && World.isLoaded());
+}), () => getInSkyblock() && World.isLoaded());
 

@@ -6,6 +6,8 @@ import { showAlert } from "../../utils/utils";
 import { registerWhen } from "../../utils/utils";
 
 const roleAudio = new Audio();
+const Instant = Java.type('java.time.Instant');
+
 
 // if Settings.showClassSpecificPings
 
@@ -26,6 +28,8 @@ function shouldHandleClassSpecificPings() {
 }
 
 registerWhen('chat', (event) => {
+    let regStart = Instant.now().getNano();
+    
     if (getPlayerClass() === 'Healer') {
         showAlert(`&f&lWISH`);
         roleAudio.playDefaultSound();
@@ -33,6 +37,14 @@ registerWhen('chat', (event) => {
     if (getPlayerClass() === 'Tank') {
         showAlert(`&f&lCASTLE`);
         roleAudio.playDefaultSound();
+    }
+
+    let regEnd = Instant.now().getNano();
+    let regDiff = regEnd - regStart;
+    if (regDiff > 0) {
+        console.log('')
+        console.log(`regwhen - chat - 'maxor is enraged (h/t ping)'`);
+        console.log(`timeTake (ns > 0): ${regDiff}`);
     }
 }, () => shouldHandleClassSpecificPings()).setCriteria('⚠ Maxor is enraged! ⚠');
 

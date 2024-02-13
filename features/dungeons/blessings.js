@@ -1,20 +1,30 @@
 import Settings from '../../settings.js';
+import PogObject from 'PogData';
 
 import { getInSkyblock, getInDungeon } from '../../utils/functions.js'; // sb, area
 import { romanToNumeral } from '../../utils/functions.js';
 import { createGuiCommand, renderGuiPosition } from '../../utils/functions.js'; // gui
 import { constrainX, constrainY } from '../../utils/functions.js' // padding
-import { registerWhen } from '../../utils/utils.js';
+import { registerWhen, timeThis } from '../../utils/utils.js';
 
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTS
 ////////////////////////////////////////////////////////////////////////////////
+const Instant = Java.type('java.time.Instant');
+
 const moveblessingscounter = new Gui();
 createGuiCommand(moveblessingscounter, 'moveblessingscounter', 'mbless');
 
 // export const baoDungeons = new PogObject("bao-dev", {?
 const blessingAddOn = '&6&l[&f&lBlessings&6&l]&r';
 const dragAddOn = `&7&l[Blessing]&r`
+
+export const blessingsDisplay = new PogObject("bao-dev", {
+    "x": 400, 
+    "y": 400,
+}, '/data/blessingsDisplay.json');
+blessingsDisplay.autosave(5);
+
 export const baoBlessings = {
     power: {
         display: `${blessingAddOn} &6&lPower`,
@@ -47,8 +57,6 @@ export const baoBlessings = {
         lvl: 0,
     },
     "draggable": `${dragAddOn} &7Power: 0 (0)\n${dragAddOn} &7Time: 0\n${dragAddOn} &7Life: 0\n${dragAddOn} &7Wisdom: 0\n${dragAddOn} &7Stone: 0`,
-    "x": 400, 
-    "y": 400,
 }
 
 
@@ -95,7 +103,7 @@ register('step', () => {
             // console.log(baoBlessings[blessing].display, baoBlessings[blessing].lvl)
         }
     }
-
+    
     if (shouldShowBlessings) {
         blessingText = '';
         baoBlessings.draggable = '';
@@ -140,28 +148,31 @@ register('worldUnload', (event) => {
 });
 
 
+
 ////////////////////////////////////////////////////////////////////////////////
 // REG: DRAGGED
 ////////////////////////////////////////////////////////////////////////////////
 register('dragged', (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveblessingscounter.isOpen()) {
-        baoBlessings.x = constrainX(x, 3, baoBlessings.draggable);
-        baoBlessings.y = constrainY(y, 3, baoBlessings.draggable);
+        blessingsDisplay.x = constrainX(x, 3, baoBlessings.draggable);
+        blessingsDisplay.y = constrainY(y, 3, baoBlessings.draggable);
     }
+    blessingsDisplay.save();
 })
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: OVERLAY
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('renderOverlay', () => {
-    Renderer.drawStringWithShadow(`${blessingText}`, baoBlessings.x, baoBlessings.y);
-}, () => Settings.showBlessingsDisplay && getInDungeon() && getInSkyblock() && World.isLoaded());
+registerWhen('renderOverlay', timeThis("renderOverlay blessingText", () => {
+    Renderer.drawStringWithShadow(`${blessingText}`, blessingsDisplay.x, blessingsDisplay.y);
+}), () => Settings.showBlessingsDisplay && getInDungeon() && getInSkyblock() && World.isLoaded());
 
-registerWhen('renderOverlay', () => {
-    renderGuiPosition(moveblessingscounter, baoBlessings, baoBlessings.draggable);
-}, () => getInSkyblock() && World.isLoaded());
+registerWhen('renderOverlay', timeThis("renderOverlay blessingText draggable", () => {
+    renderGuiPosition(moveblessingscounter, blessingsDisplay, baoBlessings.draggable);
+}), () => getInSkyblock() && World.isLoaded());
+
 
 
 ////////////////////////////////////////////////////////////////////////////////

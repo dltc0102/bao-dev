@@ -1,6 +1,7 @@
 import Settings from '../../settings.js';
+import PogObject from 'PogData';
 
-import { baoUtils, registerWhen } from '../../utils/utils.js'
+import { baoUtils, registerWhen, timeThis } from '../../utils/utils.js'
 import { getInSkyblock, getInEnd } from '../../utils/functions.js';
 import { createGuiCommand, renderGuiPosition } from '../../utils/functions.js'; // gui
 import { constrainX, constrainY } from '../../utils/functions.js' // padding
@@ -11,6 +12,8 @@ import { baoEnd } from './endStats.js';
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTS
 ////////////////////////////////////////////////////////////////////////////////
+const Instant = Java.type('java.time.Instant');
+
 const moveDragonCounter = new Gui();
 createGuiCommand(moveDragonCounter, 'movedragoncounter', 'mdrag');
 const dragonDraggable = `&7||| Dragons |||\n&7${baoUtils.thickSep}\n&7||| Protector: 0\n&7||| Old: 0\n&7||| Strong: 0\n&7||| Unstable: 0\n&7||| Wise: 0\n&7||| Young: 0\n&7||| Superior: 0\n&7${baoUtils.thinSep}\n&7||| Drags Since Sup: 0\n&7||| Crystals Broken: 0`;
@@ -30,10 +33,11 @@ const dragsSinceSupLine = `&5|&d|&5| &7Drags Since Sup: &b${baoEnd.counter.drags
 const crystalsBrokenLine = `&5|&d|&5| &7Crystals Broken: &b${baoEnd.crystalsBroken}`;
 let displayText = '';
 
-const dragonCounter = {
+export const dragonCounter = new PogObject("bao-dev", {
     "x": 3, 
     "y": 100,
-}
+}, '/data/dragonCounter.json');
+dragonCounter.autosave(5);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -63,16 +67,17 @@ register('dragged', (dx, dy, x, y) => {
         dragonCounter.x = constrainX(x, 3, dragonDraggable);
         dragonCounter.y = constrainY(y, 3, dragonDraggable);
     };
+    dragonCounter.save();
 }); 
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: OVERLAY
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('renderOverlay', () => {
+registerWhen('renderOverlay', timeThis("renderOverlay dragonCounter displayText", () => {
     Renderer.drawStringWithShadow(displayText, dragonCounter.x, dragonCounter.y);
-}, () => Settings.showDragonCounter && getInEnd() && getInSkyblock() && World.isLoaded());
+}), () => Settings.showDragonCounter && getInEnd() && getInSkyblock() && World.isLoaded());
 
-registerWhen('renderOverlay', () => {
+registerWhen('renderOverlay', timeThis("renderOverlay dragonCounter draggable", () => {
     renderGuiPosition(moveDragonCounter, dragonCounter, dragonDraggable);
-}, () => getInSkyblock() && World.isLoaded());
+}), () => getInSkyblock() && World.isLoaded());

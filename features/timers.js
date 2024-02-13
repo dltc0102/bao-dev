@@ -8,7 +8,7 @@ import { updateCDText } from '../utils/functions.js'
 import { getActivePet } from '../utils/pet.js'
 import { setTimer, checkTimeLeft, regNearbyOrbs } from '../utils/functions.js';
 import { getInSkyblock, getCurrArea } from '../utils/functions.js'; // sb, area
-import { registerWhen } from '../utils/utils.js';
+import { registerWhen, timeThis } from '../utils/utils.js';
 
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP CONSTS
@@ -18,12 +18,14 @@ const moveTimerDisplay = new Gui();
 createGuiCommand(moveTimerDisplay, 'movetimerdisplay', 'mtm');
 const timerDraggableText = "&2Mushy Tonic: &r00m 00s\n&2King's Scent: &r00m 00s\n&6Bonzo's Mask: &r00m 00s\n&6Rekindle: &r00m 00s\n&6Second Wind: &r00m 00s\n&aGummy Bear: &r00m00s\n[Flux]: 00s";
 
-// export const baoTimers = new PogObject("bao-dev", {
-export const baoTimers = {
-    "displayText": '', 
+let timerDisplayText = '';
+export const baoTimerDisplay = new PogObject("bao-dev", {
     "x": 400, 
     "y": 240,
+}, '/data/baoTimerDisplay.json');
+baoTimerDisplay.autosave(5);
 
+export const baoTimers = {
     "gummy": {
         "name": "Gummy Bear",
         "cd": 60, 
@@ -67,18 +69,12 @@ export const baoTimers = {
         "target": null,
     }, 
     "orb": {
-        "registered": [], 
         "color": '',
-        "displayText": '', 
         "timeLeft": 0, 
         "type": 5, 
         "found": false,
-        "x": 400, 
-        "y": 250,
     },
 };
-// }, '/data/baoTimers.json');
-// baoTimers.autosave(5);
 
 ////////////////////////////////////////////////////////////////////////////////
 // GUMMY TIMER
@@ -267,7 +263,7 @@ register('step', () => {
 
     timerValues.sort((a, b) => b.timeLeft - a.timeLeft);
 
-    baoTimers.displayText = timerValues.map(entry => updateCDText(entry.color, entry.name, entry.timeLeft)).join('');
+    timerDisplayText = timerValues.map(entry => updateCDText(entry.color, entry.name, entry.timeLeft)).join('');
     // baoTimers.save();
 }).setFps(1);
 
@@ -278,18 +274,22 @@ register('step', () => {
 register('dragged', (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveTimerDisplay.isOpen()) {
-        baoTimers.x = constrainX(x, 3, timerDraggableText);
-        baoTimers.y = constrainY(y, 3, timerDraggableText);
-    }
+        baoTimerDisplay.x = constrainX(x, 3, timerDraggableText);
+        baoTimerDisplay.y = constrainY(y, 3, timerDraggableText);
+    };
+    baoTimerDisplay.save();
 });
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: OVERLAY
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('renderOverlay', () => {
-    Renderer.drawStringWithShadow(baoTimers.displayText, baoTimers.x, baoTimers.y);
-    renderGuiPosition(moveTimerDisplay, baoTimers, timerDraggableText);
-}, () => (Settings.gummyTimer || Settings.rekindleAlert || Settings.secondWindAlert || Settings.flux_timer || Settings.mushyTimer || Settings.bonzo_cd_timer || Settings.kingScentTimer) && getInSkyblock() && World.isLoaded());
+registerWhen('renderOverlay', timeThis("renderOverlay timerDisplayText", () => {
+    Renderer.drawStringWithShadow(timerDisplayText, baoTimerDisplay.x, baoTimerDisplay.y);
+}), () => (Settings.gummyTimer || Settings.rekindleAlert || Settings.secondWindAlert || Settings.flux_timer || Settings.mushyTimer || Settings.bonzo_cd_timer || Settings.kingScentTimer) && getInSkyblock() && World.isLoaded());
+
+registerWhen('renderOverlay', timeThis("renderOverlay timerDisplayText draggable", () => {
+    renderGuiPosition(moveTimerDisplay, baoTimerDisplay, timerDraggableText);
+}), () => getInSkyblock() && World.isLoaded());
 
 

@@ -7,6 +7,8 @@ import { registerWhen } from '../../utils/utils.js';
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTS
 ////////////////////////////////////////////////////////////////////////////////
+const Instant = Java.type('java.time.Instant');
+
 export const baoStashes = {
     "stashes": {
         "numMats": 0, 
@@ -44,6 +46,7 @@ stashMessages.forEach(msg => {
         cancel(event);
     }, () => shouldHandleBetterStashMessages()).setCriteria(msg);
 })
+
 registerWhen('chat', (itemName, event) => {
     baoStashes.stashes.pickupMat = itemName;
 }, () => shouldHandleBetterStashMessages()).setCriteria('From stash: ${itemName}');
@@ -55,7 +58,7 @@ registerWhen('chat', (numItems, event) => {
 registerWhen('chat', (matsRem, numTypes, event) => {
     baoStashes.stashes.remMats = parseInt(matsRem.replace(',', ''), 10);
     baoStashes.stashes.sackTypes = Number(numTypes);
-    ChatLib.chat(`&eFrom Sacks: &b${baoStashes.stashes.pickupMat} x${baoStashes.stashes.numMats} &7|| &cR: &b${baoStashes.stashes.remMats} &7|| &aTypes: ${baoStashes.stashes.sackTypes}`)
+    ChatLib.chat(`&eFrom Sacks: &b${baoStashes.stashes.pickupMat} x${baoStashes.stashes.numMats} &7|| &cR: &b${baoStashes.stashes.remMats} &7|| &aTypes: ${baoStashes.stashes.sackTypes}`);
 }, () => shouldHandleBetterStashMessages()).setCriteria('You still have ${matsRem} materials totalling ${numTypes} types of materials in there!');
 
 
@@ -70,8 +73,8 @@ function shouldHandleClickStashMessages() {
 ////////////////////////////////////////////////////////////////////////////////
 // CLICK STASH SHORTENER
 ////////////////////////////////////////////////////////////////////////////////
-
 const clickStashMessages = [
+    /You have .+ items stashed away!/,
     /You have .+ materials stashed away!/, 
     /This totals .+ type of material stashed!/, 
     /This totals .+ types of materials stashed!/, 
@@ -82,7 +85,6 @@ clickStashMessages.forEach(msg => {
     registerWhen('chat', (event) => {
         cancel(event);
     }, () => shouldHandleClickStashMessages()).setCriteria(msg).setContains();
-
 })
 
 registerWhen('chat', (numMatsRem, event) => {

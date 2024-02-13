@@ -13,6 +13,8 @@ const fishingMessages = [
     /.+ CATCH! You found a .+\./,
     /.+ CATCH! You found an .+\./, 
     /Your Blessing enchant got you double drops!/, 
+    /It's a Double Hook!/, 
+    /It's a Double Hook! Woot woot!/, 
 ]
 
 fishingMessages.forEach(msg => {
@@ -28,7 +30,3 @@ registerWhen('chat', (coin, event) => {
 registerWhen('chat', (typeOfCatch, aOrAn, item, event) => {
     if (item === 'Lava Shell') ChatLib.chat('&a+ &5Lava Shell');
 }, () => Settings.betterFishingMessages && getInSkyblock() && World.isLoaded()).setCriteria('${typeOfCatch} CATCH! You found ${aOrAn} ${item}.');
-
-registerWhen('chat', (event) => {
-    cancel(event);
-}, () => Settings.betterFishingMessages && getInSkyblock() && World.isLoaded()).setCriteria("It's a Double Hook!");

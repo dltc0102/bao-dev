@@ -8,6 +8,8 @@ import { showAlert } from "../../utils/utils";
 // if Settings.showFFTimers
 
 const ffAudio = new Audio();
+const Instant = Java.type('java.time.Instant');
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // PROFESSOR M3 FIRE FREEZE TIMER

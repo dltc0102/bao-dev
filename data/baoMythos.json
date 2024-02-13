@@ -1,0 +1,32 @@
+{
+    "allLines": "&3|| &6MYTHOS &3||\n==================\n&4|&3|| &rBurrows Dug: &b0\n&4|&3|| &rFeathers: &b0\n&4|&3|| &rCoins Dug Up: &b0.0k\n------------------\n&4|&3|| &rMinos Hunters: &b0\n&4|&3|| &rLynxes: &b0\n&4|&3|| &rGaias: &b0\n&4|&3|| &rMinotaurs: &b0\n&4|&3|| &rChampions: &b0\n&4|&3|| &rInquisitors: &b0\n------------------\n&4|&3|| &r&rDTS: &b0 &rAR: &b0 &rCTP: &b0\n&4|&3|| &r&rDS: &b0 &rCoG: &b0 &rWuS: &b0\n&4|&3|| &r&rMR: &b0 &rCHIMERA: &b0\n",
+    "x": 5,
+    "y": 100,
+    "stats": {
+        "featherCount": 0,
+        "moneyCount": 0,
+        "burrowCount": 0,
+        "ancientClawCount": 0,
+        "ancientClawMoney": 0,
+        "minosHunterKills": 0,
+        "siaLynxKills": 0,
+        "gaiaConsKills": 0,
+        "minotaurKills": 0,
+        "minosChampKills": 0,
+        "minosInqKills": 0,
+        "totalMythosKills": 0,
+        "DTS": 0,
+        "AR": 0,
+        "CTP": 0,
+        "DS": 0,
+        "CoG": 0,
+        "WuS": 0,
+        "MR": 0,
+        "CHIM": 0,
+        "mobsSinceInq": 0,
+        "minotaursSinceDae": 0,
+        "burrowsSinceCOG": 0,
+        "burrowsSinceWUS": 0,
+        "championsSinceRelic": 0
+    }
+}

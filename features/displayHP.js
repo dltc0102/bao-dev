@@ -1,6 +1,7 @@
 import Settings from '../settings.js';
+import PogObject from 'PogData';
 
-import { registerWhen } from '../utils/utils.js';
+import { registerWhen, timeThis } from '../utils/utils.js';
 import { checkLSRange } from '../utils/functions.js';
 import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'; // gui
 import { constrainX, constrainY } from '../utils/functions.js' // padding
@@ -14,7 +15,7 @@ const entityArmorStand = Java.type("net.minecraft.entity.item.EntityArmorStand")
 const moveHpDisplay = new Gui(); // display hp of mobs
 createGuiCommand(moveHpDisplay, 'movehp', 'mhp');
 
-export const baoDisplayHP = {
+export const baoDisplayHP = new PogObject("bao-dev", {
     "inLSRange": false,
     "specifiedMobs": [],
     "mobInfos": [],
@@ -22,7 +23,8 @@ export const baoDisplayHP = {
     "draggableText": '[Lv000] SomeMobName 10M/10M ❤ -- [✖]',
     "x": 400,
     "y": 40,
-}
+}, '/data/baoDisplayHP.json');
+baoDisplayHP.autosave(5);
 
 const mobSettings = [
     { condition: Settings.vanq_hp, mob: 'Vanquisher' },
@@ -35,6 +37,8 @@ const mobSettings = [
     { condition: Settings.reaper_hp, mob: 'Grim Reaper' },
     { condition: Settings.phantom_fisher_hp, mob: 'Phantom Fisher' },
     { condition: Settings.rein_hp, mob: 'Reindrake' },
+    { condition: Settings.jawbus_hp, mob: 'Jawbus' }, 
+    { condition: Settings.thunder_hp, mob: 'Thunder' }
 ];
 
 
@@ -67,6 +71,7 @@ register('tick', () => {
         mobSettings.forEach(({ condition, mob, mobs }) => {
             if (condition) {
                 baoDisplayHP.specifiedMobs.push(...(mobs || [mob]));
+                baoDisplayHP.save();
             }
         });
     }
@@ -81,19 +86,29 @@ register('step', () => {
         .map((mobEntity) => {
             const entityName = mobEntity.getName().removeFormatting();
             baoDisplayHP.inLSRange = checkLSRange(mobEntity) < 31;
+            const inRangeText = baoDisplayHP.inLSRange ? '&a✓' : '&c✖';
+            if (entityName.includes('Jawbus')) {
+                const jawbusRegex = /﴾ \[Lv600] Lord Jawbus (.+)M\/100M❤ ﴿/
+                const matchJawbus = entityName.match(jawbusRegex);
+                if (matchJawbus) return `${mobEntity.getName()} &r-- [${inRangeText}&r]`;
 
-            const allowedMobPatterns = baoDisplayHP.specifiedMobs.join('|');
-            const mobRegex = new RegExp(`\\[Lv\\d+\\] (aCorrupted\\s?)?(${allowedMobPatterns})(a)? (\\d+(\\.\\d*)?[kM]?)\\/(\\d+(\\.\\d+)?[kM]?)❤`);
-            const matchMobPattern = entityName.match(mobRegex);
+            } else if (entityName.includes('Thunder')) {
+                const thunderRegex = /﴾ \[Lv400] Thunder (.+)M\/35M❤ ﴿/;
+                const matchThunder = entityName.match(thunderRegex);
+                if (matchThunder) return `${mobEntity.getName()} &r-- [${inRangeText}&r]`;
 
-            if (matchMobPattern) {
-                const inRangeText = baoDisplayHP.inLSRange ? '&a✓' : '&c✖';
-                return `${mobEntity.getName()} &r-- [${inRangeText}&r]`;
+            } else {
+                const allowedMobPatterns = baoDisplayHP.specifiedMobs.join('|');
+                const mobRegex = new RegExp(`\\[Lv\\d+\\] (aCorrupted\\s?)?(${allowedMobPatterns})(a)? (\\d+(\\.\\d*)?[kM]?)\\/(\\d+(\\.\\d+)?[kM]?)❤`);
+                const matchMobPattern = entityName.match(mobRegex);
+                if (matchMobPattern) return `${mobEntity.getName()} &r-- [${inRangeText}&r]`;
+
             }
         })
         .filter(Boolean); // Remove undefined entries
 
     baoDisplayHP.displayText = baoDisplayHP.mobInfos.join('\n');
+    baoDisplayHP.save();
 }).setFps(10);
 
 register('dragged', (dx, dy, x, y) => {
@@ -102,9 +117,13 @@ register('dragged', (dx, dy, x, y) => {
         baoDisplayHP.x = constrainX(x, 3, baoDisplayHP.draggableText);
         baoDisplayHP.y = constrainY(y, 3, baoDisplayHP.draggableText);
     };
+    baoDisplayHP.save();
 })
 
-registerWhen('renderOverlay', () => {
+registerWhen('renderOverlay', timeThis("renderOverlay displayHPText", () => {
     Renderer.drawStringWithShadow(baoDisplayHP.displayText, baoDisplayHP.x, baoDisplayHP.y);
+}), () => Settings.master_displayHP && getInSkyblock() && World.isLoaded());
+
+registerWhen('renderOverlay', timeThis("renderOverlay displayHPText draggable", () => {
     renderGuiPosition(moveHpDisplay, baoDisplayHP, baoDisplayHP.draggableText);
-}, () => Settings.master_displayHP && getInSkyblock() && World.isLoaded());
+}), () => Settings.master_displayHP && getInSkyblock() && World.isLoaded());

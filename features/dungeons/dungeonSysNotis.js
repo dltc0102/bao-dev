@@ -7,6 +7,9 @@ import { registerWhen } from "../../utils/utils";
 ///////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
 ///////////////////////////////////////////////////////////////////////////////
+const Instant = Java.type('java.time.Instant');
+
+
 function shouldHandleSysNotis() {
     return Settings.dungeonSysNotifications && getInDungeon() && getInSkyblock() && World.isLoaded();
 }

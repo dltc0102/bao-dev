@@ -52,7 +52,8 @@ const romanNumerals = {
 
 // inSkyblock
 export function getInSkyblock() {
-    return ChatLib.removeFormatting(Scoreboard.getTitle()).includes("SKYBLOCK");
+    return true;
+    // return ChatLib.removeFormatting(Scoreboard.getTitle()).includes("SKYBLOCK");
 }
 
 // currArea
@@ -194,13 +195,6 @@ export function detectEntity(entityType, givenMobName, givenInfo) {
 ////////////////////////////////////////////////////////////////////////
 // DISPLAY HEALTH OF ENTITY --------------------------------------------
 ////////////////////////////////////////////////////////////////////////
-export function displayEntity(entityFound, entityNames, x, y) {
-    if (entityFound) {
-        const stringInfo = entityNames.join('\n');
-        Renderer.drawString(stringInfo, x, y)
-    }
-}
-
 /**
  * getHealth() takes in a string parameter that ends in 'M' or 'k' and returns the unabbreviated number of the string passed in.
  * 

@@ -9,6 +9,8 @@ import { registerWhen } from "../../utils/utils";
 // CONSTS
 ////////////////////////////////////////////////////////////////////////////////
 const endStatsAudio = new Audio();
+const Instant = Java.type('java.time.Instant');
+
 
 export const baoEnd = {
     "spawned": false,

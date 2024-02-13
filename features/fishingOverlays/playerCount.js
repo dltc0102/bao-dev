@@ -1,9 +1,10 @@
 import Settings from "../../settings.js";
+import PogObject from 'PogData';
 
 import { getInSkyblock, getInGarden } from "../../utils/functions.js";
 import { constrainX, constrainY } from '../../utils/functions.js' // padding
 import { createGuiCommand, renderGuiPosition } from '../../utils/functions.js'; // gui
-import { registerWhen } from "../../utils/utils.js";
+import { registerWhen, timeThis } from "../../utils/utils.js";
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -14,12 +15,14 @@ const movePlayerCounter = new Gui();
 createGuiCommand(movePlayerCounter, 'moveplayer', 'mpc');
 const playerDraggable = '&7Players: 0';
 
-const counterInfo = {
-    'count': 0,
-    'text': 0, 
+let playerCount = 0;
+let playerCountText = '';
+
+export const playerCountDisplay = new PogObject("bao-dev", {
     'x': 3,
     'y': 24,
-};
+}, '/data/playerCountDisplay.json');
+playerCountDisplay.autosave(5);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -49,9 +52,10 @@ function getPlayerCount(entityPlayer) {
 register('dragged', (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (movePlayerCounter.isOpen()){
-        counterInfo.player.x = constrainX(x, 3, playerDraggable);
-        counterInfo.player.y = constrainY(y, 3, playerDraggable);
-    }
+        playerCountDisplay.x = constrainX(x, 3, playerDraggable);
+        playerCountDisplay.y = constrainY(y, 3, playerDraggable);
+    };
+    playerCountDisplay.save();
 })
 
 
@@ -61,8 +65,8 @@ register('dragged', (dx, dy, x, y) => {
 register('step', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (Settings.playersNearbyCount) {
-        counterInfo.count = getPlayerCount(entityPlayer);
-        counterInfo.text = updateEntityText('Players', counterInfo.count);
+        playerCount = getPlayerCount(entityPlayer);
+        playerCountText = updateEntityText('Players', playerCount);
     }
 }).setFps(3);
 
@@ -70,12 +74,12 @@ register('step', () => {
 ////////////////////////////////////////////////////////////////////////////////
 // REG: OVERLAY
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('renderOverlay', () => {
-    Renderer.drawStringWithShadow(counterInfo.text, counterInfo.x, counterInfo.y);
-}, () => Settings.playersNearbyCount && !getInGarden() && getInSkyblock() && World.isLoaded());
+registerWhen('renderOverlay', timeThis("renderOverlay playerCountText", () => {
+    Renderer.drawStringWithShadow(playerCountText, playerCountDisplay.x, playerCountDisplay.y);
+}), () => Settings.playersNearbyCount && !getInGarden() && getInSkyblock() && World.isLoaded());
 
-registerWhen('renderOverlay', () => {
-    renderGuiPosition(movePlayerCounter, counterInfo, playerDraggable);
-}, () => getInSkyblock() && World.isLoaded());
+registerWhen('renderOverlay', timeThis("renderOverlay playerCountText draggable", () => {
+    renderGuiPosition(movePlayerCounter, playerCountDisplay, playerDraggable);
+}), () => getInSkyblock() && World.isLoaded());
 
 

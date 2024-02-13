@@ -4,7 +4,7 @@ import Audio from '../utils/audio.js';
 import { colorPlot, drawArrow, drawOutlineBeacon, drawScaledString, getCell, petDropPing, playSound, startSprayTimer, updatePlots } from '../utils/functions.js'
 import { sendMessage } from '../utils/party.js'
 import { getActivePet } from '../utils/pet.js'
-import { showAlert, registerWhen } from '../utils/utils.js'
+import { showAlert, registerWhen, timeThis } from '../utils/utils.js'
 import { baoUtils } from '../utils/utils.js';
 import { updateCDText, setTimer } from '../utils/functions.js'
 import { getInSkyblock } from '../utils/functions.js'; // sb, area
@@ -597,47 +597,50 @@ register('step', () => {
 ////////////////////////////////////////////////////////////////////////////////
 // REG: OVERLAY
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('renderOverlay', () => {
+registerWhen('renderOverlay', timeThis("renderOverlay lookingAtText", () => {
     Renderer.drawStringWithShadow(lookingAtText, baoGardens.playerInfo.x, baoGardens.playerInfo.y);
-}, () => Settings.showPlayerYawPitch && shouldHandleGardenRegs());
+}), () => Settings.showPlayerYawPitch && shouldHandleGardenRegs());
 
-registerWhen('renderOverlay', () => {
+registerWhen('renderOverlay', timeThis("renderOverlay contestText", () => {
     Renderer.drawStringWithShadow(contestText, baoGardens.contestInfo.x, baoGardens.contestInfo.y);
-}, () => Settings.gardenContestOverlay && shouldHandleGardenRegs());
+}), () => Settings.gardenContestOverlay && shouldHandleGardenRegs());
 
-registerWhen('renderOverlay', () => {
+registerWhen('renderOverlay', timeThis("renderOverlay sprayonatorOverlayText", () => {
     Renderer.drawStringWithShadow(baoGardens.sprayonatorOverlay.displayText, baoGardens.sprayonatorOverlay.x, baoGardens.sprayonatorOverlay.y);
-}, () => Settings.sprayonatorDisplay && shouldHandleGardenRegs());
+}), () => Settings.sprayonatorDisplay && shouldHandleGardenRegs());
 
-registerWhen('renderOverlay', () => {
+registerWhen('renderOverlay', timeThis("renderOverlay vinylInfoText", () => {
     Renderer.drawStringWithShadow(baoGardens.vinylInfo.displayText, baoGardens.vinylInfo.x, baoGardens.vinylInfo.y);
-}, () => Settings.vinylDisplay && shouldHandleGardenRegs());
+}), () => Settings.vinylDisplay && shouldHandleGardenRegs());
 
-registerWhen('renderOverlay', () => {
+registerWhen('renderOverlay', timeThis("renderOverlay gardenPlotMap", () => {
     drawScaledString(baoGardens.plotMapText, baoGardens.gardenPlotMap.x, baoGardens.gardenPlotMap.y, 2);
+}), () => Settings.gardenPlotMap && shouldHandleGardenRegs());
+
+registerWhen('renderOverlay', timeThis("renderOverlay arrow for gardenPlotMap", () => {
     drawArrow(playerArrowImg, 0.8, Player.getYaw() + 180, baoGardens.arrow.x, baoGardens.arrow.y);
-}, () => Settings.gardenPlotMap && shouldHandleGardenRegs());
+}), () => Settings.gardenPlotMap && shouldHandleGardenRegs());
 
-registerWhen('renderOverlay', () => {
+registerWhen('renderOverlay', timeThis("renderOverlay harbringerPotionText", () => {
     Renderer.drawStringWithShadow(baoGardens.harbringer.text, baoGardens.harbringer.x, baoGardens.harbringer.y);
-}, () => Settings.harvPotionOverlay && shouldHandleGardenRegs());
+}), () => Settings.harvPotionOverlay && shouldHandleGardenRegs());
 
-registerWhen('renderOverlay', () => {
+registerWhen('renderOverlay', timeThis("renderOverlay pestRepellentText", () => {
     Renderer.drawStringWithShadow(baoGardens.pestRepellent.text, baoGardens.pestRepellent.x, baoGardens.pestRepellent.y);
-}, () => Settings.pestRepellentDisplay && shouldHandleGardenRegs());
+}), () => Settings.pestRepellentDisplay && shouldHandleGardenRegs());
 
-registerWhen('renderOverlay', () => {
+registerWhen('renderOverlay', timeThis("renderOverlay pestExchangeText", () => {
     Renderer.drawStringWithShadow(baoGardens.pestExchange.text, baoGardens.pestExchange.x, baoGardens.pestExchange.y);
-}, () => Settings.pestExchangeDisplay && shouldHandleGardenRegs());
+}), () => Settings.pestExchangeDisplay && shouldHandleGardenRegs());
 
 
 
 ////////////////////////////////////////////////////////////////////
 // SHOW PEST ENTITY BOX (ESP)
 ////////////////////////////////////////////////////////////////////
-registerWhen('renderOverlay', () => {
+registerWhen('renderOverlay', timeThis("renderOverlay pestEntityBox", () => {
     World.getAllEntities().forEach(entity => {if (entity.getName().removeFormatting().includes("ൠ")) drawOutlineBeacon(entity.x, entity.y-0.65, entity.z, givColor='white', alpha=1, seethru=false)})
-}, () => Settings.pestQOL && Settings.pestEsp && shouldHandleGardenRegs());
+}), () => Settings.pestQOL && Settings.pestEsp && shouldHandleGardenRegs());
 
 
 ////////////////////////////////////////////////////////////////////

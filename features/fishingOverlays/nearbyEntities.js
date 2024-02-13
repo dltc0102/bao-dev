@@ -1,10 +1,10 @@
 import Settings from "../../settings.js";
+import PogObject from 'PogData';
 
 import { constrainX, constrainY } from '../../utils/functions.js' // padding
 import { createGuiCommand, renderGuiPosition } from '../../utils/functions.js'; // gui
-import { registerWhen } from "../../utils/utils.js";
+import { registerWhen, timeThis } from "../../utils/utils.js";
 import { getInSkyblock, getInCI, detectDH } from "../../utils/functions.js";
-import { baoDisplayHP } from "../displayHP.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTS
@@ -14,27 +14,28 @@ const entityArmorStand = Java.type("net.minecraft.entity.item.EntityArmorStand")
 // jawbus
 const moveNearbyJawbusCounter = new Gui(); // nearby jawbus
 createGuiCommand(moveNearbyJawbusCounter, 'movejawbus', 'mj');
-const jawbusDraggable = '&7Nearby Jawbus: NO [x0]'
+const jawbusDraggable = '&7Nearby Jawbus: NO [x0]';
+let jawbusInfo = null;
+let nearbyJawbusText = '';
 
 // thunder
 const moveNearbyThunderCounter = new Gui(); // nearby jawbus
 createGuiCommand(moveNearbyThunderCounter, 'movethunder', 'mt');
 const thunderDraggable = '&7Nearby Thunder: NO [x0]'
+let thunderInfo = null;
+let nearbyThunderText = '';
 
-const counterInfo = {
+export const nearbyEntitiesDisplay = new PogObject("bao-dev", {
     'jawbus': {
-        'info': null,
-        'text': 0, 
         'x': 3,
         'y': 44,
     }, 
     'thunder': {
-        'info': null, 
-        'text': '',
         'x': 3,
         'y': 54,
     }
-};
+}, '/data/nearbyEntitiesDisplay.json');
+nearbyEntitiesDisplay.autosave(5);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -59,18 +60,11 @@ function updateNearbyText(name, givObject) {
     return `&rNearby ${name}: &b${isNBFound}  &6${numNB}`;
 }
 
-function displayEntityHP(names, foundEntity, x, y) {
-    if (names && names.length > 0 && foundEntity) {
-        const stringOfNames = names.join('\n');
-        Renderer.drawString(stringOfNames, x, y);
-    }
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // CREATING INFO OBJECTS
 ////////////////////////////////////////////////////////////////////////////////
-counterInfo.jawbus.info = createInfoObject();
-counterInfo.thunder.info = createInfoObject();
+jawbusInfo = createInfoObject();
+thunderInfo = createInfoObject();
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -79,13 +73,14 @@ counterInfo.thunder.info = createInfoObject();
 register('dragged', (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveNearbyJawbusCounter.isOpen()){
-        counterInfo.jawbus.x = constrainX(x, 3, jawbusDraggable);
-        counterInfo.jawbus.y = constrainY(y, 3, jawbusDraggable);
-    }
+        nearbyEntitiesDisplay.jawbus.x = constrainX(x, 3, jawbusDraggable);
+        nearbyEntitiesDisplay.jawbus.y = constrainY(y, 3, jawbusDraggable);
+    };
     if (moveNearbyThunderCounter.isOpen()){
-        counterInfo.thunder.x = constrainX(x, 3, thunderDraggable);
-        counterInfo.thunder.y = constrainY(y, 3, thunderDraggable);
-    }
+        nearbyEntitiesDisplay.thunder.x = constrainX(x, 3, thunderDraggable);
+        nearbyEntitiesDisplay.thunder.y = constrainY(y, 3, thunderDraggable);
+    };
+    nearbyEntitiesDisplay.save();
 })
 
 
@@ -96,16 +91,16 @@ register('step', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     // detect doublehook jawbus
     if (Settings.detectDoubleJawbus) {
-        detectDH(entityArmorStand, 'Jawbus', '&4', 'Follower', counterInfo.jawbus.info);
+        detectDH(entityArmorStand, 'Jawbus', '&4', 'Follower', jawbusInfo);
         if (getInCI()) {
-            counterInfo.jawbus.text = updateNearbyText('Jawbus', counterInfo.jawbus.info);
+            nearbyJawbusText = updateNearbyText('Jawbus', jawbusInfo);
         }
     }
 
     // detect doublehook thunder
     if (Settings.detectDoubleThunder) {
-        detectDH(entityArmorStand, 'Thunder', '&b', null, counterInfo.thunder.info);
-        counterInfo.thunder.text = updateNearbyText('Thunder', counterInfo.thunder.info);
+        detectDH(entityArmorStand, 'Thunder', '&b', null, thunderInfo);
+        nearbyThunderText = updateNearbyText('Thunder', thunderInfo);
     }
 }).setFps(3);
 
@@ -113,22 +108,18 @@ register('step', () => {
 ////////////////////////////////////////////////////////////////////////////////
 // REG: OVERLAY
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('renderOverlay', () => {
-    Renderer.drawStringWithShadow(counterInfo.jawbus.text, counterInfo.jawbus.x, counterInfo.jawbus.y);
-    if (Settings.jawbus_hp) { 
-        displayEntityHP(counterInfo.jawbus.names, counterInfo.jawbus.found, baoDisplayHP.x, baoDisplayHP.y);
-    }
-}, () => Settings.detectDoubleJawbus && getInCI() && getInSkyblock() && World.isLoaded());
+registerWhen('renderOverlay', timeThis("renderOverlay nearbyJawbusText", () => {
+    Renderer.drawStringWithShadow(nearbyJawbusText, nearbyEntitiesDisplay.jawbus.x, nearbyEntitiesDisplay.jawbus.y);
+}), () => Settings.detectDoubleJawbus && getInCI() && getInSkyblock() && World.isLoaded());
 
-registerWhen('renderOverlay', () => {
-    Renderer.drawStringWithShadow(counterInfo.thunder.text, counterInfo.thunder.x, counterInfo.thunder.y);
-    if (Settings.thunder_hp) { 
-        displayEntityHP(counterInfo.thunder.info.names, counterInfo.thunder.info.found, baoDisplayHP.x, baoDisplayHP.y); 
-    }
-}, () => Settings.detectDoubleThunder && getInCI() && getInSkyblock() && World.isLoaded());
+registerWhen('renderOverlay', timeThis("renderOverlay nearbyThunderText", () => {
+    Renderer.drawStringWithShadow(nearbyThunderText, nearbyEntitiesDisplay.thunder.x, nearbyEntitiesDisplay.thunder.y);
+}), () => Settings.detectDoubleThunder && getInCI() && getInSkyblock() && World.isLoaded());
 
-registerWhen('renderOverlay', () => {
-    renderGuiPosition(moveNearbyJawbusCounter, counterInfo.jawbus, jawbusDraggable);
-    renderGuiPosition(moveNearbyThunderCounter, counterInfo.thunder, thunderDraggable);
-}, () => getInSkyblock() && World.isLoaded());
+registerWhen('renderOverlay', timeThis("renderOverlay nearbyJawbusText draggable", () => {
+    renderGuiPosition(moveNearbyJawbusCounter, nearbyEntitiesDisplay.jawbus, jawbusDraggable);
+}), () => getInSkyblock() && World.isLoaded());
 
+registerWhen('renderOverlay', timeThis("renderOverlay nearbyThunderText draggable", () => {
+    renderGuiPosition(moveNearbyThunderCounter, nearbyEntitiesDisplay.thunder, thunderDraggable);
+}), () => getInSkyblock() && World.isLoaded());

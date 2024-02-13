@@ -1,11 +1,12 @@
 import Settings from '../settings.js';
 import Audio from '../utils/audio.js';
+import PogObject from 'PogData';
 
-import { delayMessage, filterSeparators, formatMoney, getPlayerPOI, getPlayerPos, playSound } from '../utils/functions.js';
+import { filterSeparators, formatMoney, getPlayerPOI, getPlayerPos, playSound } from '../utils/functions.js';
 import { constrainX, constrainY } from '../utils/functions.js' // padding
 import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'; // gui
 import { sendMessage } from '../utils/party.js';
-import { showAlert, registerWhen } from '../utils/utils.js';
+import { showAlert, registerWhen, timeThis } from '../utils/utils.js';
 import { getInSkyblock, getInHub } from '../utils/functions.js'; // sb, area
 import { baoUtils } from '../utils/utils.js';
 
@@ -19,7 +20,7 @@ createGuiCommand(moveMythosCounter, 'movemythoscounter', 'mmc');
 
 const mythosDragText = `&7|| MYTHOS ||\n&7==================\n&7||| Burros Dug: 0\n&7||| Feathers: 0\n&7||| Coins Dug Up: 0\n&7------------------\n&7\n&7|||MinosHunters: 0\n&7|||Lynxes: 0\n&7|||Gaias: 0\n&7|||Minotaurs: 0\n&7|||Champions: 0\n&7||| Inquisitors: 0\n&7------------------\n&7||| 0 0 0\n&7||| 0 0 0\n&7||| 0 0\n&7------------------\n&7|| Kills/Inq: 0\n&7|| Minotaurs/Dae Stick: 0\n&7|| Burrows/CoG: 0\n&7|| Burrows/WuS: 0\n&7|| Champs Since Relic: 0`;
 
-export const baoMythos = {
+export const baoMythos = new PogObject("bao-dev", {
     "allLines": '',
     "x": 5, 
     "y": 100,
@@ -53,7 +54,8 @@ export const baoMythos = {
         "burrowsSinceWUS": 0, 
         "championsSinceRelic": 0, 
     }, 
-};
+}, '/data/baoMythos.json');
+baoMythos.autosave(5);
 
 const dts_title = '&2Dwarf Turtle Shelmet' 
 const ar_title = '&5Antique Remedies'
@@ -165,6 +167,7 @@ mythosMessages.forEach(msg => {
 ////////////////////////////////////////////////////////////////////////////////
 registerWhen('chat', (event) => {
     baoMythos.stats.featherCount += 1;
+    baoMythos.save();
 }, () => shouldHandleMythosRegs()).setCriteria('RARE DROP! You dug out a Griffin Feather!');
 
 
@@ -174,6 +177,7 @@ registerWhen('chat', (event) => {
 registerWhen('chat', (money, event) => {
     const moneyNoCom = money.toString().replace(/,/g, '');;
     baoMythos.stats.moneyCount += Number(moneyNoCom);
+    baoMythos.save();
 }, () => shouldHandleMythosRegs()).setCriteria('Wow! You dug out ${money} coins!');
 
 
@@ -183,6 +187,7 @@ registerWhen('chat', (money, event) => {
 registerWhen('chat', (amt, coins, event) => {
     baoMythos.stats.ancientClawCount += parseInt(amt);
     baoMythos.stats.ancientClawMoney += parseInt(coins.replace(',', ''), 10);
+    baoMythos.save();
 }, () => shouldHandleMythosRegs()).setCriteria('You sold Ancient Claw x${amt} for ${coins} Coins!');
 
 
@@ -193,12 +198,14 @@ registerWhen('chat', (event) => {
     baoMythos.stats.burrowCount +=1;
     baoMythos.stats.burrowsSinceCOG += 1;
     baoMythos.stats.burrowsSinceWUS += 1;
+    baoMythos.save();
 }, () => shouldHandleMythosRegs()).setCriteria('You dug out a Griffin Burrow!').setContains();
 
 registerWhen('chat', (event) => {
     baoMythos.stats.burrowCount +=1;
     baoMythos.stats.burrowsSinceCOG += 1;
     baoMythos.stats.burrowsSinceWUS += 1;
+    baoMythos.save();
 }, () => shouldHandleMythosRegs()).setCriteria('You finished the Griffin burrow chain! (4/4)');
 
 
@@ -210,6 +217,7 @@ registerWhen('chat', (event) => {
     mythosAudio.playDefaultSound();
     if (baoMythos.stats.DTS === undefined) baoMythos.stats.DTS += 2;
     baoMythos.stats.DTS += 1;
+    baoMythos.save();
 }, () => shouldHandleMythosRegs()).setCriteria('[SBE] RARE DROP! Dwarf Turtle Shelmet');
 
 
@@ -221,6 +229,7 @@ registerWhen('chat', (event) => {
     mythosAudio.playDefaultSound();
     if (baoMythos.stats.AR === undefined) baoMythos.stats.AR += 2;
     baoMythos.stats.AR += 1;
+    baoMythos.save();
 }, () => shouldHandleMythosRegs()).setCriteria('[SBE] RARE DROP! Antique Remedies');
 
 
@@ -232,6 +241,7 @@ registerWhen('chat', (event) => {
     mythosAudio.playDefaultSound();
     if (baoMythos.stats.CTP === undefined) baoMythos.stats.CTP += 2;
     baoMythos.stats.CTP += 1;
+    baoMythos.save();
 }, () => shouldHandleMythosRegs()).setCriteria('[SBE] RARE DROP! Crochet Tiger Plushie');
 
 
@@ -244,6 +254,7 @@ registerWhen('chat', (event) => {
     playSound();
     if (baoMythos.stats.MR === undefined) baoMythos.stats.MR += 2;
     baoMythos.stats.MR += 1;
+    baoMythos.save();
 }, () => shouldHandleMythosRegs()).setCriteria('[SBE] RARE DROP! Minos Relic');
 
 
@@ -257,6 +268,7 @@ registerWhen('chat', (event) => {
     if (baoMythos.stats.CoG === undefined) baoMythos.stats.CoG += 2;
     baoMythos.stats.CoG += 1;
     baoMythos.stats.burrowsSinceCOG = 0;
+    baoMythos.save();
 }, () => shouldHandleMythosRegs()).setCriteria('RARE DROP! You dug out a Crown of Greed!');
 
 
@@ -270,6 +282,7 @@ registerWhen('chat', (event) => {
     if (baoMythos.stats.WuS === undefined) baoMythos.stats.WuS += 2;
     baoMythos.stats.WuS += 1;
     baoMythos.stats.burrowsSinceWUS = 0;
+    baoMythos.save();
 }, () => shouldHandleMythosRegs()).setCriteria('RARE DROP! You dug out a Washed-up Souvenir!');
 
 
@@ -283,6 +296,7 @@ registerWhen('chat', (mf, event) => {
     if (baoMythos.stats.DS === undefined) baoMythos.stats.DS += 2;
     baoMythos.stats.DS += 1;
     baoMythos.stats.minotaursSinceDae = 0;
+    baoMythos.save();
 }, () => shouldHandleMythosRegs()).setCriteria('RARE DROP! Daedalus Stick (+${mf}% ✯ Magic Find)');
 
 
@@ -305,6 +319,7 @@ registerWhen('chat', (mf, event) => {
     baoMythos.stats.minosHunterKills += 1; 
     baoMythos.stats.mobsSinceInq += 1; 
     baoMythos.stats.totalMythosKills += 1;
+    baoMythos.save();
 }, () => shouldHandleMythosRegs()).setCriteria('You dug out a Minos Hunter!').setContains();
 
 
@@ -315,6 +330,7 @@ registerWhen('chat', (mf, event) => {
     baoMythos.stats.siaLynxKills += 1; 
     baoMythos.stats.mobsSinceInq += 1; 
     baoMythos.stats.totalMythosKills += 1;
+    baoMythos.save();
 }, () => shouldHandleMythosRegs()).setCriteria('You dug out a Siamese Lynxes!').setContains();
 
 
@@ -325,6 +341,7 @@ registerWhen('chat', (mf, event) => {
     baoMythos.stats.gaiaConsKills += 1; 
     baoMythos.stats.mobsSinceInq += 1; 
     baoMythos.stats.totalMythosKills += 1;
+    baoMythos.save();
 }, () => shouldHandleMythosRegs()).setCriteria('You dug out a Gaia Construct!').setContains();
 
 
@@ -336,6 +353,7 @@ registerWhen('chat', (mf, event) => {
     baoMythos.stats.mobsSinceInq += 1; 
     baoMythos.stats.minotaursSinceDae += 1; 
     baoMythos.stats.totalMythosKills += 1;
+    baoMythos.save();
 }, () => shouldHandleMythosRegs()).setCriteria('You dug out a Minotaur!').setContains();
 
 
@@ -347,6 +365,7 @@ registerWhen('chat', (mf, event) => {
     baoMythos.stats.minosChampKills += 1; 
     baoMythos.stats.mobsSinceInq += 1; 
     baoMythos.stats.totalMythosKills += 1;
+    baoMythos.save();
 }, () => shouldHandleMythosRegs()).setCriteria('You dug out a Minos Champion!').setContains();
 
 
@@ -361,6 +380,7 @@ registerWhen('chat', (mf, event) => {
     baoMythos.stats.minosInqKills += 1; 
     baoMythos.stats.mobsSinceInq = 0; 
     baoMythos.stats.totalMythosKills += 1;
+    baoMythos.save();
 }, () => shouldHandleMythosRegs()).setCriteria('You dug out a Minos Inquisitor!').setContains();
 
 
@@ -388,6 +408,7 @@ register('step', () => {
     const mythosDisplayRaw = [mythosTitle, showGeneral, showKills, showDrops, showAverages, showTrackers].join('\n');
 
     baoMythos.allLines = filterSeparators(mythosDisplayRaw, baoUtils.thinSep);
+    baoMythos.save();
 }).setFps(1)
 
 
@@ -399,20 +420,21 @@ register('dragged', (dx, dy, x, y) => {
     if (moveMythosCounter.isOpen()){
         baoMythos.x = constrainX(x, 3, mythosDragText);
         baoMythos.y = constrainY(y, 3, mythosDragText);
-    }
+    };
+    baoMythos.save();
 });
 
 
 ////////////////////////////////////////////////////////////////////
 // REG: OVERLAY
 ////////////////////////////////////////////////////////////////////
-registerWhen('renderOverlay', () => {
+registerWhen('renderOverlay', timeThis("renderOverlay mythoCounterLines", () => {
     Renderer.drawStringWithShadow(baoMythos.allLines, baoMythos.x, baoMythos.y);
-}, () => Settings.mythosCounterMainToggle && getInHub() && getInSkyblock() && World.isLoaded());
+}), () => Settings.mythosCounterMainToggle && getInHub() && getInSkyblock() && World.isLoaded());
 
-registerWhen('renderOverlay', () => {
+registerWhen('renderOverlay', timeThis("renderOverlay mythosCounterLines draggable", () => {
     renderGuiPosition(moveMythosCounter, baoMythos, mythosDragText);
-}, () => getInSkyblock() && World.isLoaded());
+}), () => getInSkyblock() && World.isLoaded());
 
 
 ////////////////////////////////////////////////////////////////////
@@ -453,6 +475,7 @@ register('command', () => {
     baoMythos.stats.burrowsSinceCOG = 0;
     baoMythos.stats.burrowsSinceWUS = 0;
     baoMythos.stats.championsSinceRelic = 0;
- 
+    
+    baoMythos.save();
     ChatLib.chat('&aYour counter for mythological event has been resetted!');
 }).setName('resetmythosbao');

@@ -10,6 +10,8 @@ import { registerWhen } from '../../utils/utils.js';
 // CONSTS
 ///////////////////////////////////////////////////////////////////////////////
 const partyAudio = new Audio();
+const Instant = Java.type('java.time.Instant');
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -31,6 +33,7 @@ register('command', () => {
 ///////////////////////////////////////////////////////////////////////////////
 // #warp 
 ///////////////////////////////////////////////////////////////////////////////
+let canWarp = false;
 const warpMessages = [
     /Party > .+: #warp/, 
     /Party > .+: #w/, 
@@ -38,9 +41,11 @@ const warpMessages = [
 
 warpMessages.forEach(msg => {
     registerWhen('chat', (event) => {
+        canWarp = true;
         ChatLib.command('p warp');
         partyAudio.playDefaultSound();
-    }, () => Settings.autoWarp && shouldHandlePartyCommands()).setCriteria(msg);
+        setTimeout(() => { canWarp = false; }, 5000);
+    }, () => Settings.autoWarp && !canWarp && shouldHandlePartyCommands()).setCriteria(msg);
 });
 
 
@@ -68,7 +73,7 @@ registerWhen('chat', (playerName, event) => {
     
     let excludedName = Player.getName();
     let randomIdx;
-
+    
     do {
         randomIdx = Math.floor(Math.random() * partyList.length);
     } while (partyList[randomIdx] === excludedName);

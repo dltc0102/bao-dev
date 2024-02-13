@@ -4,18 +4,18 @@ import { baoFirstTime } from './utils/utils.js';
 
 // splitted
 import './features/dungeons.js'
+import './features/generalQOL.js'
 import './features/end.js'
 import './features/fishing_overlays.js'
 import './features/displayHP.js'
-import './features/generalQOL.js'
 import './features/fishing_pings.js'
-// import './features/garden.js' // not splitted
+import './features/garden.js' // not splitted
 import './features/mythos.js' // not splitted
 import './features/misc.js'
 import './features/timers.js' // not splitted ( i dont think theres a reason to )
 import './features/mainSCStats.js'
-import './features/waterSCStats.js'
-import './features/lavaSCStats.js'
+import './features/waterSCStats.js' // not rw-ed
+import './features/lavaSCStats.js' // not rw-ed
 
 // import './features/dev.js'
 

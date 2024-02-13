@@ -4,6 +4,8 @@ import { getInSkyblock, getInDungeon } from '../../utils/functions.js';
 import { sendMessage } from '../../utils/party.js';
 import { registerWhen } from '../../utils/utils.js';
 
+const Instant = Java.type('java.time.Instant');
+
 
 // functions
 function shouldHandleMelody() {

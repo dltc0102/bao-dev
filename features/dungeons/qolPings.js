@@ -6,14 +6,16 @@ import { playSound } from "../../utils/functions";
 import { registerWhen } from "../../utils/utils";
 
 const qolAudio = new Audio();
+const Instant = Java.type('java.time.Instant');
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // PF MESSAGE SHORTENER
 ////////////////////////////////////////////////////////////////////////////////
 registerWhen('chat', (message, event) => {
     cancel(event);
-    ChatLib.chat(`&d&lPF &r> &a${message}`);
 }, () => Settings.betterPFMessages && getInSkyblock() && World.isLoaded()).setCriteria('Party Finder > ${message}');
+
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -7,6 +7,8 @@ import { getInSkyblock, getInDungeon } from "../../utils/functions";
 ///////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
 ///////////////////////////////////////////////////////////////////////////////
+const Instant = Java.type('java.time.Instant');
+
 const milestoneNums = {
     '❶': 1, 
     '❷': 2, 
@@ -172,7 +174,7 @@ registerWhen('chat', (numCrystals, event) => {
 // DUNGEON BUFF MESSAGE
 ///////////////////////////////////////////////////////////////////////////////
 registerWhen('chat', (playerName, blessing, time, event) => {
-    ChatLib.chat(`&6&lDUNGEON BUFF! &dBlessing of ${blessing}!`)
+    ChatLib.chat(`&6&lDUNGEON BUFF! &dBlessing of ${blessing}!`);
 }, () => shouldHandleInteractiveElements()).setCriteria('DUNGEON BUFF! ${playerName} found a Blessing of ${blessing}! (${time})');
 
 
@@ -210,7 +212,7 @@ registerWhen('chat', (playerName, event) => {
 registerWhen('chat', (message, event) => {
     if (message === "That's a fine pair of loot chests! You better hurry or I'll explode and destroy them!") {
         ChatLib.chat(`&a&l[BOMB] &r&aCreeper: &f&lPUZZLE STARTED!`);
-
+        
     }
     if (message === "I'm starting to get excited! In 30s, I'm going to ruin your day!") {
         ChatLib.chat(`&a&l[BOMB] &r&aCreeper: &c&l30s Left!`);

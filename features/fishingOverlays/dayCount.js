@@ -1,9 +1,10 @@
 import Settings from "../../settings.js";
+import PogObject from 'PogData';
 
 import { getInSkyblock, getInGarden } from "../../utils/functions.js";
 import { constrainX, constrainY } from '../../utils/functions.js' // padding
 import { createGuiCommand, renderGuiPosition } from '../../utils/functions.js'; // gui
-import { registerWhen } from "../../utils/utils.js";
+import { registerWhen, timeThis } from "../../utils/utils.js";
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -13,11 +14,12 @@ const moveDayCounter = new Gui();
 createGuiCommand(moveDayCounter, 'movedaycount', 'mdc');
 const dayDraggable = '&7Day: 0.00'
 
-const counterInfo = {
-    'text': 0, 
+let lobbyDayText = '';
+export const dayCountDisplay = new PogObject("bao-dev", {
     'x': 3,
     'y': 34,
-};
+}, '/data/dayCountDisplay.json');
+dayCountDisplay.autosave(5);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -35,9 +37,7 @@ function getLobbyDay() {
 ////////////////////////////////////////////////////////////////////////////////
 register('step', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
-    if (Settings.lobbyDayCount) {
-        counterInfo.text = getLobbyDay();
-    }
+    if (Settings.lobbyDayCount) lobbyDayText = getLobbyDay();
 }).setFps(3);
 
 
@@ -47,20 +47,21 @@ register('step', () => {
 register('dragged', (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveDayCounter.isOpen()){
-        counterInfo.x = constrainX(x, 3, dayDraggable);
-        counterInfo.y = constrainY(y, 3, dayDraggable);
-    }
+        dayCountDisplay.x = constrainX(x, 3, dayDraggable);
+        dayCountDisplay.y = constrainY(y, 3, dayDraggable);
+    };
+    dayCountDisplay.save();
 })
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: OVERLAY
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('renderOverlay', () => {
-    Renderer.drawStringWithShadow(counterInfo.text, counterInfo.x, counterInfo.y);
-}, () => Settings.lobbyDayCount && !getInGarden() && getInSkyblock() && World.isLoaded());
+registerWhen('renderOverlay', timeThis("renderOverlay lobbyDayText", () => {
+    Renderer.drawStringWithShadow(lobbyDayText, dayCountDisplay.x, dayCountDisplay.y);
+}), () => Settings.lobbyDayCount && !getInGarden() && getInSkyblock() && World.isLoaded());
 
-registerWhen('renderOverlay', () => {
-    renderGuiPosition(moveDayCounter, counterInfo, dayDraggable);
-}, () => getInSkyblock() && World.isLoaded());
+registerWhen('renderOverlay', timeThis("renderOverlay lobbyDayText draggable", () => {
+    renderGuiPosition(moveDayCounter, dayCountDisplay, dayDraggable);
+}), () => getInSkyblock() && World.isLoaded());
 

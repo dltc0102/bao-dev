@@ -1,9 +1,10 @@
 import Settings from "../../settings.js";
+import PogObject from 'PogData';
 
 import { getInSkyblock, getInGarden } from "../../utils/functions.js";
 import { constrainX, constrainY } from '../../utils/functions.js' // padding
 import { createGuiCommand, renderGuiPosition } from '../../utils/functions.js'; // gui
-import { registerWhen } from "../../utils/utils.js";
+import { registerWhen, timeThis } from "../../utils/utils.js";
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -15,13 +16,14 @@ const moveBobberCounter = new Gui();
 createGuiCommand(moveBobberCounter, 'movebobber', 'mbc');
 const bobberDraggable = '&7Bobbers: 0';
 
-const counterInfo = {
-    'count': 0,
-    'text': 0, 
+let bobberCount = 0;
+let bobberText = '';
+
+export const bobberDisplay = new PogObject("bao-dev", {
     'x': 3,
     'y': 14,
-};
-
+}, '/data/bobberDisplay.json');
+bobberDisplay.autosave(5);
 
 ////////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
@@ -43,9 +45,10 @@ function updateBobberCount(hook) {
 register('dragged', (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveBobberCounter.isOpen()){
-        counterInfo.x = constrainX(x, 3, bobberDraggable);
-        counterInfo.y = constrainY(y, 3, bobberDraggable);
-    }
+        bobberDisplay.x = constrainX(x, 3, bobberDraggable);
+        bobberDisplay.y = constrainY(y, 3, bobberDraggable);
+    };
+    bobberDisplay.save();
 })
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -54,8 +57,8 @@ register('dragged', (dx, dy, x, y) => {
 register('step', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (Settings.bobberCount) { 
-        counterInfo.count = updateBobberCount(entityHook);
-        counterInfo.text = updateEntityText('Bobbers', counterInfo.count);
+        bobberCount = updateBobberCount(entityHook);
+        bobberText = updateEntityText('Bobbers', bobberCount);
     }
 }).setFps(3);
 
@@ -63,11 +66,11 @@ register('step', () => {
 ////////////////////////////////////////////////////////////////////////////////
 // REG: OVERLAY
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('renderOverlay', () => {
-    Renderer.drawStringWithShadow(counterInfo.text, counterInfo.x, counterInfo.y);
-}, () => Settings.bobberCount && !getInGarden() && getInSkyblock() && World.isLoaded());
+registerWhen('renderOverlay', timeThis("renderOverlay bobberText", () => {
+    Renderer.drawStringWithShadow(bobberText, bobberDisplay.x, bobberDisplay.y);
+}), () => Settings.bobberCount && !getInGarden() && getInSkyblock() && World.isLoaded());
 
-registerWhen('renderOverlay', () => {
-    renderGuiPosition(moveBobberCounter, counterInfo, bobberDraggable);
-}, () => getInSkyblock() && World.isLoaded());
+registerWhen('renderOverlay', timeThis("renderOverlay bobberText draggable", () => {
+    renderGuiPosition(moveBobberCounter, bobberDisplay, bobberDraggable);
+}), () => getInSkyblock() && World.isLoaded());
 

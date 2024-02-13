@@ -7,6 +7,8 @@ import { registerWhen } from "../../utils/utils";
 ///////////////////////////////////////////////////////////////////////////////
 // TOGGLE: MESSAGE QOL
 ///////////////////////////////////////////////////////////////////////////////
+const Instant = Java.type('java.time.Instant');
+
 const messageQOLMessages = [
     // friend join/leave messages
     /Friend > .+ joined./, 
@@ -45,6 +47,7 @@ const importantItems = ["Giant's Sword", "Infinileap", "Diamond Pickaxe", "Stonk
 registerWhen('chat', (item, amt, coins, event) => {
     if (!importantItems.includes(item)) cancel(event);
 }, () => getInDungeon() && getInSkyblock() && World.isLoaded()).setCriteria('You sold ${item} x${amt} for ${coins} Coin!');
+
 
 registerWhen('chat', (thing, amt, coins, event) => {
     if (!importantItems.includes(thing)) cancel(event);

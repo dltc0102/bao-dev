@@ -1,0 +1,22 @@
+{
+    "inLSRange": true,
+    "specifiedMobs": [
+        "Vanquisher",
+        "Reindrake",
+        "Yeti",
+        "Great White Shark",
+        "Carrot King",
+        "Water Hydra",
+        "Sea Emperor",
+        "Grim Reaper",
+        "Phantom Fisher",
+        "Reindrake",
+        "Jawbus",
+        "Thunder"
+    ],
+    "mobInfos": [],
+    "displayText": "",
+    "draggableText": "[Lv000] SomeMobName 10M/10M ❤ -- [✖]",
+    "x": 389.5,
+    "y": 48.5
+}
