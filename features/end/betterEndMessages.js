@@ -1,8 +1,8 @@
-import Settings from "../../settings";
+import ExtraSettings from "../../extraSettings.js";
 import Audio from "../../utils/audio";
 
 import { getInSkyblock, getInEnd } from "../../utils/functions";
-import { showAlert, registerWhen } from "../../utils/utils";
+import { showAlert, registerWhen, timeThis } from "../../utils/utils";
 import { sendMessage } from "../../utils/party";
 
 
@@ -11,8 +11,6 @@ import { sendMessage } from "../../utils/party";
 ////////////////////////////////////////////////////////////////////////////////
 const endProtTitle = '&8End Protector'
 const endAudio = new Audio();
-const Instant = Java.type('java.time.Instant');
-
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,13 +26,13 @@ const someEndMessages = [
 ];
 
 someEndMessages.forEach(msg => {{
-    registerWhen('chat', (event) => {
+    registerWhen('chat', timeThis("registerChat cancel someEndMessages", (event) => {
         cancel(event);
-    }, () => Settings.betterEndMessages && getInEnd() && getInSkyblock() && World.isLoaded()).setCriteria(msg);
+    }), () => ExtraSettings.betterEndMessages && getInEnd() && getInSkyblock() && World.isLoaded()).setCriteria(msg);
 }});
 
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat endstone protector spawning message", (event) => {
     endAudio.playDefaultSound();
     sendMessage('Endstone Protector Spawning');
     showAlert(endProtTitle)
-}, () => Settings.end_protector_ping && getInEnd() && getInSkyblock() && World.isLoaded()).setCriteria('The ground begins to shake as an Endstone Protector rises from below!');
+}), () => ExtraSettings.end_protector_ping && getInEnd() && getInSkyblock() && World.isLoaded()).setCriteria('The ground begins to shake as an Endstone Protector rises from below!');

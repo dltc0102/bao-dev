@@ -10,8 +10,6 @@ import { registerWhen, timeThis } from '../../utils/utils.js';
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTS
 ////////////////////////////////////////////////////////////////////////////////
-const Instant = Java.type('java.time.Instant');
-
 const moveblessingscounter = new Gui();
 createGuiCommand(moveblessingscounter, 'moveblessingscounter', 'mbless');
 
@@ -92,7 +90,7 @@ let blessingText = '';
 ////////////////////////////////////////////////////////////////////////////////
 // REG: STEP
 ////////////////////////////////////////////////////////////////////////////////
-register('step', () => {
+register('step', timeThis("registerStep blessings", () => {
     if (!getInSkyblock() || !World.isLoaded() || !getInDungeon()) return;
     const tabInfo = TabList.getFooter().removeFormatting();
     for (let blessing in baoBlessings) {
@@ -136,30 +134,30 @@ register('step', () => {
         blessingText = '';
         baoBlessings.draggable = '';
     }
-}).setFps(1);
+})).setFps(1);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: WORLD UNLOAD
 ////////////////////////////////////////////////////////////////////////////////
-register('worldUnload', (event) => {
+register('worldUnload', timeThis("registerWorldUnload reset blessings", (event) => {
     resetBlessings();
     shouldShowBlessings = false;
-});
+}));
 
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: DRAGGED
 ////////////////////////////////////////////////////////////////////////////////
-register('dragged', (dx, dy, x, y) => {
+register('dragged', timeThis("registerDragged moveblessingscounter", (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveblessingscounter.isOpen()) {
         blessingsDisplay.x = constrainX(x, 3, baoBlessings.draggable);
         blessingsDisplay.y = constrainY(y, 3, baoBlessings.draggable);
     }
     blessingsDisplay.save();
-})
+}));
 
 
 ////////////////////////////////////////////////////////////////////////////////

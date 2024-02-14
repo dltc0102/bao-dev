@@ -80,20 +80,14 @@ register('tick', () => {
     );
 });
 
-let debugKeys = [];
-let showRenderDebug = false;
-let debugText = '';
-let debugX = 100;
-let debugY = 300;
-
 const timeStore = {};
 const Instant = Java.type('java.time.Instant');
 export function timeThis(key, callback) {
     return function(...args) {
-        const start = Instant.now().getNano();
+        const start = Instant.now();
         const result = callback(...args);
-        const end = Instant.now().getNano();
-        timeStore[key] = (timeStore[key] || 0) + (end - start);
+        const end = Instant.now();
+        timeStore[key] = (timeStore[key] || 0) + (end.getNano() - start.getNano()) + (end.getEpochSecond() - start.getEpochSecond()) * 1000000000;
         return result;
     }
 }
@@ -121,21 +115,26 @@ register('command', () => {
     console.log('')
 }).setName('logtimestore');
 
-let stepCount = 4;
-register('step', () => {
-    if (stepCount > 1) { stepCount -= 1; return; };
-    if (stepCount !== 1);
-    let currTime = new Date();
-    let formattedDate = `${(currTime.getMonth() + 1).toString().padStart(2, '0')}/${currTime.getDate().toString().padStart(2, '0')}/${currTime.getFullYear()} ${currTime.getHours().toString().padStart(2, '0')}:${currTime.getMinutes().toString().padStart(2, '0')}`;
-    console.log(formattedDate);
-    console.log('');
 
-    Object.entries(timeStore).forEach(([key, value]) => {
-        console.log(`${key}: ${value} (${nsToMs(value)}ms || ${nsToS(value)}s)`);
+// let stepCount = 4;
+// register('step', () => {
+//     if (stepCount > 1) { stepCount -= 1; return; };
+//     if (stepCount !== 1);
+//     let currTime = new Date();
+//     let formattedDate = `${(currTime.getMonth() + 1).toString().padStart(2, '0')}/${currTime.getDate().toString().padStart(2, '0')}/${currTime.getFullYear()} ${currTime.getHours().toString().padStart(2, '0')}:${currTime.getMinutes().toString().padStart(2, '0')}`;
+//     console.log(formattedDate);
+//     console.log('');
 
-    });
-    console.log('')
-    console.log('------------------------------------------------------------------------------------');
-    console.log('');
-    stepCount = 4;
-}).setFps(1);
+//     Object.entries(timeStore).forEach(([key, value]) => {
+//         console.log(`${key}: ${value} (${nsToMs(value)}ms || ${nsToS(value)}s)`);
+
+//     });
+//     console.log('')
+//     console.log('------------------------------------------------------------------------------------');
+//     console.log('');
+//     stepCount = 4;
+// }).setFps(1);
+
+register('command', () => {
+    console.log("Number limits:", Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
+}).setName('logintlimit');

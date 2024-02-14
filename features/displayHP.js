@@ -15,18 +15,20 @@ const entityArmorStand = Java.type("net.minecraft.entity.item.EntityArmorStand")
 const moveHpDisplay = new Gui(); // display hp of mobs
 createGuiCommand(moveHpDisplay, 'movehp', 'mhp');
 
-export const baoDisplayHP = new PogObject("bao-dev", {
-    "inLSRange": false,
-    "specifiedMobs": [],
-    "mobInfos": [],
-    "displayText": '',
-    "draggableText": '[Lv000] SomeMobName 10M/10M ❤ -- [✖]',
-    "x": 400,
-    "y": 40,
-}, '/data/baoDisplayHP.json');
-baoDisplayHP.autosave(5);
+let inLSRange = false;
+let mobInfos = [];
+let specifiedMobs = [];
+let hpDisplayText = '';
+const hpDraggable = '[Lv000] SomeMobName 10M/10M ❤ -- [✖]';
 
-const mobSettings = [
+export const displayHPCounter = new PogObject("bao-dev", {
+    "x": 400, 
+    "y": 40,
+}, '/data/displayHPCounter.json');
+displayHPCounter.autosave(5);
+
+
+let mobSettings = [
     { condition: Settings.vanq_hp, mob: 'Vanquisher' },
     { condition: Settings.rein_hp, mob: 'Reindrake' },
     { condition: Settings.yeti_hp, mob: 'Yeti' },
@@ -52,41 +54,37 @@ function distCheck(entity, player, maxDistance) {
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP LIST OF TOGGLED MOBS FOR HP
 ////////////////////////////////////////////////////////////////////////////////
-register('tick', () => {
-    if (Settings.master_displayHP) {
-        baoDisplayHP.specifiedMobs = []; // init empty list to remove duplicates
+register('step', timeThis("registerStep pushing settings for specifiedMobs", () => {
+    if (!getInSkyblock() || !World.isLoaded() || !Settings.master_displayHP) return;
+    // mobSettings = [];
+    specifiedMobs = []; // init empty list to remove duplicates
     
-        if (Settings.toggle_debug) {
-            mobSettings.push(
-                { condition: true, mobs: ['Magma Slug', 'Pyroclastic Worm', 'Moogma', 'Lava Leech', 'Fire Eel', 'Lava Flame', 'Taurus'] }
-            );
-        }
-    
-        if (Settings.mythos_hp) {
-            mobSettings.push(
-                { condition: true, mobs: ['Exalted Minos Hunter', 'Bagheera', 'Exalted Minotaur', 'Exalted Gaia Construct', 'Exalted Minos Champion', 'Exalted Minos Inquisitor'] }
-            );
-        }
-    
-        mobSettings.forEach(({ condition, mob, mobs }) => {
-            if (condition) {
-                baoDisplayHP.specifiedMobs.push(...(mobs || [mob]));
-                baoDisplayHP.save();
-            }
-        });
+    if (Settings.toggle_debug) {
+        mobSettings.push(
+            { condition: true, mobs: ['Magma Slug', 'Pyroclastic Worm', 'Moogma', 'Lava Leech', 'Fire Eel', 'Lava Flame', 'Taurus'] }
+        );
     }
-});
+
+    if (Settings.mythos_hp) {
+        mobSettings.push(
+            { condition: true, mobs: ['Exalted Minos Hunter', 'Bagheera', 'Exalted Minotaur', 'Exalted Gaia Construct', 'Exalted Minos Champion', 'Exalted Minos Inquisitor'] }
+        );
+    }
+
+    mobSettings.forEach(({ condition, mob, mobs }) => {
+        if (condition) specifiedMobs.push(...(mobs || [mob]));
+    });
+})).setFps(1);
 
 
-register('step', () => {
+register('step', timeThis("registerStep update mobInfos", () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
-
-    baoDisplayHP.mobInfos = World.getAllEntitiesOfType(entityArmorStand)
+    mobInfos = World.getAllEntitiesOfType(entityArmorStand)
         .filter(mobEntity => distCheck(mobEntity, Player.getPlayer(), 31))
         .map((mobEntity) => {
             const entityName = mobEntity.getName().removeFormatting();
-            baoDisplayHP.inLSRange = checkLSRange(mobEntity) < 31;
-            const inRangeText = baoDisplayHP.inLSRange ? '&a✓' : '&c✖';
+            inLSRange = checkLSRange(mobEntity) < 31;
+            const inRangeText = inLSRange ? '&a✓' : '&c✖';
             if (entityName.includes('Jawbus')) {
                 const jawbusRegex = /﴾ \[Lv600] Lord Jawbus (.+)M\/100M❤ ﴿/
                 const matchJawbus = entityName.match(jawbusRegex);
@@ -98,32 +96,30 @@ register('step', () => {
                 if (matchThunder) return `${mobEntity.getName()} &r-- [${inRangeText}&r]`;
 
             } else {
-                const allowedMobPatterns = baoDisplayHP.specifiedMobs.join('|');
+                const allowedMobPatterns = specifiedMobs.join('|');
                 const mobRegex = new RegExp(`\\[Lv\\d+\\] (aCorrupted\\s?)?(${allowedMobPatterns})(a)? (\\d+(\\.\\d*)?[kM]?)\\/(\\d+(\\.\\d+)?[kM]?)❤`);
                 const matchMobPattern = entityName.match(mobRegex);
                 if (matchMobPattern) return `${mobEntity.getName()} &r-- [${inRangeText}&r]`;
-
             }
         })
         .filter(Boolean); // Remove undefined entries
 
-    baoDisplayHP.displayText = baoDisplayHP.mobInfos.join('\n');
-    baoDisplayHP.save();
-}).setFps(10);
+    hpDisplayText = mobInfos.join('\n');
+})).setFps(5);
 
-register('dragged', (dx, dy, x, y) => {
+register('dragged', timeThis("registerDragged moveHpDisplay", (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveHpDisplay.isOpen()) {
-        baoDisplayHP.x = constrainX(x, 3, baoDisplayHP.draggableText);
-        baoDisplayHP.y = constrainY(y, 3, baoDisplayHP.draggableText);
+        displayHPCounter.x = constrainX(x, 3, hpDraggable);
+        displayHPCounter.y = constrainY(y, 3, hpDraggable);
     };
-    baoDisplayHP.save();
-})
+    displayHPCounter.save();
+}));
 
 registerWhen('renderOverlay', timeThis("renderOverlay displayHPText", () => {
-    Renderer.drawStringWithShadow(baoDisplayHP.displayText, baoDisplayHP.x, baoDisplayHP.y);
+    Renderer.drawStringWithShadow(hpDisplayText, displayHPCounter.x, displayHPCounter.y);
 }), () => Settings.master_displayHP && getInSkyblock() && World.isLoaded());
 
 registerWhen('renderOverlay', timeThis("renderOverlay displayHPText draggable", () => {
-    renderGuiPosition(moveHpDisplay, baoDisplayHP, baoDisplayHP.draggableText);
+    renderGuiPosition(moveHpDisplay, displayHPCounter, hpDraggable);
 }), () => Settings.master_displayHP && getInSkyblock() && World.isLoaded());

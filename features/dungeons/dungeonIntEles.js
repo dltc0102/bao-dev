@@ -1,6 +1,6 @@
 import Settings from "../../settings.js";
 
-import { registerWhen } from "../../utils/utils";
+import { registerWhen, timeThis } from "../../utils/utils";
 import { getInSkyblock, getInDungeon } from "../../utils/functions";
 
 
@@ -125,91 +125,91 @@ interactiveElementMsgs.forEach(msg => {
 // MILESTONE MESSAGES (CLASS SPECIFIC)
 ///////////////////////////////////////////////////////////////////////////////
 // damage (bers, mage)
-registerWhen('chat', (msClass, milestone, stuff, event) => {
+registerWhen('chat', timeThis("registerChat class specific milestone message", (msClass, milestone, stuff, event) => {
     sendMSMessage(msClass, milestone);
-}, () => shouldHandleInteractiveElements()).setCriteria('${msClass} Milestone ${milestone}: ${stuff}').setContains();
+}), () => shouldHandleInteractiveElements()).setCriteria('${msClass} Milestone ${milestone}: ${stuff}').setContains();
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // WITHER KEY/DOOR MESSAGES
 ///////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat wither key obtained message", (event) => {
     ChatLib.chat('&aWither Key Obtained.');
-}, () => shouldHandleInteractiveElements()).setCriteria('A Wither key has picked up!');
+}), () => shouldHandleInteractiveElements()).setCriteria('A Wither key has picked up!');
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // BLOOD KEY/DOOR MESSAGES
 ///////////////////////////////////////////////////////////////////////////////
 let bloodPlayer = '';
-registerWhen('chat', (playerName, event) => {
+registerWhen('chat', timeThis("registerChat player has obained blood key message", (playerName, event) => {
     bloodPlayer = playerName;
     ChatLib.chat('&cBlood Key Obtained.');
-}, () => shouldHandleInteractiveElements()).setCriteria('${playerName} has obtained Blood Key!');
+}), () => shouldHandleInteractiveElements()).setCriteria('${playerName} has obtained Blood Key!');
 
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat player has opened blood door message", (event) => {
     ChatLib.chat(`&c&l${bloodPlayer} opened the Blood Door!`);
-}, () => shouldHandleInteractiveElements()).setCriteria('The BLOOD DOOR has been opened!');
+}), () => shouldHandleInteractiveElements()).setCriteria('The BLOOD DOOR has been opened!');
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // BOSS MESSAGES
 ///////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (host, dialogue, event) => {
+registerWhen('chat', timeThis("registerChat [BOSS] The Watcher Dialogue", (host, dialogue, event) => {
     if (dialogue === 'That will be enough for now.' || dialogue === 'You have proven yourself. You may pass.') {
         ChatLib.chat(`&c[BOSS]&r The Watcher: ${dialogue}`)
     }
-}, () => shouldHandleInteractiveElements()).setCriteria("[BOSS] ${host}: ${dialogue}");
+}), () => shouldHandleInteractiveElements()).setCriteria("[BOSS] ${host}: ${dialogue}");
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // ALL CRYSTALS PLACED NOTI
 ///////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (numCrystals, event) => {
+registerWhen('chat', timeThis("registerChat all energy crystals placed", (numCrystals, event) => {
     if (numCrystals === '2') ChatLib.chat('&a&lAll Energy Crystals Placed!');
-}, () => shouldHandleInteractiveElements()).setCriteria('${numCrystals}/2 Energy Crystals are now active!');
+}), () => shouldHandleInteractiveElements()).setCriteria('${numCrystals}/2 Energy Crystals are now active!');
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // DUNGEON BUFF MESSAGE
 ///////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (playerName, blessing, time, event) => {
+registerWhen('chat', timeThis("registerChat dungeon buff! blessing of Blah message", (playerName, blessing, time, event) => {
     ChatLib.chat(`&6&lDUNGEON BUFF! &dBlessing of ${blessing}!`);
-}, () => shouldHandleInteractiveElements()).setCriteria('DUNGEON BUFF! ${playerName} found a Blessing of ${blessing}! (${time})');
+}), () => shouldHandleInteractiveElements()).setCriteria('DUNGEON BUFF! ${playerName} found a Blessing of ${blessing}! (${time})');
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUZZLE COMP MESSAGES
 ///////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat tic tac toe completed message", (event) => {
     ChatLib.chat('&a&lTic Tac Toe Completed!');
-}, () => shouldHandleInteractiveElements()).setCriteria('PUZZLE SOLVED! ${playerName} tied Tic Tac Toe! Good job!');
+}), () => shouldHandleInteractiveElements()).setCriteria('PUZZLE SOLVED! ${playerName} tied Tic Tac Toe! Good job!');
 
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat three weirdos completed message", (event) => {
     ChatLib.chat('&a&lThree Weirdos Completed!');
-}, () => shouldHandleInteractiveElements()).setCriteria("PUZZLE SOLVED! ${playerName} wasn't fooled by ${npcName}! Good job!");
+}), () => shouldHandleInteractiveElements()).setCriteria("PUZZLE SOLVED! ${playerName} wasn't fooled by ${npcName}! Good job!");
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // PUZZLE FAIL MESSAGES
 ///////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat bomb defusal fail message", (event) => {
     ChatLib.chat(`&c&lPUZZLE FAIL! &f&lBOMB DEFUSE`);
-}, () => shouldHandleInteractiveElements()).setCriteria('PUZZLE FAIL! The Creeper Bomb exploded! You took too long! Yikes!');
+}), () => shouldHandleInteractiveElements()).setCriteria('PUZZLE FAIL! The Creeper Bomb exploded! You took too long! Yikes!');
 
-registerWhen('chat', (playerName, npc, event) => {
+registerWhen('chat', timeThis("registerChat three weirdos fail message", (playerName, npc, event) => {
     ChatLib.chat(`&c&lPUZZLE FAIL! &f&lTHREE WEIRDOS &7(${playerName})`);
-}, () => shouldHandleInteractiveElements()).setCriteria('PUZZLE FAIL! ${playerName} was fooled by ${npc}! Yikes!');
+}), () => shouldHandleInteractiveElements()).setCriteria('PUZZLE FAIL! ${playerName} was fooled by ${npc}! Yikes!');
 
-registerWhen('chat', (playerName, event) => {
+registerWhen('chat', timeThis("registerChat blaze puzzle fail message", (playerName, event) => {
     ChatLib.chat(`&c&lPUZZLE FAIL! &f&lBLAZE &7(${playerName})`);
-}, () => shouldHandleInteractiveElements()).setCriteria('PUZZLE FAIL! ${playerName} killed a Blaze in the wrong order! Yikes!');
+}), () => shouldHandleInteractiveElements()).setCriteria('PUZZLE FAIL! ${playerName} killed a Blaze in the wrong order! Yikes!');
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // BOMB PUZZLE MESSAGES
 ///////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (message, event) => {
+registerWhen('chat', timeThis("registerChat bomb defusal countdown messages", (message, event) => {
     if (message === "That's a fine pair of loot chests! You better hurry or I'll explode and destroy them!") {
         ChatLib.chat(`&a&l[BOMB] &r&aCreeper: &f&lPUZZLE STARTED!`);
         
@@ -217,4 +217,4 @@ registerWhen('chat', (message, event) => {
     if (message === "I'm starting to get excited! In 30s, I'm going to ruin your day!") {
         ChatLib.chat(`&a&l[BOMB] &r&aCreeper: &c&l30s Left!`);
     } 
-}, () => shouldHandleInteractiveElements()).setCriteria('[BOMB] Creeper: ${message}').setContains();
+}), () => shouldHandleInteractiveElements()).setCriteria('[BOMB] Creeper: ${message}').setContains();

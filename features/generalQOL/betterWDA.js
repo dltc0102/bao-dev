@@ -1,10 +1,8 @@
 import Settings from '../../settings.js';
 
 import { getInSkyblock } from '../../utils/functions.js'
-import { registerWhen } from '../../utils/utils.js';
+import { registerWhen, timeThis } from '../../utils/utils.js';
 
-
-const Instant = Java.type('java.time.Instant');
 
 ////////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
@@ -24,7 +22,7 @@ const wdaMessages = [
 ]
 
 wdaMessages.forEach(msg => {{
-    registerWhen('chat', (event) => {
+    registerWhen('chat', timeThis("registerChat cancel wdaMessages", (event) => {
         cancel(event);
-    }, () => shouldHandleWDAMsgs()).setCriteria(msg);
+    }), () => shouldHandleWDAMsgs()).setCriteria(msg);
 }});

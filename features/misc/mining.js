@@ -1,7 +1,7 @@
-import Settings from "../../settings";
+import ExtraSettings from "../../extraSettings.js";
 import Audio from "../../utils/audio";
 
-import { registerWhen } from "../../utils/utils";
+import { registerWhen, timeThis } from "../../utils/utils";
 import { getInSkyblock, getInMines, getInCH } from "../../utils/functions";
 
 
@@ -14,29 +14,29 @@ const miningAudio = new Audio();
 ////////////////////////////////////////////////////////////////////////////////
 // GOLDEN GOBLIN ALERT
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat golden goblin ping", (event) => {
     cancel(event);
     showAlert('&6Golden Goblin');
     sendMessage('[!] Golden Goblin [!]')
     miningAudio.playDefaultSound();
-}, () => Settings.goldenGoblinAlert && (getInMines() || getInCH()) && getInSkyblock() && World.isLoaded()).setCriteria('A Golden Goblin has spawned!');
+}), () => ExtraSettings.goldenGoblinAlert && (getInMines() || getInCH()) && getInSkyblock() && World.isLoaded()).setCriteria('A Golden Goblin has spawned!');
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // SCATHA PET
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (mf, event) => {
+registerWhen('chat', timeThis("registerChat scatha pet ping", (mf, event) => {
     cancel(event);
     const message = ChatLib.getChatMessage(event, true);
     petDropPing(message, 'PET DROP!', 'Scatha', mf);
-}, () => Settings.goldenGoblinAlert && getInCH() && getInSkyblock() && World.isLoaded()).setCriteria('PET DROP! Scatha (+${mf}% ✯ Magic Find)');
+}), () => ExtraSettings.goldenGoblinAlert && getInCH() && getInSkyblock() && World.isLoaded()).setCriteria('PET DROP! Scatha (+${mf}% ✯ Magic Find)');
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // BAL PET
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (mf, event) => {
+registerWhen('chat', timeThis("registerChat bal pet ping", (mf, event) => {
     cancel(event);
     sendMessage(`RARE DROP A Bal Pet Dropped!`);
     miningAudio.playDefaultSound();
-}, () => Settings.goldenGoblinAlert && getInCH() && getInSkyblock() && World.isLoaded()).setCriteria('RARE DROP A Bal Pet Dropped!');
+}), () => ExtraSettings.goldenGoblinAlert && getInCH() && getInSkyblock() && World.isLoaded()).setCriteria('RARE DROP A Bal Pet Dropped!');

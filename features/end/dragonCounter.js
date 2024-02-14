@@ -1,4 +1,4 @@
-import Settings from '../../settings.js';
+import ExtraSettings from '../../extraSettings.js';
 import PogObject from 'PogData';
 
 import { baoUtils, registerWhen, timeThis } from '../../utils/utils.js'
@@ -12,8 +12,6 @@ import { baoEnd } from './endStats.js';
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTS
 ////////////////////////////////////////////////////////////////////////////////
-const Instant = Java.type('java.time.Instant');
-
 const moveDragonCounter = new Gui();
 createGuiCommand(moveDragonCounter, 'movedragoncounter', 'mdrag');
 const dragonDraggable = `&7||| Dragons |||\n&7${baoUtils.thickSep}\n&7||| Protector: 0\n&7||| Old: 0\n&7||| Strong: 0\n&7||| Unstable: 0\n&7||| Wise: 0\n&7||| Young: 0\n&7||| Superior: 0\n&7${baoUtils.thinSep}\n&7||| Drags Since Sup: 0\n&7||| Crystals Broken: 0`;
@@ -43,32 +41,32 @@ dragonCounter.autosave(5);
 ////////////////////////////////////////////////////////////////////////////////
 // REG: STEP
 ////////////////////////////////////////////////////////////////////////////////
-register('step', () => {
+register('step', timeThis("registerStep processing dragonCounter", () => {
     if (!getInSkyblock() || !World.isLoaded() || !getInEnd()) return;
-    if (!Settings.showDragonCounter) return;
-    const dragTitle = Settings.dragCounterSpawns || Settings.dragCounterTrackers ? `&5|&d|&5| &6Dragons &5|&d|&5|\n${dragThick}` : '';
+    if (!ExtraSettings.showDragonCounter) return;
+    const dragTitle = ExtraSettings.dragCounterSpawns || ExtraSettings.dragCounterTrackers ? `&5|&d|&5| &6Dragons &5|&d|&5|\n${dragThick}` : '';
 
-    const showDragSpawns = Settings.dragCounterSpawns ? [protectorDragLine, oldDragLine, strongDragLine, unstableDragLine, wiseDragLine, youngDragLine, superiorDragLine, dragThin].join('\n') : '';
+    const showDragSpawns = ExtraSettings.dragCounterSpawns ? [protectorDragLine, oldDragLine, strongDragLine, unstableDragLine, wiseDragLine, youngDragLine, superiorDragLine, dragThin].join('\n') : '';
 
-    const showDragTrackers = Settings.dragCounterTrackers ? [dragsSinceSupLine, crystalsBrokenLine, dragThin].join('\n') : '';
+    const showDragTrackers = ExtraSettings.dragCounterTrackers ? [dragsSinceSupLine, crystalsBrokenLine, dragThin].join('\n') : '';
 
     const dragDisplayRaw = [dragTitle, showDragSpawns, showDragTrackers].join('\n').replace(/\n{6,}/g, '\n');
     
     displayText = filterSeparators(dragDisplayRaw, dragThin);
-}).setFps(1);
+})).setFps(1);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: DRAG
 ////////////////////////////////////////////////////////////////////////////////
-register('dragged', (dx, dy, x, y) => {
+register('dragged', timeThis("registerDragged movedragoncounter", (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveDragonCounter.isOpen()) {
         dragonCounter.x = constrainX(x, 3, dragonDraggable);
         dragonCounter.y = constrainY(y, 3, dragonDraggable);
     };
     dragonCounter.save();
-}); 
+})); 
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +74,7 @@ register('dragged', (dx, dy, x, y) => {
 ////////////////////////////////////////////////////////////////////////////////
 registerWhen('renderOverlay', timeThis("renderOverlay dragonCounter displayText", () => {
     Renderer.drawStringWithShadow(displayText, dragonCounter.x, dragonCounter.y);
-}), () => Settings.showDragonCounter && getInEnd() && getInSkyblock() && World.isLoaded());
+}), () => ExtraSettings.showDragonCounter && getInEnd() && getInSkyblock() && World.isLoaded());
 
 registerWhen('renderOverlay', timeThis("renderOverlay dragonCounter draggable", () => {
     renderGuiPosition(moveDragonCounter, dragonCounter, dragonDraggable);

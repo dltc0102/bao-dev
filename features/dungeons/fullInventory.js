@@ -2,15 +2,13 @@ import Settings from "../../settings";
 import Audio from "../../utils/audio";
 
 import { getInSkyblock, getInDungeon } from "../../utils/functions";
-import { showAlert } from "../../utils/utils";
+import { showAlert, timeThis } from "../../utils/utils";
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTS
 ////////////////////////////////////////////////////////////////////////////////
 const invAudio = new Audio();
-const Instant = Java.type('java.time.Instant');
-
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -31,9 +29,9 @@ function isPlayerInvFull() {
 ////////////////////////////////////////////////////////////////////////////////
 // REG: STEP
 ////////////////////////////////////////////////////////////////////////////////
-register('step', () => {
+register('step', timeThis("registerStep check if full inventory", () => {
     if (Settings.dungeonMessageQOL && isPlayerInvFull() && getInDungeon() && getInSkyblock() && World.isLoaded()) {
         showAlert('&4&lFull Inv');
         invAudio.playDefaultSound();
     }
-}).setFps(1);
+})).setFps(1);

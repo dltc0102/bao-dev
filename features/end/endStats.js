@@ -1,17 +1,13 @@
-import Settings from "../../settings";
 import Audio from "../../utils/audio";
 
-import { getInSkyblock, getInEnd } from "../../utils/functions";
-import { registerWhen } from "../../utils/utils";
+import { getInEnd, getInSkyblock } from "../../utils/functions";
+import { registerWhen, timeThis } from "../../utils/utils";
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTS
 ////////////////////////////////////////////////////////////////////////////////
 const endStatsAudio = new Audio();
-const Instant = Java.type('java.time.Instant');
-
-
 export const baoEnd = {
     "spawned": false,
     "eyesPlaced": 0,
@@ -33,19 +29,19 @@ export const baoEnd = {
 ////////////////////////////////////////////////////////////////////////////////
 // REG: CHAT
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (playerName, numEyes, event) => {
+registerWhen('chat', timeThis("registerChat eyesPlaced++ stat", (playerName, numEyes, event) => {
     if (playerName === Player.getName()) baoEnd.eyesPlaced++;
-}, () => getInEnd() && getInSkyblock() && World.isLoaded()).setCriteria('☬ ${playerName} placed a Summoning Eye! (${numEyes}/8)');
+}), () => getInEnd() && getInSkyblock() && World.isLoaded()).setCriteria('☬ ${playerName} placed a Summoning Eye! (${numEyes}/8)');
 
 
-registerWhen('chat', (event) => {
-    endStatsAudio.playDefaultSound();
+registerWhen('chat', timeThis("registerChat reset stats when dragon egg spawns", (event) => {
     baoEnd.eyesPlaced = 0;
     baoEnd.spawned = false;
-}, () => getInEnd() && getInSkyblock() && World.isLoaded()).setCriteria('☬ The Dragon Egg has spawned!');
+    endStatsAudio.playDefaultSound();
+}), () => getInEnd() && getInSkyblock() && World.isLoaded()).setCriteria('☬ The Dragon Egg has spawned!');
 
 
-registerWhen('chat', (dragName, event) => {
+registerWhen('chat', timeThis("registerChat dragon spawned message", (dragName, event) => {
     let dragNameLower = dragName.toLowerCase();
     if (dragNameLower !== 'superior') {
         baoEnd.counter[dragNameLower] += 1;
@@ -57,13 +53,13 @@ registerWhen('chat', (dragName, event) => {
     
     baoEnd.counter.dragsSinceSuperior += 1;
     baoEnd.spawned = true;
-}, () => getInEnd() && getInSkyblock() && World.isLoaded()).setCriteria('☬ The ${dragName} Dragon has spawned!');
+}), () => getInEnd() && getInSkyblock() && World.isLoaded()).setCriteria('☬ The ${dragName} Dragon has spawned!');
 
 
-registerWhen('chat', (playerName, event) => {
+registerWhen('chat', timeThis("registerChat crystalsBroken++ stat", (playerName, event) => {
     if (playerName === Player.getName()) baoEnd.crystalsBroken += 1;
-}, () => getInEnd() && getInSkyblock() && World.isLoaded()).setCriteria('☬ ${playerName} destroyed an Ender Crystal!');
+}), () => getInEnd() && getInSkyblock() && World.isLoaded()).setCriteria('☬ ${playerName} destroyed an Ender Crystal!');
 
-registerWhen('chat', (dragType, event) => {
+registerWhen('chat', timeThis("registerChat dragon killed event", (dragType, event) => {
     baoEnd.spawned = false;
-}, () => getInEnd() && getInSkyblock() && World.isLoaded()).setCriteria('${dragType} DRAGON DOWN!').setContains();
+}), () => getInEnd() && getInSkyblock() && World.isLoaded()).setCriteria('${dragType} DRAGON DOWN!').setContains();

@@ -10,17 +10,25 @@
 [debug]
 	debug_mode = false
 
+[ping]
+	ping_display = false
+	tps_display = false
+
+	[ping.commands]
+		ping_command = false
+
 [dungeons]
 	"toggle:_player_actions" = true
-	"toggle:_system_notifications" = true
-	"toggle:_interactive_elements" = true
 	full_inventory_alert = true
 	"toggle:_qol" = true
 	"class/cata_lvl_up_ping" = true
-	party_finder_message_shortener = true
 	melody_terminal_alert = true
 	better_dungeon_messages = true
 	display_dungeon_blessings = true
+	"toggle:_system_notifications" = true
+	"toggle:_interactive_elements" = true
+	party_finder_message_shortener = true
+	fire_freeze_timers = false
 	bonzo_mask_cd_timer = true
 
 	[dungeons.secrets]
@@ -30,6 +38,7 @@
 	rng_sounds = 0
 
 ["dragons/end"]
+	dragon_hitbox = false
 
 	["dragons/end".counter]
 		"drag_counter:_trackers" = true
@@ -91,8 +100,10 @@
 
 	[general_qol.commands]
 		party_transfer_randomly = true
+		tps_command = false
 		auto_warp_command = true
 		warpexc_command = true
+		ping_command = false
 		auto_notify_new_party_joiners = true
 		party_kickoffline_shortcut = true
 		party_allinvite_shortcut = true
@@ -141,13 +152,21 @@
 	["dragons/end/end".qol]
 		end_protector_ping = false
 
+[tps]
+	tps_display = false
+
+	[tps.commands]
+		tps_command = false
+
 [gui]
 	bobber_count = true
 	detect_double_jawbus = true
 	lobby_day_counter = true
 	players_nearby_count = true
+	ping_display = false
 	detect_charge_counter = true
 	detect_double_thunder = true
+	tps_display = false
 
 	[gui.toggles]
 		bobber_count = false

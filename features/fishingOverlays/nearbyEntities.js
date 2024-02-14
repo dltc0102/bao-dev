@@ -68,26 +68,9 @@ thunderInfo = createInfoObject();
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// REG: DRAG
-////////////////////////////////////////////////////////////////////////////////
-register('dragged', (dx, dy, x, y) => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (moveNearbyJawbusCounter.isOpen()){
-        nearbyEntitiesDisplay.jawbus.x = constrainX(x, 3, jawbusDraggable);
-        nearbyEntitiesDisplay.jawbus.y = constrainY(y, 3, jawbusDraggable);
-    };
-    if (moveNearbyThunderCounter.isOpen()){
-        nearbyEntitiesDisplay.thunder.x = constrainX(x, 3, thunderDraggable);
-        nearbyEntitiesDisplay.thunder.y = constrainY(y, 3, thunderDraggable);
-    };
-    nearbyEntitiesDisplay.save();
-})
-
-
-////////////////////////////////////////////////////////////////////////////////
 // REG: STEP 
 ////////////////////////////////////////////////////////////////////////////////
-register('step', () => {
+register('step', timeThis("registerStep update nearbyJawbusText and nearbyThunderText", () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     // detect doublehook jawbus
     if (Settings.detectDoubleJawbus) {
@@ -102,7 +85,24 @@ register('step', () => {
         detectDH(entityArmorStand, 'Thunder', '&b', null, thunderInfo);
         nearbyThunderText = updateNearbyText('Thunder', thunderInfo);
     }
-}).setFps(3);
+})).setFps(3);
+
+
+////////////////////////////////////////////////////////////////////////////////
+// REG: DRAG
+////////////////////////////////////////////////////////////////////////////////
+register('dragged', timeThis("registerDragged moveNearbyJawbusCounter and moveNearbyThunderCounter", (dx, dy, x, y) => {
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    if (moveNearbyJawbusCounter.isOpen()){
+        nearbyEntitiesDisplay.jawbus.x = constrainX(x, 3, jawbusDraggable);
+        nearbyEntitiesDisplay.jawbus.y = constrainY(y, 3, jawbusDraggable);
+    };
+    if (moveNearbyThunderCounter.isOpen()){
+        nearbyEntitiesDisplay.thunder.x = constrainX(x, 3, thunderDraggable);
+        nearbyEntitiesDisplay.thunder.y = constrainY(y, 3, thunderDraggable);
+    };
+    nearbyEntitiesDisplay.save();
+}))
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -3,13 +3,9 @@ import Audio from "../../utils/audio";
 
 import { getInSkyblock, getInDungeon } from "../../utils/functions";
 import { showAlert } from "../../utils/utils";
-import { registerWhen } from "../../utils/utils";
+import { registerWhen, timeThis } from "../../utils/utils";
 
 const roleAudio = new Audio();
-const Instant = Java.type('java.time.Instant');
-
-
-// if Settings.showClassSpecificPings
 
 function getPlayerClass() {
     let tabInfo = TabList.getNames();
@@ -27,7 +23,7 @@ function shouldHandleClassSpecificPings() {
     return getInDungeon() && getInSkyblock() && World.isLoaded();
 }
 
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat maxor is enraged", (event) => {
     let regStart = Instant.now().getNano();
     
     if (getPlayerClass() === 'Healer') {
@@ -46,9 +42,9 @@ registerWhen('chat', (event) => {
         console.log(`regwhen - chat - 'maxor is enraged (h/t ping)'`);
         console.log(`timeTake (ns > 0): ${regDiff}`);
     }
-}, () => shouldHandleClassSpecificPings()).setCriteria('⚠ Maxor is enraged! ⚠');
+}), () => Settings.showClassSpecificPings && shouldHandleClassSpecificPings()).setCriteria('⚠ Maxor is enraged! ⚠');
 
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat goldor enters core entrance", (event) => {
     if (getPlayerClass() === 'Healer') {
         showAlert(`&f&lWISH`);
         roleAudio.playDefaultSound();
@@ -57,4 +53,4 @@ registerWhen('chat', (event) => {
         showAlert(`&f&lCASTLE`);
         roleAudio.playDefaultSound();
     }
-}, () => shouldHandleClassSpecificPings()).setCriteria('[BOSS] Goldor: You have done it, you destroyed the factory…');
+}), () => Settings.showClassSpecificPings && shouldHandleClassSpecificPings()).setCriteria('[BOSS] Goldor: You have done it, you destroyed the factory…');

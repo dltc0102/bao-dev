@@ -1,4 +1,4 @@
-import Settings from "../../settings.js";
+import ExtraSettings from "../../extraSettings.js";
 import PogObject from 'PogData';
 
 import { baoEnd } from "./endStats";
@@ -10,15 +10,12 @@ import { createGuiCommand, renderGuiPosition } from '../../utils/functions.js'; 
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTS
 ////////////////////////////////////////////////////////////////////////////////
-const Instant = Java.type('java.time.Instant');
-
 const moveDamageCounter = new Gui();
 createGuiCommand(moveDamageCounter, 'movedamagecounter', 'mdmg');
 const damagersDraggable = `&7Top Damagers: \n&7${baoUtils.thickSep}\n&7Name1: 00❤\n&7Name2: 00❤\n&7Name3: 00❤`
 
 let damagersText = '';
 let damagers = [];
-
 
 export const damageCounter = new PogObject("bao-dev", {
     "x": 3, 
@@ -52,35 +49,35 @@ const resetMessages = [
     /☬ The .+ Dragon has spawned!/, 
 ]
 resetMessages.forEach(msg => {
-    registerWhen('chat', (event) => {
+    registerWhen('chat', timeThis("registerChat cancel resetMessages", (event) => {
         damagers = [];
-    }, () => getInEnd() && getInSkyblock() && World.isLoaded()).setCriteria(msg);
+    }), () => getInEnd() && getInSkyblock() && World.isLoaded()).setCriteria(msg);
 })
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: STEP
 ////////////////////////////////////////////////////////////////////////////////
-register('step', () => {
-    if (!Settings.showDragonDamageDisplay) return;
+register('step', timeThis("registerStep update DamagersText", () => {
+    if (!ExtraSettings.showDragonDamageDisplay) return;
     if (!getInEnd()) return;
     if (!getInSkyblock() || !World.isLoaded()) return;
     damagers = getTopDragDamagers().join('\n');
     damagersText =  baoEnd.spawned ? `&bTop Damagers: \n&9${baoUtils.thickSep}\n${damagers}` : '';
-}).setFps(3);
+})).setFps(3);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: DRAG
 ////////////////////////////////////////////////////////////////////////////////
-register('dragged', (dx, dy, x, y) => {
+register('dragged', timeThis("registerDragged moveDamageCounter", (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveDamageCounter.isOpen()) {
         damageCounter.x = constrainX(x, 3, damagersDraggable);
         damageCounter.y = constrainY(y, 3, damagersDraggable);
     };
     damageCounter.save();
-}); 
+})); 
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +85,7 @@ register('dragged', (dx, dy, x, y) => {
 ////////////////////////////////////////////////////////////////////////////////
 registerWhen('renderOverlay', timeThis("renderOverlay dragon damagersText", () => {
     Renderer.drawStringWithShadow(damagersText, damageCounter.x, damageCounter.y);
-}), () => Settings.showDragonDamageDisplay && getInEnd() && getInSkyblock() && World.isLoaded());
+}), () => ExtraSettings.showDragonDamageDisplay && getInEnd() && getInSkyblock() && World.isLoaded());
 
 registerWhen('renderOverlay', timeThis("renderOverlay dragon damagersText draggable", () => {
     renderGuiPosition(moveDamageCounter, damageCounter, damagersDraggable);

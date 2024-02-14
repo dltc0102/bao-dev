@@ -1,7 +1,7 @@
 import Settings from "../../settings";
 
 import { getInSkyblock } from "../../utils/functions";
-import { registerWhen } from "../../utils/utils";
+import { registerWhen, timeThis } from "../../utils/utils";
 
 ////////////////////////////////////////////////////////////////////////////
 // BETTER FISHING MESSAGES
@@ -18,15 +18,15 @@ const fishingMessages = [
 ]
 
 fishingMessages.forEach(msg => {
-    registerWhen('chat', (event) => {
+    registerWhen('chat', timeThis("registerChat cancel fishingMessages", (event) => {
         cancel(event);
-    }, () => Settings.betterFishingMessages && getInSkyblock() && World.isLoaded()).setCriteria(msg);
+    }), () => Settings.betterFishingMessages && getInSkyblock() && World.isLoaded()).setCriteria(msg);
 });
 
-registerWhen('chat', (coin, event) => {
+registerWhen('chat', timeThis("registerChat good catch you found x coins", (coin, event) => {
     ChatLib.chat(`&7+ &6${coin} &7coins`);
-}, () => Settings.betterFishingMessages && getInSkyblock() && World.isLoaded()).setCriteria('GOOD CATCH! You found ${coin} Coins.');
+}), () => Settings.betterFishingMessages && getInSkyblock() && World.isLoaded()).setCriteria('GOOD CATCH! You found ${coin} Coins.');
 
-registerWhen('chat', (typeOfCatch, aOrAn, item, event) => {
+registerWhen('chat', timeThis("registerChat great catch you found an item", (typeOfCatch, aOrAn, item, event) => {
     if (item === 'Lava Shell') ChatLib.chat('&a+ &5Lava Shell');
-}, () => Settings.betterFishingMessages && getInSkyblock() && World.isLoaded()).setCriteria('${typeOfCatch} CATCH! You found ${aOrAn} ${item}.');
+}), () => Settings.betterFishingMessages && getInSkyblock() && World.isLoaded()).setCriteria('${typeOfCatch} CATCH! You found ${aOrAn} ${item}.');

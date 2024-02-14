@@ -1,7 +1,7 @@
 import Settings from "../../settings.js";
 
 import { getInSkyblock, getInDungeon } from "../../utils/functions.js";
-import { registerWhen } from "../../utils/utils";
+import { registerWhen, timeThis } from "../../utils/utils";
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -44,22 +44,22 @@ messageQOLMessages.forEach(msg => {{
 ///////////////////////////////////////////////////////////////////////////////
 const importantItems = ["Giant's Sword", "Infinileap", "Diamond Pickaxe", "Stonk", "Ragnarock Axe", "Spring Boots", "Abiphone", "Rabbit Hat", "Treecapitator"];
 
-registerWhen('chat', (item, amt, coins, event) => {
+registerWhen('chat', timeThis("registerChat you sold thing x1 for 1 coin", (item, amt, coins, event) => {
     if (!importantItems.includes(item)) cancel(event);
-}, () => getInDungeon() && getInSkyblock() && World.isLoaded()).setCriteria('You sold ${item} x${amt} for ${coins} Coin!');
+}), () => getInDungeon() && getInSkyblock() && World.isLoaded()).setCriteria('You sold ${item} x${amt} for ${coins} Coin!');
 
 
-registerWhen('chat', (thing, amt, coins, event) => {
+registerWhen('chat', timeThis("registerChat you sold thing x1 for 2 coins", (thing, amt, coins, event) => {
     if (!importantItems.includes(thing)) cancel(event);
-}, () => getInDungeon() && getInSkyblock() && World.isLoaded()).setCriteria('You sold ${thing} x${amt} for ${coins} Coins!');
+}), () => getInDungeon() && getInSkyblock() && World.isLoaded()).setCriteria('You sold ${thing} x${amt} for ${coins} Coins!');
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // LEVER USED NOTI
 ///////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat lever used message", (event) => {
     ChatLib.chat('&c&lLEVER USED');
-}, () => getInDungeon() && getInSkyblock() && World.isLoaded()).setCriteria('This lever has already been used.');
+}), () => getInDungeon() && getInSkyblock() && World.isLoaded()).setCriteria('This lever has already been used.');
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -67,6 +67,6 @@ registerWhen('chat', (event) => {
 ///////////////////////////////////////////////////////////////////////////////
 const importantDrops = ["Necron's Handle", "Implosion", "Shadow Warp", "Wither Shield", "Dark Claymore", "Necron Dye", "Recombobulator 3000"];
 
-registerWhen('chat', (playerName, drop, chestType, event) => {
+registerWhen('chat', timeThis("registerChat rare reward! player found a drop in their bedrock chest", (playerName, drop, chestType, event) => {
     if (!importantDrops.includes(drop) || playerName !== Player.getName()) cancel(event);
-}, () => getInSkyblock() && World.isLoaded()).setCriteria('RARE REWARD! ${playerName} found a ${drop} in their ${chestType} Chest!');
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('RARE REWARD! ${playerName} found a ${drop} in their ${chestType} Chest!');

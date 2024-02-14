@@ -1,7 +1,7 @@
 import Settings from "../../settings.js";
 import Audio from "../../utils/audio.js";
 
-import { registerWhen, showAlert } from "../../utils/utils";
+import { registerWhen, showAlert, timeThis } from "../../utils/utils";
 import { getInSkyblock } from "../../utils/functions.js";
 
 
@@ -28,8 +28,8 @@ const faweMessages = [
 ]
 
 faweMessages.forEach(({ message, alert}) => {
-    registerWhen('chat', (event) => {
+    registerWhen('chat', timeThis("registerChat cancel faweMessages", (event) => {
         showAlert(alert);
         fawePingAudio.playDefaultSound();
-    }, () => Settings.fawePings && getInSkyblock() && World.isLoaded()).setCriteria(message).setContains();
+    }), () => Settings.fawePings && getInSkyblock() && World.isLoaded()).setCriteria(message).setContains();
 })

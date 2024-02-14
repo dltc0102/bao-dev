@@ -1,21 +1,25 @@
 import Settings from './settings.js';
-import { baoUtils } from './utils/utils.js';
-import { baoFirstTime } from './utils/utils.js';
+import ExtraSettings from './extraSettings.js';
 
-// splitted
+import { baoUtils, baoFirstTime } from './utils/utils.js';
+
+// bao main
 import './features/dungeons.js'
 import './features/generalQOL.js'
-import './features/end.js'
 import './features/fishing_overlays.js'
 import './features/displayHP.js'
 import './features/fishing_pings.js'
-import './features/garden.js' // not splitted
-import './features/mythos.js' // not splitted
-import './features/misc.js'
-import './features/timers.js' // not splitted ( i dont think theres a reason to )
+import './features/garden.js'
+import './features/timers.js'
 import './features/mainSCStats.js'
-import './features/waterSCStats.js' // not rw-ed
-import './features/lavaSCStats.js' // not rw-ed
+import './features/waterSCStats.js'
+import './features/lavaSCStats.js'
+
+
+// bao extras
+import './features/end.js'
+import './features/mythos.js'
+import './features/misc.js'
 
 // import './features/dev.js'
 
@@ -49,6 +53,10 @@ if (baoFirstTime.firstTime) {
 register("command", () => 
     Settings.openGUI()
 ).setName("biscuitaddons").setAliases('bao');
+
+register('command', () => {
+    ExtraSettings.openGUI()
+}).setName('biscuitextras').setAliases('baox');
 
 register('command', (args) => {
     Client.showTitle(args, '', 1, 30,   1);

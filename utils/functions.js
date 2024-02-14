@@ -52,8 +52,7 @@ const romanNumerals = {
 
 // inSkyblock
 export function getInSkyblock() {
-    return true;
-    // return ChatLib.removeFormatting(Scoreboard.getTitle()).includes("SKYBLOCK");
+    return ChatLib.removeFormatting(Scoreboard.getTitle()).includes("SKYBLOCK");
 }
 
 // currArea
@@ -120,6 +119,8 @@ export function getInIsland() {
 export function getInMines() {
     return getCurrArea() === 'Dwarven Mines';
 }
+
+// is shark fest
 
 ////////////////////////////////////////////////////////////////////////////////
 // SOUND ----------------------------------------------------------------------
@@ -868,4 +869,11 @@ export function romanToNumeral(romanStr) {
 export function drawDragonHitBox(x, y, z, colorStr) {
     let colorCode = colorToRgb(colorStr);
     RenderLib.drawEspBox(x, y, z, 16, 8, colorCode.red, colorCode.green, colorCode.blue, 1, false);
+}
+
+export function renderHPBarDisplay(textPos, currHealth, totalHealth) {
+    let baseWidth = 50;
+    let currHPWidth = ((currHealth/totalHealth) * 100) * 50;
+    new Rectangle(textPos.x, textPos.y, baseWidth, 10, ''); // total heatlh bar
+    new Rectangle(textPos.x, textPos.y, currHPWidth, 10, ''); // curr health bar
 }

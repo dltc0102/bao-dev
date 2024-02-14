@@ -4,4 +4,5 @@ import './generalQOL/partyCommands.js'; // d
 import './generalQOL/grandmaWolf.js'; // d
 import './generalQOL/qolHiders.js'; // d
 import './generalQOL/qolPings.js';
-
+import './generalQOL/tpsDisplay.js';
+import './generalQOL/pingDisplay.js';

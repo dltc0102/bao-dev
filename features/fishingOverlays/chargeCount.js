@@ -1,26 +1,28 @@
 import Settings from "../../settings.js";
 import PogObject from 'PogData';
+import Audio from "../../utils/audio.js";
 
 import { constrainX, constrainY } from '../../utils/functions.js' // padding
 import { createGuiCommand, renderGuiPosition } from '../../utils/functions.js'; // gui
 import { registerWhen, timeThis } from "../../utils/utils.js";
 import { getInSkyblock, getInGarden } from "../../utils/functions.js";
-
+import { showAlert } from "../../utils/utils.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTS
 ////////////////////////////////////////////////////////////////////////////////
+const chargeAudio = new Audio();
 const moveChargesCounter = new Gui(); // charges
 createGuiCommand(moveChargesCounter, 'movecharge', 'mcc');
 const chargesDraggable = '&7Thunder Bottle: 00000⚡';
 
 let sentFullMsg = false;
+let chargeCounterText = '';
 export const chargeCounterInfo = new PogObject("bao-dev", {
-    'text': 0, 
     'x': 3,
     'y': 64,
 }, '/data/chargeCounterInfo.json');
-
+chargeCounterInfo.autosave(5);
 
 ////////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
@@ -77,12 +79,10 @@ function getThunderBottle() {
 
         if (slotLore[0].includes('Thunder in a Bottle')) {
             const fullCharge = getCharges(slotLore);
-            // console.log(`fullCharge: ${fullCharge}`)
             currentBottles.push(fullCharge);
 
         } else if (slotLore[0].includes('Empty Thunder Bottle')) {
             const partialCharge = getCharges(slotLore);
-            // console.log(`partialCharge: ${partialCharge}`)
             currentBottles.push(partialCharge);
         }
 
@@ -96,37 +96,38 @@ function getThunderBottle() {
 ////////////////////////////////////////////////////////////////////////////////
 // REG: STEP
 ////////////////////////////////////////////////////////////////////////////////
-register('step', () => {
+register('step', timeThis("registerStep update chargeCounterText", () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (Settings.full_bottle_ping) {
         let bottleCharge = getThunderBottle();
 
         if (bottleCharge === 50000 && !sentFullMsg) {
-            handleFullyCharged('&b&lTHUNDER BOTTLE FULL', fishOverlayAudio, sentFullMsg)
+            handleFullyCharged('&b&lTHUNDER BOTTLE FULL', chargeAudio, sentFullMsg)
         }
-        chargeCounterInfo.text = updateChargeText(bottleCharge);
+        chargeCounterText = updateChargeText(bottleCharge);
         sentFullMsg = bottleCharge === 50000;
     } 
-}).setFps(3);
+})).setFps(3);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: DRAG
 ////////////////////////////////////////////////////////////////////////////////
-register('dragged', (dx, dy, x, y) => {
+register('dragged', timeThis("registerDragged moveChargesCounter", (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveChargesCounter.isOpen()){
         chargeCounterInfo.x = constrainX(x, 3, chargesDraggable);
         chargeCounterInfo.y = constrainY(y, 3, chargesDraggable);
-    }
-})
+    };
+    chargeCounterInfo.save();
+}))
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: OVERLAY
 ////////////////////////////////////////////////////////////////////////////////
 registerWhen('renderOverlay', timeThis("renderOverlay chargeCounterText", () => {
-    Renderer.drawStringWithShadow(chargeCounterInfo.text, chargeCounterInfo.x, chargeCounterInfo.y);
+    Renderer.drawStringWithShadow(chargeCounterText, chargeCounterInfo.x, chargeCounterInfo.y);
 }), () => Settings.chargeCounter && !getInGarden() && getInSkyblock() && World.isLoaded());
 
 registerWhen('renderOverlay', timeThis("renderOverlay chargeCounterText draggable", () => {

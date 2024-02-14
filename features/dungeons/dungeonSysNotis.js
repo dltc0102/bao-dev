@@ -1,15 +1,12 @@
 import Settings from "../../settings.js";
 
 import { getInSkyblock, getInDungeon } from "../../utils/functions.js";
-import { registerWhen } from "../../utils/utils";
+import { registerWhen, timeThis } from "../../utils/utils";
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
 ///////////////////////////////////////////////////////////////////////////////
-const Instant = Java.type('java.time.Instant');
-
-
 function shouldHandleSysNotis() {
     return Settings.dungeonSysNotifications && getInDungeon() && getInSkyblock() && World.isLoaded();
 }
@@ -41,7 +38,7 @@ const sysNotiMessages = [
 ]
 
 sysNotiMessages.forEach(msg => {{
-    registerWhen('chat', (event) => {
+    registerWhen('chat', timeThis("registerChat cancel sysNotiMessages", (event) => {
         cancel(event);
-    }, () => shouldHandleSysNotis()).setCriteria(msg);
+    }), () => shouldHandleSysNotis()).setCriteria(msg);
 }});

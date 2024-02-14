@@ -13,14 +13,6 @@ import './dungeons/melody.js'; // d (needs testing in an f7 run)
 import './dungeons/qolPings.js'; // d
 import './dungeons/secretCounter.js'; //d (keep debugging, not sure if there are any bugs in this one)
 
-// console.log('');
-//     console.log(`regwhen - chat - 'blah'`);
-//     let regStart = Instant.now().getNano();
-//     let regEnd = Instant.now().getNano();
-//     let regDiff = regEnd - regStart;
-//     if (regDiff > 0) console.log(`timeTake (ns > 0): regDiff`);
-
-
 // WIP IDEAS
 // dungeon routes saver
 // settings to start at p3 for 1/2/3/4/devs

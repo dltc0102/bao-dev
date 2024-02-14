@@ -29,14 +29,14 @@ baoFishStats.autosave(5);
 ////////////////////////////////////////////////////////////////////////////
 // REG: DRAG
 ////////////////////////////////////////////////////////////////////////////
-register('dragged', (dx, dy, x, y) => {
+register('dragged', timeThis("registerDragged movefishcounter", (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (movefishcounter.isOpen()) {
         baoFishStats.x = constrainX(x, 3, fishCounterDraggable);
         baoFishStats.y = constrainY(y, 3, fishCounterDraggable);
     }
     baoFishStats.save();
-})
+}))
 
 
 ////////////////////////////////////////////////////////////////////////////

@@ -1,10 +1,7 @@
 import Settings from '../../settings.js';
 
 import { getInSkyblock } from '../../utils/functions.js'; // sb, area
-import { registerWhen } from '../../utils/utils.js';
-
-
-const Instant = Java.type('java.time.Instant');
+import { registerWhen, timeThis } from '../../utils/utils.js';
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,7 +22,7 @@ const grandmaMessages = [
 ]
 
 grandmaMessages.forEach(msg => {{
-    registerWhen('chat', (event) => {
+    registerWhen('chat', timeThis("registerChat cancel grandmaMessages", (event) => {
         cancel(event);
-    }, () => shouldHandleGrandmaMsgs()).setCriteria(msg);
+    }), () => shouldHandleGrandmaMsgs()).setCriteria(msg);
 }});

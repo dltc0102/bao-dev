@@ -47,28 +47,28 @@ function getPlayerCount(entityPlayer) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// REG: STEP
+////////////////////////////////////////////////////////////////////////////////
+register('step', timeThis("regissterStep update playerCountText", () => {
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    if (Settings.playersNearbyCount) {
+        playerCount = getPlayerCount(entityPlayer);
+        playerCountText = updateEntityText('Players', playerCount);
+    }
+})).setFps(3);
+
+
+////////////////////////////////////////////////////////////////////////////////
 // REG: DRAG
 ////////////////////////////////////////////////////////////////////////////////
-register('dragged', (dx, dy, x, y) => {
+register('dragged', timeThis("registerDragged movePlayerCounter", (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (movePlayerCounter.isOpen()){
         playerCountDisplay.x = constrainX(x, 3, playerDraggable);
         playerCountDisplay.y = constrainY(y, 3, playerDraggable);
     };
     playerCountDisplay.save();
-})
-
-
-////////////////////////////////////////////////////////////////////////////////
-// REG: STEP
-////////////////////////////////////////////////////////////////////////////////
-register('step', () => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (Settings.playersNearbyCount) {
-        playerCount = getPlayerCount(entityPlayer);
-        playerCountText = updateEntityText('Players', playerCount);
-    }
-}).setFps(3);
+}))
 
 
 ////////////////////////////////////////////////////////////////////////////////

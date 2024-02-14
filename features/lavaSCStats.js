@@ -5,6 +5,9 @@ import { getInSkyblock } from '../utils/functions.js'; // sb, area
 import { baoUtils } from '../utils/utils.js';
 import { filterSeparators } from '../utils/functions.js';
 import { getInCI, getInCH } from '../utils/functions.js';
+import { registerWhen, timeThis } from '../utils/utils.js';
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP CONSTS
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,6 +24,7 @@ export const baoLavaSCStats = new PogObject("bao-dev", {
     "taurusCatches": 0,
     "thunderCatches": 0, 
     "lordJawbusCatches": 0,
+    "vanquisherCatches": 0,
 
     // crimson mob drops
     "flashBook": 0, 
@@ -41,6 +45,7 @@ export const baoLavaSCStats = new PogObject("bao-dev", {
     "catchesSinceThunder": 0, 
     "catchesSinceJawbus": 0, 
     "jawbusSinceLastVial": 0,
+    "catchesSinceVanq": 0,
 
     // CRYSTAL HOLLOWS AVGS
     "catchesSinceFlamingWorm": 0, 
@@ -49,171 +54,169 @@ baoLavaSCStats.autosave(5);
 
 
 ////////////////////////////////////////////////////////////////////////////
-// LAVA SEA CREATURES (CRIMSON ISLE) ---------------------------------------
+// LAVA SEA CREATURES (CRIMSON ISLE) 
 ///////////////////////////////////////////////////////////////////////////
-// vanqs
-register('chat', (event) => {
-    if (!getInCI()) return;
-    if (Settings.hide_sc_msgs) cancel(event);
-}).setCriteria('A Vanquisher is spawning nearby!');
+const lavaSCMessages = [
+    /A Vanquisher is spawning nearby!/, 
+    /WOAH! A Plhlegblast appeared./, 
+    /From beneath the lava appears a Magma Slug./, 
+    /You hear a faint Moo from the lava... A moogma appears./, 
+    /A small but fearsome Lava Leech emerges./, 
+    /You feel the heat raidating as a Pyroclastic Worm surfaces/, 
+    /A Lava Flame flies out from beneath the lava./, 
+    /A Fire Eel slithers out from the depths./, 
+    /Taurus and his steed emerge./, 
+    /You hear a massive rumble as Thunder emerges./, 
+    /You have angered a legendary creature... Lord Jawbus has arrived./, 
+    /A flaming worm surfaces from the depths!/, 
+    /A Lava Blaze has surfaced from the depths!/, 
+    /A Lava Pigman arose from the depths!/, 
+]
 
-// Phlegblast
-register('chat', (event) => {
-    if (!getInCI()) return;
-    if (Settings.hide_sc_msgs) cancel(event);
+lavaSCMessages.forEach(msg => {
+    registerWhen('chat', timeThis('registerChat cancel lavaSCMessages', (event) => {
+        cancel(event);
+    }), () => getInSkyblock() && World.isLoaded()).setCriteria(msg);
+})
+// vanqs
+registerWhen('chat', timeThis('registerChat vanquisher spawned', (event) => {
     baoLavaSCStats.phlegblastCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder += 1;
     baoLavaSCStats.catchesSinceJawbus += 1;
-    baoLavaSCStats.save();
-}).setCriteria("WOAH! A Plhlegblast appeared.");
+    setTimeout(() => { baoLavaSCStats.catchesSinceVanq = 0; }, 250);
+}), () => getInCI() && getInSkyblock() && World.isLoaded()).setCriteria('A Vanquisher is spawning nearby!');
+
+// Phlegblast
+registerWhen('chat', timeThis('registerChat plhlegblast spawned', (event) => {
+    baoLavaSCStats.phlegblastCatches += 1;
+    baoLavaSCStats.totalCrimsonSCCatches += 1;
+    baoLavaSCStats.catchesSinceThunder += 1;
+    baoLavaSCStats.catchesSinceJawbus += 1;
+    baoLavaSCStats.catchesSinceVanq += 1;
+}), () => getInCI() && getInSkyblock() && World.isLoaded()).setCriteria("WOAH! A Plhlegblast appeared.");
+
 
 // Magma Slug
-register('chat', (event) => {
-    if (!getInCI()) return;
-    if (Settings.hide_sc_msgs) cancel(event);
+registerWhen('chat', timeThis('registerChat magma slug spawned', (event) => {
     baoLavaSCStats.magmaSlugCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder += 1;
     baoLavaSCStats.catchesSinceJawbus += 1;
-    baoLavaSCStats.save();
-}).setCriteria("From beneath the lava appears a Magma Slug.");
+    baoLavaSCStats.catchesSinceVanq += 1;
+}), () => getInCI() && getInSkyblock() && World.isLoaded()).setCriteria("From beneath the lava appears a Magma Slug.");
+
 
 // Moogma
-register('chat', (event) => {
-    if (!getInCI()) return;
-    if (Settings.hide_sc_msgs) cancel(event);
+registerWhen('chat', timeThis('registerChat moogma spawned', (event) => {
     baoLavaSCStats.moogmaCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder += 1;
     baoLavaSCStats.catchesSinceJawbus += 1;
-    baoLavaSCStats.save();
-}).setCriteria("You hear a faint Moo from the lava... A Moogma appears.");
+    baoLavaSCStats.catchesSinceVanq += 1;
+}), () => getInCI() && getInSkyblock() && World.isLoaded()).setCriteria("You hear a faint Moo from the lava... A Moogma appears.");
 
 // Lava Leech
-register('chat', (event) => {
-    if (!getInCI()) return;
-    if (Settings.hide_sc_msgs) cancel(event);
+registerWhen('chat', timeThis('registerChat lava leech spawned', (event) => {
     baoLavaSCStats.lavaLeechCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder += 1;
     baoLavaSCStats.catchesSinceJawbus += 1;
-    baoLavaSCStats.save();
-}).setCriteria("A small but fearsome Lava Leech emerges.");
+    baoLavaSCStats.catchesSinceVanq += 1;
+}), () => getInCI() && getInSkyblock() && World.isLoaded()).setCriteria("A small but fearsome Lava Leech emerges.");
 
 // Pyroclastic Worm
-register('chat', (event) => {
-    if (!getInCI()) return;
-    if (Settings.hide_sc_msgs) cancel(event);
+registerWhen('chat', timeThis('registerChat pyroclastic worm spawned', (event) => {
     baoLavaSCStats.pyroclasticWormCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder += 1;
     baoLavaSCStats.catchesSinceJawbus += 1;
-    baoLavaSCStats.save();
-}).setCriteria("You feel the heat radiating as a Pyroclastic Worm surfaces.");
+    baoLavaSCStats.catchesSinceVanq += 1;
+}), () => getInCI() && getInSkyblock() && World.isLoaded()).setCriteria("You feel the heat radiating as a Pyroclastic Worm surfaces.");
 
 // Lava Flame
-register('chat', (event) => {
-    if (!getInCI()) return;
-    if (Settings.hide_sc_msgs) cancel(event);
+registerWhen('chat', timeThis('registerChat lava flame spawned', (event) => {
     baoLavaSCStats.lavaFlameCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder += 1;
     baoLavaSCStats.catchesSinceJawbus += 1;
-    baoLavaSCStats.save();
-}).setCriteria("A Lava Flame flies out from beneath the lava.");
+    baoLavaSCStats.catchesSinceVanq += 1;
+}), () => getInCI() && getInSkyblock() && World.isLoaded()).setCriteria("A Lava Flame flies out from beneath the lava.");
 
 // Fire Eels
-register('chat', (event) => {
-    if (!getInCI()) return;
-    if (Settings.hide_sc_msgs) cancel(event);
+registerWhen('chat', timeThis('registerChat fire eel spawned', (event) => {
     baoLavaSCStats.fireEelsCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder += 1;
     baoLavaSCStats.catchesSinceJawbus += 1;
-    baoLavaSCStats.save();
-}).setCriteria("A Fire Eel slithers out from the depths.");
+    baoLavaSCStats.catchesSinceVanq += 1;
+}), () => getInCI() && getInSkyblock() && World.isLoaded()).setCriteria("A Fire Eel slithers out from the depths.");
 
 // Taurus
-register('chat', (event) => {
-    if (!getInCI()) return;
-    if (Settings.hide_sc_msgs) cancel(event);
+registerWhen('chat', timeThis('registerChat taurus spawned', (event) => {
     baoLavaSCStats.taurusCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder += 1;
     baoLavaSCStats.catchesSinceJawbus += 1;
-    baoLavaSCStats.save();
-}).setCriteria("Taurus and his steed emerge.");
+    baoLavaSCStats.catchesSinceVanq += 1;
+}), () => getInCI() && getInSkyblock() && World.isLoaded()).setCriteria("Taurus and his steed emerge.");
+
 
 // Thunder
-register('chat', (event) => {
-    if (!getInCI()) return;
-    if (Settings.hide_sc_msgs) cancel(event);
+registerWhen('chat', timeThis('registerChat thunder spawned', (event) => {
     baoLavaSCStats.thunderCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder = 0;
     baoLavaSCStats.catchesSinceJawbus += 1;
-    baoLavaSCStats.save();
-}).setCriteria("You hear a massive rumble as Thunder emerges.");
+    baoLavaSCStats.catchesSinceVanq += 1;
+}), () => getInCI() && getInSkyblock() && World.isLoaded()).setCriteria("You hear a massive rumble as Thunder emerges.");
 
 // Lord Jawbus
-register('chat', (event) => {
-    if (!getInCI()) return;
-    if (Settings.hide_sc_msgs) cancel(event);
+registerWhen('chat', timeThis('registerChat jawbus spawned', (event) => {
     baoLavaSCStats.lordJawbusCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder += 1;
     baoLavaSCStats.catchesSinceJawbus = 0;
     baoLavaSCStats.jawbusSinceLastVial += 1;
-    baoLavaSCStats.save();
-}).setCriteria("You have angered a legendary creature... Lord Jawbus has arrived.");
+    baoLavaSCStats.catchesSinceVanq += 1;
+}), () => getInCI() && getInSkyblock() && World.isLoaded()).setCriteria("You have angered a legendary creature... Lord Jawbus has arrived.");
 
 // Radioactive Vial [Jawbus]
-register('chat', (mf, event) => {
-    if (!getInCI()) return;
+registerWhen('chat', timeThis('registerChat vial message', (mf, event) => {
     baoLavaSCStats.jawbusSinceLastVial = 0;
-    baoLavaSCStats.save();
-}).setCriteria("RARE DROP! Radioactive Vial (+${mf}% ✯ Magic Find)")
+}), () => getInCI() && getInSkyblock() && World.isLoaded()).setCriteria("RARE DROP! Radioactive Vial (+${mf}% ✯ Magic Find)");
+
 
 ////////////////////////////////////////////////////////////////////////////
 // LAVA SEA CREATURES (CRYSTAL HOLLOWS) ------------------------------------
 ////////////////////////////////////////////////////////////////////////////
 // Flaming Worm
-register('chat', (event) => {
-    if (!getInCH()) return;
-    if (Settings.hide_sc_msgs) cancel(event);
+registerWhen('chat', timeThis('registerChat flaming worm spawned', (event) => {
     baoLavaSCStats.flamingWormCatches += 1;
     baoLavaSCStats.totalLavaCHSCCatches += 1;
     baoLavaSCStats.catchesSinceFlamingWorm = 0;
-    baoLavaSCStats.save();
-}).setCriteria("A flaming worm surfaces from the depths!");
+}), () => getInCH() && getInSkyblock() && World.isLoaded()).setCriteria("A flaming worm surfaces from the depths!");
 
 // Lava Blaze
-register('chat', (event) => {
-    if (!getInCH()) return;
-    if (Settings.hide_sc_msgs) cancel(event);
+registerWhen('chat', timeThis('registerChat lava blaze spawned', (event) => {
     baoLavaSCStats.lavaBlazeCatches += 1;
     baoLavaSCStats.totalLavaCHSCCatches += 1;
     baoLavaSCStats.catchesSinceFlamingWorm += 1;
-    baoLavaSCStats.save();
-}).setCriteria("A Lava Blaze has surfaced from the depths!");
+}), () => getInCH() && getInSkyblock() && World.isLoaded()).setCriteria("A Lava Blaze has surfaced from the depths!");
 
 // Lava Pigman
-register('chat', (event) => {
-    if (!getInCH()) return;
-    if (Settings.hide_sc_msgs) cancel(event);
+registerWhen('chat', timeThis('registerChat lava pigman spawned', (event) => {
     baoLavaSCStats.lavaPigmanCatches += 1;
     baoLavaSCStats.totalLavaCHSCCatches += 1;
     baoLavaSCStats.catchesSinceFlamingWorm += 1;
-    baoLavaSCStats.save();
-}).setCriteria("A Lava Pigman arose from the depths!");
+}), () => getInCH() && getInSkyblock() && World.isLoaded()).setCriteria("A Lava Pigman arose from the depths!");
+
 
 ////////////////////////////////////////////////////////////////
 // step 
 ////////////////////////////////////////////////////////////////
-register('step', () => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (!getInCI()) return;
+register('step', timeThis("registerStep update CI DisplayText", () => {
+    if (!getInSkyblock() || !World.isLoaded() || !getInCI()) return;
     const crimsonSepThick = `&3${baoUtils.thickSep}`;
     const crimsonSepThin = `&3${baoUtils.thinSep}`;
 
@@ -259,5 +262,4 @@ register('step', () => {
     const CIDisplayRaw = [crimsonTitle, showCIKills, showCITrackers, showCIAverages].join('\n').replace(/\n{6,}/g, '\n');
     
     baoLavaSCStats.CIDisplay = filterSeparators(CIDisplayRaw, crimsonSepThin);
-    baoLavaSCStats.save();
-}).setFps(1);
+})).setFps(1);

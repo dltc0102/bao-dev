@@ -3,7 +3,7 @@ import Audio from "../../utils/audio";
 
 import { getInSkyblock, getInJerry, playSound, petDropPing } from "../../utils/functions";
 import { sendMessage } from "../../utils/party";
-import { registerWhen, showAlert } from "../../utils/utils";
+import { registerWhen, showAlert, timeThis } from "../../utils/utils";
 import { baoWaterSCStats } from '../../features/waterSCStats.js'
 
 
@@ -28,46 +28,46 @@ function shouldHandleWinterFishingPings() {
 ////////////////////////////////////////////////////////////////////////////////
 // YETI
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat yeti ping", (event) => {
     cancel(event);
     sendMessage(`[!] Baba Yeti [!] (${baoWaterSCStats.catchesSinceYeti} kills)`);
     showAlert(yetiTitle);
     winterAudio.playDefaultSound();
-}, () => Settings.yetiPing && shouldHandleWinterFishingPings()).setCriteria('What is this creature!?');
+}), () => Settings.yetiPing && shouldHandleWinterFishingPings()).setCriteria('What is this creature!?');
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // YETI: BABY YETI PET
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (mf, event) => {
+registerWhen('chat', timeThis("registerChat baby yeti pet ping", (mf, event) => {
     const message = ChatLib.getChatMessage(event, true);
     petDropPing(message, 'PET DROP!', 'Baby Yeti', mf);
-}, () => Settings.yetiPing && Settings.babyYetiPing && shouldHandleWinterFishingPings()).setCriteria('PET DROP! Baby Yeti (+${mf}% ✯ Magic Find)');
+}), () => Settings.yetiPing && Settings.babyYetiPing && shouldHandleWinterFishingPings()).setCriteria('PET DROP! Baby Yeti (+${mf}% ✯ Magic Find)');
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // NUTCRACKER
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat nutcracker ping", (event) => {
     cancel(event);
     sendMessage('[!] Nootkracker [!]');
     showAlert(nutcrackerTitle);
     winterAudio.playDefaultSound();
-}, () => Settings.nutcrackerPing && shouldHandleWinterFishingPings()).setCriteria('You found a forgotten Nutcracker laying beneath the ice.');
+}), () => Settings.nutcrackerPing && shouldHandleWinterFishingPings()).setCriteria('You found a forgotten Nutcracker laying beneath the ice.');
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REINDRAKE
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (event) => { // personal
+registerWhen('chat', timeThis("registerChat other reindrake pings", (event) => { // personal
     cancel(event);
     sendMessage(`[!] Reindrake [!] (${baoWaterSCStats.catchesSinceReindrake} kills)`);
     showAlert(reinTitle);
     playSound();
-}, () => Settings.reinPing && shouldHandleWinterFishingPings()).setCriteria('A Reindrake forms from the depths.');
+}), () => Settings.reinPing && shouldHandleWinterFishingPings()).setCriteria('A Reindrake forms from the depths.');
 
-registerWhen('chat', (event) => { // public
+registerWhen('chat', timeThis("registerChat reindrake ping", (event) => { // public
     cancel(event);
     showAlert(reinTitle);
     winterAudio.playDefaultSound();
-}, () => Settings.reinPing && shouldHandleWinterFishingPings()).setCriteria('WOAH! A Reindrake was summoned from the depths!');
+}), () => Settings.reinPing && shouldHandleWinterFishingPings()).setCriteria('WOAH! A Reindrake was summoned from the depths!');

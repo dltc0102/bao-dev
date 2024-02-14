@@ -35,23 +35,23 @@ function getLobbyDay() {
 ////////////////////////////////////////////////////////////////////////////////
 // REG: STEP
 ////////////////////////////////////////////////////////////////////////////////
-register('step', () => {
+register('step', timeThis("registerStep update lobbyDayText", () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (Settings.lobbyDayCount) lobbyDayText = getLobbyDay();
-}).setFps(3);
+})).setFps(3);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: DRAG
 ////////////////////////////////////////////////////////////////////////////////
-register('dragged', (dx, dy, x, y) => {
+register('dragged', timeThis("registerDragged moveDayCounter", (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveDayCounter.isOpen()){
         dayCountDisplay.x = constrainX(x, 3, dayDraggable);
         dayCountDisplay.y = constrainY(y, 3, dayDraggable);
     };
     dayCountDisplay.save();
-})
+}))
 
 
 ////////////////////////////////////////////////////////////////////////////////

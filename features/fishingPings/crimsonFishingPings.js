@@ -2,7 +2,7 @@ import Settings from "../../settings";
 import Audio from "../../utils/audio";
 
 import { getInSkyblock, getInCI } from "../../utils/functions";
-import { registerWhen, showAlert } from "../../utils/utils";
+import { registerWhen, showAlert, timeThis } from "../../utils/utils";
 import { sendMessage } from "../../utils/party";
 import { baoLavaSCStats } from '../../features/lavaSCStats.js'
 import { playSound } from "../../utils/functions";
@@ -35,27 +35,27 @@ const jawbusMessages = [
 ];
 
 jawbusMessages.forEach(msg => {
-    registerWhen('chat', (event) => {
+    registerWhen('chat', timeThis("registerChat other jawbus pings", (event) => {
         crimsonAudio.playDefaultSound();
         showAlert(jawbusTitle);
-    }, () => Settings.jawbusPing && shouldHandleCrimsonFishingPings()).setCriteria(msg).setContains();
+    }), () => Settings.jawbusPing && shouldHandleCrimsonFishingPings()).setCriteria(msg).setContains();
 })
 
-registerWhen('chat', (event) => {
+registerWhen('chat', ("registerChat jawbus ping", (event) => {
     showAlert(jawbusTitle);
     sendMessage(`[!] Jawbus [!] (${baoLavaSCStats.catchesSinceJawbus})`)
     crimsonAudio.playDefaultSound();
-}, () => Settings.jawbusPing && shouldHandleCrimsonFishingPings()).setCriteria('You have angered a legendary creature... Lord Jawbus has arrived.');
+}), () => Settings.jawbusPing && shouldHandleCrimsonFishingPings()).setCriteria('You have angered a legendary creature... Lord Jawbus has arrived.');
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // JAWBUS: VIAL
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (mf, event) => {
+registerWhen('chat', timeThis("registerChat vial ping", (mf, event) => {
     sendMessage(`ay RARE DROP! Radioactive Vial (+${mf}% ✯ Magic Find)`);
     showAlert(rvialTitle)
     playSound();
-}, () => Settings.jawbusPing && Settings.rvialPing && shouldHandleCrimsonFishingPings()).setCriteria("RARE DROP! Radioactive Vial (+${mf}% ✯ Magic Find)");
+}), () => Settings.jawbusPing && Settings.rvialPing && shouldHandleCrimsonFishingPings()).setCriteria("RARE DROP! Radioactive Vial (+${mf}% ✯ Magic Find)");
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -67,42 +67,48 @@ const thunderMessages = [
 ]
 
 thunderMessages.forEach(msg => {
-    registerWhen('chat', (event) => {
+    registerWhen('chat', timeThis("registerChat other thunder pings", (event) => {
         showAlert(thunderTitle);
         crimsonAudio.playDefaultSound();
-    }, () => Settings.thunderPing && shouldHandleCrimsonFishingPings()).setCriteria(msg);
+    }), () => Settings.thunderPing && shouldHandleCrimsonFishingPings()).setCriteria(msg);
 })
 
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat thunder ping", (event) => {
     cancel(event);
     sendMessage(`[!] Thunder [!] (${baoLavaSCStats.catchesSinceThunder})`)
     showAlert(thunderTitle);
     crimsonAudio.playDefaultSound();
-}, () => Settings.thunderPing && shouldHandleCrimsonFishingPings()).setCriteria('You hear a massive rumble as Thunder emerges.');
+}), () => Settings.thunderPing && shouldHandleCrimsonFishingPings()).setCriteria('You hear a massive rumble as Thunder emerges.');
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // VANQUISHER
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (event) => {
-    showAlert(vanqTitle);
-    crimsonAudio.playDefaultSound();
-}, () => Settings.vanqPing && shouldHandleCrimsonFishingPings()).setCriteria('Vanquisher Spawned!').setContains();
+const vanqMessages = [
+    /Vanquisher Spawned/, 
+    /VANQUISHER SPAWNED/, 
+]
+vanqMessages.forEach(msg => {
+    registerWhen('chat', timeThis("registerChat other vanquisher pings", (event) => {
+        showAlert(vanqTitle);
+        crimsonAudio.playDefaultSound();
+    }), () => Settings.vanqPing && shouldHandleCrimsonFishingPings()).setCriteria(msg).setContains();
+})
 
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat vanquisher ping", (event) => {
     cancel(event);
     showAlert(vanqTitle);
     sendMessage('[!] Vanquisher [!]');
     crimsonAudio.playDefaultSound();
-}, () => Settings.vanqPing && shouldHandleCrimsonFishingPings()).setCriteria('A Vanquisher is spawning nearby!');
+}), () => Settings.vanqPing && shouldHandleCrimsonFishingPings()).setCriteria('A Vanquisher is spawning nearby!');
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // PLHLEGBLAST
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat plhlegblast ping", (event) => {
     cancel(event);
     showAlert(phlegTitle);
     sendMessage('[!] Plhlegblast [!]');
     crimsonAudio.playDefaultSound();
-}, () => Settings.phlegPing && shouldHandleCrimsonFishingPings()).setCriteria('WOAH! A Plhlegblast appeared.');
+}), () => Settings.phlegPing && shouldHandleCrimsonFishingPings()).setCriteria('WOAH! A Plhlegblast appeared.');

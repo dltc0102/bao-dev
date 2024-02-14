@@ -12,6 +12,7 @@ import { createGuiCommand, renderGuiPosition } from '../utils/functions.js'; // 
 import { constrainX, constrainY } from '../utils/functions.js' // padding
 import { getInGarden } from '../utils/functions.js';
 
+
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTS 
 ////////////////////////////////////////////////////////////////////////////////
@@ -185,7 +186,7 @@ function shouldHandleGardenRegs() {
 ////////////////////////////////////////////////////////////////////////////////
 // DESK CONFIG REMINDER FOR PLOT MAP
 ////////////////////////////////////////////////////////////////////////////////
-register('step', () => {
+register('step', timeThis("registerStep check if plots array is emtpy", () => {
     if (!getInGarden()) return;
     if (sentReminder) return;
     if (baoGardens.plots = []) {
@@ -193,25 +194,25 @@ register('step', () => {
         ChatLib.chat("&7[&3Bao&6] &7Hi! \n&7Just a reminder, to setup bao for the garden, click into the &e'Configure Plots'&7 window of your &e/desk&7 menu in the Garden.\n&7If you' received the chat message &b'Bao config saved'&7, the process has been completed.")
         sentReminder = true;
     };
-}).setFps(1);
+})).setFps(1);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: Out of Materials for Sprayonator
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (materialName, event) => {
+registerWhen('chat', timeThis("registerChat you dont have any material", (materialName, event) => {
     gardenAudio.playDefaultSound();
     showAlert(`&cNeed &e${materialName}&c!`)
-}, () => Settings.alertNoMatSprayonator && shouldHandleGardenRegs()).setCriteria("You don't have any ${materialName}!");
+}), () => Settings.alertNoMatSprayonator && shouldHandleGardenRegs()).setCriteria("You don't have any ${materialName}!");
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: Selected Material for Sprayonator
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (material, event) => {
+registerWhen('chat', timeThis("registerChat selected material is now x", (material, event) => {
     cancel(event);
     baoGardens.sprayonatorOverlay.selectedSprayMaterial = material;
-}, () => Settings.hideSelSprayMatMsg && shouldHandleGardenRegs()).setCriteria('SPRAYONATOR! Your selected material is now ${material}!');
+}), () => Settings.hideSelSprayMatMsg && shouldHandleGardenRegs()).setCriteria('SPRAYONATOR! Your selected material is now ${material}!');
 
 
 
@@ -258,7 +259,7 @@ for (let i=0; i <5; i++) {
 ////////////////////////////////////////////////////////////////////////////////
 // GETTING DATA OF PLAYER'S PLOT NAMES FROM DESK CONFIG GUI
 ////////////////////////////////////////////////////////////////////////////////
-register('guiRender', () => {
+register('guiRender', timeThis("registerGuiRender get player's desk config data", () => {
     if (!getInGarden()) return;
     if (baoGardens.playerPlotInfo.configMsg) return;
     if (Player.getPlayer() === null || Player.getOpenedInventory() === null || Player.getContainer().getName() !== 'Configure Plots') return;
@@ -298,18 +299,18 @@ register('guiRender', () => {
         baoGardens.playerPlotInfo.configMsg = true;
     }
     // baoGardens.save();
-});
+}));
 
 
-register("guiClosed", () => {
+register("guiClosed", timeThis("registerGuiClosed reset configMsg flag", () => {
     baoGardens.playerPlotInfo.configMsg = false;
-});
+}));
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: PEST APPEARED IN PLOT MESSAGE
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (exclamation, userPlotName, event) => {
+registerWhen('chat', timeThis("registerChat pest appeared in plot", (exclamation, userPlotName, event) => {
     updatePlots(baoGardens.plots, userPlotName, 'pest', true);
     if (Settings.titlePestAlert) showAlert(`&c1 &rPest!`);
     if (Settings.autoSHPest) {
@@ -323,9 +324,9 @@ registerWhen('chat', (exclamation, userPlotName, event) => {
         }, 200)
     };
     gardenAudio.playDefaultSound();
-}, () => Settings.pestQOL && shouldHandleGardenRegs()).setCriteria('${exclamation}! A Pest has appeared in Plot - ${userPlotName}!');
+}), () => Settings.pestQOL && shouldHandleGardenRegs()).setCriteria('${exclamation}! A Pest has appeared in Plot - ${userPlotName}!');
 
-registerWhen('chat', (exclamation, numPests, userPlotName, event) => {
+registerWhen('chat', timeThis("registerChat x pests appeared in plot", (exclamation, numPests, userPlotName, event) => {
     updatePlots(baoGardens.plots, userPlotName, 'pest', true);
     if (Settings.titlePestAlert) showAlert(`&b${numPests} &rpests!`);
     if (Settings.autoSHPest) {
@@ -339,81 +340,83 @@ registerWhen('chat', (exclamation, numPests, userPlotName, event) => {
         }, 200)
     };
     gardenAudio.playDefaultSound();
-}, () => Settings.pestQOL && shouldHandleGardenRegs()).setCriteria('${exclamation}! ${numPests} Pests have spawned in Plot - ${userPlotName}!');
+}), () => Settings.pestQOL && shouldHandleGardenRegs()).setCriteria('${exclamation}! ${numPests} Pests have spawned in Plot - ${userPlotName}!');
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: PLOT SPRAYED MESSAGE
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat cancel sprayonator expiry warning", (event) => {
     cancel(event);
-}, () => Settings.hideSprayonatorExpiryMsg && shouldHandleGardenRegs()).setCriteria('SPRAYONATOR! This will expire in 30m!');
+}), () => Settings.hideSprayonatorExpiryMsg && shouldHandleGardenRegs()).setCriteria('SPRAYONATOR! This will expire in 30m!');
 
-registerWhen('chat', (userPlotName, mat, event) => {
+registerWhen('chat', timeThis("registerChat sprayonator sprayed plot with material", (userPlotName, mat, event) => {
     // SPRAYONATOR! You sprayed Plot - melon 2 with Compost!
     updatePlots(baoGardens.plots, userPlotName, 'spray', false);
     updatePlots(baoGardens.plots, userPlotName, 'spray', true);
     updatePlots(baoGardens.plots, userPlotName, 'sprayDateEnd', new Date());
     if (Settings.gardenPlotMap) startSprayTimer(baoGardens.plots, userPlotName);
     gardenAudio.playProcSound();
-}, () => shouldHandleGardenRegs()).setCriteria('SPRAYONATOR! You sprayed Plot - ${userPlotName} with ${mat}!');
+}), () => shouldHandleGardenRegs()).setCriteria('SPRAYONATOR! You sprayed Plot - ${userPlotName} with ${mat}!');
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: VINYL SELECTED MESSAGES
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (vinylName, event) => {
+registerWhen('chat', timeThis("registerChat no vinyl playing", (vinylName, event) => {
+    if (!allVinylNames.includes(vinylName)) return;
     baoGardens.vinylInfo.isPlaying = false;
     baoGardens.vinylInfo.currentVinyl = '&cNo Vinyl Playing';
-}, () => Settings.vinylDisplay && getInGarden() && allVinylNames.includes(vinylName) && getInSkyblock() && World.isLoaded()).setCriteria('You are no longer playing ${vinylName}!');
+}), () => Settings.vinylDisplay && getInGarden() && getInSkyblock() && World.isLoaded()).setCriteria('You are no longer playing ${vinylName}!');
 
-registerWhen('chat', (vinylName, event) => {
+registerWhen('chat', timeThis("registerChat now playing vinyl song", (vinylName, event) => {
+    if (!allVinylNames.includes(vinylName)) return;
     baoGardens.vinylInfo.isPlaying = true;
     baoGardens.vinylInfo.currentVinyl = vinylName;
     gardenAudio.playDefaultSound();
-}, () => Settings.vinylDisplay && getInGarden() && allVinylNames.includes(vinylName) && getInSkyblock() && World.isLoaded()).setCriteria('You are now playing ${vinylName}!');
+}), () => Settings.vinylDisplay && getInGarden() && getInSkyblock() && World.isLoaded()).setCriteria('You are now playing ${vinylName}!');
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: HARVEST HARBRINGER POTION TIMER
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat harvest harbringer potion timer", (event) => {
     baoGardens.harbringer.cd = getActivePet().includes('Parrot') ? 35 : 25;
     gardenAudio.playDrinkSound();
     setTimer(baoGardens.harbringer);
-}, () => Settings.harvPotionOverlay && shouldHandleGardenRegs()).setCriteria('BUFF! You have gained Harvest Harbinger V! Press TAB or type /effects to view your active effects!');
+}), () => Settings.harvPotionOverlay && shouldHandleGardenRegs()).setCriteria('BUFF! You have gained Harvest Harbinger V! Press TAB or type /effects to view your active effects!');
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: PEST REPELLENT TIMER
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (typeOfPestRepellent, event) => {
+registerWhen('chat', timeThis("registerChat pest repellent timer", (typeOfPestRepellent, event) => {
     if (typeOfPestRepellent === '2x') baoGardens.pestRepellent.is2x = true; 
     if (typeOfPestRepellent === '4x') baoGardens.pestRepellent.is4x = true; 
     baoGardens.pestRepellent.is2x = typeOfPestRepellent === '2';
     baoGardens.pestRepellent.is4x = typeOfPestRepellent === '4';
     gardenAudio.playDrinkSound();
     setTimer(baoGardens.pestRepellent);
-}, () => Settings.pestRepellentDisplay && shouldHandleGardenRegs()).setCriteria('YUM! Pests will now spawn ${typeOfPestRepellent}x less while you break crops for the next 60m!');
+}), () => Settings.pestRepellentDisplay && shouldHandleGardenRegs()).setCriteria('YUM! Pests will now spawn ${typeOfPestRepellent}x less while you break crops for the next 60m!');
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: PEST EXCHANGE TIMER
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (numPests, ff, duration, event) => {
+registerWhen('chat', timeThis("registerChat pest exchange timer", (numPests, ff, duration, event) => {
     // [NPC] Phillip: In exchange for 1 Pest, I've given you +10☘ Farming Fortune for 30m!
     baoGardens.pestExchange.bonusFF = parseInt(ff.replace(',', ''), 10)
     baoGardens.pestExchange.donatedPests = parseInt(numPests.replace(',', ''), 10);
     baoGardens.pestExchange.cd = parseInt(duration.replace(',', ''), 10);
     gardenAudio.playDrinkSound();
     setTimer(baoGardens.pestExchange);
-}, () => Settings.pestExchangeDisplay && shouldHandleGardenRegs()).setCriteria("[NPC] Phillip: In exchange for ${numPests} Pest, I've given you +${ff}☘ Farming Fortune for ${duration}m!");
+}), () => Settings.pestExchangeDisplay && shouldHandleGardenRegs()).setCriteria("[NPC] Phillip: In exchange for ${numPests} Pest, I've given you +${ff}☘ Farming Fortune for ${duration}m!");
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: GAMELOAD
 ////////////////////////////////////////////////////////////////////////////////
-register('gameLoad', () => {
+register('gameLoad', timeThis("registerGameLoad save garden timers across load", () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.harvPotionOverlay) return;
     if (!Settings.pestRepellentDisplay) return;
@@ -443,13 +446,13 @@ register('gameLoad', () => {
         baoGardens.pestRepellent.timeLeft = 0;
     }
     // baoGardens.save();
-});
+}));
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: STEP - TIMERS
 ////////////////////////////////////////////////////////////////////////////////
-register('step', () => {
+register('step', timeThis("registerStep update timer text for timers", () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (!getInGarden()) return;
 
@@ -508,13 +511,13 @@ register('step', () => {
         baoGardens.pestExchange.text = baoGardens.pestExchange.used ? `&2Pest Exchange: &r${Math.floor(baoGardens.pestExchange.timeLeft / 60)}m ${Math.floor(baoGardens.pestExchange.timeLeft % 60)}s &6(+${baoGardens.pestExchange.bonusFF === null || isNaN(baoGardens.pestExchange.bonusFF) ? 0 : baoGardens.pestExchange.bonusFF}☘ &7|&6 ${baoGardens.pestExchange.donatedPests === null || isNaN(baoGardens.pestExchange.donatedPests) ? 0 : baoGardens.pestExchange.donatedPests} Pests )` : '';
     }
     // baoGardens.save();
-}).setFps(1);
+})).setFps(1);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: STEP - OTHERS
 ////////////////////////////////////////////////////////////////////////////////
-register('step', () => {
+register('step', timeThis("registerStep process other garden info", () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (!getInGarden()) return;
 
@@ -591,7 +594,7 @@ register('step', () => {
     baoGardens.pestExchange.x = paddingText(baoGardens.pestExchange.text);
     baoGardens.harbringer.x = paddingText(baoGardens.harbringer.text);
     // baoGardens.save();
-}).setFps(5);
+})).setFps(5);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -646,63 +649,53 @@ registerWhen('renderOverlay', timeThis("renderOverlay pestEntityBox", () => {
 ////////////////////////////////////////////////////////////////////
 // BURROWING SPORES PING
 ////////////////////////////////////////////////////////////////////
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat burrowing spores ping", (event) => {
     showAlert('&dBurrowing Spores')
     sendMessage('VERY RARE DROP! Burrowing Spores');
     gardenAudio.playDefaultSound();
-}, () => Settings.gardenRareDropPings && shouldHandleGardenRegs()).setCriteria('VERY RARE CROP! Burrowing Spores');
+}), () => Settings.gardenRareDropPings && shouldHandleGardenRegs()).setCriteria('VERY RARE CROP! Burrowing Spores');
 
 
 ////////////////////////////////////////////////////////////////////
 // ATMOSPHERIC FILTER PING
 ////////////////////////////////////////////////////////////////////
-registerWhen('chat', (ff, event) => {
+registerWhen('chat', timeThis("registerChat atmospheric filter ping", (ff, event) => {
     showAlert('&6Atmospheric Filter');
     sendMessage(`RARE DROP! Atmospheric Filter (+${ff}☘)`)
     playSound();
-}, () => Settings.gardenRareDropPings && shouldHandleGardenRegs()).setCriteria('RARE DROP! Atmospheric Filter (+${ff}☘)');
-
-
-////////////////////////////////////////////////////////////////////
-// ATMOSPHERIC FILTER PING
-////////////////////////////////////////////////////////////////////
-registerWhen('chat', (ff, event) => {
-    showAlert('&6Atmospheric Filter');
-    sendMessage(`RARE DROP! Atmospheric Filter (+${ff}☘)`)
-    playSound();
-}, () => Settings.gardenRareDropPings && shouldHandleGardenRegs()).setCriteria('RARE DROP! Atmospheric Filter (+${ff}☘)');
+}), () => Settings.gardenRareDropPings && shouldHandleGardenRegs()).setCriteria('RARE DROP! Atmospheric Filter (+${ff}☘)');
 
 
 ////////////////////////////////////////////////////////////////////
 // PESTERMINATOR I PING
 ////////////////////////////////////////////////////////////////////
-registerWhen('chat', (ff, event) => {
+registerWhen('chat', timeThis("registerChat pesterminator book ping", (ff, event) => {
     showAlert('&6Pesterminator I Book');
     sendMessage(`RARE DROP! Pesterminator I Book (+${ff}☘)`)
     playSound();
-}, () => Settings.gardenRareDropPings && shouldHandleGardenRegs()).setCriteria('RARE DROP! Pesterminator I Book (+${ff}☘)');
+}), () => Settings.gardenRareDropPings && shouldHandleGardenRegs()).setCriteria('RARE DROP! Pesterminator I Book (+${ff}☘)');
 
 
 ////////////////////////////////////////////////////////////////////
 // RAT PET DROP PING
 ////////////////////////////////////////////////////////////////////
-registerWhen('chat', (ff, event) => {
+registerWhen('chat', timeThis("registerChat rat pet ping", (ff, event) => {
     // PET DROP! &5Rat&r (+1000☘)
     // PET DROP! &6Rat&r (+1000☘)
     const message = ChatLib.getChatMessage(event, true);
     petDropPing(message, 'PET DROP!', 'Rat', ff, gardenAudio)
-}, () => Settings.gardenRareDropPings && shouldHandleGardenRegs()).setCriteria('PET DROP! Rat (+${ff}☘)');
+}), () => Settings.gardenRareDropPings && shouldHandleGardenRegs()).setCriteria('PET DROP! Rat (+${ff}☘)');
 
 
 ////////////////////////////////////////////////////////////////////
 // SLUG PET DROP PING
 ////////////////////////////////////////////////////////////////////
-registerWhen('chat', (ff, event) => {
+registerWhen('chat', timeThis("registerChat slug pet ping", (ff, event) => {
     // PET DROP! &5Slug&r (+1000☘)
     // PET DROP! &6Slug&r (+1000☘)
     const message = ChatLib.getChatMessage(event, true);
     petDropPing(message, 'PET DROP!', 'Slug', ff, gardenAudio);
-}, () => Settings.gardenRareDropPings && shouldHandleGardenRegs()).setCriteria('PET DROP! Slug (+${ff}☘)');
+}), () => Settings.gardenRareDropPings && shouldHandleGardenRegs()).setCriteria('PET DROP! Slug (+${ff}☘)');
 
 
 ////////////////////////////////////////////////////////////////////
@@ -715,14 +708,14 @@ const betterGardenMessages = [
 ]
 
 betterGardenMessages.forEach(msg => {
-    registerWhen('chat', (event) => {
+    registerWhen('chat', timeThis("registerChat cancel betterGardenMessages", (event) => {
         cancel(event);
-    }, () => Settings.betterGardenMessages && shouldHandleGardenRegs()).setCriteria(msg);
+    }), () => Settings.betterGardenMessages && shouldHandleGardenRegs()).setCriteria(msg);
 })
 
-registerWhen('chat', (presetName, plotName, event) => {
+registerWhen('chat', timeThis("registerChat pasting preset message simplified", (presetName, plotName, event) => {
     ChatLib.chat(`&6&lPASTING: &rUsing Preset &b&l[&r${presetName}&b&l]&r on Plot &b'&c${plotName}&b'&r!`);
-}, () => Settings.betterGardenMessages && shouldHandleGardenRegs()).setCriteria('Started pasting ${presetName} preset on Garden Plot - ${plotName}!');
+}), () => Settings.betterGardenMessages && shouldHandleGardenRegs()).setCriteria('Started pasting ${presetName} preset on Garden Plot - ${plotName}!');
 
 
 const jacobMessages = [
@@ -731,9 +724,9 @@ const jacobMessages = [
 ]
 
 jacobMessages.forEach(msg => {
-    registerWhen('chat', (event) => {
+    registerWhen('chat', timeThis("registerChat cancel jacobMessages if not in garden", (event) => {
         cancel(event);
-    }, () => Settings.betterGardenMessages && !getInGarden() && getInSkyblock() && World.isLoaded()).setCriteria(msg);
+    }), () => Settings.betterGardenMessages && !getInGarden() && getInSkyblock() && World.isLoaded()).setCriteria(msg);
 });
 
 

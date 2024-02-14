@@ -40,27 +40,28 @@ function updateBobberCount(hook) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// REG: STEP
+////////////////////////////////////////////////////////////////////////////////
+register('step', timeThis("registerStep update bobberCountText", () => {
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    if (Settings.bobberCount) { 
+        bobberCount = updateBobberCount(entityHook);
+        bobberText = updateEntityText('Bobbers', bobberCount);
+    }
+})).setFps(3);
+
+
+////////////////////////////////////////////////////////////////////////////////
 // REG: DRAG
 ////////////////////////////////////////////////////////////////////////////////
-register('dragged', (dx, dy, x, y) => {
+register('dragged', timeThis("registerDragged moveBobberCount", (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveBobberCounter.isOpen()){
         bobberDisplay.x = constrainX(x, 3, bobberDraggable);
         bobberDisplay.y = constrainY(y, 3, bobberDraggable);
     };
     bobberDisplay.save();
-})
-
-////////////////////////////////////////////////////////////////////////////////
-// REG: STEP
-////////////////////////////////////////////////////////////////////////////////
-register('step', () => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (Settings.bobberCount) { 
-        bobberCount = updateBobberCount(entityHook);
-        bobberText = updateEntityText('Bobbers', bobberCount);
-    }
-}).setFps(3);
+}))
 
 
 ////////////////////////////////////////////////////////////////////////////////

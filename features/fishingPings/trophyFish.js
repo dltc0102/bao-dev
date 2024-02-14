@@ -1,21 +1,21 @@
 import Settings from "../../settings";
 
 import { getInSkyblock, getInCI, playSound } from "../../utils/functions";
-import { registerWhen } from "../../utils/utils";
+import { registerWhen, timeThis } from "../../utils/utils";
 import { playSound } from "../../utils/functions";
 
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat cancel bronze trophyfish", (event) => {
     cancel(event);
-}, () => Settings.toggleTrophyFishMsgs && getInCI() && getInSkyblock() && World.isLoaded()).setCriteria('TROPHY FISH! You caught a ${fish} BRONZE.');
+}), () => Settings.toggleTrophyFishMsgs && getInCI() && getInSkyblock() && World.isLoaded()).setCriteria('TROPHY FISH! You caught a ${fish} BRONZE.');
 
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat cancel silver trophyfish", (event) => {
     cancel(event);
-}, () => Settings.toggleTrophyFishMsgs && getInCI() && getInSkyblock() && World.isLoaded()).setCriteria('TROPHY FISH! You caught a ${fish} SILVER.');
+}), () => Settings.toggleTrophyFishMsgs && getInCI() && getInSkyblock() && World.isLoaded()).setCriteria('TROPHY FISH! You caught a ${fish} SILVER.');
 
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat cancel gold trophyfish", (event) => {
     cancel(event);
-}, () => Settings.toggleTrophyFishMsgs && getInCI() && getInSkyblock() && World.isLoaded()).setCriteria('TROPHY FISH! You caught a ${fish} GOLD.');
+}), () => Settings.toggleTrophyFishMsgs && getInCI() && getInSkyblock() && World.isLoaded()).setCriteria('TROPHY FISH! You caught a ${fish} GOLD.');
 
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat rngsound for diamond trophyfish", (event) => {
     playSound();
-}, () => Settings.toggleTrophyFishMsgs && getInCI() && getInSkyblock() && World.isLoaded()).setCriteria('TROPHY FISH! You caught a ${fish} DIAMOND.');
+}), () => Settings.toggleTrophyFishMsgs && getInCI() && getInSkyblock() && World.isLoaded()).setCriteria('TROPHY FISH! You caught a ${fish} DIAMOND.');

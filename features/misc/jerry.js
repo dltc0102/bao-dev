@@ -1,7 +1,7 @@
-import Settings from "../../settings";
+import ExtraSettings from "../../extraSettings.js";
 import Audio from "../../utils/audio";
 
-import { registerWhen, showAlert } from "../../utils/utils";
+import { registerWhen, showAlert, timeThis } from "../../utils/utils";
 import { getInSkyblock } from "../../utils/functions";
 import { baoUtils } from "../../utils/utils";
 
@@ -41,11 +41,11 @@ const jerryMessages = [
 ]
 
 jerryMessages.forEach(msg => {
-    registerWhen('chat', (color, event) => {
+    registerWhen('chat', timeThis("registerChat cancel/alert jerryMessages", (color, event) => {
         cancel(event);
         let jerryColor = determineJerryColor(color);
         ChatLib.chat(`${baoUtils.modPrefix} [!] ${jerryColor}${color} Jerry`);
         showAlert(`${jerryColor}${color} Jerry`);
         jerryAudio.playDefaultSound();
-    }, () => Settings.jerry_ping && getInSkyblock() && World.isLoaded()).setCriteria(msg);
+    }), () => ExtraSettings.jerry_ping && getInSkyblock() && World.isLoaded()).setCriteria(msg);
 })

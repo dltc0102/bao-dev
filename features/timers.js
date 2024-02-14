@@ -79,38 +79,38 @@ export const baoTimers = {
 ////////////////////////////////////////////////////////////////////////////////
 // GUMMY TIMER
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat gummy bear message", (event) => {
     timerAudio.playDrinkSound();
     setTimer(baoTimers.gummy);
-}, () => Settings.gummyTimer && getInSkyblock() && World.isLoaded()).setCriteria('You ate a Re-heated Gummy Polar Bear!');
+}), () => Settings.gummyTimer && getInSkyblock() && World.isLoaded()).setCriteria('You ate a Re-heated Gummy Polar Bear!');
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REKINDLE TIMER
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat phoenix pet message", (event) => {
     timerAudio.playProcSound();
     setTimer(baoTimers.rekindle);
-}, () => Settings.rekindleAlert && getInSkyblock() && World.isLoaded()).setCriteria('Your Phoenix Pet saved you from certain death!');
+}), () => Settings.rekindleAlert && getInSkyblock() && World.isLoaded()).setCriteria('Your Phoenix Pet saved you from certain death!');
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // SPIRIT MASK TIMER
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat spirit mask message", (event) => {
     timerAudio.playProcSound();
     setTimer(baoTimers.secondWind);
-}, () => Settings.secondWindAlert && getInSkyblock() && World.isLoaded()).setCriteria('Second Wind Activated! Your Spirit Mask saved your life!');
+}), () => Settings.secondWindAlert && getInSkyblock() && World.isLoaded()).setCriteria('Second Wind Activated! Your Spirit Mask saved your life!');
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // FLUX TIMER
 ///////////////////////////////////////////////////////////////////////////////
-register("step", () => {
+register("step", timeThis("registerStep get flux time", () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (!Settings.flux_timer) return;
     regNearbyOrbs(baoTimers.orb);
-}).setFps(10);
+})).setFps(10);
 
 ////////////////////////////////////////////////////////////////////////////////
 // MUSHY TIMER 
@@ -121,36 +121,36 @@ const mushyMessages = [
 ];
 
 mushyMessages.forEach(msg => {
-    registerWhen('chat', (event) => {
+    registerWhen('chat', timeThis("registerChat mushyMessages", (event) => {
         timerAudio.playDrinkSound();
         baoTimers.glowyTonic.cd = getActivePet().includes('Parrot') ? 84 : 60;
         setTimer(baoTimers.glowyTonic);
-    }, () => Settings.mushyTimer && getInSkyblock() && World.isLoaded()).setCriteria(msg);
+    }), () => Settings.mushyTimer && getInSkyblock() && World.isLoaded()).setCriteria(msg);
 })
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // BONZO MASK TIMER
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat bonzo mask message", (event) => {
     timerAudio.playProcSound();
     setTimer(baoTimers.bonzo);
-}, () => Settings.bonzo_cd_timer && getInSkyblock() && World.isLoaded()).setCriteria("Your Bonzo's Mask saved your life!");
+}), () => Settings.bonzo_cd_timer && getInSkyblock() && World.isLoaded()).setCriteria("Your Bonzo's Mask saved your life!");
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // KINGS SCENT TIMER 
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat kings scent message", (event) => {
     timerAudio.playDrinkSound();
     setTimer(baoTimers.kingsScent);
-}, () => Settings.kingScentTimer && getInSkyblock() && World.isLoaded()).setCriteria("[NPC] King Yolkar: I'm covering you in my foul stench as we speak. It won't last long before it dissipates!");
+}), () => Settings.kingScentTimer && getInSkyblock() && World.isLoaded()).setCriteria("[NPC] King Yolkar: I'm covering you in my foul stench as we speak. It won't last long before it dissipates!");
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: GAMELOAD
 ////////////////////////////////////////////////////////////////////////////////
-register('gameLoad', () => {
+register('gameLoad', timeThis("registerGameLoad save timers across loads", () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (Settings.rekindleAlert) {
         if (baoTimers.rekindle.used) {
@@ -211,13 +211,13 @@ register('gameLoad', () => {
         }
     };
     // baoTimers.save();
-})
+}))
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: STEP
 ////////////////////////////////////////////////////////////////////////////////
-register('step', () => {
+register('step', timeThis("registerStep update general timer text", () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     const timerValues = [];
     // rekindle
@@ -265,20 +265,20 @@ register('step', () => {
 
     timerDisplayText = timerValues.map(entry => updateCDText(entry.color, entry.name, entry.timeLeft)).join('');
     // baoTimers.save();
-}).setFps(1);
+})).setFps(1);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: DRAG
 ////////////////////////////////////////////////////////////////////////////////
-register('dragged', (dx, dy, x, y) => {
+register('dragged', timeThis("registerDragged moveTimerDisplay", (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveTimerDisplay.isOpen()) {
         baoTimerDisplay.x = constrainX(x, 3, timerDraggableText);
         baoTimerDisplay.y = constrainY(y, 3, timerDraggableText);
     };
     baoTimerDisplay.save();
-});
+}));
 
 
 ////////////////////////////////////////////////////////////////////////////////

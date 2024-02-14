@@ -1,7 +1,7 @@
-import Settings from "../../settings";
+import ExtraSettings from "../../extraSettings.js";
 import Audio from "../../utils/audio";
 
-import { registerWhen } from "../../utils/utils";
+import { registerWhen, timeThis } from "../../utils/utils";
 import { getInSkyblock } from "../../utils/functions";
 import { baoUtils } from "../../utils/utils";
 
@@ -29,28 +29,28 @@ const fearMessages = [
 ]
 
 fearMessages.forEach(msg => {
-    registerWhen('chat', (event) => {
+    registerWhen('chat', timeThis("registerChat cancel fearMessages", (event) => {
         cancel(event);
-    }, () => Settings.primalFearQOL && getInSkyblock() && World.isLoaded()).setCriteria(msg);
+    }), () => ExtraSettings.primalFearQOL && getInSkyblock() && World.isLoaded()).setCriteria(msg);
 })
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // PRIMAL FEAR SPAWNING PING
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (event) => {
+registerWhen('chat', timeThis("registerChat primal fear ping", (event) => {
     ChatLib.chat('[!] Primal Fear [!]');
     showAlert('&4PRIMAL FEAR');
     fearAudio.playDefaultSound();
-}, () => Settings.primalFearQOL && Settings.spawningFearPing && getInSkyblock() && World.isLoaded()).setCriteria('FEAR. A Primal Fear has been summoned!');
+}), () => ExtraSettings.primalFearQOL && ExtraSettings.spawningFearPing && getInSkyblock() && World.isLoaded()).setCriteria('FEAR. A Primal Fear has been summoned!');
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // MATH TEACHER FEAR SOLVER
 ////////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', (problem, event) => {
+registerWhen('chat', timeThis("registerChat math fear solver", (problem, event) => {
     let result = solveFearMaths(problem);
     setTimeout(() => { ChatLib.chat(`${baoUtils.modPrefix} &fAnswer: &b${result}`) }, 100);
-}, () => Settings.primalFearQOL && Settings.mathFearSolver && getInSkyblock() && World.isLoaded()).setCriteria('QUICK MATHS! Solve: ${problem}');
+}), () => ExtraSettings.primalFearQOL && ExtraSettings.mathFearSolver && getInSkyblock() && World.isLoaded()).setCriteria('QUICK MATHS! Solve: ${problem}');
 
 
