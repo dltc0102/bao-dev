@@ -1,3 +1,6 @@
+/// <reference types="../CTAutocomplete" />
+/// <reference lib="es2015" />
+
 import Settings from './settings.js';
 import ExtraSettings from './extraSettings.js';
 
@@ -14,7 +17,7 @@ import './features/timers.js'
 import './features/mainSCStats.js'
 import './features/waterSCStats.js'
 import './features/lavaSCStats.js'
-
+import './features/detections.js'
 
 // bao extras
 import './features/end.js'

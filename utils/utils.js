@@ -113,7 +113,7 @@ register('command', () => {
     console.log('')
     console.log('------------------------------------------------------------------------------------');
     console.log('')
-}).setName('logtimestore');
+}).setName('logtimestore', true);
 
 
 // let stepCount = 4;
@@ -137,4 +137,4 @@ register('command', () => {
 
 register('command', () => {
     console.log("Number limits:", Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
-}).setName('logintlimit');
+}).setName('logintlimit', true);

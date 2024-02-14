@@ -1,6 +1,6 @@
-import './end/betterEndMessages.js'; // d
-import './end/dragonHitBox.js'; // d
-import './end/dragonCounter.js'; // d (showing in places where it isnt end)
+import './end/betterEndMessages.js';
+import './end/dragonHitBox.js';
+import './end/dragonCounter.js';
 import './end/damageCounter.js';
 import './end/endStats.js';
 

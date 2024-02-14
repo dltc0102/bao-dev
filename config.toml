@@ -19,6 +19,7 @@
 
 [dungeons]
 	"toggle:_player_actions" = true
+	class_specific_pings = false
 	full_inventory_alert = true
 	"toggle:_qol" = true
 	"class/cata_lvl_up_ping" = true
@@ -328,4 +329,13 @@
 	[misc.dyes]
 		dye_pings = true
 		announce_dye_pings_in_guild = false
+
+[detections]
+
+	[detections.jawbus]
+		"detection:_jawbus" = false
+
+	[detections.thunder]
+		"detection:_thunder" = false
+		"detection:_vanquisher" = false
 

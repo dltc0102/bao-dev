@@ -1,8 +1,9 @@
-import './generalQOL/betterStashMessages.js'; // d
-import './generalQOL/betterWDA.js'; // d
-import './generalQOL/partyCommands.js'; // d
-import './generalQOL/grandmaWolf.js'; // d
-import './generalQOL/qolHiders.js'; // d
+import './generalQOL/betterStashMessages.js';
+import './generalQOL/betterWDA.js';
+import './generalQOL/partyCommands.js';
+import './generalQOL/grandmaWolf.js';
+import './generalQOL/qolHiders.js';
 import './generalQOL/qolPings.js';
+
 import './generalQOL/tpsDisplay.js';
 import './generalQOL/pingDisplay.js';

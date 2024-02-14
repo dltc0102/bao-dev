@@ -23,7 +23,7 @@ registerWhen('packetReceived', timeThis('registerPacketReceived process current 
             tps;
     if (prevTime !== 0) avgTps = tps * 0.182 + avgTps * 0.818;
     prevTime = Date.now();
-}), () => getInSkyblock() && World.isLoaded());
+}), () => (Settings.showTpsDisplay || Settings.tpsCommands) && getInSkyblock() && World.isLoaded());
 
 export function getTps() {
     return tps;

@@ -1,17 +1,19 @@
 // dungeon cleaning
-import './dungeons/dungeonIntEles.js'; // d
-import './dungeons/dungeonMsgQOL.js'; // d
+import './dungeons/dungeonIntEles.js';
+import './dungeons/dungeonMsgQOL.js';
 import './dungeons/dungeonPlayerActions.js'; // ice spray ping is broken
-import './dungeons/dungeonSysNotis.js'; // d
+import './dungeons/dungeonSysNotis.js';
 
-// // dungeon qol
-import './dungeons/blessings.js'; // d
-import './dungeons/classSpecificPings.js'; //d
-import './dungeons/ffTimer.js'; // d
+// dungeon qol
+import './dungeons/blessings.js';
+import './dungeons/classSpecificPings.js';
+import './dungeons/ffTimer.js';
 import './dungeons/fullInventory.js'; //d
-import './dungeons/melody.js'; // d (needs testing in an f7 run)
-import './dungeons/qolPings.js'; // d
-import './dungeons/secretCounter.js'; //d (keep debugging, not sure if there are any bugs in this one)
+import './dungeons/melody.js'; // (needs testing in an f7 run)
+import './dungeons/qolPings.js';
+import './dungeons/secretCounter.js'; 
+
+
 
 // WIP IDEAS
 // dungeon routes saver

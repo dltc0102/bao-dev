@@ -209,7 +209,7 @@ export function detectEntity(entityType, givenMobName, givenInfo) {
  * 
  * @usedbyfunction detectDH()
  */
-function getHealth(healthStr) {
+export function getHealth(healthStr) {
     const multipliers = {
         k: 1000,
         M: 1000000,
@@ -255,7 +255,7 @@ export function detectDH(entityType, givenMobName, givenFormatCode, nameExceptio
     for (let idx = 0; idx < last10.length; idx++) {
         if (!last10[idx] && (!last10[idx].includes(`Doublehook ${givenMobName} Detected!`) || !last10[idx].includes(`Detected ${givenMobName} nearby`))) break;
         hasMob = hasMob || last10[idx].includes(givenMobName);
-        hasDoubleMob = hasDoubleMob || last10[idx].includes(`Doublehook ${givenMobName}`);
+        hasDoubleMob = last10[idx].includes(`Doublehook ${givenMobName}`);
     }
     
     givenMobInfo.numNearby = nearbyMobEntities.length;
@@ -876,4 +876,42 @@ export function renderHPBarDisplay(textPos, currHealth, totalHealth) {
     let currHPWidth = ((currHealth/totalHealth) * 100) * 50;
     new Rectangle(textPos.x, textPos.y, baseWidth, 10, ''); // total heatlh bar
     new Rectangle(textPos.x, textPos.y, currHPWidth, 10, ''); // curr health bar
+}
+
+export function createNearbyInfoObject() {
+    let detectedMobInfo = {
+        mobName: '',
+        found: false,
+        currentHP: 0,
+        totalHP: 0, 
+        names: [],
+        numFound: 0,
+    };
+    return detectedMobInfo;
+}
+
+export function getNearbyEntities(givRegex, infoObj) {
+    infoObj.names = [];
+    let nearbyEntities = World.getAllEntitiesOfType(entityArmorStand)
+        .filter(mobEntity => {
+        const mobName = mobEntity.getName().removeFormatting();
+        const mobMatch = mobName.match(givRegex);
+        if (mobMatch) {
+            infoObj.mobName = mobMatch[1];
+            infoObj.found = true;
+            infoObj.currentHP = getHealth(mobMatch[2]);
+            infoObj.totalHP = getHealth(mobMatch[3]);
+            infoObj.names.push(mobName);
+            infoObj.numFound = infoObj.names.length;
+        }
+    });
+    return nearbyEntities;
+}
+
+export function determineSentFlag(flag) {
+    const last7 = ChatLib.getChatLines().slice(0, 7).map(str => str.removeFormatting());
+    for (let idx = 0; idx < last7.length; idx++) {
+        if (!last7[idx] && (!last7[idx].match(/.+ > .+: Doublehook .+ Detected!/) || !last7[idx].match(/.+ > .+: Detected .+ Nearby!/))) break;
+        flag = last7[idx].match(/.+ > .+: Doublehook .+ Detected!/) || last7[idx].match(/.+ > .+: Detected .+ Nearby!/);
+    }
 }

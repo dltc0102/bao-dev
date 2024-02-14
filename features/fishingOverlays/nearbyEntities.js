@@ -5,6 +5,9 @@ import { constrainX, constrainY } from '../../utils/functions.js' // padding
 import { createGuiCommand, renderGuiPosition } from '../../utils/functions.js'; // gui
 import { registerWhen, timeThis } from "../../utils/utils.js";
 import { getInSkyblock, getInCI, detectDH } from "../../utils/functions.js";
+import { getJawbusInfoObject } from "../detections/jawbus.js";
+import { getThunderInfoObject } from "../detections/thunder.js";
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTS
@@ -15,14 +18,12 @@ const entityArmorStand = Java.type("net.minecraft.entity.item.EntityArmorStand")
 const moveNearbyJawbusCounter = new Gui(); // nearby jawbus
 createGuiCommand(moveNearbyJawbusCounter, 'movejawbus', 'mj');
 const jawbusDraggable = '&7Nearby Jawbus: NO [x0]';
-let jawbusInfo = null;
 let nearbyJawbusText = '';
 
 // thunder
 const moveNearbyThunderCounter = new Gui(); // nearby jawbus
 createGuiCommand(moveNearbyThunderCounter, 'movethunder', 'mt');
 const thunderDraggable = '&7Nearby Thunder: NO [x0]'
-let thunderInfo = null;
 let nearbyThunderText = '';
 
 export const nearbyEntitiesDisplay = new PogObject("bao-dev", {
@@ -41,68 +42,48 @@ nearbyEntitiesDisplay.autosave(5);
 ////////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
-function createInfoObject() {
-    let resultObj = {
-        found: false,
-        foundNearby: false, 
-        names: [], 
-        titleShown: false, 
-        numNearby: 0, 
-        currHealth: 0,
-        totalHealth: 0,   
-    }
-    return resultObj;
-}
-
 function updateNearbyText(name, givObject) {
-    let isNBFound = givObject.foundNearby ? 'YES' : 'NO';
-    let numNB = givObject.numNearby > 0 ? ` [x${givObject.numNearby}]` : '';
-    return `&rNearby ${name}: &b${isNBFound}  &6${numNB}`;
+    let isFound = givObject.found ? 'YES' : 'NO';
+    let numFound = givObject.numFound > 0 ? ` [x${givObject.numFound}]` : '';
+    return `&rNearby ${name}: &b${isFound}  &6${numFound}`;
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// CREATING INFO OBJECTS
-////////////////////////////////////////////////////////////////////////////////
-jawbusInfo = createInfoObject();
-thunderInfo = createInfoObject();
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: STEP 
 ////////////////////////////////////////////////////////////////////////////////
-register('step', timeThis("registerStep update nearbyJawbusText and nearbyThunderText", () => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    // detect doublehook jawbus
-    if (Settings.detectDoubleJawbus) {
-        detectDH(entityArmorStand, 'Jawbus', '&4', 'Follower', jawbusInfo);
-        if (getInCI()) {
-            nearbyJawbusText = updateNearbyText('Jawbus', jawbusInfo);
-        }
-    }
+register('step', timeThis("registerStep update nearbyJawbusText", () => {
+    if (!getInSkyblock() || !World.isLoaded() || !Settings.detectJawbusEntities || !getInCI()) return;
+    let jawbusInfo = getJawbusInfoObject();
+    nearbyJawbusText = updateNearbyText('Jawbus', jawbusInfo);
+})).setFps(3);
 
-    // detect doublehook thunder
-    if (Settings.detectDoubleThunder) {
-        detectDH(entityArmorStand, 'Thunder', '&b', null, thunderInfo);
-        nearbyThunderText = updateNearbyText('Thunder', thunderInfo);
-    }
+register('step', timeThis("registerStep update nearbyThunderText", () => {
+    if (!getInSkyblock() || !World.isLoaded() || Settings.detectThunderEntities || !getInCI()) return;
+    let thunderInfo = getThunderInfoObject();
+    nearbyThunderText = updateNearbyText('Thunder', thunderInfo);
 })).setFps(3);
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: DRAG
 ////////////////////////////////////////////////////////////////////////////////
-register('dragged', timeThis("registerDragged moveNearbyJawbusCounter and moveNearbyThunderCounter", (dx, dy, x, y) => {
+register('dragged', timeThis("registerDragged moveNearbyJawbusCounter", (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveNearbyJawbusCounter.isOpen()){
         nearbyEntitiesDisplay.jawbus.x = constrainX(x, 3, jawbusDraggable);
         nearbyEntitiesDisplay.jawbus.y = constrainY(y, 3, jawbusDraggable);
     };
+    nearbyEntitiesDisplay.save();
+}));
+
+register('dragged', timeThis("registerDragged moveNearbyThunderCounter", (dx, dy, x, y) => {
+    if (!getInSkyblock() || !World.isLoaded()) return;
     if (moveNearbyThunderCounter.isOpen()){
         nearbyEntitiesDisplay.thunder.x = constrainX(x, 3, thunderDraggable);
         nearbyEntitiesDisplay.thunder.y = constrainY(y, 3, thunderDraggable);
     };
     nearbyEntitiesDisplay.save();
-}))
+}));
 
 
 ////////////////////////////////////////////////////////////////////////////////

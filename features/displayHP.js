@@ -86,12 +86,12 @@ register('step', timeThis("registerStep update mobInfos", () => {
             inLSRange = checkLSRange(mobEntity) < 31;
             const inRangeText = inLSRange ? '&a✓' : '&c✖';
             if (entityName.includes('Jawbus')) {
-                const jawbusRegex = /﴾ \[Lv600] Lord Jawbus (.+)M\/100M❤ ﴿/
+                const jawbusRegex = /﴾ \[Lv600] Lord Jawbus (.+)[?Mk]\/100M❤ ﴿/
                 const matchJawbus = entityName.match(jawbusRegex);
                 if (matchJawbus) return `${mobEntity.getName()} &r-- [${inRangeText}&r]`;
 
             } else if (entityName.includes('Thunder')) {
-                const thunderRegex = /﴾ \[Lv400] Thunder (.+)M\/35M❤ ﴿/;
+                const thunderRegex = /﴾ \[Lv400] Thunder (.+)[?Mk]\/35M❤ ﴿/;
                 const matchThunder = entityName.match(thunderRegex);
                 if (matchThunder) return `${mobEntity.getName()} &r-- [${inRangeText}&r]`;
 

@@ -210,10 +210,6 @@ register('chat', (members, event) => {
     partyList.push(...partyMembers);
 }).setCriteria('Party Members: ${names}');
 
-register('command', () => {
-    ChatLib.chat(`party members: ${partyList.join(', ')}`);
-}).setName('getplist');
-
 
 // p1 invites p2 to party
 register("chat", (p1, p2) => {
@@ -305,18 +301,3 @@ export function sendMessage(message) {
 export function announce(message) {
     ChatLib.command(`ac ${message}`)
 }
-
-
-////////////////////////////////////////////////////////////////////////////////
-// COMMAND CHECKS --------------------------------------------------------------
-////////////////////////////////////////////////////////////////////////////////
-
-// party info
-register('command', () => {
-    ChatLib.command('pl')
-    setTimeout(() => {
-        ChatLib.chat(`isPL: ${isPL}`)
-        ChatLib.chat(`whoPL: ${whoPL}`)
-        ChatLib.chat(`party list: ${partyList}`)
-    }, 1000)
-}).setName('baopinfo').setAliases('baopi')

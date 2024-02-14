@@ -2,7 +2,7 @@ import { @ButtonProperty, @CheckboxProperty, Color, @ColorProperty, @PercentSlid
 
 @Vigilant("bao-dev", "§3bao-dev", {
     getCategoryComparator: () => (a, b) => {
-        const categories = ['Information', 'General QOL', 'GUI', 'HP Display', 'Timers', 'Fishing QOL', 'Fishing Pings', 'Counter', 'Garden', 'Dungeons', 'Sounds/Dev']
+        const categories = ['Information', 'General QOL', 'GUI', 'HP Display', 'Timers', 'Detections', 'Fishing QOL', 'Fishing Pings', 'Counter', 'Garden', 'Dungeons', 'Sounds/Dev']
         return categories.indexOf(a.name) - categories.indexOf(b.name);
     }
 })
@@ -173,14 +173,14 @@ class Settings {
     playersNearbyCount = false;
 
     @SwitchProperty({
-        name: "Detect Double Jawbus",
+        name: "Nearby Jawbus Count",
         description: "Detects nearby unpinged Jawbus and Doublehook Jawbus Entities.",
         category: "GUI", 
     })
     detectDoubleJawbus = false;
 
     @SwitchProperty({
-        name: "Detect Double Thunder",
+        name: "Nearby Thunder Count",
         description: "Detects nearby unpinged Thunder and Doublehook Thunder Entities.",
         category: "GUI", 
     })
@@ -450,7 +450,31 @@ class Settings {
     })
     gummyTimer = false;
 
+    // DETECTIONS
+    @SwitchProperty({
+        name: "Detection: Jawbus",
+        description: "Detects nearby and doublehook Jawbus-es.",
+        category: "Detections",
+        subcategory: "Jawbus"
+    })
+    detectJawbusEntities = false;
 
+    @SwitchProperty({
+        name: "Detection: Thunder",
+        description: "Detects nearby and doublehook Thunders.",
+        category: "Detections",
+        subcategory: "Thunder"
+    })
+    detectThunderEntities = false;
+
+    @SwitchProperty({
+        name: "Detection: Vanquisher",
+        description: "Detects nearby or multiple Vanquishers.",
+        category: "Detections",
+        subcategory: "Thunder"
+    })
+    detectVanqEntities = false;
+    
     // FISHING QOL
     @SwitchProperty({
         name: "Hide SC Messages",
@@ -1130,5 +1154,3 @@ class Settings {
         this.addDependency("Toggle: Interactive Elements", "Better Dungeon Messages")
     }   
 }
-
-export default new Settings();
