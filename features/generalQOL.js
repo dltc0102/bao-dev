@@ -1,3 +1,6 @@
+/// <reference types="../../CTAutocomplete" />
+/// <reference lib="es2015" />
+
 import './generalQOL/betterStashMessages.js';
 import './generalQOL/betterWDA.js';
 import './generalQOL/partyCommands.js';

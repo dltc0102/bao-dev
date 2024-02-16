@@ -1,3 +1,6 @@
+/// <reference types="../../../CTAutocomplete" />
+/// <reference lib="es2015" />
+
 import Settings from '../../settings.js';
 
 import { getInSkyblock, getInJerry } from '../../utils/functions.js'; // sb, area

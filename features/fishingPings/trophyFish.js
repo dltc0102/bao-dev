@@ -1,3 +1,6 @@
+/// <reference types="../../../CTAutocomplete" />
+/// <reference lib="es2015" />
+
 import Settings from "../../settings";
 
 import { getInSkyblock, getInCI, playSound } from "../../utils/functions";

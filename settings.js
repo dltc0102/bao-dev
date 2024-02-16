@@ -16,7 +16,7 @@ class Settings {
         placeholder: "Join Us!"
     })
     baoDiscordInvite() {
-        java.awt.Desktop.getDesktop().browse(new java.net.URI("https://discord.gg/JdNQqzPb"));
+        Java.awt.Desktop.getDesktop().browse(new Java.net.URI("https://discord.gg/JdNQqzPb"));
     }
     
     // GENERAL QOL
@@ -303,7 +303,7 @@ class Settings {
         subcategory: "Edit Overlays",
     })
     openHPDisplayGUI() {
-        ChatLib.command('movehp', true)
+        ChatLib.command('movehp', true);
     }
 
     @SwitchProperty({
@@ -471,7 +471,7 @@ class Settings {
         name: "Detection: Vanquisher",
         description: "Detects nearby or multiple Vanquishers.",
         category: "Detections",
-        subcategory: "Thunder"
+        subcategory: "Vanquisher"
     })
     detectVanqEntities = false;
     
@@ -1037,6 +1037,13 @@ class Settings {
     showClassSpecificPings = false;
 
     @SwitchProperty({
+        name: "Join Dungeon Shortcuts", 
+        description: "Join a dungeon when in party.\nUsage: &b#f5 &ror &b#m3",
+        category: "Dungeons"
+    })
+    enableJoinDungeonShortcuts = false;
+
+    @SwitchProperty({
         name: "Fire Freeze Timers", 
         description: "Alert and Pings for when to activate Fire Freeze in &eF/MM 2 and 3&r. &f-- &d[WIP] ",
         category: "Dungeons"
@@ -1045,7 +1052,7 @@ class Settings {
 
     @SwitchProperty({
         name: "Party Finder Message Shortener", 
-        description: "Changed 'Party Finder > (message) to 'PF > (message)'",
+        description: "Changed from '&dParty Finder &7> &a(message)&r' to '&dPF &7> &a(message)&r'",
         category: "Dungeons"
     })
     betterPFMessages = false;
@@ -1154,3 +1161,5 @@ class Settings {
         this.addDependency("Toggle: Interactive Elements", "Better Dungeon Messages")
     }   
 }
+
+export default new Settings();

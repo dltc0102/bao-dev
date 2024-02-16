@@ -1,3 +1,6 @@
+/// <reference types="../../CTAutocomplete" />
+/// <reference lib="es2015" />
+
 import Settings from '../settings.js';
 import Audio from '../utils/audio.js';
 import PogObject from 'PogData';
@@ -23,6 +26,7 @@ export const baoInv = new PogObject("bao-dev", {
     "flowers": {
         "antiqueRemedies": 0,
     },
+    "gw_teeth": 0,
 })
 baoInv.autosave(5);
 
@@ -75,18 +79,20 @@ register('command', () => {
 
 register('command', () => {
     ChatLib.chat(`inv logged items: `);
-    ChatLib.chat('-------------------')
-    ChatLib.chat(`Books: `)
-    ChatLib.chat(`Flash: ${baoInv.books.flash}`)
-    ChatLib.chat(`Chimera: ${baoInv.books.chimera}`)
-    ChatLib.chat('-------------------')
-    ChatLib.chat(`Skulls: `)
-    ChatLib.chat(`Shelmets: ${baoInv.skulls.turtleShelmets}`)
-    ChatLib.chat(`Plushies: ${baoInv.skulls.tigerPlushies}`)
-    ChatLib.chat(`Minos Relics: ${baoInv.skulls.minosRelics}`)
-    ChatLib.chat(`ML Frags: ${baoInv.skulls.mlFrags}`)
-    ChatLib.chat(`Hydra Heads: ${baoInv.skulls.hydraHeads}`)
-    ChatLib.chat('-------------------')
-    ChatLib.chat(`Flowers: `)
-    ChatLib.chat(`Remedies: ${baoInv.flowers.antiqueRemedies}`)
+    ChatLib.chat('-------------------');
+    ChatLib.chat(`Books: `);
+    ChatLib.chat(`Flash: ${baoInv.books.flash}`);
+    ChatLib.chat(`Chimera: ${baoInv.books.chimera}`);
+    ChatLib.chat('-------------------');
+    ChatLib.chat(`Skulls: `);
+    ChatLib.chat(`Shelmets: ${baoInv.skulls.turtleShelmets}`);
+    ChatLib.chat(`Plushies: ${baoInv.skulls.tigerPlushies}`);
+    ChatLib.chat(`Minos Relics: ${baoInv.skulls.minosRelics}`);
+    ChatLib.chat(`ML Frags: ${baoInv.skulls.mlFrags}`);
+    ChatLib.chat(`Hydra Heads: ${baoInv.skulls.hydraHeads}`);
+    ChatLib.chat('-------------------');
+    ChatLib.chat(`Flowers: `);
+    ChatLib.chat(`Remedies: ${baoInv.flowers.antiqueRemedies}`);
+    ChatLib.chat('-------------------');
+    ChatLib.chat(`GW Toof: ${baoInv.gw_teeth}`);
 }).setName('logitems');

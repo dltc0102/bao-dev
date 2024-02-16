@@ -1,3 +1,6 @@
+/// <reference types="../../../CTAutocomplete" />
+/// <reference lib="es2015" />
+
 import Settings from "../../settings.js";
 import Audio from "../../utils/audio.js";
 
@@ -25,7 +28,7 @@ register('step', timeThis("registerStep (step3) - getsNearbyEntities for Thunder
 
     if (titleShown || nbMsgSent) return;
 
-    determineSentFlag(alreadySent);
+    determineSentFlag(alreadySent, 10);
     if (alreadySent) return;
 
     if (isDoubleHook) {

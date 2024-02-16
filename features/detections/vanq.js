@@ -1,3 +1,6 @@
+/// <reference types="../../../CTAutocomplete" />
+/// <reference lib="es2015" />
+
 import Settings from "../../settings.js";
 import Audio from "../../utils/audio.js";
 
@@ -16,6 +19,7 @@ let nbMsgSent = false;
 let alreadySent = false;
 
 let vanqInfo = createNearbyInfoObject();
+vanqInfo.mobName = 'Vanquisher';
 
 register('step', timeThis("registerStep (step3) - getsNearbyEntities for Vanquishers and sends respective alerts", () => {
     if (!getInSkyblock() || !World.isLoaded() || !getInCI() || !Settings.detectVanqEntities) return;
@@ -24,7 +28,7 @@ register('step', timeThis("registerStep (step3) - getsNearbyEntities for Vanquis
 
     if (titleShown || nbMsgSent) return;
 
-    determineSentFlag(alreadySent);
+    determineSentFlag(alreadySent, 10);
     if (alreadySent) return;
 
     if (isDoubleHook) {

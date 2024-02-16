@@ -1,3 +1,6 @@
+/// <reference types="../../CTAutocomplete" />
+/// <reference lib="es2015" />
+
 import RenderLib from 'RenderLib/index.js';
 import Settings from '../settings.js';
 import Audio from '../utils/audio.js'
@@ -6,6 +9,7 @@ import { sendMessage } from '../utils/party.js';
 import { showAlert } from '../utils/utils.js';
 
 const funcAudio = new Audio();
+const entityArmorStand = Java.type("net.minecraft.entity.item.EntityArmorStand");
 
 const rarityCode = {
     "1": "&r", 
@@ -880,7 +884,6 @@ export function renderHPBarDisplay(textPos, currHealth, totalHealth) {
 
 export function createNearbyInfoObject() {
     let detectedMobInfo = {
-        mobName: '',
         found: false,
         currentHP: 0,
         totalHP: 0, 
@@ -897,10 +900,9 @@ export function getNearbyEntities(givRegex, infoObj) {
         const mobName = mobEntity.getName().removeFormatting();
         const mobMatch = mobName.match(givRegex);
         if (mobMatch) {
-            infoObj.mobName = mobMatch[1];
             infoObj.found = true;
-            infoObj.currentHP = getHealth(mobMatch[2]);
-            infoObj.totalHP = getHealth(mobMatch[3]);
+            infoObj.currentHP = getHealth(mobMatch[1]);
+            infoObj.totalHP = getHealth(mobMatch[2]);
             infoObj.names.push(mobName);
             infoObj.numFound = infoObj.names.length;
         }
@@ -908,10 +910,14 @@ export function getNearbyEntities(givRegex, infoObj) {
     return nearbyEntities;
 }
 
-export function determineSentFlag(flag) {
-    const last7 = ChatLib.getChatLines().slice(0, 7).map(str => str.removeFormatting());
-    for (let idx = 0; idx < last7.length; idx++) {
-        if (!last7[idx] && (!last7[idx].match(/.+ > .+: Doublehook .+ Detected!/) || !last7[idx].match(/.+ > .+: Detected .+ Nearby!/))) break;
-        flag = last7[idx].match(/.+ > .+: Doublehook .+ Detected!/) || last7[idx].match(/.+ > .+: Detected .+ Nearby!/);
+export function determineSentFlag(flag, firstXMessages) {
+    const lastX = ChatLib.getChatLines().slice(0, firstXMessages).map(str => str.removeFormatting());
+    for (let idx = 0; idx < lastX.length; idx++) {
+        let chatMsg = lastX[idx];
+        if (chatMsg && chatMsg.match(/.+ > .+: Doublehook .+ Detected!/) || chatMsg.match(/.+ > .+: Detected .+ Nearby!/)) {
+            flag = true;
+        } else {
+            flag = false;
+        }
     }
 }

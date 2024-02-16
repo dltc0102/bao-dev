@@ -1,3 +1,6 @@
+/// <reference types="../../../CTAutocomplete" />
+/// <reference lib="es2015" />
+
 import Settings from "../../settings";
 import Audio from "../../utils/audio";
 
@@ -98,7 +101,7 @@ vanqMessages.forEach(msg => {
 registerWhen('chat', timeThis("registerChat vanquisher ping", (event) => {
     cancel(event);
     showAlert(vanqTitle);
-    sendMessage('[!] Vanquisher [!]');
+    sendMessage(`[!] Vanquisher [!] (${baoLavaSCStats.catchesSinceVanq})`);
     crimsonAudio.playDefaultSound();
 }), () => Settings.vanqPing && shouldHandleCrimsonFishingPings()).setCriteria('A Vanquisher is spawning nearby!');
 

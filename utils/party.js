@@ -1,6 +1,11 @@
-import { debug, determinePlayerRankColor, baoUtils } from '../utils/utils.js';
+/// <reference types="../../CTAutocomplete" />
+/// <reference lib="es2015" />
 
+import { debug, determinePlayerRankColor, baoUtils, registerWhen, timeThis } from '../utils/utils.js';
+
+////////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
+////////////////////////////////////////////////////////////////////////////////
 export function getRankColor(rank, ign) {
     let newName = '';
     if (rank == '[VIP]' || rank == '[VIP+]') newName = `&a${rank} ${ign}`
@@ -60,8 +65,16 @@ function simplifyMessage(givenName, event, message) {
     ChatLib.chat(`${newName} ${message}`);
 }
 
+function removeNameFromPartyList(name, myList) {
+    let leftIdx = myList.indexOf(name);
+    if (leftIdx !== -1) {
+        myList.splice(leftIdx, 1);
+    }
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
-// PARTY CHECKER ---------------------------------------------------------------
+// PARTY CHECKER 
 ////////////////////////////////////////////////////////////////////////////////
 let inParty = false;
 let isPL = false;
@@ -73,105 +86,88 @@ let partySize = 0;
 // party members list
 let partyList = [];
 
-// party chat: blub blub blub
-register('chat', (player, msg) => {
+// normal chat messages
+registerWhen('chat', timeThis('registerChat - party - chat messages', (playerName, msg) => {
     inParty = true;
-    // ChatLib.chat(`Party > ${player}: ${msg}`)
-    debug(`inParty: ${inParty}`)
-}).setCriteria('Party > ${player}: ${msg}')
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('Party > ${playerName}: ${msg}');
 
 // leader disbanded party
-register("chat", (name) => { 
+registerWhen('chat', timeThis('registerChat - party - disbanded party', (playerName, event) => {
     inParty = false;
-    isPL = name === Player.getName();
-    whoPL = isPL ? Player.getName() : name;
+    isPL = playerName === Player.getName();
+    whoPL = isPL ? Player.getName() : playerName;
     partyList = [];
-    debug(`inParty: ${inParty}, isPL: ${isPL}, whoPL: ${whoPL}`)
-}).setCriteria("${name} has disbanded the party!");
+}), () => getInSkyblock() && World.isLoaded()).setCriteria("${playerName} has disbanded the party!");
 
 // party disbanded by default reasons
-register("chat", () => {
+registerWhen('chat', timeThis('registerChat - party - party disbanded (empty)', (event) => {
     inParty = false;
     partyList = [];
-    debug(`inParty: ${inParty}`)
-}).setCriteria("The party was disbanded because all invites expired and the party was empty.")
+}), () => getInSkyblock() && World.isLoaded()).setCriteria("The party was disbanded because all invites expired and the party was empty.");
 
 // you left the party
-register("chat", () => {
-    inParty = false
-    partyList = [];
-    debug(`inParty: ${inParty}`)
-}).setCriteria("You left the party.")
+registerWhen('chat', timeThis('registerChat - party - player left party', (playerName, event) => {
+    if (playerName === 'You') {
+        inParty = false;
+        partyList = [];
+    } else {
+        inParty = true;
+        let rawName = colorPartyPlayer(playerName);
+        let leftName = rawName.slice(2, rawName.length);
+        removeNameFromPartyList(leftName, partyList);
+    }
+}), () => getInSkyblock() && World.isLoaded()).setCriteria("${playerName} left the party.");
 
 // you were kicked from the party by name
-register("chat", (name) => {
+registerWhen('chat', timeThis('registerChat - party - kicked out of party', (playerName, event) => {
     inParty = false
     isPL = false;
-    whoPL = name;
+    whoPL = playerName;
     partyList = [];
-    debug(`whoPL: ${whoPL}, inParty: ${inParty}, isPL: ${isPL}`)
-}).setCriteria("You have been kicked from the party by ${name}")
+}), () => getInSkyblock() && World.isLoaded()).setCriteria("You have been kicked from the party by ${playerName}");
 
 // you joined name's party
-register("chat", (name) => {
+registerWhen('chat', timeThis('registerChat - party - you joined party', (playerName, event) => {
     inParty = true
     isPL = false
-    whoPL = name;
-    debug(`inParty: ${inParty}, isPL: ${isPL}, whoPL: ${name}`)
-}).setCriteria("You have joined ${name}'s party!")
+    whoPL = playerName;
+}), () => getInSkyblock() && World.isLoaded()).setCriteria("You have joined ${playerName}'s party!");
 
 // someone joined the party
-register('chat', (playerName, event) => {
+registerWhen('chat', timeThis('registerChat - party - someone joins party', (playerName, event) => {
     inParty = true;
     if (partyList.length > 0) {
         let newName = colorPartyPlayer(playerName);
         partyList.push(newName.slice(2, newName.length));
     }
-}).setCriteria('${playerName} joined the party.');
-
-function removeNameFromPartyList(name, myList) {
-    let leftIdx = myList.indexOf(name);
-    if (leftIdx !== -1) {
-        myList.splice(leftIdx, 1);
-    }
-}
-
-// someone left the party
-register('chat', (playerName, event) => {
-    inParty = playerName !== Player.getName();
-    let rawName = colorPartyPlayer(playerName);
-    let leftName = rawName.slice(2, rawName.length);
-    removeNameFromPartyList(leftName, partyList);
-}).setCriteria('${playerName} left the party.');
+}), () => getInSkyblock() && World.isLoaded()).setCriteria("${playerName} joined the party.");
 
 // someone was removed/kicked from the party
-register('chat', (playerName, event) => {
+registerWhen('chat', timeThis('registerChat - party - someone removed from party', (playerName, event) => {
     inParty = playerName !== Player.getName();
     let rawName = colorPartyPlayer(playerName);
     let leftName = rawName.slice(2, rawName.length);
     removeNameFromPartyList(leftName, partyList);
-}).setCriteria('${playerName} has been removed from the party.');
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('${playerName} has been removed from the party.');
 
-
-// pl promoted player to mod
-register("chat", (currPL, partyMember) => {
+// promoted
+registerWhen('chat', timeThis('registerChat - party - promoted message', (currPL, partyMember, event) => {
     inParty = true;
     whoPL = currPL;
     isPL = stripRank(currPL) === Player.getName();
     isMod = stripRank(partyMember) === Player.getName();
-}).setCriteria("${currPL} has promoted ${partyMember} to Party Moderator");
+}), () => getInSkyblock() && World.isLoaded()).setCriteria("${currPL} has promoted ${partyMember} to Party Moderator");
 
 // pl demoted player to member
-register("chat", (currPL, p2) => {
+registerWhen('chat', timeThis('registerChat - party - demoted message', (currPL, p2, event) => {
     inParty = true;
     isPL = stripRank(currPL) === Player.getName();
     isMod = stripRank(p2) === Player.getName();
     whoPL = currPL;
-    debug(`inParty: ${inParty}, isPL: ${isPL}, isMod: ${isMod}, whoPL: ${currPL}, demoted: ${p2}`)
-}).setCriteria("${currPL} has demoted ${p2} to Party Member")
+}), () => getInSkyblock() && World.isLoaded()).setCriteria("${currPL} has demoted ${p2} to Party Member");
 
 // transfer
-register('chat', (newPL, oldPL, event) => {
+registerWhen('chat', timeThis('registerChat - party - transfer message', (newPL, oldPL, event) => {
     inParty = true;
     let newPLName = stripRank(newPL);
     let oldPLName = stripRank(oldPL);
@@ -179,52 +175,38 @@ register('chat', (newPL, oldPL, event) => {
     whoPL = newPLName;
     isMod = oldPLName === Player.getName();
     whoMod = oldPLName;
-    debug(`inParty: ${inParty}, isPL: ${isPL}, whoPL: ${whoPL}, isMod: ${isMod}, whoMod: ${whoMod}`);
-}).setCriteria('The party was transferred to ${newPL} by ${oldPL}');
-
-// remove duplicates in partylist
-register('step', () => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (partyList.length !== 0) partyList = [...new Set(partyList)];
-}).setFps(1);
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('The party was transferred to ${newPL} by ${oldPL}');
 
 // party leader name when /pl
-register('chat', (name, event) => {
+registerWhen('chat', timeThis('registerChat - party - party leader', (name, event) => {
     whoPL = getPartyName(name);
     isPL = whoPL === Player.getName();
     partyList = [whoPL];
-
-    debug(`isPL: ${isPL}, whoPL: ${whoPL}`);
-}).setCriteria('Party Leader: ${name}');
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('Party Leader: ${name}');
 
 // party moderator(s) when /pl
-register('chat', (mods, event) => {
+registerWhen('chat', timeThis('registerChat - party - party moderators', (mods, event) => {
     let partyMods = getPartyPeople(mods);
     partyList.push(...partyMods);
-}).setCriteria('Party Moderators: ${mods}');
-
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('Party Moderators: ${mods}');
 
 // party member(s) when /pl
-register('chat', (members, event) => {
+registerWhen('chat', timeThis('registerChat - party - party members', (members, event) => {
     let partyMembers = getPartyPeople(members);
     partyList.push(...partyMembers);
-}).setCriteria('Party Members: ${names}');
-
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('Party Members: ${members}');
 
 // p1 invites p2 to party
-register("chat", (p1, p2) => {
+registerWhen('chat', timeThis('registerChat - party - p1 invites p2 to party message', (event) => {
+    if (!inParty) { isPL = true; whoPL = Player.getName(); }
     inParty = true;
-    isPL = p1 === Player.getName();
-    whoPL = isPL ? Player.getName() : p2;
-    debug(`inParty: ${inParty}, inviter: ${p1}, invitee: ${p2}`)
-}).setCriteria("${p1} invited ${p2} to the party! They have 60 seconds to accept.");
+}), () => getInSkyblock() && World.isLoaded()).setCriteria("${p1} invited ${p2} to the party! They have 60 seconds to accept.");
 
 // get number of party members through doing /pl
-register("chat", (numMembers) => {
+registerWhen('chat', timeThis('registerChat - party - no. of people in party', (numMembers, event) => {
     inParty = true;
     partySize = numMembers;
-    debug(`inParty: ${inParty}, partySize: ${partySize}`)
-}).setCriteria("Party Members (${numMembers})")
+}), () => getInSkyblock() && World.isLoaded()).setCriteria("Party Members (${numMembers})");
 
 
 
@@ -241,19 +223,25 @@ register("chat", (numMembers) => {
 // Party > user: #pta -- if plocked list has people, and user is pl, pt will be automatically transferred to anyone that is not in plocked list.
 ///////////////////////////////////////////////////////////////////////////////////////////
 
+// remove duplicates in partylist
+register('step', () => {
+    if (!getInSkyblock() || !World.isLoaded()) return;
+    if (partyList.length !== 0) partyList = [...new Set(partyList)];
+}).setFps(1);
 
 // check isPL
 if (whoPL == Player.getName()) isPL = true;
 
 // disconnected
-register('chat', (playerName, event) => {
+registerWhen('chat', timeThis('registerChat - party - simplify disconnected message', (playerName, event) => {
     simplifyMessage(playerName, event, '&edisconnected.');
-}).setCriteria('${playerName} has disconnected, they have 5 minutes to rejoin before they are removed from the party.')
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('${playerName} has disconnected, they have 5 minutes to rejoin before they are removed from the party.');
+
 
 // warped
-register('chat', (playerName, event) => {
+registerWhen('chat', timeThis('registerChat - party - simplify party warp message', (playerName, event) => {
     simplifyMessage(playerName, event, '&ewarped the party.');
-}).setCriteria('Party Leader, ${playerName}, summoned you to their server.')
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('Party Leader, ${playerName}, summoned you to their server.');
 
 
 export function getInParty() {
@@ -301,3 +289,7 @@ export function sendMessage(message) {
 export function announce(message) {
     ChatLib.command(`ac ${message}`)
 }
+
+register('command', () => {
+    ChatLib.chat(`${baoUtils.modPrefix} &cwhoPL: &b${whoPL}&c, isPL: &b${isPL}`);
+}).setName('pstat');

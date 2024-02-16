@@ -10,6 +10,6 @@
         "RenderLib", 
         "Elementa", 
         "BloomCore",
-        "CTAutocomplete",
+        "CTAutocomplete"
     ]
 }

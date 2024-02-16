@@ -1,3 +1,6 @@
+/// <reference types="../../../CTAutocomplete" />
+/// <reference lib="es2015" />
+
 import ExtraSettings from "../../extraSettings.js";
 
 import { registerWhen, showAlert, timeThis } from "../../utils/utils";

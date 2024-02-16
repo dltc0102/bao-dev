@@ -1,3 +1,6 @@
+/// <reference types="../../../CTAutocomplete" />
+/// <reference lib="es2015" />
+
 import Settings from "../../settings.js";
 import PogObject from 'PogData';
 
@@ -58,7 +61,7 @@ register('step', timeThis("registerStep update nearbyJawbusText", () => {
 })).setFps(3);
 
 register('step', timeThis("registerStep update nearbyThunderText", () => {
-    if (!getInSkyblock() || !World.isLoaded() || Settings.detectThunderEntities || !getInCI()) return;
+    if (!getInSkyblock() || !World.isLoaded() || !Settings.detectThunderEntities || !getInCI()) return;
     let thunderInfo = getThunderInfoObject();
     nearbyThunderText = updateNearbyText('Thunder', thunderInfo);
 })).setFps(3);

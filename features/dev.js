@@ -1,3 +1,6 @@
+/// <reference types="../../CTAutocomplete" />
+/// <reference lib="es2015" />
+
 import PogObject from 'PogData';
 import Audio from "../utils/audio.js";
 

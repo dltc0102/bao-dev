@@ -1,3 +1,6 @@
+/// <reference types="../../CTAutocomplete" />
+/// <reference lib="es2015" />
+
 // dungeon cleaning
 import './dungeons/dungeonIntEles.js';
 import './dungeons/dungeonMsgQOL.js';
@@ -12,6 +15,7 @@ import './dungeons/fullInventory.js'; //d
 import './dungeons/melody.js'; // (needs testing in an f7 run)
 import './dungeons/qolPings.js';
 import './dungeons/secretCounter.js'; 
+import './dungeons/joinDungeonCommand.js'; 
 
 
 

@@ -1,3 +1,6 @@
+/// <reference types="../../CTAutocomplete" />
+/// <reference lib="es2015" />
+
 import Settings from '../settings.js';
 import PogObject from 'PogData';
 
@@ -50,6 +53,22 @@ let mobSettings = [
 function distCheck(entity, player, maxDistance) {
     return entity.distanceTo(player) < maxDistance;
 }
+
+register('command', () => {
+    Settings.master_displayHP = true;
+    Settings.vanq_hp = true;
+    Settings.mythosMobHP = true;
+    Settings.rein_hp = true;
+    Settings.yeti_hp = true;
+    Settings.jawbus_hp = true;
+    Settings.thunder_hp = true;
+    Settings.gwshark_hp = true;
+    Settings.carrotking_hp = true;
+    Settings.waterhydra_hp = true;
+    Settings.sea_emp_hp = true;
+    Settings.reaper_hp = true;
+    Settings.phantom_fisher_hp = true;
+}).setName('toggleAllDisplayHP');
 
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP LIST OF TOGGLED MOBS FOR HP
