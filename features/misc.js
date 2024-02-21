@@ -7,3 +7,4 @@ import './misc/jerry.js';
 import './misc/dye.js';
 import './misc/spooky.js';
 import './misc/sheep.js';
+import './misc/broodmother.js';

@@ -1,7 +1,7 @@
 /// <reference types="../../../CTAutocomplete" />
 /// <reference lib="es2015" />
 
-import Settings from "../../settings";
+import Settings from "../../config1/settings.js";
 import Audio from "../../utils/audio";
 
 import { getInSkyblock, getInCI, getInJerry, playSound, petDropPing, pingDolphinMS } from "../../utils/functions";

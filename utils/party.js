@@ -285,6 +285,7 @@ export function sendMessage(message) {
     }
 }
 
+
 // announce
 export function announce(message) {
     ChatLib.command(`ac ${message}`)
@@ -292,4 +293,5 @@ export function announce(message) {
 
 register('command', () => {
     ChatLib.chat(`${baoUtils.modPrefix} &cwhoPL: &b${whoPL}&c, isPL: &b${isPL}`);
-}).setName('pstat');
+    ChatLib.chat(`Party List: ${getPList()}`)
+}).setName('pstat', true);

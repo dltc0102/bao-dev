@@ -1,7 +1,7 @@
 /// <reference types="../../../CTAutocomplete" />
 /// <reference lib="es2015" />
 
-import ExtraSettings from "../../extraSettings.js";
+import ExtraSettings from "../../config2/extraSettings.js";
 
 import { registerWhen, timeThis } from "../../utils/utils";
 import { getInSkyblock, getInMines } from "../../utils/functions";

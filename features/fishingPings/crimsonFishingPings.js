@@ -1,12 +1,12 @@
 /// <reference types="../../../CTAutocomplete" />
 /// <reference lib="es2015" />
 
-import Settings from "../../settings";
+import Settings from "../../config1/settings.js";
 import Audio from "../../utils/audio";
 
 import { getInSkyblock, getInCI } from "../../utils/functions";
 import { registerWhen, showAlert, timeThis } from "../../utils/utils";
-import { sendMessage } from "../../utils/party";
+import { sendMessage, getPList } from "../../utils/party";
 import { baoLavaSCStats } from '../../features/lavaSCStats.js'
 import { playSound } from "../../utils/functions";
 
@@ -49,6 +49,27 @@ registerWhen('chat', ("registerChat jawbus ping", (event) => {
     sendMessage(`[!] Jawbus [!] (${baoLavaSCStats.catchesSinceJawbus})`)
     crimsonAudio.playDefaultSound();
 }), () => Settings.jawbusPing && shouldHandleCrimsonFishingPings()).setCriteria('You have angered a legendary creature... Lord Jawbus has arrived.');
+
+
+////////////////////////////////////////////////////////////////////////////////
+// FAKE LOCATION MESSAGE SEND WHEN PLAYER IN PARTY DIES TO JAWBUS
+////////////////////////////////////////////////////////////////////////////////
+function getRandomCILoc() {
+    const locations = ['left of stronghold', 'above spawn', 'desert', 'plhleg pool', 'right of stronghold', 'dead', 'ded', 'dojo'];
+    const randomIdx = Math.floor(Math.random() * locations.length);
+    return locations[randomIdx];
+};
+
+// import { announce } from "../../utils/party";
+// registerWhen('chat', timeThis('', (playerName, event) => {
+//     let partyList = getPList();
+//     if (partyList.includes(playerName)) setTimeout(() => { ChatLib.chat(`ac ${getRandomCILoc()}`); }, 1500);
+// }), () => getInCI() && getInSkyblock() && World.isLoaded()).setCriteria(' ☠ ${playerName} was killed by Lord Jawbus.');
+
+// registerWhen('chat', timeThis('', (playerName, event) => {
+//     setTimeout(() => { ChatLib.chat(`ac ${getRandomCILoc()}`); }, 1500);
+// }), () => getInCI() && getInSkyblock() && World.isLoaded()).setCriteria(' ☠ You were killed by Lord Jawbus.');
+
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,207 @@
+
+[general_qol]
+
+	[general_qol.messages_qol]
+		hide_autopet_messages = true
+		removed_watchdog_announcements = true
+		grandma_hider = true
+		hide_sack_messages = false
+		"hide_aote/aotv_message" = true
+		hide_snow_cannon_messages = true
+		better_stash_messages = true
+		hide_click_stash_messages = true
+
+	[general_qol.commands]
+		party_transfer_randomly = true
+		tps_command = true
+		auto_warp_command = true
+		warpexc_command = true
+		ping_command = true
+		auto_notify_new_party_joiners = true
+		party_kickoffline_shortcut = true
+		party_allinvite_shortcut = true
+
+	[general_qol.qol]
+		easy_get_baker_cake = true
+		kicked_notifier = true
+
+[hp_display]
+	"display_hp:_phantom_fishers" = true
+	mob_hp_display_master_toggle = true
+	"display_hp:_vanquishers" = true
+	"display_hp:_yeti" = true
+	"display_hp:_mythos_mobs" = true
+	"display_hp:_grim_reapers" = true
+	"display_hp:_jawbus" = true
+	"display_hp:_water_hydras" = true
+	"display_hp:_sea_emperors" = true
+	"display_hp:_reindrakes" = true
+	"display_hp:_great_whites" = true
+	"display_hp:_thunder" = true
+	"display_hp:_carrot_kings" = true
+
+[timers]
+	tuba_howl_cd_timer = false
+	ragnarock_axe_cd_timer = false
+	mushy_tonic_timer = true
+	withercloak_cd_timer = false
+	spirit_mask_cd_timer = true
+	flux_countdown_timer = true
+	"king's_scent_timer" = true
+	wisp-flavored_potion_timer = true
+	phoenix_rekindle_cd_timer = true
+	reheated_gummy_bear_timer = true
+	cells_alignment_cd_timer = false
+	bonzo_mask_cd_timer = false
+	firestorm_cd_timer = false
+
+	[timers.flare]
+		flare_timer = false
+
+	[timers.cake]
+		cake_timer = false
+
+[kuudra]
+	better_kuudra_messages = true
+
+[dungeons]
+	"toggle:_player_actions" = true
+	class_specific_pings = true
+	full_inventory_alert = true
+	"toggle:_qol" = true
+	"class/cata_lvl_up_ping" = false
+	melody_terminal_alert = true
+	display_dungeon_blessings = true
+	better_dungeon_messages = true
+	join_dungeon_shortcuts = true
+	"toggle:_system_notifications" = true
+	"toggle:_interactive_elements" = true
+	party_finder_message_shortener = true
+	fire_freeze_timers = true
+
+	[dungeons.secrets]
+		"display_secrets_per_run_(per_session)" = true
+
+[gui]
+	lobby_day_counter = true
+	ping_display = true
+	detect_charge_counter = true
+	tps_display = true
+	bobber_count = true
+	bobber_count_chroma = true
+	players_nearby_count = true
+	number_of_players_for_chroma = 20
+	nearby_thunder_count = true
+	number_of_bobbers_for_chroma = 3
+	full_charge_chroma = false
+	players_count_chroma = false
+	nearby_jawbus_count = true
+
+[garden]
+	garden_pet_drop_pings = false
+	garden_rare_drop_pings = false
+
+	[garden.pest_qol]
+		pest_qol = false
+		"pest_qol:_screen_pest_alert" = false
+		"pest_qol:_auto_set_home_pest" = false
+		"pest_qol:_esp" = false
+		"pest_qol:_autowarp_pest" = false
+
+	[garden.timers]
+		pest_repellent_timer = false
+		harbringer_potion_timer = false
+		pest_exchange_timer = false
+
+	[garden.overlays]
+		vinyl_display = false
+		display_contest_overlay = false
+		player_yaw_and_pitch = false
+		sprayonator_display = false
+
+	[garden.qol]
+		plot_map = false
+		sprayonator_no_mat_alert = false
+		hide_sprayonator_expiry_message = false
+		sprayonator_selected_mat_message_hider = false
+		better_garden_messages = false
+
+["sounds/dev"]
+
+	["sounds/dev".debug]
+		debug_mode = false
+
+	["sounds/dev".sounds]
+		rng_sounds = 0
+
+[fishing_qol]
+	full_thunder_bottle_ping = true
+
+	[fishing_qol.message_hiders]
+		hide_sc_messages = true
+		better_fishing_messages = true
+
+[counter]
+
+	[counter.overlay]
+		"counter:_drops" = false
+		fishing_counter = false
+		"counter:_time_elapsed_since_[rng]" = false
+		"counter:_kills" = false
+		"counter:_special_funny_counters" = false
+		"counter:_mob_since_[rng]" = false
+		"counter:_trackers" = false
+		"counter:_averages" = false
+
+[fishing_pings]
+	toggle_trophy_fish_messages = true
+
+	[fishing_pings.crimson_isles]
+		vanquisher_ping = true
+		radioactive_vial_ping = true
+		phlegblast_ping = false
+		jawbus_ping = true
+		thunder_ping = true
+
+	[fishing_pings.hub_shark]
+		meg_pet_drop_ping = true
+		great_white_shark_ping = true
+
+	[fishing_pings.hub]
+		sea_emperor_ping = true
+		squid_pet_drop_ping = true
+		dolphin_milestone_pet_drop_ping = true
+		carrot_king_ping = true
+		lucky_clover_core_ping = true
+		water_hydra_ping = true
+		guardian_pet_drop_ping = true
+		flying_fish_pet_drop_ping = true
+
+	[fishing_pings.winter_island]
+		nutcracker_ping = true
+		baby_yeti_pet_drop_ping = true
+		reindrake_ping = true
+		yeti_ping = true
+
+	[fishing_pings.zothers]
+		zombie_miner_ping = true
+		fawe_default_pings = true
+
+	[fishing_pings.hub_spooky]
+		grim_reaper_ping = true
+		phantom_fisher_ping = true
+		deep_sea_orb_ping = true
+		phantom_rod_ping = true
+		lucky_hoof_ping = true
+
+[detections]
+
+	[detections.jawbus]
+		"detection:_jawbus" = true
+
+	[detections.vanquisher]
+		"detection:_vanquisher" = true
+
+	[detections.thunder]
+		"detection:_thunder" = true
+

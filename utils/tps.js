@@ -1,7 +1,7 @@
 /// <reference types="../../CTAutocomplete" />
 /// <reference lib="es2015" />
 
-import Settings from "../settings";
+import Settings from '../config1/settings.js';
 
 // if Settings.tps
 import { registerWhen, timeThis } from "./utils";

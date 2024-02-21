@@ -1,7 +1,7 @@
 /// <reference types="../../../CTAutocomplete" />
 /// <reference lib="es2015" />
 
-import Settings from '../../settings.js';
+import Settings from "../../config1/settings.js";
 
 import { getInSkyblock } from '../../utils/functions.js'; // sb, area
 import { registerWhen, timeThis } from '../../utils/utils.js';

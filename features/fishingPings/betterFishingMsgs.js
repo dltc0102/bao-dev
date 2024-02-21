@@ -1,7 +1,7 @@
 /// <reference types="../../../CTAutocomplete" />
 /// <reference lib="es2015" />
 
-import Settings from "../../settings";
+import Settings from "../../config1/settings.js";
 
 import { getInSkyblock } from "../../utils/functions";
 import { registerWhen, timeThis } from "../../utils/utils";
@@ -23,7 +23,7 @@ const fishingMessages = [
 fishingMessages.forEach(msg => {
     registerWhen('chat', timeThis("registerChat cancel fishingMessages", (event) => {
         cancel(event);
-    }), () => Settings.betterFishingMessages && getInSkyblock() && World.isLoaded()).setCriteria(msg);
+    }), () => Settings.betterFishingMessages && getInSkyblock() && World.isLoaded()).setCriteria(msg).setContains();
 });
 
 registerWhen('chat', timeThis("registerChat good catch you found x coins", (coin, event) => {

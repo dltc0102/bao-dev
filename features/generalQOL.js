@@ -10,3 +10,5 @@ import './generalQOL/qolPings.js';
 
 import './generalQOL/tpsDisplay.js';
 import './generalQOL/pingDisplay.js';
+
+// import './generalQOL/flareTimer.js';

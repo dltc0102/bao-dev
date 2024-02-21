@@ -1,7 +1,7 @@
 /// <reference types="../../../CTAutocomplete" />
 /// <reference lib="es2015" />
 
-import Settings from "../../settings.js";
+import Settings from "../../config1/settings.js";
 import PogObject from 'PogData';
 import Audio from "../../utils/audio.js";
 
@@ -10,6 +10,7 @@ import { createGuiCommand, renderGuiPosition } from '../../utils/functions.js'; 
 import { registerWhen, timeThis } from "../../utils/utils.js";
 import { getInSkyblock, getInGarden } from "../../utils/functions.js";
 import { showAlert } from "../../utils/utils.js";
+import { isSBALoaded, getCounterColor } from "../../utils/functions.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTS
@@ -30,12 +31,6 @@ chargeCounterInfo.autosave(5);
 ////////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
-function updateChargeText(charges) {
-    if (charges === 50000) return 'Thunder Bottle: &b&lFULL';
-    if (charges === null) return 'Thunder Bottle: &cNo Bottle Available';
-    if (charges !== null && charges !== 50000) return `Thunder Bottle: &b${charges}⚡`; 
-}
-
 function handleFullyCharged(alert, audioInst, flag) {
     if (alert) showAlert(alert);
     if (audioInst) audioInst.playDefaultSound();
@@ -99,17 +94,40 @@ function getThunderBottle() {
 ////////////////////////////////////////////////////////////////////////////////
 // REG: STEP
 ////////////////////////////////////////////////////////////////////////////////
-register('step', timeThis("registerStep update chargeCounterText", () => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (Settings.full_bottle_ping) {
-        let bottleCharge = getThunderBottle();
+function getChargeDisplayText(charge, flag) {
+    let bottleStatus = '';
+    if (charge === 50000) {
+        bottleStatus = 'FULL';
+    } else if (charge === null) {
+        bottleStatus = '&r&cNo Bottle Available';
+    } else {
+        bottleStatus = `${charge}⚡`;
+    ;}
 
-        if (bottleCharge === 50000 && !sentFullMsg) {
-            handleFullyCharged('&b&lTHUNDER BOTTLE FULL', chargeAudio, sentFullMsg)
-        }
-        chargeCounterText = updateChargeText(bottleCharge);
-        sentFullMsg = bottleCharge === 50000;
-    } 
+    let colorF = '&b';
+    if (flag && charge !== null) {
+        if (hasSBA) {
+            colorF = charge === 50000 ? '&z' : '&b';
+        } else {
+            colorF = charge === 50000 ? '&b&l' : '&b';
+        };
+    } else {
+        colorF = charge === 50000 ? '&b&l' : '&b';
+    }
+
+    return `&rThunder Bottle: ${colorF}${bottleStatus}`;
+}
+
+register('step', timeThis("registerStep update chargeCounterText", () => {
+    if (!getInSkyblock() || !World.isLoaded() || !Settings.full_bottle_ping) return;
+    let bottleCharge = getThunderBottle();
+
+    if (bottleCharge === 50000 && !sentFullMsg) {
+        handleFullyCharged('&b&lTHUNDER BOTTLE FULL', chargeAudio, sentFullMsg)
+    }
+
+    chargeCounterText = getChargeDisplayText(bottleCharge, Settings.fullBottleChroma);
+    sentFullMsg = bottleCharge === 50000;
 })).setFps(3);
 
 

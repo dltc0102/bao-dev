@@ -1,8 +1,8 @@
-import { @ButtonProperty, @CheckboxProperty, Color, @ColorProperty, @PercentSliderProperty, @SelectorProperty, @SwitchProperty, @TextProperty, @Vigilant} from 'Vigilance';
+import { @ButtonProperty, @CheckboxProperty, Color, @ColorProperty, @PercentSliderProperty, @SelectorProperty, @SwitchProperty, @TextProperty, @SliderProperty, @Vigilant} from 'Vigilance';
 
-@Vigilant("bao-dev", "§3bao-dev", {
+@Vigilant("bao-dev/config1", "§3bao-dev", {
     getCategoryComparator: () => (a, b) => {
-        const categories = ['Information', 'General QOL', 'GUI', 'HP Display', 'Timers', 'Detections', 'Fishing QOL', 'Fishing Pings', 'Counter', 'Garden', 'Dungeons', 'Sounds/Dev']
+        const categories = ['Information', 'General QOL', 'GUI', 'HP Display', 'Timers', 'Detections', 'Fishing QOL', 'Fishing Pings', 'Counter', 'Garden', 'Dungeons', , 'Kuudra', 'Sounds/Dev']
         return categories.indexOf(a.name) - categories.indexOf(b.name);
     }
 })
@@ -117,6 +117,14 @@ class Settings {
     hide_snow_cannon_messages = false;
 
     @SwitchProperty({
+        name: "Hide Sack Messages",
+        description: "Hides [Sack] Messages",
+        category: "General QOL",
+        subcategory: "Messages QOL", 
+    })
+    hideDefaultSackMessages = false;
+
+    @SwitchProperty({
         name: "Better Stash Messages",
         description: "&cHides/Simplifies Stash Messages.\n&7'From stash: &e${itemName}&f'&b -- hidden.\n&7'You picked up &e${numItems}&7 items from your material stash!'&b -- hidden.\n\n&7'You still have &e${matsRem}&7 materials totalling &e${numTypes}&7 types of materials in there!'&b -- will be hidden and simplified... \n&bTO: &7'From Sacks: &e${pickupMat}&7 x&e${numMats}&7 || R: &e${remMats}&7 || Types: &e${sackTypes}&f'",
         category: "General QOL",
@@ -158,19 +166,53 @@ class Settings {
 
 
     // GUI
+    // bobbers
     @SwitchProperty({
         name: "Bobber Count",
-        description: "Shows bobbers near you in a 30 block radius for Bobbin' Time.",
+        description: "Shows bobbers near you in a 30 block radius.\n&eThis is mainly for Bobbin' Time.",
         category: "GUI", 
     })
     bobberCount = false;
 
     @SwitchProperty({
+        name: "Bobber Count Chroma",
+        description: "Counter changes to chroma when a specified number of Bobbers are counted.\n\n&fExample:\nIf you &ahave&r Skyblock Addons (SBA): &f'&zBobbers: 10&r'\nIf you &cdon't have&r Skyblock Addons (SBA): &f'&f&lBobbers: &b&l10&r'",
+        category: "GUI",
+    })
+    bobberChroma = false;
+
+    @SliderProperty({
+        name: "Number of Bobbers for Chroma",
+        description: "Select the number of bobbers that can appear until it should turn chroma.\n&bBy default, this is set to 10 (max).",
+        category: "GUI",
+        min: "1",
+        max: "10"
+    })
+    bobberChromaNum = 10;
+
+    // players
+    @SwitchProperty({
         name: "Players Nearby Count",
-        description: "Shows players near you in a 30 block radius.",
+        description: "Shows players near you in a 30 block radius.\n&eThis is mainly for Legion.",
         category: "GUI", 
     })
     playersNearbyCount = false;
+
+    @SwitchProperty({
+        name: "Players Count Chroma",
+        description: "Counter changes to chroma when a specified number of Players are counted.\n\n&fExample:\nIf you &ahave&r Skyblock Addons (SBA): &f'&zPlayers: 20&r'\nIf you &cdon't have&r Skyblock Addons (SBA): &f'&f&lPlayers: &b&l20&r'",
+        category: "GUI",
+    })
+    playerChroma = false;
+
+    @SliderProperty({
+        name: "Number of Players for Chroma",
+        description: "Select the number of players that can appear until it should turn chroma.\n&bBy default, this is set to 20 (max).",
+        category: "GUI",
+        min: "0",
+        max: "20"
+    })
+    playerChromaNum = 20;
 
     @SwitchProperty({
         name: "Nearby Jawbus Count",
@@ -192,6 +234,13 @@ class Settings {
         category: "GUI", 
     })
     chargeCounter = false;
+
+    @SwitchProperty({
+        name: "Full Charge Chroma",
+        description: "If bottle is full, displayed text for full charge bottle will be chroma.\n\n&fExample:\nIf you &ahave&r Skyblock Addons (SBA): &f'Thunder Bottle: &zFULL&r'\nIf you &cdon't have&r Skyblock Addons (SBA): &f'Thunder Bottle: &b&lFULL&r'",
+        category: "GUI",
+    })
+    fullBottleChroma = false;
 
     @SwitchProperty({
         name: "Lobby Day Counter",
@@ -399,6 +448,43 @@ class Settings {
 
 
     // TIMERS
+    @SwitchProperty({
+        name: "Cake Timer", 
+        description: "Shows Timer for nearby Cake.",
+        category: "Timers",
+        subcategory: "Cake",
+    })
+    cakeTimer = false;
+
+    @ButtonProperty({
+        name: "Edit Cake Timer Location", 
+        description: "Click the button to move Cake Timer on your screen.", 
+        category: "Timers",
+        subcategory: "Cake",
+    })
+    openCakeGUI() {
+        ChatLib.command('moveCakeDisplay', true);
+    }
+
+    // flares
+    @SwitchProperty({
+        name: "Flare Timer", 
+        description: "Shows Timer for nearby Flare.",
+        category: "Timers",
+        subcategory: "Flare",
+    })
+    flareTimer = false;
+
+    @ButtonProperty({
+        name: "Edit Flare Timer Location", 
+        description: "Click the button to move Flare Timer on your screen.", 
+        category: "Timers",
+        subcategory: "Flare",
+    })
+    openFlareGUI() {
+        ChatLib.command('moveFlareDisplay', true);
+    }
+
     @ButtonProperty({
         name: "Edit Timers Location", 
         description: "Click the button to move the Timers on your screen.", 
@@ -408,6 +494,14 @@ class Settings {
     openTimerGUI() {
         ChatLib.command('movetimerdisplay', true);
     }
+
+    @SwitchProperty({
+        name: "Bonzo Mask CD Timer", 
+        description: "Shows message when CD for Bonzo Mask Clownin' Around is available.",
+        category: "Timers"
+    })
+    bonzoMaskTimer = false;
+
     @SwitchProperty({
         name: "Phoenix Rekindle CD Timer",
         description: "Shows message when CD for Phoenix Rekindle Ability is available.",
@@ -428,6 +522,41 @@ class Settings {
         category: "Timers",
     })
     mushyTimer = false;
+
+    @SwitchProperty({
+        name: "Withercloak CD Timer", 
+        description: "Shows Timer for Withercloak.",
+        category: "Timers",
+    })
+    withercloakTimer = false;
+    
+    @SwitchProperty({
+        name: "Cells Alignment CD Timer", 
+        description: "Shows Timer for Cells Alignment.",
+        category: "Timers",
+    })
+    cellsAlignTimer = false;
+    
+    @SwitchProperty({
+        name: "Firestorm CD Timer", 
+        description: "Shows Timer for Firestorm from the Fire Fury Staff.",
+        category: "Timers",
+    })
+    firestormTimer = false;
+    
+    @SwitchProperty({
+        name: "Tuba Howl CD Timer", 
+        description: "Shows Timer for Howl from the Tuba/Weirder Tuba.",
+        category: "Timers",
+    })
+    howlTimer = false;
+    
+    @SwitchProperty({
+        name: "Ragnarock Axe CD Timer", 
+        description: "Shows Timer for Ragnarock Axe Ability.",
+        category: "Timers",
+    })
+    ragAxeTimer = false;
     
     @SwitchProperty({
         name: "Flux Countdown Timer",
@@ -449,6 +578,13 @@ class Settings {
         category: "Timers", 
     })
     gummyTimer = false;
+
+    @SwitchProperty({
+        name: "Wisp-Flavored Potion Timer",
+        description: "Timer for Wisp-Flavored Potion. &7Note: this will be grouped with the timers for bonzo masks and spirit masks timers.",
+        category: "Timers", 
+    })
+    wispTimer = false;
 
     // DETECTIONS
     @SwitchProperty({
@@ -956,13 +1092,6 @@ class Settings {
 
     // DUNGEONS
     @SwitchProperty({
-        name: "Bonzo Mask CD Timer", 
-        description: "Shows message when CD for Bonzo Mask Clownin' Around is available.",
-        category: "Dungeons"
-    })
-    bonzo_cd_timer = false;
-
-    @SwitchProperty({
         name: "Melody Terminal Alert", 
         description: "Tells your party you have a melody terminal.",
         category: "Dungeons"
@@ -1071,13 +1200,22 @@ class Settings {
     })
     cataLevelUpPing = false;
 
+
+    // KUUDRA
+    @SwitchProperty({
+        name: "Better Kuudra Messages", 
+        description: "Better Kuudra Messages",
+        category: "Kuudra"
+    })
+    betterKuudraMessages = false;
+
     // SOUND/DEV
     @SelectorProperty({
         name: "RNG Sounds", 
         description: "Choose a sound to play when RNG Drops happen.", 
         category: "Sounds/Dev", 
         subcategory: "Sounds", 
-        options: ['Disfigure - Blank', 'Persona4 - Specialist', 'TVB News Theme', 'Chipi Chipi Dubi Daba', 'Default']
+        options: ['Default', 'Disfigure - Blank', 'Persona4 - Specialist', 'TVB News Theme', 'Chipi Chipi Dubi Daba']
     })
     rng_sound_sel = 0;
 
@@ -1111,6 +1249,17 @@ class Settings {
         
         // General QOL
         this.addDependency("Hide Click Stash Messages", "Better Stash Messages")
+
+        // gui
+        this.addDependency("Bobber Count Chroma", "Bobber Count")
+        this.addDependency("Number of Bobbers for Chroma", "Bobber Count Chroma")
+        
+        this.addDependency("Players Count Chroma", "Players Nearby Count")
+        this.addDependency("Number of Players for Chroma", "Players Count Chroma")
+        
+        this.addDependency("Full Charge Chroma", "Detect Charge Counter")
+
+
 
         // Display HP
         this.addDependency("Display HP: Vanquishers", "Mob HP Display Master Toggle")

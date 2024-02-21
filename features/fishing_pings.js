@@ -1,6 +1,5 @@
 /// <reference types="../../CTAutocomplete" />
 /// <reference lib="es2015" />
-import Settings from '../settings.js'
 import './fishingPings/betterFishingMsgs.js'
 import './fishingPings/trophyFish.js'
 import './fishingPings/fawePings.js'
@@ -12,6 +11,8 @@ import './fishingPings/spookyFestPings.js'
 import './fishingPings/crystalHollowFishingPings.js'
 
 
+
+import Settings from '../config1/settings.js';
 
 // toggle all fishing pings command
 register('command', () => {

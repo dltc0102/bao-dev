@@ -1,14 +1,14 @@
 /// <reference types="../../../CTAutocomplete" />
 /// <reference lib="es2015" />
 
-import Settings from "../../settings.js";
+import Settings from "../../config1/settings.js";
 import PogObject from 'PogData';
 
 import { getInSkyblock, getInGarden } from "../../utils/functions.js";
 import { constrainX, constrainY } from '../../utils/functions.js' // padding
 import { createGuiCommand, renderGuiPosition } from '../../utils/functions.js'; // gui
 import { registerWhen, timeThis } from "../../utils/utils.js";
-
+import { isSBALoaded } from "../../utils/functions.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTS
@@ -27,16 +27,15 @@ export const playerCountDisplay = new PogObject("bao-dev", {
 }, '/data/playerCountDisplay.json');
 playerCountDisplay.autosave(5);
 
+let hasSBA = false;
+register('gameLoad', () => {
+    hasSBA = isSBALoaded();
+});
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
-function updateEntityText(name, count) {
-    let colorF = count > 6 ? '&b&l' : '&b'
-    let nbEntitiesText = count > 0 ? Math.round(count) : '0';
-    return `&r${name}: ${colorF}${nbEntitiesText}`;
-}
-
 function getPlayerCount(entityPlayer) {
     const regex = /taurus/i;
     let nbPlayers = World.getAllEntitiesOfType(entityPlayer).filter(player => player.distanceTo(Player.getPlayer()) < 31);
@@ -53,11 +52,16 @@ function getPlayerCount(entityPlayer) {
 // REG: STEP
 ////////////////////////////////////////////////////////////////////////////////
 register('step', timeThis("regissterStep update playerCountText", () => {
-    if (!getInSkyblock() || !World.isLoaded()) return;
-    if (Settings.playersNearbyCount) {
-        playerCount = getPlayerCount(entityPlayer);
-        playerCountText = updateEntityText('Players', playerCount);
+    if (!getInSkyblock() || !World.isLoaded() || !Settings.playersNearbyCount) return;
+    playerCount = getPlayerCount(entityPlayer);
+    let numPlayers = playerCount > 0 ? Math.round(playerCount) : 0;
+
+    if (Settings.playerChroma && playerCount >= Settings.playerChromaNum) {
+        playerCountText = hasSBA ? `&zPlayers: ${numPlayers}` : `&rPlayers: &b&l${numPlayers}`;
+        return;
     }
+    let colorF = playerCount >= 20 ? '&b&l' : '&b';
+    playerCountText = `&rPlayers: ${colorF}${numPlayers}`;
 })).setFps(3);
 
 

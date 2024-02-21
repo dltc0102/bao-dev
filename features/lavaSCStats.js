@@ -1,7 +1,7 @@
 /// <reference types="../../CTAutocomplete" />
 /// <reference lib="es2015" />
 
-import Settings from '../settings.js';
+import Settings from '../config1/settings.js';
 import PogObject from 'PogData';
 
 import { getInSkyblock } from '../utils/functions.js'; // sb, area
@@ -83,7 +83,6 @@ lavaSCMessages.forEach(msg => {
 })
 // vanqs
 registerWhen('chat', timeThis('registerChat vanquisher spawned', (event) => {
-    baoLavaSCStats.phlegblastCatches += 1;
     baoLavaSCStats.totalCrimsonSCCatches += 1;
     baoLavaSCStats.catchesSinceThunder += 1;
     baoLavaSCStats.catchesSinceJawbus += 1;

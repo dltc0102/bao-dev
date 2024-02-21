@@ -1,7 +1,7 @@
 /// <reference types="../../../CTAutocomplete" />
 /// <reference lib="es2015" />
 
-import Settings from '../../settings.js';
+import Settings from "../../config1/settings.js";
 import Audio from '../../utils/audio.js';
 
 import { getInSkyblock } from '../../utils/functions.js'; // sb, area
@@ -202,13 +202,13 @@ register('command', timeThis("registerCommand /tps command", () => {
 ///////////////////////////////////////////////////////////////////////////////
 // #ping and /ping commands
 ///////////////////////////////////////////////////////////////////////////////
-import { getPlayerPing } from './pingDisplay.js';
+import { getHypixelPing } from '../../utils/ping.js';
 
 registerWhen('chat', timeThis('registerChat #ping command', (event) => {
     setTimeout(() => {
-        let playerPing = getPlayerPing();
+        let playerPing = getHypixelPing();
         if (playerPing === -1) {
-            getPlayerPing();
+            getHypixelPing();
             return;
         } else {
             ChatLib.command(`pc [Bao] Ping: ${playerPing}`)
@@ -220,9 +220,9 @@ register('command', () => {
     if (!Settings.pingCommands) { ChatLib.chat(`${baoUtils.modPrefix} &cYou don't have the ping commands feature turned on! This command will not work!`); return; };
 
     setTimeout(() => {
-        let playerPing = getPlayerPing();
+        let playerPing = getHypixelPing();
         if (playerPing === -1) {
-            getPlayerPing();
+            getHypixelPing();
             return;
         } else {
             ChatLib.chat(`${baoUtils.modPrefix} Ping: &b${playerPing}`)

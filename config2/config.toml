@@ -1,0 +1,52 @@
+
+["dragons/end"]
+	dragon_hitbox = true
+
+	["dragons/end".counter]
+		"drag_counter:_trackers" = false
+		dragon_counter = false
+		dragon_damage_display = false
+		"drag_counter:_spawns" = false
+
+	["dragons/end".qol]
+		end_protector_ping = false
+		better_end_messages = false
+
+[mythos]
+
+	[mythos.counter]
+		mythos_counter = false
+		mythos_mob_averages_info = false
+		mythos_mob_trackers_info = false
+		general_mythos_info = false
+		mythos_mob_drops_info = false
+		mythos_mob_kills_info = false
+
+	[mythos.qol]
+		announce_inqs = false
+		better_mythos_event_messages = false
+
+[misc]
+	mute_the_sheep = false
+
+	[misc.spooky]
+		trick_or_treat_mobs_ping = false
+		headless_horseman_ping = false
+		primal_fear_spawning_ping = false
+		solver_for_mathematician_fear = false
+		primal_fear_qol = false
+
+	[misc.broodmother]
+		broodmother_alert = true
+
+	[misc.mining]
+		bal_pet_drop_alert = false
+		scatha_pet_drop_alert = false
+		golden_goblin_alert = false
+
+	[misc.jerry]
+		hidden_jerry_ping = false
+
+	[misc.dyes]
+		dye_pings = false
+

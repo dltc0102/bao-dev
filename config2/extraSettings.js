@@ -1,6 +1,6 @@
 import { @ButtonProperty, @CheckboxProperty, Color, @ColorProperty, @PercentSliderProperty, @SelectorProperty, @SwitchProperty, @TextProperty, @Vigilant} from 'Vigilance';
 
-@Vigilant("bao-dev", "§3bao-dev", {
+@Vigilant("bao-dev/config2", "§3bao-dev extras", {
     getCategoryComparator: () => (a, b) => {
         const categories = ['Dragons/End', 'Mythos', 'Misc']
         return categories.indexOf(a.name) - categories.indexOf(b.name);
@@ -154,6 +154,14 @@ class ExtraSettings {
 
 
     // MISC
+    @SwitchProperty({
+        name: "Broodmother Alert",
+        description: "Notification for when Broodmother Spawns",
+        category: "Misc",
+        subcategory: "Broodmother"
+    })
+    broodmotherAlert = false;
+
     @SwitchProperty({
         name: "Golden Goblin Alert",
         description: "Notification for when Golden Goblin Spawns",

@@ -1,8 +1,8 @@
 /// <reference types="../../CTAutocomplete" />
 /// <reference lib="es2015" />
 
+import Settings from '../config1/settings.js';
 import RenderLib from 'RenderLib/index.js';
-import Settings from '../settings.js';
 import Audio from '../utils/audio.js'
 
 import { sendMessage } from '../utils/party.js';
@@ -54,6 +54,23 @@ const romanNumerals = {
     'M': 1000
 };
 
+// check mod loaded
+const Loader = Java.type("net.minecraftforge.fml.common.Loader");
+export const checkLoaded = (mod) => Loader.isModLoaded(mod);
+
+// has sba loaded
+export function isSBALoaded() {
+    return checkLoaded("skyblockaddons");
+}
+
+// color counter
+export function getCounterColor(num, specifiedNum, flag) {
+    let colorF = '&b';
+    if (flag) colorF = num >= specifiedNum ? '&z' : '&b';
+    if (!flag) colorF = num >= specifiedNum ? '&b&l' : '&b';
+    return colorF;
+}
+
 // inSkyblock
 export function getInSkyblock() {
     return ChatLib.removeFormatting(Scoreboard.getTitle()).includes("SKYBLOCK");
@@ -69,11 +86,20 @@ export function getCurrArea() {
     }
 }
 
+// kuudra
+export function getInKuudra() {
+    return getCurrArea() === 'Kuudra';
+}
+
 // dungeons
 export function getInDungeon() {
     return getCurrArea() === 'Catacombs';
 }
 
+// spider
+export function getInSpider() {
+    return getCurrArea() === "Spider's Den";
+}
 // dungon hub
 export function getInDHub() {
     return getCurrArea() === 'Dungeon Hub';
@@ -813,6 +839,23 @@ export function checkTimeLeft(timerObj, name, ability) {
         if (name === 'Phoenix' || name === 'Spirit Mask' || name === 'Bonzo Mask') {
             ChatLib.chat(`&eYour ${name}'s &c${ability}&e ability has been refreshed!`);
             showAlert(`&a${ability} Available`);
+
+        } else if (name === 'Wither Cloak') {
+            ChatLib.chat(`&7Your ${name}'s &b${ability}&7 ability can be used again!`);
+            showAlert(`&a${ability} Available`);
+
+        } else if (ability === 'Cells Alignment' || name === 'Tuba' || name === 'Ragnarock Axe') {
+            ChatLib.chat(`&aYour &5${name}&a's &6${ability}&a ability can be used again!`);
+            showAlert(`&a${ability} Available`);
+
+        } else if (name === 'Fire Fury Staff') {
+            ChatLib.chat(`&aYour &5${name}&a's &c${ability}&a ability can be used again!`);
+            showAlert(`&a${ability} Available`);
+
+        } else if (name === 'Cake') {
+            ChatLib.chat(`&eYour &cCentury Cake&e effects have worn off! Go refresh them!`);
+            showAlert(`&a${name} Available`);
+
         } else {
             if (name === 'Glowy Tonic') ChatLib.chat(`&eYour &2${name}&e has expired.`);
             if (name === 'Gummy Bear') ChatLib.chat(`&eYour &cReheated ${name}&e has expired.`);
@@ -829,8 +872,10 @@ export function checkTimeLeft(timerObj, name, ability) {
 export function setTimer(timerObj) {
     timerObj.used = true;
     const targetTime = new Date();
-    if (timerObj.name === 'Second Wind') {
+    if (timerObj.name === 'Second Wind' || timerObj.name === 'Wither Cloak' || timerObj.name === 'Cells Align' || timerObj.name === 'Firestorm' || timerObj.name === 'Howl' || timerObj.name === 'Ragnarock') {
         targetTime.setSeconds(targetTime.getSeconds() + timerObj.cd);
+    } else if (timerObj.name === 'Cake') {
+        targetTime.setHours(targetTime.getHours() + timerObj.cd);
     } else { 
         targetTime.setMinutes(targetTime.getMinutes() + timerObj.cd);
     }
@@ -875,11 +920,9 @@ export function drawDragonHitBox(x, y, z, colorStr) {
     RenderLib.drawEspBox(x, y, z, 16, 8, colorCode.red, colorCode.green, colorCode.blue, 1, false);
 }
 
-export function renderHPBarDisplay(textPos, currHealth, totalHealth) {
-    let baseWidth = 50;
-    let currHPWidth = ((currHealth/totalHealth) * 100) * 50;
-    new Rectangle(textPos.x, textPos.y, baseWidth, 10, ''); // total heatlh bar
-    new Rectangle(textPos.x, textPos.y, currHPWidth, 10, ''); // curr health bar
+export function drawBroodmotherBox(x, y, z, colorStr) {
+    let colorCode = colorToRgb(colorStr);
+    RenderLib.drawEspBox(x, y-1, z, 1.4, 0.9, colorCode.red, colorCode.green, colorCode.blue, 1, false);
 }
 
 export function createNearbyInfoObject() {
@@ -905,6 +948,12 @@ export function getNearbyEntities(givRegex, infoObj) {
             infoObj.totalHP = getHealth(mobMatch[2]);
             infoObj.names.push(mobName);
             infoObj.numFound = infoObj.names.length;
+        } else {
+            infoObj.found = false;
+            infoObj.currentHP = 0;
+            infoObj.totalHP = 0;
+            infoObj.names = [];
+            infoObj.numFound = 0;
         }
     });
     return nearbyEntities;
