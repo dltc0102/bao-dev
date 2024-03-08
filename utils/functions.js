@@ -1,6 +1,3 @@
-/// <reference types="../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 import Settings from '../config1/settings.js';
 import RenderLib from 'RenderLib/index.js';
 import Audio from '../utils/audio.js'
@@ -41,7 +38,8 @@ const colorNames = {
     light_purple: 'FF99CC', 
     white: 'FFFFFF', 
     black: '000000', 
-    gray: '858585'
+    gray: '858585', 
+    gold: 'FFD700',
 };
 
 const romanNumerals = {
@@ -100,6 +98,12 @@ export function getInDungeon() {
 export function getInSpider() {
     return getCurrArea() === "Spider's Den";
 }
+
+// park
+export function getInPark() {
+    return getCurrArea() === "The Park";
+}
+
 // dungon hub
 export function getInDHub() {
     return getCurrArea() === 'Dungeon Hub';
@@ -566,10 +570,20 @@ export function drawOutlineBeacon(x, y, z, givColor, alpha, seethru) {
     RenderLib.drawEspBox(x, y, z, 1, 1, colorCode.red, colorCode.green, colorCode.blue, alpha, seethru);
 }
 
-export function drawLine(x1, y1, z1, x2, y2, z2, givColor, seethru) {
+export function drawFollowerHitbox(x, y, z, givColor, alpha, seethru) {
     let colorCode = colorToRgb(givColor);
-    drawLine3d(x1, y1, z1, x2, y2, z2, colorCode.red, colorCode.green, colorCode.blue, 1, 3, seethru);
+    RenderLib.drawEspBox(x, y, z, 0.9, 1.3, colorCode.red, colorCode.green, colorCode.blue, alpha, seethru);
 }
+
+export function drawGoldenFishBox(x, y, z, givColor, alpha, seethru) {
+    let colorCode = colorToRgb(givColor);
+    RenderLib.drawEspBox(x, y, z, 0.4, 0.4, colorCode.red, colorCode.green, colorCode.blue, alpha, seethru);
+}
+
+// export function drawLine(x1, y1, z1, x2, y2, z2, givColor, seethru) {
+//     let colorCode = colorToRgb(givColor);
+//     drawLine(x1, y1, z1, x2, y2, z2, colorCode.red, colorCode.green, colorCode.blue, 1, 3, seethru);
+// }
 
 export function colorToRgb(input) {
     if (/^#([0-9A-F]{3}){1,2}$/i.test(input)) {

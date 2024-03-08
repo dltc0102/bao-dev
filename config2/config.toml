@@ -12,19 +12,48 @@
 		end_protector_ping = false
 		better_end_messages = false
 
+[garden]
+	garden_pet_drop_pings = false
+	garden_rare_drop_pings = false
+
+	[garden.pest_qol]
+		pest_qol = false
+		"pest_qol:_screen_pest_alert" = false
+		"pest_qol:_auto_set_home_pest" = false
+		"pest_qol:_esp" = false
+		"pest_qol:_autowarp_pest" = false
+
+	[garden.timers]
+		pest_repellent_timer = false
+		harbringer_potion_timer = false
+		pest_exchange_timer = false
+
+	[garden.overlays]
+		vinyl_display = false
+		display_contest_overlay = false
+		player_yaw_and_pitch = false
+		sprayonator_display = false
+
+	[garden.qol]
+		plot_map = false
+		sprayonator_no_mat_alert = false
+		hide_sprayonator_expiry_message = false
+		sprayonator_selected_mat_message_hider = false
+		better_garden_messages = false
+
 [mythos]
 
 	[mythos.counter]
 		mythos_counter = false
-		mythos_mob_averages_info = false
-		mythos_mob_trackers_info = false
-		general_mythos_info = false
-		mythos_mob_drops_info = false
-		mythos_mob_kills_info = false
+		mythos_mob_averages_info = true
+		mythos_mob_trackers_info = true
+		general_mythos_info = true
+		mythos_mob_drops_info = true
+		mythos_mob_kills_info = true
 
 	[mythos.qol]
-		announce_inqs = false
-		better_mythos_event_messages = false
+		announce_inqs = true
+		better_mythos_event_messages = true
 
 [misc]
 	mute_the_sheep = false

@@ -1,13 +1,165 @@
 import { @ButtonProperty, @CheckboxProperty, Color, @ColorProperty, @PercentSliderProperty, @SelectorProperty, @SwitchProperty, @TextProperty, @Vigilant} from 'Vigilance';
 
-@Vigilant("bao-dev/config2", "§3bao-dev extras", {
+@Vigilant("bao-dev/config1", "§3bao-extras", {
     getCategoryComparator: () => (a, b) => {
-        const categories = ['Dragons/End', 'Mythos', 'Misc']
+        const categories = ['Garden', 'Dragons/End', 'Mythos', 'Misc']
         return categories.indexOf(a.name) - categories.indexOf(b.name);
     }
 })
 
 class ExtraSettings {
+    // GARDEN
+    @SwitchProperty({
+        name: "Plot Map",
+        description: "Shows the player's position on the map relative to the garden, shows the 5x5 plot Garden has.",
+        category: "Garden",
+        subcategory: "QOL", 
+    })
+    gardenPlotMap = false;
+
+    @SwitchProperty({
+        name: "Display Contest Overlay",
+        description: "Shows whether there is a Jacob's Contest or not. [&aYes&r/&cNo&r]",
+        category: "Garden",
+        subcategory: "Overlays", 
+    })
+    gardenContestOverlay = false;
+
+    @SwitchProperty({
+        name: "Sprayonator Display",
+        description: "Shows display for selected material and possible pests for the Sprayonator.",
+        category: "Garden",
+        subcategory: "Overlays", 
+    })
+    sprayonatorDisplay = false;
+
+    @SwitchProperty({
+        name: "Vinyl Display",
+        description: "Shows display for selected Vinyl.",
+        category: "Garden",
+        subcategory: "Overlays", 
+    })
+    vinylDisplay = false;
+
+    @SwitchProperty({
+        name: "Harbringer Potion Timer",
+        description: "Shows timer for Harbringer Potion.",
+        category: "Garden",
+        subcategory: "Timers", 
+    })
+    harvPotionOverlay = false;
+
+    @SwitchProperty({
+        name: "Pest Repellent Timer",
+        description: "Shows timer for Pest Repellent.",
+        category: "Garden",
+        subcategory: "Timers", 
+    })
+    pestRepellentDisplay = false;
+
+    @SwitchProperty({
+        name: "Pest Exchange Timer",
+        description: "Shows timer for Pest Exchange. Also shows # of pests exchanged and the bonus FF you were given.",
+        category: "Garden",
+        subcategory: "Timers", 
+    })
+    pestExchangeDisplay = false;
+
+    @SwitchProperty({
+        name: "Pest QOL",
+        description: "QOL Features for Pest Hunting.",
+        category: "Garden",
+        subcategory: "Pest QOL", 
+    })
+    pestQOL = false;
+
+    @SwitchProperty({
+        name: "Pest QOL: ESP",
+        description: "Highlights an outlined box around a pest. &c(not esp through walls)",
+        category: "Garden",
+        subcategory: "Pest QOL", 
+    })
+    pestEsp = false;
+
+    @SwitchProperty({
+        name: "Pest QOL: Auto Set Home Pest",
+        description: "Automatically sets home when a pest has spawned.\n&c This is a chat macro.",
+        category: "Garden",
+        subcategory: "Pest QOL", 
+    })
+    autoSHPest = false;
+
+    @SwitchProperty({
+        name: "Pest QOL: Autowarp Pest",
+        description: "Automatically warps you to plot where the pest has spawned.\n&cThis is a chat macro.\n&cThis feature is automatically disabled when a Jacob's contest is active.",
+        category: "Garden",
+        subcategory: "Pest QOL", 
+    })
+    autoWarpPest = false;
+
+    @SwitchProperty({
+        name: "Pest QOL: Screen Pest Alert",
+        description: "Show Pest Alert on Screen",
+        category: "Garden",
+        subcategory: "Pest QOL", 
+    })
+    titlePestAlert = false;
+
+    @SwitchProperty({
+        name: "Hide Sprayonator Expiry Message",
+        description: "&7'SPRAYONATOR! This will expire in 30m'&b -- hidden",
+        category: "Garden",
+        subcategory: "QOL", 
+    })
+    hideSprayonatorExpiryMsg = false;
+
+    @SwitchProperty({
+        name: "Sprayonator No Mat Alert",
+        description: "Alerts the user that you don't have the required materials for Sprayonator.",
+        category: "Garden",
+        subcategory: "QOL", 
+    })
+    alertNoMatSprayonator = false;
+
+    @SwitchProperty({
+        name: "Sprayonator Selected Mat Message Hider",
+        description: "&7'SPRAYONATOR! Your selected material is now &e${material}&7!'&b -- hidden",
+        category: "Garden",
+        subcategory: "QOL", 
+    })
+    hideSelSprayMatMsg = false;
+
+    @SwitchProperty({
+        name: "Better Garden Messages",
+        description: "Hides/Changes the message into something simpler.\n&7[NPC] Jacob: &b messages about contest starting and anita accessory's stats will be hidden if player is not in &cGarden&b.\n&7'WARNING! Blocks that you break on this plot will not drop items while using a custom preset!'&b -- hidden\n&7'Remember, you have to be on the island for the resources to be planted!'&b -- hidden\n\n&7'Started pasting &e${presetName}&7 preset on Garden Plot - &e${plotName}&7!'\n&c.. converted to ..\n&7'PASTING: Using Preset [&e${presetName}&7] on Plot &e${plotName}&7!'",
+        category: "Garden",
+        subcategory: "QOL", 
+    })
+    betterGardenMessages = false;
+
+    @SwitchProperty({
+        name: "Garden Rare Drop Pings",
+        description: "Shows, announces and pings user when drops have been detected.\n&aDrops included for pings: Pesterminator Books, Atmospheric Filters, Burrowing Spores\n&c This is a chat macro.",
+        category: "Garden",
+    })
+    gardenRareDropPings = false;
+
+    @SwitchProperty({
+        name: "Garden Pet Drop Pings",
+        description: "Shows, announces and pings user when drops have been detected.\n&aDrops included for pings: Slug Pets, Rat Pets\n&c This is a chat macro.",
+        category: "Garden",
+    })
+    gardenPetDropPings = false;
+
+    @SwitchProperty({
+        name: "Player Yaw and Pitch",
+        description: "Shows the player's Yaw and Pitch to 4 decimal places.",
+        category: "Garden",
+        subcategory: "Overlays",
+    })
+    showPlayerYawPitch = false;
+
+
     // MYTHOS
     @SwitchProperty({
         name: "Announce Inqs",
@@ -255,6 +407,12 @@ class ExtraSettings {
         // descriptions
         this.setCategoryDescription("Misc", "Miscellaneous Pings for Event Mobs")
         this.setCategoryDescription("Mythos", "Mythological Counters and QOL Features\n&b/resetmythosbao&r to reset all mythos counter stats")
+
+        // Gardens
+        this.addDependency("Pest QOL: ESP", "Pest QOL")
+        this.addDependency("Pest QOL: Auto Set Home Pest", "Pest QOL")
+        this.addDependency("Pest QOL: Autowarp Pest", "Pest QOL")
+        this.addDependency("Pest QOL: Screen Pest Alert", "Pest QOL")
 
         // Mythos 
         this.addDependency("General Mythos Info", "Mythos Counter")

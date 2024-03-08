@@ -1,6 +1,3 @@
-/// <reference types="../../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 import Settings from "../../config1/settings.js";
 import PogObject from 'PogData';
 
@@ -33,12 +30,20 @@ register('gameLoad', () => {
     hasSBA = isSBALoaded();
 });
 
+register('worldLoad', () => {
+    hasSBA = isSBALoaded();
+});
+
+registerWhen('chat', timeThis('registerChat joining new instance', (token, event) => {
+    hasSBA = isSBALoaded();
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('Profile ID: ${token}');
+
 ////////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
 function updateBobberCount(hook) {
     return World.getAllEntitiesOfType(hook).filter(dist => dist.distanceTo(Player.getPlayer()) < 31).length;
-}
+};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -68,7 +73,7 @@ register('dragged', timeThis("registerDragged moveBobberCount", (dx, dy, x, y) =
         bobberDisplay.y = constrainY(y, 3, bobberDraggable);
     };
     bobberDisplay.save();
-}))
+}));
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +88,7 @@ registerWhen('renderOverlay', timeThis("renderOverlay bobberText draggable", () 
 }), () => getInSkyblock() && World.isLoaded());
 
 
-/////////////////
+////////////////////////////////////////////////////////////////////////////////
 register('command', () => {
     ChatLib.chat(`hasSba: ${isSBALoaded()}`);
 }).setName('checksba');

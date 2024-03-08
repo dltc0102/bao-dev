@@ -3,35 +3,20 @@ import Settings from "../../config1/settings";
 import { baoUtils, registerWhen, timeThis } from "../../utils/utils";
 import { getInSkyblock } from "../../utils/functions";
 
-const slayerDrops = [
-    // rev
 
-    // tara
+registerWhen('chat', timeThis('registerChat cancel blazeDrops', (mf, event) => {
+    cancel(event);
+}), () => getInSkyblock() && World.isLoaded()).setCriteria("RARE DROP! (Enchanted Blaze Powder) (\+${mf}% ✯ Magic Find)");
 
-    // sven
 
-    // eman
-
-    // vamp
-
-    // blaze
-    /RARE DROP! (Enchanted Blaze Powder) (\+.+% ✯ Magic Find)/,
-]
-
-slayerDrops.forEach(msg => {
-    registerWhen('chat', timeThis('', (event) => {
-        cancel(event);
-    }), () => getInSkyblock() && World.isLoaded()).setCriteria(msg);
-})
-
-const slayerMessages = [
+const slayerCompMessages = [
     /SLAYER QUEST COMPLETE!/,
     /.+ Slayer LVL .+ - Next LVL in .+ XP!/,
     /SLAYER QUEST STARTED!/,
     /» Slay .+ Combat XP worth of .+\./,
 ]
 
-slayerMessages.forEach(msg => {
+slayerCompMessages.forEach(msg => {
     registerWhen('chat', timeThis('registerChat cancel slayer messages', (event) => {
         cancel(event);
     }), () => getInSkyblock() && World.isLoaded()).setCriteria(msg).setContains();
@@ -107,5 +92,5 @@ registerWhen('chat', timeThis('', (tierLevel, slayerType, event) => {
     let combatXp = parseInt(tierLevel.replace(',', ''));
     let [slayerTier, slayerName] = getSlayerTier(combatXp, slayerType);
     let slayersLeft = Math.round(xpLeft/5);
-    ChatLib.chat(`${baoUtils.modPrefix} &a&l${slayerName.toUpperCase()} SLAYER COMPLETE! &r&b${slayersLeft} &7${slayerTier}s until Slayer Lvl &c${nextLevel}`);
+    ChatLib.chat(`&c&lSLAYER DEAD! » &r&b${slayersLeft} &7${slayerName} ${slayerTier}s until Slayer Lvl &c${nextLevel}!`);
 }), () => getInSkyblock() && World.isLoaded()).setCriteria('» Slay ${tierLevel} Combat XP worth of ${slayerType}.').setContains();

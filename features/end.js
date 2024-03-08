@@ -1,6 +1,3 @@
-/// <reference types="../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 import './end/betterEndMessages.js';
 import './end/dragonHitBox.js';
 import './end/dragonCounter.js';

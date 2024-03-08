@@ -1,8 +1,6 @@
-/// <reference types="../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 import Settings from '../config1/settings.js';
 import PogObject from 'PogData';
+
 
 /**
  * Shows a chat message only visible to the client
@@ -17,6 +15,7 @@ export function debug(message) {
     }
 }
 
+
 /**
  * Shows Title that alerts the user when event happens.
  * @param {string} title 
@@ -25,6 +24,7 @@ export function debug(message) {
 export function showAlert(someTitle) {
     Client.showTitle(someTitle, '', 1, 30, 1);
 }
+
 
 export function removeFromArray(array, value) {
     return array.filter(function (etu) {
@@ -95,6 +95,26 @@ export function timeThis(key, callback) {
     }
 }
 
+// function inRunTime(curr, start, end) {
+//     return (curr >= start && curr < target);
+// }
+
+// const runStore = {};
+// export function countThis(key, callback) {
+//     let count = 0;
+//     let start = Date.now();
+//     let target = new Date(start + 5000);
+//     return function(...args) {
+//         let curr = Date.now();
+//         let running = inRunTime(curr, start, target);
+//         if (running) count += 1;
+//         if (!running) runStore[key] = count;
+//     }
+
+// }
+
+
+
 function nsToMs(ns) {
     return ns / 1000000;
 }
@@ -117,26 +137,6 @@ register('command', () => {
     console.log('------------------------------------------------------------------------------------');
     console.log('')
 }).setName('logtimestore', true);
-
-
-// let stepCount = 4;
-// register('step', () => {
-//     if (stepCount > 1) { stepCount -= 1; return; };
-//     if (stepCount !== 1);
-//     let currTime = new Date();
-//     let formattedDate = `${(currTime.getMonth() + 1).toString().padStart(2, '0')}/${currTime.getDate().toString().padStart(2, '0')}/${currTime.getFullYear()} ${currTime.getHours().toString().padStart(2, '0')}:${currTime.getMinutes().toString().padStart(2, '0')}`;
-//     console.log(formattedDate);
-//     console.log('');
-
-//     Object.entries(timeStore).forEach(([key, value]) => {
-//         console.log(`${key}: ${value} (${nsToMs(value)}ms || ${nsToS(value)}s)`);
-
-//     });
-//     console.log('')
-//     console.log('------------------------------------------------------------------------------------');
-//     console.log('');
-//     stepCount = 4;
-// }).setFps(1);
 
 register('command', () => {
     console.log("Number limits:", Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);

@@ -1,6 +1,3 @@
-/// <reference types="../../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 import ExtraSettings from "../../config2/extraSettings.js";
 import PogObject from 'PogData';
 

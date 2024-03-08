@@ -1,6 +1,3 @@
-/// <reference types="../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 import Settings from '../config1/settings.js';
 import PogObject from 'PogData';
 
@@ -12,6 +9,40 @@ import { baoLavaSCStats } from './lavaSCStats.js';
 import { getInCI, getInJerry, getInIsland } from '../utils/functions.js';
 import { registerWhen, timeThis } from '../utils/utils.js';
 
+
+// register('command', () => {
+//     baoLavaSCStats.phlegblastCatches = 1;
+//     baoLavaSCStats.magmaSlugCatches = 21649;
+//     baoLavaSCStats.moogmaCatches = 16573;
+//     baoLavaSCStats.lavaLeechCatches = 8234;
+//     baoLavaSCStats.pyroclasticWormCatches = 5592;
+//     baoLavaSCStats.lavaFlameCatches = 5025;
+//     baoLavaSCStats.fireEelsCatches = 4025;
+//     baoLavaSCStats.taurusCatches = 2412;
+//     baoLavaSCStats.thunderCatches = 975;
+//     baoLavaSCStats.lordJawbusCatches = 345;
+
+//     baoWaterSCStats.squidCatches = 19233;
+//     baoWaterSCStats.nightSquidCatches = 855;
+//     baoWaterSCStats.seaWalkerCatches = 10890;
+//     baoWaterSCStats.seaGuardianCatches = 8495;
+//     baoWaterSCStats.seaWitchCatches = 9530;
+//     baoWaterSCStats.seaArcherCatches = 7512;
+//     baoWaterSCStats.rotdCatches = 5768;
+//     baoWaterSCStats.catfishCatches = 3849;
+//     baoWaterSCStats.carrotKingCatches = 218;
+//     baoWaterSCStats.seaLeechCatches = 2531;
+//     baoWaterSCStats.guardianDefenderCatches = 2007;
+//     baoWaterSCStats.deepSeaProtectorCatches = 1320;
+//     baoWaterSCStats.waterHydraCatches = 708;
+//     baoWaterSCStats.seaEmperorCatches = 211;
+//     baoWaterSCStats.agarimooCatches = 439;
+//     baoWaterSCStats.abyssalMinerCatches = 2;
+//     baoWaterSCStats.oasisRabbitCatches = 23;
+//     baoWaterSCStats.oasisSheepCatches = 56;
+//     baoWaterSCStats.poisonedWaterWormCatches = 13;
+//     baoWaterSCStats.waterWormCatches = 10;
+// }).setName('setbiscuitstats');
 
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTS

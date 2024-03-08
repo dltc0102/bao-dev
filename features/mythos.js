@@ -1,6 +1,3 @@
-/// <reference types="../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 import ExtraSettings from "../config2/extraSettings.js";
 import Audio from '../utils/audio.js';
 import PogObject from 'PogData';
@@ -146,7 +143,7 @@ const mythosMessages = [
     /Wow! You dug out .+ coins!/, 
     /You sold Ancient Claw x.+ for .+ Coins!/,
     /You sold Ancient Claw x.+ for .+ Coin!/,
-    /You gut out a Griffin Burrow!/, 
+    /You dug out a Griffin Burrow!/, 
     /You finished the Griffin burrow chain! (4\/4)/, 
 
     // mob stats
@@ -161,7 +158,7 @@ const mythosMessages = [
 mythosMessages.forEach(msg => {
     registerWhen('chat', timeThis("registerChat cancel mythosMessages", (event) => {
         cancel(event);
-    }), () => ExtraSettings.betterMythosMessages && shouldHandleMythosRegs()).setCriteria(msg);
+    }), () => ExtraSettings.betterMythosMessages && shouldHandleMythosRegs()).setCriteria(msg).setContains();
 });
 
 

@@ -1,5 +1,3 @@
-/// <reference types="../../CTAutocomplete" />
-/// <reference lib="es2015" />
 import './fishingPings/betterFishingMsgs.js'
 import './fishingPings/trophyFish.js'
 import './fishingPings/fawePings.js'

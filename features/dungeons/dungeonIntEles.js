@@ -1,6 +1,3 @@
-/// <reference types="../../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 import Settings from "../../config1/settings.js";
 
 import { registerWhen, timeThis } from "../../utils/utils";

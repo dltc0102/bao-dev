@@ -1,6 +1,3 @@
-/// <reference types="../../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 import Settings from "../../config1/settings.js";
 import Audio from '../../utils/audio.js';
 
@@ -31,11 +28,22 @@ register('command', () => {
 }).setName('checkpl');
 
 
+
+///////////////////////////////////////////////////////////////////////////////
+// #help
+///////////////////////////////////////////////////////////////////////////////
+registerWhen('chat', timeThis('', (playerName, event) => {
+    sendMessage("[Bao Commands] #w :: #warp :: #pai :: #ko :: #pt :: /warpexc")
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('Party > ${playerName}: #help');
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // #warp 
 ///////////////////////////////////////////////////////////////////////////////
 let canWarp = false;
 const warpMessages = [
+    /Party > .+: !warp/, 
+    /Party > .+: !w/, 
     /Party > .+: #warp/, 
     /Party > .+: #w/, 
 ];
@@ -49,12 +57,11 @@ warpMessages.forEach(msg => {
     }), () => Settings.autoWarp && !canWarp && shouldHandlePartyCommands()).setCriteria(msg);
 });
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // Auto notifier for #warp when player joins 
 ///////////////////////////////////////////////////////////////////////////////
 registerWhen('chat', timeThis("registerChat type #w or #warp when ready", (playerName, event) => {
-    sendMessage('[!] type #warp or #w for warp when r [!]')
+    sendMessage('( ﾟ◡ﾟ)/  Type #warp or #w when ready!')
     partyAudio.playDefaultSound();
 }), () => Settings.autoNotifyWarp && shouldHandlePartyCommands()).setCriteria('${playerName} joined the party.');
 
@@ -62,7 +69,7 @@ registerWhen('chat', timeThis("registerChat type #w or #warp when ready", (playe
 ///////////////////////////////////////////////////////////////////////////////
 // #pta
 ///////////////////////////////////////////////////////////////////////////////
-registerWhen('chat', timeThis("registerChat #pta command", (playerName, event) => {
+function considerPTA() {
     let partyList = getPList();
     if (partyList.length === 1) { 
         setTimeout(() => {
@@ -79,7 +86,17 @@ registerWhen('chat', timeThis("registerChat #pta command", (playerName, event) =
         randomIdx = Math.floor(Math.random() * partyList.length);
     } while (partyList[randomIdx] === excludedName);
     ChatLib.command(`p transfer ${partyList[randomIdx]}`);
-}), () => Settings.ptaCommand && shouldHandlePartyCommands()).setCriteria('Party > ${playerName}: #pta');
+}
+
+const ptaMessages = [
+    /Party > .+: #pta/, 
+    /Party > .+: !pta/
+]
+ptaMessages.forEach(msg => {
+    registerWhen('chat', timeThis("registerChat #pta command", (event) => {
+        considerPTA();
+    }), () => Settings.ptaCommand && shouldHandlePartyCommands()).setCriteria(msg);
+})
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -89,6 +106,11 @@ registerWhen('chat', timeThis("registerChat #pai command", (playerName, event) =
     ChatLib.command('p settings allinvite'); 
     partyAudio.playDefaultSound();
 }), () => Settings.paiCommand && shouldHandlePartyCommands()).setCriteria('Party > ${playerName}: #pai');
+
+registerWhen('chat', timeThis("registerChat #pai command", (playerName, event) => {
+    ChatLib.command('p settings allinvite'); 
+    partyAudio.playDefaultSound();
+}), () => Settings.paiCommand && shouldHandlePartyCommands()).setCriteria('Party > ${playerName}: !pai');
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -100,6 +122,12 @@ registerWhen('chat', timeThis("registerChat #ko command", (playerName, event) =>
 }), () => Settings.koCommand && shouldHandlePartyCommands()).setCriteria('Party > ${playerName}: #ko');
 
 
+registerWhen('chat', timeThis("registerChat #ko command", (playerName, event) => {
+    ChatLib.command('p kickoffline');
+    partyAudio.playDefaultSound();
+}), () => Settings.koCommand && shouldHandlePartyCommands()).setCriteria('Party > ${playerName}: !ko');
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // #pt / #transfer 
 ///////////////////////////////////////////////////////////////////////////////
@@ -107,6 +135,21 @@ registerWhen('chat', timeThis("registerChat #pt command", (playerName, event) =>
     ChatLib.command(`p transfer ${stripRank(playerName)}`);
     partyAudio.playDefaultSound();
 }), () => shouldHandlePartyCommands()).setCriteria('Party > ${playerName}: #pt');
+
+registerWhen('chat', timeThis("registerChat #pt command", (playerName, event) => {
+    ChatLib.command(`p transfer ${stripRank(playerName)}`);
+    partyAudio.playDefaultSound();
+}), () => shouldHandlePartyCommands()).setCriteria('Party > ${playerName}: !pt');
+
+registerWhen('chat', timeThis("registerChat #pt command", (playerName, toPlayer, event) => {
+    ChatLib.command(`p transfer ${toPlayer}`);
+    partyAudio.playDefaultSound();
+}), () => shouldHandlePartyCommands()).setCriteria('Party > ${playerName}: #pt ${toPlayer}');
+
+registerWhen('chat', timeThis("registerChat #pt command", (playerName, toPlayer, event) => {
+    ChatLib.command(`p transfer ${toPlayer}`);
+    partyAudio.playDefaultSound();
+}), () => shouldHandlePartyCommands()).setCriteria('Party > ${playerName}: !pt ${toPlayer}');
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -147,85 +190,85 @@ register("command", timeThis("registerCommand warpexc command", (...args) => {
 ///////////////////////////////////////////////////////////////////////////////
 // #tps
 ///////////////////////////////////////////////////////////////////////////////
-import { getTps } from '../../utils/tps.js';
+// import { getTps } from '../../utils/tps.js';
 
-let accumulatedTpsSum = 0;
-let currentStepCount = 0;
-const batchSize = 100;
-const tpsDelay = 50;
+// let accumulatedTpsSum = 0;
+// let currentStepCount = 0;
+// const batchSize = 100;
+// const tpsDelay = 50;
 
-function calculateAverageTps(outputFunction, prefix, resultF) {
-    currentStepCount++;
-    accumulatedTpsSum += getTps();
+// function calculateAverageTps(outputFunction, prefix, resultF) {
+//     currentStepCount++;
+//     accumulatedTpsSum += getTps();
 
-    if (currentStepCount >= batchSize) {
-        const message = `${prefix} TPS: ${resultF}${(accumulatedTpsSum / batchSize).toFixed(1)}`;
-        outputFunction(message);
-        currentStepCount = 0;
-        accumulatedTpsSum = 0;
-        return;
-    }
+//     if (currentStepCount >= batchSize) {
+//         const message = `${prefix} TPS: ${resultF}${(accumulatedTpsSum / batchSize).toFixed(1)}`;
+//         outputFunction(message);
+//         currentStepCount = 0;
+//         accumulatedTpsSum = 0;
+//         return;
+//     }
 
-    setTimeout(() => calculateAverageTps(outputFunction, prefix, resultF), tpsDelay);
-}
+//     setTimeout(() => calculateAverageTps(outputFunction, prefix, resultF), tpsDelay);
+// }
 
-registerWhen('chat', timeThis('registerChat #tps command', (playerName, event) => {
-    if (currentStepCount === 0) {
-        setTimeout(() => {
-            ChatLib.chat(`${baoUtils.modPrefix} &7Calculating TPS... (3 seconds)`);
-            calculateAverageTps(sendMessage, '[Bao]', '');
-        }, 10);
-    } else {
-        setTimeout(() => {
-            ChatLib.chat(`${baoUtils.modPrefix} TPS is taking a while... (be patient!)`);
-        }, 10);
-    }
-}), () => Settings.tpsCommands && getInSkyblock() && World.isLoaded()).setCriteria("Party > ${playerName}: #tps");
+// registerWhen('chat', timeThis('registerChat #tps command', (playerName, event) => {
+//     if (currentStepCount === 0) {
+//         setTimeout(() => {
+//             ChatLib.chat(`${baoUtils.modPrefix} &7Calculating TPS... (3 seconds)`);
+//             calculateAverageTps(sendMessage, '[Bao]', '');
+//         }, 10);
+//     } else {
+//         setTimeout(() => {
+//             ChatLib.chat(`${baoUtils.modPrefix} TPS is taking a while... (be patient!)`);
+//         }, 10);
+//     }
+// }), () => Settings.tpsCommands && getInSkyblock() && World.isLoaded()).setCriteria("Party > ${playerName}: #tps");
 
-register('command', timeThis("registerCommand /tps command", () => {
-    if (!Settings.tpsCommands) { ChatLib.chat(`${baoUtils.modPrefix} &cYou don't have the ping commands feature turned on! This command will not work!`); return; };
+// register('command', timeThis("registerCommand /tps command", () => {
+//     if (!Settings.tpsCommands) { ChatLib.chat(`${baoUtils.modPrefix} &cYou don't have the ping commands feature turned on! This command will not work!`); return; };
     
-    if (currentStepCount === 0) {
-        setTimeout(() => {
-            ChatLib.chat(`${baoUtils.modPrefix} &7Calculating TPS... (3 seconds)`);
-            calculateAverageTps(ChatLib.chat, `${baoUtils.modPrefix}`, '&b');
-        }, 10);
-    } else {
-        setTimeout(() => {
-            ChatLib.chat(`${baoUtils.modPrefix} TPS is taking a while... (be patient!)`);
-        }, 10);
-    }
-})).setName('tps');
+//     if (currentStepCount === 0) {
+//         setTimeout(() => {
+//             ChatLib.chat(`${baoUtils.modPrefix} &7Calculating TPS... (3 seconds)`);
+//             calculateAverageTps(ChatLib.chat, `${baoUtils.modPrefix}`, '&b');
+//         }, 10);
+//     } else {
+//         setTimeout(() => {
+//             ChatLib.chat(`${baoUtils.modPrefix} TPS is taking a while... (be patient!)`);
+//         }, 10);
+//     }
+// })).setName('tps');
 
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // #ping and /ping commands
 ///////////////////////////////////////////////////////////////////////////////
-import { getHypixelPing } from '../../utils/ping.js';
+// import { getHypixelPing } from '../../utils/ping.js';
 
-registerWhen('chat', timeThis('registerChat #ping command', (event) => {
-    setTimeout(() => {
-        let playerPing = getHypixelPing();
-        if (playerPing === -1) {
-            getHypixelPing();
-            return;
-        } else {
-            ChatLib.command(`pc [Bao] Ping: ${playerPing}`)
-        }
-    }, 100);
-}), () => Settings.pingCommands && getInSkyblock() && World.isLoaded()).setCriteria("Party > ${playerName}: #ping");
+// registerWhen('chat', timeThis('registerChat #ping command', (event) => {
+//     setTimeout(() => {
+//         let playerPing = getHypixelPing();
+//         if (playerPing === -1) {
+//             getHypixelPing();
+//             return;
+//         } else {
+//             ChatLib.command(`pc [Bao] Ping: ${playerPing}`)
+//         }
+//     }, 100);
+// }), () => Settings.pingCommands && getInSkyblock() && World.isLoaded()).setCriteria("Party > ${playerName}: #ping");
 
-register('command', () => {
-    if (!Settings.pingCommands) { ChatLib.chat(`${baoUtils.modPrefix} &cYou don't have the ping commands feature turned on! This command will not work!`); return; };
+// register('command', () => {
+//     if (!Settings.pingCommands) { ChatLib.chat(`${baoUtils.modPrefix} &cYou don't have the ping commands feature turned on! This command will not work!`); return; };
 
-    setTimeout(() => {
-        let playerPing = getHypixelPing();
-        if (playerPing === -1) {
-            getHypixelPing();
-            return;
-        } else {
-            ChatLib.chat(`${baoUtils.modPrefix} Ping: &b${playerPing}`)
-        }
-    }, 100);
-}).setName('ping');
+//     setTimeout(() => {
+//         let playerPing = getHypixelPing();
+//         if (playerPing === -1) {
+//             getHypixelPing();
+//             return;
+//         } else {
+//             ChatLib.chat(`${baoUtils.modPrefix} Ping: &b${playerPing}`)
+//         }
+//     }, 100);
+// }).setName('ping');

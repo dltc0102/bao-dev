@@ -1,6 +1,3 @@
-/// <reference types="../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 class Audio {
 
     playChipiSong() {
@@ -34,6 +31,10 @@ class Audio {
     playDutSound() {
         this.sounds.dut.play();
     }
+
+    playFlashSound() {
+        this.sounds.gfish.play();
+    }
     
     constructor() {
         this.sounds = {
@@ -44,7 +45,8 @@ class Audio {
             rngBis: new Sound({source: "tvb-news-theme.ogg"}),
             drink: new Sound({source: "drinking-sound-effect.ogg"}), 
             dut: new Sound({source: "dut-sound-effect.ogg"}), 
-            chipi: new Sound({source: "chipichipi.ogg"})
+            chipi: new Sound({source: "chipichipi.ogg"}),
+            gfish: new Sound({source: "Flash.ogg"}),
         };
     }
 }

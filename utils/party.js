@@ -1,6 +1,3 @@
-/// <reference types="../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 import { debug, determinePlayerRankColor, baoUtils, registerWhen, timeThis } from '../utils/utils.js';
 
 ////////////////////////////////////////////////////////////////////////////////

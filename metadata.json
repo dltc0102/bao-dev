@@ -9,7 +9,6 @@
         "Vigilance", 
         "RenderLib", 
         "Elementa", 
-        "BloomCore",
-        "CTAutocomplete"
+        "BloomCore"
     ]
 }

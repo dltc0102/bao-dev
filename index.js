@@ -1,32 +1,31 @@
-/// <reference types="../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 import Settings from './config1/settings.js';
 import ExtraSettings from './config2/extraSettings.js';
 
 import { baoUtils, baoFirstTime } from './utils/utils.js';
 
 // bao main
-import './features/dungeons.js'
-import './features/generalQOL.js'
-import './features/fishing_overlays.js'
-import './features/displayHP.js'
-import './features/fishing_pings.js'
-import './features/garden.js'
-import './features/timers.js'
-import './features/mainSCStats.js'
-import './features/waterSCStats.js'
-import './features/lavaSCStats.js'
-import './features/detections.js'
-import './features/kuudra.js'
-import './features/slayers.js'
+// import './features/dungeons.js'
+import './features/generalQOL.js' // 1
+// import './features/fishing_overlays.js' // 1
+// import './features/displayHP.js' // 1
+// import './features/fishing_pings.js' // 1
+// import './features/garden.js'
+// import './features/timers.js' // 1
+// import './features/mainSCStats.js' // 1
+// import './features/waterSCStats.js' // 1
+// import './features/lavaSCStats.js' // 1
+// // import './features/detections.js'
+// import './features/kuudra.js'
+// import './features/slayers.js' // 1
 
-// bao extras
-import './features/end.js'
-import './features/mythos.js'
-import './features/misc.js'
+// // bao extras
+// import './features/end.js'
+// import './features/mythos.js'
+// import './features/misc.js'
 
 // import './features/dev.js'
+import './features/tempDetections.js' // 1
+// import './utils/ignore.js' // 1
 
 // import './utils/cake.js';
 // import './utils/inventoryLog.js'
@@ -178,14 +177,14 @@ register('command', () => {
     Settings.fawePings = true;
 
     // counter
-    // Settings.fishing_counter = true;
-    // Settings.kills_fishingcounter = true;
-    // Settings.mob_since_fishingcounter = true;
-    // Settings.drops_fishingcounter = true;
-    // Settings.tracker_fishingcounter = true;
-    // Settings.avgs_fishingcounter = true;
-    // Settings.elapsed_sincefishingcounter = true;
-    // Settings.specials_fishingcounter = true;
+    Settings.fishing_counter = true;
+    Settings.kills_fishingcounter = true;
+    Settings.mob_since_fishingcounter = true;
+    Settings.drops_fishingcounter = true;
+    Settings.tracker_fishingcounter = true;
+    Settings.avgs_fishingcounter = true;
+    Settings.elapsed_sincefishingcounter = true;
+    Settings.specials_fishingcounter = true;
     
     // garden
 

@@ -1,6 +1,3 @@
-/// <reference types="../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 // dungeon cleaning
 import './dungeons/dungeonIntEles.js';
 import './dungeons/dungeonMsgQOL.js';

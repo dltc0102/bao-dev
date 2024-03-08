@@ -1,4 +1,75 @@
 
+[timers]
+	tuba_howl_cd_timer = false
+	ragnarock_axe_cd_timer = false
+	mushy_tonic_timer = true
+	withercloak_cd_timer = false
+	spirit_mask_cd_timer = true
+	flux_countdown_timer = true
+	"king's_scent_timer" = true
+	wisp-flavored_potion_timer = true
+	phoenix_rekindle_cd_timer = true
+	reheated_gummy_bear_timer = true
+	cells_alignment_cd_timer = false
+	bonzo_mask_cd_timer = false
+	firestorm_cd_timer = false
+
+	[timers.flare]
+		flare_timer = false
+
+	[timers.cake]
+		cake_timer = false
+
+[dungeons]
+	"toggle:_player_actions" = true
+	class_specific_pings = true
+	full_inventory_alert = true
+	"toggle:_qol" = true
+	"class/cata_lvl_up_ping" = false
+	melody_terminal_alert = true
+	display_dungeon_blessings = true
+	better_dungeon_messages = true
+	join_dungeon_shortcuts = true
+	"toggle:_system_notifications" = true
+	"toggle:_interactive_elements" = true
+	party_finder_message_shortener = true
+	fire_freeze_timers = true
+
+	[dungeons.secrets]
+		"display_secrets_per_run_(per_session)" = true
+
+["dragons/end"]
+	dragon_hitbox = false
+
+	["dragons/end".counter]
+		"drag_counter:_trackers" = false
+		dragon_counter = false
+		dragon_damage_display = false
+		"drag_counter:_spawns" = false
+
+	["dragons/end".qol]
+		end_protector_ping = false
+		better_end_messages = false
+
+[fishing_qol]
+	full_thunder_bottle_ping = true
+
+	[fishing_qol.message_hiders]
+		hide_sc_messages = true
+		better_fishing_messages = true
+
+[counter]
+
+	[counter.overlay]
+		"counter:_drops" = false
+		fishing_counter = false
+		"counter:_time_elapsed_since_[rng]" = false
+		"counter:_kills" = false
+		"counter:_special_funny_counters" = false
+		"counter:_mob_since_[rng]" = false
+		"counter:_trackers" = false
+		"counter:_averages" = false
+
 [general_qol]
 
 	[general_qol.messages_qol]
@@ -26,8 +97,10 @@
 		kicked_notifier = true
 
 [hp_display]
+	"display_hp:_abyssal_miners" = false
 	"display_hp:_phantom_fishers" = true
 	mob_hp_display_master_toggle = true
+	"display_hp:_plhlegblasts" = false
 	"display_hp:_vanquishers" = true
 	"display_hp:_yeti" = true
 	"display_hp:_mythos_mobs" = true
@@ -40,52 +113,14 @@
 	"display_hp:_thunder" = true
 	"display_hp:_carrot_kings" = true
 
-[timers]
-	tuba_howl_cd_timer = false
-	ragnarock_axe_cd_timer = false
-	mushy_tonic_timer = true
-	withercloak_cd_timer = false
-	spirit_mask_cd_timer = true
-	flux_countdown_timer = true
-	"king's_scent_timer" = true
-	wisp-flavored_potion_timer = true
-	phoenix_rekindle_cd_timer = true
-	reheated_gummy_bear_timer = true
-	cells_alignment_cd_timer = false
-	bonzo_mask_cd_timer = false
-	firestorm_cd_timer = false
-
-	[timers.flare]
-		flare_timer = false
-
-	[timers.cake]
-		cake_timer = false
-
 [kuudra]
 	better_kuudra_messages = true
-
-[dungeons]
-	"toggle:_player_actions" = true
-	class_specific_pings = true
-	full_inventory_alert = true
-	"toggle:_qol" = true
-	"class/cata_lvl_up_ping" = false
-	melody_terminal_alert = true
-	display_dungeon_blessings = true
-	better_dungeon_messages = true
-	join_dungeon_shortcuts = true
-	"toggle:_system_notifications" = true
-	"toggle:_interactive_elements" = true
-	party_finder_message_shortener = true
-	fire_freeze_timers = true
-
-	[dungeons.secrets]
-		"display_secrets_per_run_(per_session)" = true
 
 [gui]
 	lobby_day_counter = true
 	ping_display = true
 	detect_charge_counter = true
+	server_health_display = false
 	tps_display = true
 	bobber_count = true
 	bobber_count_chroma = true
@@ -134,24 +169,19 @@
 	["sounds/dev".sounds]
 		rng_sounds = 0
 
-[fishing_qol]
-	full_thunder_bottle_ping = true
+[mythos]
 
-	[fishing_qol.message_hiders]
-		hide_sc_messages = true
-		better_fishing_messages = true
+	[mythos.counter]
+		mythos_counter = false
+		mythos_mob_averages_info = false
+		mythos_mob_trackers_info = false
+		general_mythos_info = false
+		mythos_mob_drops_info = false
+		mythos_mob_kills_info = false
 
-[counter]
-
-	[counter.overlay]
-		"counter:_drops" = false
-		fishing_counter = false
-		"counter:_time_elapsed_since_[rng]" = false
-		"counter:_kills" = false
-		"counter:_special_funny_counters" = false
-		"counter:_mob_since_[rng]" = false
-		"counter:_trackers" = false
-		"counter:_averages" = false
+	[mythos.qol]
+		announce_inqs = false
+		better_mythos_event_messages = false
 
 [fishing_pings]
 	toggle_trophy_fish_messages = true
@@ -204,4 +234,28 @@
 
 	[detections.thunder]
 		"detection:_thunder" = true
+
+[misc]
+	mute_the_sheep = false
+
+	[misc.spooky]
+		trick_or_treat_mobs_ping = false
+		headless_horseman_ping = false
+		primal_fear_spawning_ping = false
+		solver_for_mathematician_fear = false
+		primal_fear_qol = false
+
+	[misc.broodmother]
+		broodmother_alert = false
+
+	[misc.mining]
+		bal_pet_drop_alert = false
+		scatha_pet_drop_alert = false
+		golden_goblin_alert = false
+
+	[misc.jerry]
+		hidden_jerry_ping = false
+
+	[misc.dyes]
+		dye_pings = false
 

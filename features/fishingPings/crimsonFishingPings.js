@@ -1,8 +1,6 @@
-/// <reference types="../../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 import Settings from "../../config1/settings.js";
 import Audio from "../../utils/audio";
+import PogObject from '../../../PogData';
 
 import { getInSkyblock, getInCI } from "../../utils/functions";
 import { registerWhen, showAlert, timeThis } from "../../utils/utils";
@@ -71,13 +69,12 @@ function getRandomCILoc() {
 // }), () => getInCI() && getInSkyblock() && World.isLoaded()).setCriteria(' ☠ You were killed by Lord Jawbus.');
 
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // JAWBUS: VIAL
 ////////////////////////////////////////////////////////////////////////////////
 registerWhen('chat', timeThis("registerChat vial ping", (mf, event) => {
     sendMessage(`ay RARE DROP! Radioactive Vial (+${mf}% ✯ Magic Find)`);
-    showAlert(rvialTitle)
+    showAlert(rvialTitle);
     playSound();
 }), () => Settings.jawbusPing && Settings.rvialPing && shouldHandleCrimsonFishingPings()).setCriteria("RARE DROP! Radioactive Vial (+${mf}% ✯ Magic Find)");
 

@@ -2,7 +2,7 @@ import { @ButtonProperty, @CheckboxProperty, Color, @ColorProperty, @PercentSlid
 
 @Vigilant("bao-dev/config1", "§3bao-dev", {
     getCategoryComparator: () => (a, b) => {
-        const categories = ['Information', 'General QOL', 'GUI', 'HP Display', 'Timers', 'Detections', 'Fishing QOL', 'Fishing Pings', 'Counter', 'Garden', 'Dungeons', , 'Kuudra', 'Sounds/Dev']
+        const categories = ['Information', 'General QOL', 'GUI', 'HP Display', 'Timers', 'Detections', 'Fishing Overlays', 'Fishing QOL', 'Fishing Pings', 'Counter', 'Garden', 'Dungeons', , 'Kuudra', 'Sounds/Dev']
         return categories.indexOf(a.name) - categories.indexOf(b.name);
     }
 })
@@ -250,19 +250,11 @@ class Settings {
     lobbyDayCount = false;
 
     @SwitchProperty({
-        name: "Ping Display",
-        description: "Shows Ping Display.",
+        name: "Server Health Display",
+        description: "Server Health Display shows the User's Ping and TPS of the server instance.",
         category: "GUI",
     })
-    showPingDisplay = false;
-
-    @SwitchProperty({
-        name: "TPS Display",
-        description: "Shows TPS Display.",
-        category: "GUI",
-    })
-    showTpsDisplay = false;
-
+    showServerHealthDisplay = false;
 
     @ButtonProperty({
         name: "Edit Bobber Count Location", 
@@ -325,25 +317,15 @@ class Settings {
     }
 
     @ButtonProperty({
-        name: "Edit Ping Display Location", 
-        description: "Click the button to move the Ping Display on your screen.", 
+        name: "Edit Server Health Display Location", 
+        description: "Click the button to move the Server Health Display on your screen.", 
         category: "GUI", 
         subcategory: "Edit Overlays", 
     })
     openPingDisplay() {
-        ChatLib.command('moveping', true)
+        ChatLib.command('moveserverhealthdisplay', true)
     }
 
-    @ButtonProperty({
-        name: "Edit TPS Display Location", 
-        description: "Click the button to move the TPS Display on your screen.", 
-        category: "GUI", 
-        subcategory: "Edit Overlays", 
-    })
-    openTpsGUI() {
-        ChatLib.command('movetps', true)
-    }
-    
     // HP DISPLAY
     @ButtonProperty({
         name: "Edit HP Display Location", 
@@ -405,6 +387,13 @@ class Settings {
     thunder_hp = false;
 
     @SwitchProperty({
+        name: "Display HP: Plhlegblasts",
+        description: "Toggles health display for Plhlegblast",
+        category: "HP Display",
+    })
+    plhleg_hp = false;
+
+    @SwitchProperty({
         name: "Display HP: Great Whites",
         description: "Toggles health display for Great Whites",
         category: "HP Display",
@@ -445,6 +434,13 @@ class Settings {
         category: "HP Display",
     })
     phantom_fisher_hp = false;
+
+    @SwitchProperty({
+        name: "Display HP: Abyssal Miners",
+        description: "Toggles health display for Abyssal Miner",
+        category: "HP Display",
+    })
+    abyssal_miner_hp = false;
 
 
     // TIMERS
@@ -938,158 +934,6 @@ class Settings {
     specials_fishingcounter = false;
 
 
-    // GARDEN
-    @SwitchProperty({
-        name: "Plot Map",
-        description: "Shows the player's position on the map relative to the garden, shows the 5x5 plot Garden has.",
-        category: "Garden",
-        subcategory: "QOL", 
-    })
-    gardenPlotMap = false;
-
-    @SwitchProperty({
-        name: "Display Contest Overlay",
-        description: "Shows whether there is a Jacob's Contest or not. [&aYes&r/&cNo&r]",
-        category: "Garden",
-        subcategory: "Overlays", 
-    })
-    gardenContestOverlay = false;
-
-    @SwitchProperty({
-        name: "Sprayonator Display",
-        description: "Shows display for selected material and possible pests for the Sprayonator.",
-        category: "Garden",
-        subcategory: "Overlays", 
-    })
-    sprayonatorDisplay = false;
-
-    @SwitchProperty({
-        name: "Vinyl Display",
-        description: "Shows display for selected Vinyl.",
-        category: "Garden",
-        subcategory: "Overlays", 
-    })
-    vinylDisplay = false;
-
-    @SwitchProperty({
-        name: "Harbringer Potion Timer",
-        description: "Shows timer for Harbringer Potion.",
-        category: "Garden",
-        subcategory: "Timers", 
-    })
-    harvPotionOverlay = false;
-
-    @SwitchProperty({
-        name: "Pest Repellent Timer",
-        description: "Shows timer for Pest Repellent.",
-        category: "Garden",
-        subcategory: "Timers", 
-    })
-    pestRepellentDisplay = false;
-
-    @SwitchProperty({
-        name: "Pest Exchange Timer",
-        description: "Shows timer for Pest Exchange. Also shows # of pests exchanged and the bonus FF you were given.",
-        category: "Garden",
-        subcategory: "Timers", 
-    })
-    pestExchangeDisplay = false;
-
-    @SwitchProperty({
-        name: "Pest QOL",
-        description: "QOL Features for Pest Hunting.",
-        category: "Garden",
-        subcategory: "Pest QOL", 
-    })
-    pestQOL = false;
-
-    @SwitchProperty({
-        name: "Pest QOL: ESP",
-        description: "Highlights an outlined box around a pest. &c(not esp through walls)",
-        category: "Garden",
-        subcategory: "Pest QOL", 
-    })
-    pestEsp = false;
-
-    @SwitchProperty({
-        name: "Pest QOL: Auto Set Home Pest",
-        description: "Automatically sets home when a pest has spawned.\n&c This is a chat macro.",
-        category: "Garden",
-        subcategory: "Pest QOL", 
-    })
-    autoSHPest = false;
-
-    @SwitchProperty({
-        name: "Pest QOL: Autowarp Pest",
-        description: "Automatically warps you to plot where the pest has spawned.\n&cThis is a chat macro.\n&cThis feature is automatically disabled when a Jacob's contest is active.",
-        category: "Garden",
-        subcategory: "Pest QOL", 
-    })
-    autoWarpPest = false;
-
-    @SwitchProperty({
-        name: "Pest QOL: Screen Pest Alert",
-        description: "Show Pest Alert on Screen",
-        category: "Garden",
-        subcategory: "Pest QOL", 
-    })
-    titlePestAlert = false;
-
-    @SwitchProperty({
-        name: "Hide Sprayonator Expiry Message",
-        description: "&7'SPRAYONATOR! This will expire in 30m'&b -- hidden",
-        category: "Garden",
-        subcategory: "QOL", 
-    })
-    hideSprayonatorExpiryMsg = false;
-
-    @SwitchProperty({
-        name: "Sprayonator No Mat Alert",
-        description: "Alerts the user that you don't have the required materials for Sprayonator.",
-        category: "Garden",
-        subcategory: "QOL", 
-    })
-    alertNoMatSprayonator = false;
-
-    @SwitchProperty({
-        name: "Sprayonator Selected Mat Message Hider",
-        description: "&7'SPRAYONATOR! Your selected material is now &e${material}&7!'&b -- hidden",
-        category: "Garden",
-        subcategory: "QOL", 
-    })
-    hideSelSprayMatMsg = false;
-
-    @SwitchProperty({
-        name: "Better Garden Messages",
-        description: "Hides/Changes the message into something simpler.\n&7[NPC] Jacob: &b messages about contest starting and anita accessory's stats will be hidden if player is not in &cGarden&b.\n&7'WARNING! Blocks that you break on this plot will not drop items while using a custom preset!'&b -- hidden\n&7'Remember, you have to be on the island for the resources to be planted!'&b -- hidden\n\n&7'Started pasting &e${presetName}&7 preset on Garden Plot - &e${plotName}&7!'\n&c.. converted to ..\n&7'PASTING: Using Preset [&e${presetName}&7] on Plot &e${plotName}&7!'",
-        category: "Garden",
-        subcategory: "QOL", 
-    })
-    betterGardenMessages = false;
-
-    @SwitchProperty({
-        name: "Garden Rare Drop Pings",
-        description: "Shows, announces and pings user when drops have been detected.\n&aDrops included for pings: Pesterminator Books, Atmospheric Filters, Burrowing Spores\n&c This is a chat macro.",
-        category: "Garden",
-    })
-    gardenRareDropPings = false;
-
-    @SwitchProperty({
-        name: "Garden Pet Drop Pings",
-        description: "Shows, announces and pings user when drops have been detected.\n&aDrops included for pings: Slug Pets, Rat Pets\n&c This is a chat macro.",
-        category: "Garden",
-    })
-    gardenPetDropPings = false;
-
-    @SwitchProperty({
-        name: "Player Yaw and Pitch",
-        description: "Shows the player's Yaw and Pitch to 4 decimal places.",
-        category: "Garden",
-        subcategory: "Overlays",
-    })
-    showPlayerYawPitch = false;
-
-
     // DUNGEONS
     @SwitchProperty({
         name: "Melody Terminal Alert", 
@@ -1283,12 +1127,6 @@ class Settings {
         this.addDependency("Counter: Averages", "Fishing Counter")
         this.addDependency("Counter: Time Elapsed since [RNG]", "Fishing Counter")
         this.addDependency("Counter: Special Funny Counters", "Fishing Counter")
-
-        // Gardens
-        this.addDependency("Pest QOL: ESP", "Pest QOL")
-        this.addDependency("Pest QOL: Auto Set Home Pest", "Pest QOL")
-        this.addDependency("Pest QOL: Autowarp Pest", "Pest QOL")
-        this.addDependency("Pest QOL: Screen Pest Alert", "Pest QOL")
 
         // fishing.crimson_isles
         this.addDependency("Radioactive Vial Ping", "Jawbus Ping")

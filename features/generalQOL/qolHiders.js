@@ -1,6 +1,3 @@
-/// <reference types="../../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 import Settings from "../../config1/settings.js";
 
 import { getInSkyblock, getInJerry } from '../../utils/functions.js'; // sb, area
@@ -31,7 +28,7 @@ registerWhen('chat', timeThis("registerChat cancel 'there are blocks in the way'
     cancel(event);
 }), () => Settings.aotvHider && getInSkyblock() && World.isLoaded()).setCriteria('There are blocks in the way!');
 
-/// 
+
 // HIDE DEFAULT SACK MESSAGES
 const defaultSackMessages = [
     /\[Sacks] \+.+ items\. (Last .+s\.)/,
@@ -45,3 +42,28 @@ defaultSackMessages.forEach(msg => {
         cancel(event);
     }), () => Settings.hideDefaultSackMessages && getInSkyblock() && World.isLoaded()).setCriteria(msg);
 })
+
+
+registerWhen('chat', timeThis('', (playerName, numCoins, event) => {
+    cancel(event);
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('${playerName} collected an auction for ${numCoins} coins!');
+
+registerWhen('chat', timeThis('', (event) => {
+    cancel(event);
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('Putting item in escrow...');
+
+registerWhen('chat', timeThis('', (event) => {
+    cancel(event);
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('Setting up the auction...');
+
+registerWhen('chat', timeThis('', (item, event) => {
+    cancel(event);
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('BIN Auction started for ${item}!');
+
+
+////////////////////////////////////////////////////////////////////////////////
+// island entity limit
+////////////////////////////////////////////////////////////////////////////////
+registerWhen('chat', timeThis('registerChat hide max entity on island message', (entities, event) => {
+    cancel(event);
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('You have reached the maximum number of ${entities} allowed on your island.');

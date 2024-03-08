@@ -1,6 +1,3 @@
-/// <reference types="../../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 import Settings from "../../config1/settings.js";
 import Audio from "../../utils/audio.js";
 
@@ -35,4 +32,4 @@ faweMessages.forEach(({ message, alert}) => {
         showAlert(alert);
         fawePingAudio.playDefaultSound();
     }), () => Settings.fawePings && getInSkyblock() && World.isLoaded()).setCriteria(message).setContains();
-})
+});

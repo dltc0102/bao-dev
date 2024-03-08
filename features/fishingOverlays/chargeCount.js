@@ -1,6 +1,3 @@
-/// <reference types="../../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 import Settings from "../../config1/settings.js";
 import PogObject from 'PogData';
 import Audio from "../../utils/audio.js";
@@ -16,17 +13,33 @@ import { isSBALoaded, getCounterColor } from "../../utils/functions.js";
 // CONSTS
 ////////////////////////////////////////////////////////////////////////////////
 const chargeAudio = new Audio();
+
 const moveChargesCounter = new Gui(); // charges
 createGuiCommand(moveChargesCounter, 'movecharge', 'mcc');
 const chargesDraggable = '&7Thunder Bottle: 00000⚡';
 
 let sentFullMsg = false;
 let chargeCounterText = '';
+
 export const chargeCounterInfo = new PogObject("bao-dev", {
     'x': 3,
     'y': 64,
 }, '/data/chargeCounterInfo.json');
 chargeCounterInfo.autosave(5);
+
+let hasSBA = false;
+register('gameLoad', () => {
+    hasSBA = isSBALoaded();
+});
+
+register('worldLoad', () => {
+    hasSBA = isSBALoaded();
+});
+
+registerWhen('chat', timeThis('registerChat joining new instance', (token, event) => {
+    hasSBA = isSBALoaded();
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('Profile ID: ${token}');
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
@@ -90,11 +103,7 @@ function getThunderBottle() {
     return closestCharge;
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-// REG: STEP
-////////////////////////////////////////////////////////////////////////////////
-function getChargeDisplayText(charge, flag) {
+function getChargeDisplayText(charge, flag, sba) {
     let bottleStatus = '';
     if (charge === 50000) {
         bottleStatus = 'FULL';
@@ -106,7 +115,7 @@ function getChargeDisplayText(charge, flag) {
 
     let colorF = '&b';
     if (flag && charge !== null) {
-        if (hasSBA) {
+        if (sba) {
             colorF = charge === 50000 ? '&z' : '&b';
         } else {
             colorF = charge === 50000 ? '&b&l' : '&b';
@@ -118,6 +127,10 @@ function getChargeDisplayText(charge, flag) {
     return `&rThunder Bottle: ${colorF}${bottleStatus}`;
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+// REG: STEP
+////////////////////////////////////////////////////////////////////////////////
 register('step', timeThis("registerStep update chargeCounterText", () => {
     if (!getInSkyblock() || !World.isLoaded() || !Settings.full_bottle_ping) return;
     let bottleCharge = getThunderBottle();
@@ -126,7 +139,7 @@ register('step', timeThis("registerStep update chargeCounterText", () => {
         handleFullyCharged('&b&lTHUNDER BOTTLE FULL', chargeAudio, sentFullMsg)
     }
 
-    chargeCounterText = getChargeDisplayText(bottleCharge, Settings.fullBottleChroma);
+    chargeCounterText = getChargeDisplayText(bottleCharge, Settings.fullBottleChroma, hasSBA);
     sentFullMsg = bottleCharge === 50000;
 })).setFps(3);
 

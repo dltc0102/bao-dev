@@ -1,14 +1,13 @@
-/// <reference types="../../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 import Settings from "../../config1/settings.js";
 import PogObject from 'PogData';
 
-import { getInSkyblock, getInGarden } from "../../utils/functions.js";
+import { getInSkyblock, getInCI, getInGarden } from "../../utils/functions.js";
 import { constrainX, constrainY } from '../../utils/functions.js' // padding
 import { createGuiCommand, renderGuiPosition } from '../../utils/functions.js'; // gui
 import { registerWhen, timeThis } from "../../utils/utils.js";
 import { isSBALoaded } from "../../utils/functions.js";
+import { getPList, sendMessage } from "../../utils/party.js";
+import { showAlert } from "../../utils/utils.js";
 
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTS
@@ -17,9 +16,6 @@ const entityPlayer = Java.type("net.minecraft.entity.player.EntityPlayer");
 const movePlayerCounter = new Gui();
 createGuiCommand(movePlayerCounter, 'moveplayer', 'mpc');
 const playerDraggable = '&7Players: 0';
-
-let playerCount = 0;
-let playerCountText = '';
 
 export const playerCountDisplay = new PogObject("bao-dev", {
     'x': 3,
@@ -32,6 +28,13 @@ register('gameLoad', () => {
     hasSBA = isSBALoaded();
 });
 
+register('worldLoad', () => {
+    hasSBA = isSBALoaded();
+});
+
+registerWhen('chat', timeThis('registerChat joining new instance', (token, event) => {
+    hasSBA = isSBALoaded();
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('Profile ID: ${token}');
 
 ////////////////////////////////////////////////////////////////////////////////
 // FUNCTIONS
@@ -40,28 +43,28 @@ function getPlayerCount(entityPlayer) {
     const regex = /taurus/i;
     let nbPlayers = World.getAllEntitiesOfType(entityPlayer).filter(player => player.distanceTo(Player.getPlayer()) < 31);
     let tabNames = TabList.getNames().filter(name => /\[.*\]/.test(name)).map(name => name.split(' ')[1].removeFormatting());
-
-    return nbPlayers
-        .filter(player => !regex.test(player.getName()))
-        .map(player => player.getName())
-        .filter(name => tabNames.includes(name)).length;
+    let players = nbPlayers
+    .filter(player => !regex.test(player.getName()))
+    .map(player => player.getName())
+    .filter(name => tabNames.includes(name)).length;
+    return players > 0 ? Math.round(players) : 0;
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // REG: STEP
 ////////////////////////////////////////////////////////////////////////////////
-register('step', timeThis("regissterStep update playerCountText", () => {
+let playerCountText = '';
+register('step', timeThis("registerStep update playerCountText", () => {
     if (!getInSkyblock() || !World.isLoaded() || !Settings.playersNearbyCount) return;
-    playerCount = getPlayerCount(entityPlayer);
-    let numPlayers = playerCount > 0 ? Math.round(playerCount) : 0;
-
+    let playerCount = getPlayerCount(entityPlayer);
+    
     if (Settings.playerChroma && playerCount >= Settings.playerChromaNum) {
-        playerCountText = hasSBA ? `&zPlayers: ${numPlayers}` : `&rPlayers: &b&l${numPlayers}`;
+        playerCountText = hasSBA ? `&zPlayers: ${playerCount}` : `&rPlayers: &b&l${playerCount}`;
         return;
     }
     let colorF = playerCount >= 20 ? '&b&l' : '&b';
-    playerCountText = `&rPlayers: ${colorF}${numPlayers}`;
+    playerCountText = `&rPlayers: ${colorF}${playerCount}`;
 })).setFps(3);
 
 

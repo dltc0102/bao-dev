@@ -1,6 +1,3 @@
-/// <reference types="../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 import Settings from '../config1/settings.js';
 import PogObject from 'PogData';
 
@@ -9,7 +6,6 @@ import { baoUtils } from '../utils/utils.js';
 import { filterSeparators } from '../utils/functions.js';
 import { getInCI, getInCH } from '../utils/functions.js';
 import { registerWhen, timeThis } from '../utils/utils.js';
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // SETUP CONSTS

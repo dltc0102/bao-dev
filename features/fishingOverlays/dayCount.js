@@ -1,6 +1,3 @@
-/// <reference types="../../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 import Settings from "../../config1/settings.js";
 import PogObject from 'PogData';
 
@@ -17,7 +14,6 @@ const moveDayCounter = new Gui();
 createGuiCommand(moveDayCounter, 'movedaycount', 'mdc');
 const dayDraggable = '&7Day: 0.00'
 
-let lobbyDayText = '';
 export const dayCountDisplay = new PogObject("bao-dev", {
     'x': 3,
     'y': 34,
@@ -38,10 +34,11 @@ function getLobbyDay() {
 ////////////////////////////////////////////////////////////////////////////////
 // REG: STEP
 ////////////////////////////////////////////////////////////////////////////////
+let lobbyDayText = '';
 register('step', timeThis("registerStep update lobbyDayText", () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
     if (Settings.lobbyDayCount) lobbyDayText = getLobbyDay();
-})).setFps(3);
+})).setFps(2);
 
 
 ////////////////////////////////////////////////////////////////////////////////

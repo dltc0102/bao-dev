@@ -1,6 +1,3 @@
-/// <reference types="../../CTAutocomplete" />
-/// <reference lib="es2015" />
-
 import Settings from '../config1/settings.js';
 import PogObject from 'PogData';
 
@@ -12,6 +9,7 @@ import { updateCDText } from '../utils/functions.js';
 import { filterSeparators } from '../utils/functions.js';
 import { getInJerry, getInHub, getInCH, getInDesert } from '../utils/functions.js';
 import { registerWhen, timeThis } from '../utils/utils.js';
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
