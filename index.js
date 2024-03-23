@@ -8,15 +8,15 @@ import { baoUtils, baoFirstTime } from './utils/utils.js';
 import './features/generalQOL.js' // 1
 // import './features/fishing_overlays.js' // 1
 // import './features/displayHP.js' // 1
-// import './features/fishing_pings.js' // 1
+import './features/fishing_pings.js' // 1
 // import './features/garden.js'
-// import './features/timers.js' // 1
-// import './features/mainSCStats.js' // 1
-// import './features/waterSCStats.js' // 1
-// import './features/lavaSCStats.js' // 1
+import './features/timers.js' // 1
+import './features/mainSCStats.js' // 1
+import './features/waterSCStats.js' // 1
+import './features/lavaSCStats.js' // 1
 // // import './features/detections.js'
 // import './features/kuudra.js'
-// import './features/slayers.js' // 1
+import './features/slayers.js' // 1
 
 // // bao extras
 // import './features/end.js'
@@ -25,7 +25,9 @@ import './features/generalQOL.js' // 1
 
 // import './features/dev.js'
 import './features/tempDetections.js' // 1
-// import './utils/ignore.js' // 1
+import './utils/ignore.js' // 1
+import './utils/waypoints.js' // 1
+import './features/partyLines.js' // 1
 
 // import './utils/cake.js';
 // import './utils/inventoryLog.js'

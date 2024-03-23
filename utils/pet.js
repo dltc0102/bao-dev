@@ -1,27 +1,39 @@
 import Settings from '../config1/settings.js';
-import { debug } from '../utils/utils.js';
+import Audio from './audio.js';
+import { registerWhen, timeThis } from './utils.js';
+import { showAlert } from './utils.js';
+import { getInSkyblock } from './functions.js';
+
+const petAudio = new Audio();
 
 let usingPet = false;
 let activePetName = '';
-register('chat', (petName, event) => {
+
+registerWhen('chat', timeThis('', (petName, event) => {
     usingPet = true;
     activePetName = petName;
-    debug(`usingPet: ${usingPet}, activePet: ${activePetName}`)
-}).setCriteria('You summoned your ${petName}!')
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('You summoned your ${petName}!');
 
-register('chat', (pet, event) => {
+registerWhen('chat', timeThis('', (petName, event) => {
     usingPet = false;
     activePetName = '';
-    debug(`usingPet: ${usingPet}, activePet: ${activePetName}`)
-}).setCriteria('You despawned your ${pet}!')
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('You despawned your ${petName}!');
 
-register('chat', (lvlNum, petName, event) => {
+registerWhen('chat', timeThis('', (lvlNum, petName, event) => {
     if (Settings.hideAutopetMessages) cancel(event);
     usingPet = true;
     activePetName = petName;
-    debug(`usingPet: ${usingPet}, activePet: ${activePetName}, mainPet: ${petName}`)
-}).setCriteria('Autopet equipped your [Lvl ${lvlNum}] ${petName}! VIEW RULE')
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('Autopet equipped your [Lvl ${lvlNum}] ${petName}! VIEW RULE');
+
+registerWhen('chat', timeThis('', (petName, event) => {
+    showAlert(`${petName} &6&l100`);
+    petAudio.playDefaultSound();
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('Your ${petName} leveled up to level 100!');
 
 export function getActivePet() {
     return activePetName;
+}
+
+export function isPetActive() {
+    return usingPet;
 }

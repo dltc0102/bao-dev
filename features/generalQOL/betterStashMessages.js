@@ -36,6 +36,14 @@ stashMessages.forEach(msg => {
     }), () => Settings.betterStashMessages && getInSkyblock() && World.isLoaded()).setCriteria(msg);
 })
 
+registerWhen('chat', timeThis('', (event) => {
+    cancel(event);
+}), () => getInSkyblock() && World.isLoaded()).setCriteria(' ');
+
+registerWhen('chat', timeThis('', (event) => {
+    cancel(event);
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('  ');
+
 registerWhen('chat', timeThis("registerChat from stash: messages", (itemName, event) => {
     baoStashes.stashes.pickupMat = itemName;
 }), () => Settings.betterStashMessages && getInSkyblock() && World.isLoaded()).setCriteria('From stash: ${itemName}');

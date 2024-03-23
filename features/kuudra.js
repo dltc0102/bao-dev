@@ -63,39 +63,3 @@ registerWhen('chat', timeThis('', (player, event) => {
 }), () => getInSkyblock() && World.isLoaded()).setCriteria("${player} destroyed one of Kuudra's pods!");
 
 
-
-
-
-
-
-
-
-
-
-
-// temporary
-const temporaryMessages = [
-    /You have .+ pending Bestiary Milestone to be claimed!/,
-    />>> CLICK HERE to claim it! <<</,
-]
-temporaryMessages.forEach(msg => {
-    registerWhen('chat', timeThis('', (event) => {
-        cancel(event);
-    }), () => getInSkyblock() && World.isLoaded()).setCriteria(msg).setContains();
-})
-
-let volcSent = false;
-register('step', () => {
-    if (!getInSkyblock() || !World.isLoaded() || !getInCI()) return;
-    if (volcSent) return;
-    const explosivity = TabList.getNames()[58].removeFormatting().trim();
-    if (explosivity === 'CATACLYSMIC') {
-        kuudraAudio.playDefaultSound();
-        showAlert('&4CATACLYSMIC');
-        volcSent = true;
-    }
-}).setFps(1);
-
-registerWhen('chat', timeThis('registerChat - reset volcSent', (fruit, profileType, event) => {
-    volcSent = false;
-}), () => getInSkyblock() && World.isLoaded()).setCriteria('You are playing on profile: ${fruit} (${profileType})');

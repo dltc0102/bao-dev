@@ -33,7 +33,7 @@ register('command', () => {
 // #help
 ///////////////////////////////////////////////////////////////////////////////
 registerWhen('chat', timeThis('', (playerName, event) => {
-    sendMessage("[Bao Commands] #w :: #warp :: #pai :: #ko :: #pt :: /warpexc")
+    sendMessage("[Bao Commands] #w :: #warp :: #pai :: #ko :: /warpexc (name)")
 }), () => getInSkyblock() && World.isLoaded()).setCriteria('Party > ${playerName}: #help');
 
 
@@ -103,29 +103,33 @@ ptaMessages.forEach(msg => {
 // #pai 
 ///////////////////////////////////////////////////////////////////////////////
 registerWhen('chat', timeThis("registerChat #pai command", (playerName, event) => {
+    // if (!getIsPL()) { ChatLib.chat(`${baoUtils.modPrefix} &b#pai&c won't work. You are not party leader!`); return; }
     ChatLib.command('p settings allinvite'); 
     partyAudio.playDefaultSound();
-}), () => Settings.paiCommand && shouldHandlePartyCommands()).setCriteria('Party > ${playerName}: #pai');
+}), () => Settings.paiCommand && getInSkyblock() && World.isLoaded()).setCriteria('Party > ${playerName}: #pai');
 
-registerWhen('chat', timeThis("registerChat #pai command", (playerName, event) => {
+registerWhen('chat', timeThis("registerChat #pai command", (playerName, event) => { 
+    // if (!getIsPL()) { ChatLib.chat(`${baoUtils.modPrefix} &b!pai&c won't work. You are not party leader!`); return; }
     ChatLib.command('p settings allinvite'); 
     partyAudio.playDefaultSound();
-}), () => Settings.paiCommand && shouldHandlePartyCommands()).setCriteria('Party > ${playerName}: !pai');
+}), () => Settings.paiCommand && getInSkyblock() && World.isLoaded()).setCriteria('Party > ${playerName}: !pai');
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // #ko 
 ///////////////////////////////////////////////////////////////////////////////
 registerWhen('chat', timeThis("registerChat #ko command", (playerName, event) => {
+    if (!getIsPL()) { ChatLib.chat(`${baoUtils.modPrefix} &b!#ko&c won't work. You are not party leader!`); return; }
     ChatLib.command('p kickoffline');
     partyAudio.playDefaultSound();
-}), () => Settings.koCommand && shouldHandlePartyCommands()).setCriteria('Party > ${playerName}: #ko');
+}), () => Settings.koCommand && getInSkyblock() && World.isLoaded()).setCriteria('Party > ${playerName}: #ko');
 
 
 registerWhen('chat', timeThis("registerChat #ko command", (playerName, event) => {
+    if (!getIsPL()) { ChatLib.chat(`${baoUtils.modPrefix} &b!ko&c won't work. You are not party leader!`); return; }
     ChatLib.command('p kickoffline');
     partyAudio.playDefaultSound();
-}), () => Settings.koCommand && shouldHandlePartyCommands()).setCriteria('Party > ${playerName}: !ko');
+}), () => Settings.koCommand && getInSkyblock() && World.isLoaded()).setCriteria('Party > ${playerName}: !ko');
 
 
 ///////////////////////////////////////////////////////////////////////////////

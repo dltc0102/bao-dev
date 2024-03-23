@@ -67,3 +67,11 @@ registerWhen('chat', timeThis('', (item, event) => {
 registerWhen('chat', timeThis('registerChat hide max entity on island message', (entities, event) => {
     cancel(event);
 }), () => getInSkyblock() && World.isLoaded()).setCriteria('You have reached the maximum number of ${entities} allowed on your island.');
+
+
+////////////////////////////////////////////////////////////////////////////////
+// exp
+////////////////////////////////////////////////////////////////////////////////
+registerWhen('chat', timeThis('registerChat hide randomExp from playing skyblock', (stuff, event) => {
+    cancel(event);
+}), () => getInSkyblock() && World.isLoaded()).setCriteria("You earned ${stuff} EXP from playing SkyBlock!");

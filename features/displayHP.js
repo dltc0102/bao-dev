@@ -91,6 +91,7 @@ register('step', timeThis("registerStep pushing settings for specifiedMobs", () 
     mobSettings.forEach(({ condition, mob, mobs }) => {
         if (condition) specifiedMobs.push(...(mobs || [mob]));
     });
+    specifiedMobs = [...new Set(specifiedMobs)];
 })).setFps(1);
 
 
@@ -129,15 +130,16 @@ register('step', timeThis("registerStep update mobInfos", () => {
                 if (matchBarbX) return `${mobEntity.getName()} &r-- [${inRangeText}&r]`;
 
             } else if (entityName.includes('Ashfang')) {
-                const ashfangRegex = /﴾ \[Lv200] Ashfang§r (.+)[?Mk]\/50M❤ ﴿/;
+                const ashfangRegex = /﴾ \[Lv200] Ashfang (.+)[?Mk]\/50M❤ ﴿/;
                 const matchAshfang = entityName.match(ashfangRegex);
                 if (matchAshfang) return `${mobEntity.getName()} &r-- [${inRangeText}&r]`;
 
             } else {
-                const allowedMobPatterns = specifiedMobs.join('|');
-                const mobRegex = new RegExp(`\\[Lv\\d+] (aCorrupted\\s?)?(${allowedMobPatterns})(a)? (\\d+(\\.\\d*)?[kM])/(\\d+(\\.\\d+)?[kM])❤`);
+                const mobRegex = /[Lv(\d+)] (aCorrupted)?(.+)(a)? (.+[?Mk])\/(.+[?Mk])❤/;
                 const matchMobPattern = entityName.match(mobRegex);
-                if (matchMobPattern) return `${mobEntity.getName()} &r-- [${inRangeText}&r]`;
+                if (matchMobPattern && specifiedMobs.includes(matchMobPattern[3])) {
+                    return `${mobEntity.getName()} &r-- [${inRangeText}&r]`;
+                }
             }
         })
         .filter(Boolean); // Remove undefined entries

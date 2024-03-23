@@ -1,7 +1,7 @@
 import Audio from "../utils/audio";
 
 import { registerWhen, timeThis } from "../utils/utils";
-import { sendMessage } from "../utils/party";
+import { sendMessage, stripRank } from "../utils/party";
 import { showAlert } from "../utils/utils";
 import { drawBonzoBox, drawGoldenFishBox, getInSkyblock } from "../utils/functions";
 import { getInPark, getInCI } from "../utils/functions";
@@ -104,7 +104,7 @@ function detectDH(entityType, givenMobName, givenFormatCode, nameException, give
     // if message.includes JAWBUS or Jawbus or JAWBUS SPAWNED or Jawbus Spawned
     
     givenMobInfo.numNearby = nearbyMobEntities.length;
-    22
+    
     if (givenMobInfo.numNearby === 0) { givenMobInfo.titleShown = false; givenMobInfo.messageSent = false;}
     
     // noping nearby detection
@@ -120,7 +120,7 @@ function detectDH(entityType, givenMobName, givenFormatCode, nameException, give
                     let coords = `x: ${vx}, y: ${vy-6}, z: ${vz}`;
                     if (vx !== 0 && vy !== 0 && vz !== 0) sendMessage(`${coords}  ||  ${givenMobName} Detected Nearby`);
                 } else {
-                    sendMessage(`Detected ${givenMobName} Nearby!`); 
+                    sendMessage(`${givenMobName} Spawned Nearby!`); 
                 }
                 givenMobInfo.messageSent = true;
             }, 150); 
@@ -135,7 +135,7 @@ function detectDH(entityType, givenMobName, givenFormatCode, nameException, give
         tempAudio.playDefaultSound();
         if (!hasDoubleMob) { 
             setTimeout(() => {
-                sendMessage(`Doublehook ${givenMobName}s Detected!`); 
+                sendMessage(`Doublehook ${givenMobName} Nearby!`); 
                 givenMobInfo.messageSent = true;
             }, 150);
         }
@@ -152,117 +152,113 @@ register("step", timeThis("registerStep detectDH of mobInfo", () => {
     detectDH(EntityArmorStand, 'Vanquisher', '&5', null, vanqInfo);
 })).setFps(3);
 
-registerWhen('chat', timeThis('registerChat hide stupid dh message', (event) => {
-    cancel(event);
-}), () => getInSkyblock() && World.isLoaded()).setCriteria('Womp! Womp! Bitch').setContains();
 
 
-// guild shortener
-const bridgeBot = 'Baltics';
-registerWhen('chat', timeThis('registerChat guild message shortener', (playerName, msg, event) => {
-    if (playerName.includes(bridgeBot)) return;
-    cancel(event);
-    const message = ChatLib.getChatMessage(event, true);
-    const shortenedMessage = message.substring(message.indexOf(">")+1);
-    ChatLib.chat(`&2G >&r${shortenedMessage}`);
-}), () => getInSkyblock() && World.isLoaded()).setCriteria('Guild > ${playerName}: ${msg}');
-
-// bridge shortener
-registerWhen('chat', timeThis('registerChat guild bridge message shortener', (bridgeRank, bridgeName, bridgeRole, playerName, playerMessage, event) => {
-    if (bridgeName !== bridgeBot) return;
-    cancel(event);
-    const message = ChatLib.getChatMessage(event, true);
-    const firstColonIndex = message.indexOf(':');
-    if (firstColonIndex !== -1) {
-        const bridgeMessage = message.substring(firstColonIndex + 1).split(':')[1].trim();
-        const bridgeCap = bridgeName[0].toUpperCase();
-        ChatLib.chat(`&2${bridgeCap} > &a${playerName}&r: ${bridgeMessage}`);
-    }
-}), () => getInSkyblock() && World.isLoaded()).setCriteria("Guild > ${bridgeRank} ${bridgeName} ${bridgeRole}: ${bridgeMessage}");
-
-
-// park rain timer 
-let rainTimeText = '';
-let rainTimeLeft = '';
-let rainTime = 0;
-let oneMinAlert = false;    
-register('step', timeThis("registerStep rain time", () => {
-    if (!getInPark() || !getInSkyblock() || !World.isLoaded()) return;
-    rainTimeText = TabList.getNames()[44];
-    
-    rainTimeLeft = rainTimeText.split(":")[1].trim(); // 10m
-    if (rainTimeLeft === '1m') {
-        showAlert('&e1 min of Rain Left')
-        tempAudio.playDefaultSound();
-        oneMinAlert = true;
-    }
-    if (rainTimeLeft !== '1m') {
-        oneMinAlert = false;
-    }
-})).setFps(1);
-
-registerWhen('renderOverlay', timeThis('registerOverlay rainTime text', () => {
-    Renderer.drawStringWithShadow(rainTimeText, Renderer.screen.getWidth() - Renderer.getStringWidth(rainTimeText) - 3, 50);
-}), () => getInPark() && getInSkyblock() && World.isLoaded());
-
-
-// volcano timer
-let explosivity = '';
-register('step', timeThis("registerStep get lobby explosivity", () => {
-    if (!getInCI() || !getInSkyblock() || !World.isLoaded()) return;
-    let phase = TabList.getNames()[58].trim();
-    // console.log(JSON.stringify(phase))
-    let phaseText = phase.includes('CATACLYSMIC') ? ` &4&lCATACLYSMIC` : phase;
-    explosivity = `Explosivity:${phaseText}`;
-})).setFps(1);
-
-registerWhen('renderOverlay', timeThis('registerOverlay explosivity text', () => {
-    Renderer.drawStringWithShadow(explosivity, Renderer.screen.getWidth() - Renderer.getStringWidth(explosivity) - 3, 3);
-}), () => getInCI() && getInSkyblock() && World.isLoaded());
-
-
-// jawbus followers hitboxes
-import { drawFollowerHitbox } from "../utils/functions";
-registerWhen('renderWorld', timeThis("renderOverlay follower hitboxes", () => {
-    World.getAllEntities().forEach(entity => {if (entity.getName().removeFormatting().includes("Jawbus Follower")) drawFollowerHitbox(entity.x, entity.y-0.65, entity.z, givColor='white', alpha=1, seethru=false)})
-}), () => getInCI() && getInSkyblock() && World.isLoaded());
-
-
-// flare timer
-const warningFlareTexture = 'ewogICJ0aW1lc3RhbXAiIDogMTY0NjY4NzMwNjIyMywKICAicHJvZmlsZUlkIiA6ICI0MWQzYWJjMmQ3NDk0MDBjOTA5MGQ1NDM0ZDAzODMxYiIsCiAgInByb2ZpbGVOYW1lIiA6ICJNZWdha2xvb24iLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjJlMmJmNmMxZWMzMzAyNDc5MjdiYTYzNDc5ZTU4NzJhYzY2YjA2OTAzYzg2YzgyYjUyZGFjOWYxYzk3MTQ1OCIKICAgIH0KICB9Cn';
-const alertFlareTexture = '';
-const sosFlareTexture = 'ewogICJ0aW1lc3RhbXAiIDogMTY0NjY4NzM0NzQ4OSwKICAicHJvZmlsZUlkIiA6ICI0MWQzYWJjMmQ3NDk0MDBjOTA5MGQ1NDM0ZDAzODMxYiIsCiAgInByb2ZpbGVOYW1lIiA6ICJNZWdha2xvb24iLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzAwNjJjYzk4ZWJkYTcyYTZhNGI4OTc4M2FkY2VmMjgxNWI0ODNhMDFkNzNlYTg3YjNkZjc2MDcyYTg5ZDEzYiIKICAgIH0KICB9Cn0';
 
 // thunder shard box
-const thunderShardTexture = '';
-
-const entityArmorStand = Java.type("net.minecraft.entity.item.EntityArmorStand");
-
-register('command', () => {
-    World.getAllEntitiesOfType(entityArmorStand).filter(entity => { 
-        console.log(entity.getEntity())
-    })
-    console.log('-------------------------------------------')
-    console.log('')
-}).setName('detectas');
-
-register('command', () => {
-    World.getAllEntitiesOfType(entityArmorStand).filter(entity => { 
-        console.log(entity.getEntity()?.func_82169_q(3)?.func_77978_p()?.toString());
-    })
-    console.log('-------------------------------------------')
-    console.log('')
-}).setName('gettextures');
+// const thunderShardTexture = '';
 
 import { drawBonzoBox } from "../utils/functions";
-registerWhen('renderWorld', timeThis('', () => {
-    World.getAllEntitiesOfType(entityArmorStand).filter(entity => { 
-        let entityID = entity.getEntity();
-        let [ex, ey, ez] = [entityID.x, entityID.y, entityID.z]
-        drawBonzoBox(ex, ey, ez, 'light_blue', true);
-    })
-}), () => getInCI() && getInSkyblock() && World.isLoaded());
+// registerWhen('renderWorld', timeThis('', () => {
+//     World.getAllEntitiesOfType(entityArmorStand).filter(entity => { 
+//         let entityID = entity.getEntity();
+//         let [ex, ey, ez] = [entityID.x, entityID.y, entityID.z]
+//         drawBonzoBox(ex, ey, ez, 'light_blue', true);
+//     })
+// }), () => getInCI() && getInSkyblock() && World.isLoaded());
 
-registerWhen('chat', timeThis('', (event) => {
-    cancel(event);
-}), () => getInSkyblock() && World.isLoaded()).setCriteria('You have reached the maximum number of Magma Cubes allowed on your island. (2)');
+
+
+// remove lines
+
+function createChatBreak() {
+    ChatLib.chat(ChatLib.getChatBreak(' ')); 
+}
+
+function createPartyJoinMessage(playerName) {
+    return new Message(
+        new TextComponent("&eYou have &c60&e seconds to accept. &6Click here to join!").setClick("run_command", `/p accept ${playerName}`)
+    );
+}
+
+// // general lines
+// registerWhen('chat', timeThis('', (event) => {
+//     const message = ChatLib.getChatMessage(event, true);
+//     if (message.includes('friend') || message.includes('Friend')) return;
+//     if (message.includes('&9')) {
+//         cancel(event);
+//         createChatBreak();
+//     }
+// }), () => getInSkyblock() && World.isLoaded()).setCriteria('--------------------------------------').setContains();
+
+// registerWhen('chat', timeThis('', (playerName, event) => {
+//     cancel(event);
+//     let message = ChatLib.getChatMessage(event, true);
+//     let inviteLine = message.replace(/-/g, '').split('!')[0];
+
+//     createChatBreak();
+//     ChatLib.chat(`${inviteLine}!`);
+//     ChatLib.chat(createPartyJoinMessage(stripRank(playerName)))
+//     createChatBreak();
+// }), () => getInSkyblock() && World.isLoaded()).setCriteria('${playerName} has invited you to join their party!').setContains();
+
+// function requestOptionsLine(playerName) {
+//     let acceptOption = new Message(
+//         new TextComponent("&a&l[ACCEPT]&r").setClick("run_command", `/f accept ${playerName}`)
+//     );
+
+//     let denyOption = new Message(
+//         new TextComponent("&c&l[DENY]&r").setClick("run_command", `/f deny ${playerName}`)
+//     );
+
+//     let ignoreOption = new Message(
+//         new TextComponent("&7&l[IGNORE]&r").setClick("run_command", `/ignore add ${playerName}`)
+//     );
+
+//     return `${acceptOption}&8 - ${denyOption}&8 - ${ignoreOption}`;
+// }
+
+// registerWhen('chat', timeThis('', (newFriend, event) => {
+//     cancel(event);
+//     let message = ChatLib.getChatMessage(event, true);
+//     let newMessage = message.replace(/-/g, '');
+//     const requestRegex = /Friend request from (.+)\[ACCEPT] - \[DENY] - \[IGNORE]/;
+//     let msgMatch = newMessage.match(requestRegex);
+//     let newFriendName = stripRank(newFriend);
+//     if (msgMatch) {
+//         formattedName = msgMatch[1];
+//         createChatBreak();
+//         ChatLib.chat(`&eFriend request from ${formattedName}`);
+//         ChatLib.chat(requestOptionsLine(newFriendName)); // not working
+//         createChatBreak();
+//     }
+// }), () => getInSkyblock() && World.isLoaded()).setCriteria('Friend request from ${newFriend}').setContains();
+
+// function getEmbeddedLine(event) {
+//     let message = ChatLib.getChatMessage(event, true);
+//     message.replace(/-/g, '');
+    
+//     createChatBreak();
+//     ChatLib.chat(message);
+//     createChatBreak();
+// };
+
+// const embeddedMessages = [
+//     /.+ is now a best friend!/, 
+//     /.+ is no longer a best friend!/, 
+//     /.+ now has the nickname .+/,
+//     /Enabled best friend join\/leave notifications!/, 
+//     /Disabled best friend join\/leave notifications!/, 
+//     /Enabled friend join\/leave notifications!/, 
+//     /Disabled friend join\/leave notifications!/, 
+//     /You removed .+ from your friends list!/,
+//     /Declined .+'s friend request!/
+// ]
+
+// embeddedMessages.forEach(msg => {
+//     registerWhen('chat', timeThis('', (playerName, event) => {
+//         cancel(event);
+//         getEmbeddedLine(event);
+//     }), () => getInSkyblock() && World.isLoaded()).setCriteria(msg).setContains();
+// });
+

@@ -148,6 +148,13 @@ registerWhen('chat', timeThis('registerChat - party - someone removed from party
 }), () => getInSkyblock() && World.isLoaded()).setCriteria('${playerName} has been removed from the party.');
 
 // promoted
+registerWhen('chat', timeThis('registerChat promoted to partyLeader message', (currPL, newPL, event) => {
+    let newPLName = stripRank(newPL);
+    inParty = true;
+    whoPL = newPLName;
+    isPL = newPLName === Player.getName();
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('${currPL} has promoted ${newPL} to Party Leader')
+
 registerWhen('chat', timeThis('registerChat - party - promoted message', (currPL, partyMember, event) => {
     inParty = true;
     whoPL = currPL;

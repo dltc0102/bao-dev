@@ -3,7 +3,7 @@ import Audio from "../../utils/audio";
 
 import { registerWhen, timeThis } from "../../utils/utils";
 import { getInSkyblock, getInMines, getInCH } from "../../utils/functions";
-
+import { petDropPing } from "../../utils/functions";
 
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTS

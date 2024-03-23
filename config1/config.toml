@@ -62,13 +62,13 @@
 
 	[counter.overlay]
 		"counter:_drops" = false
-		fishing_counter = false
+		fishing_counter = true
 		"counter:_time_elapsed_since_[rng]" = false
 		"counter:_kills" = false
 		"counter:_special_funny_counters" = false
 		"counter:_mob_since_[rng]" = false
-		"counter:_trackers" = false
-		"counter:_averages" = false
+		"counter:_trackers" = true
+		"counter:_averages" = true
 
 [general_qol]
 

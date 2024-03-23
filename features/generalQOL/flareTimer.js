@@ -1,5 +1,5 @@
-import Settings from "../../config1/settings";
 import PogObject from 'PogData';
+import Audio from "../../utils/audio.js";
 
 import { registerWhen, showAlert, timeThis } from '../../utils/utils.js'
 import { getInSkyblock } from '../../utils/functions.js'
@@ -7,7 +7,8 @@ import { createGuiCommand, renderGuiPosition } from "../../utils/functions.js";
 import { constrainX, constrainY } from "../../utils/functions.js";
 
 
-const entityArmorStand = Java.type("net.minecraft.entity.item.EntityArmorStand");
+// consts
+const flareAudio = new Audio();
 
 const moveFlareCounter = new Gui();
 createGuiCommand(moveFlareCounter, 'moveflarecounter', 'mflare');
@@ -22,77 +23,94 @@ const flareTextures = [
     "ewogICJ0aW1lc3RhbXAiIDogMTY0NjY4NzM0NzQ4OSwKICAicHJvZmlsZUlkIiA6ICI0MWQzYWJjMmQ3NDk0MDBjOTA5MGQ1NDM0ZDAzODMxYiIsCiAgInByb2ZpbGVOYW1lIiA6ICJNZWdha2xvb24iLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzAwNjJjYzk4ZWJkYTcyYTZhNGI4OTc4M2FkY2VmMjgxNWI0ODNhMDFkNzNlYTg3YjNkZjc2MDcyYTg5ZDEzYiIKICAgIH0KICB9Cn0="
 ];
 
-let flareActive = false;
-
 export const flareTimerDisplay = new PogObject("bao-dev", {
     "x": 300, 
     "y": 300
 }, '/data/flareTimerDisplay.json');
 flareTimerDisplay.autosave(5);
 
-let flare = {
-    type: -1,
-    time: 0
-};
-let inFlareRange = false;
 
-let flareType = 0;
-let flareTime = 0;
-let flareDisplayText = '';
+// functions
+function formatFlareTimer(mins, secs, type=1) {
+    let text = '00:00';
+    if (type === 1) {
+        if (mins > 0) {
+            text = `${mins}m ${secs}s`;
+        } else if (mins === 0) {
+            text = `${secs}s`;
+        }
+
+    } else if (type === 2) {
+        if (mins > 0) {
+            if (secs === 0) {
+                text = `${mins}:00`;
+            } else if (secs < 10) {
+                text = `${mins}:0${secs}`;
+            } else {
+                text = `${mins}:${secs}`;
+            }
+        } else if (mins === 0) {
+            if (secs < 10) {
+                text = `0:0${secs}`;
+            } else {
+                text = `0:${secs}`;
+            }
+        }
+    }
+    return text;
+}
+
+// session values
+let flareDetected = false;
+let hasFlare = false;
+let flareMins = 0;
+let flareSecs = 0;
+let flareText = '';
+
+// reg steps
+register('step', () => {
+    if (flareDetected || !getInSkyblock() || !World.isLoaded()) return;
+    World.getAllEntities().forEach(entity => {
+        if (entity.getName().includes("FireworksRocketEntity")) {
+            hasFlare = true;
+            flareMins = 3;
+            flareSecs = 0;
+            flareDetected = true;
+            setTimeout(() => {
+                flareDetected = false;
+            }, 5000);
+        }
+    })
+}).setFps(1);
 
 register('step', () => {
     if (!getInSkyblock() || !World.isLoaded()) return;
-    inFlareRange = false;
-    flare = {
-        type: -1,
-        time: 0
-    };
-
-    World.getAllEntitiesOfType(entityArmorStand.class).find((flare) => {
-        const [px, py, pz] = [Player.getX(), Player.getY(), Player.getZ()];
-        const [fx, fy, fz] = [flare.getX(), flare.getY(), flare.getZ()];
-        const distance = Math.floor(
-            Math.sqrt(
-                Math.pow(fx-px, 2) + Math.pow(fy-py, 2) + Math.pow(fz-pz, 2)
-            )
-        );
-        if (distance > 40 || flare.getTicksExisted() > 3600) return;
-
-        let as = new EntityLivingBase(flare.getEntity());
-        let head = as.getItemInSlot(4)?.getRawNBT();
-        if (!head) return;
-        let type = -1;
-        for (let idx = 0; idx < flareTextures.length; idx++) {
-            if (head.includes(flareTextures[idx])) {
-                type = idx;
-                break;
+    if (hasFlare) {
+        if (flareSecs === 0) {
+            if (flareMins === 0) {
+                hasFlare = false;
+                showAlert('&6&lFlare Disappeared!');
+                flareAudio.playDefaultSound();
+            } else {
+                flareMins -= 1;
+                flareSecs += 59;
             }
+        } else {
+            flareSecs -= 1;
         }
-        if (type === -1) return;
-        inFlareRange = true;
-        const flareTime = parseInt(180-flare.getTicksExisted()/20);
-        if (type > flare.type) {
-            flare.type = type;
-            flare.time = time;
-        } else if (type === flare.type && flareTime > flare.time) {
-            flare.time = flareTime;
-        }
-    });
-    
-    if (flare.type === 0) flareType = '&a&lWarning';
-    if (flare.type === 1) flareType = '&1&lAlert';
-    if (flare.type === 2) flareType = '&5&lSOS';
-    flareTime = inFlareRange ? flare.time : -1;
-    flareDisplayText = `${flareType}: ${flare.time}`;
+        flareText = `Flare Timer: &b${formatFlareTimer(flareMins, flareSecs, 1)}`;
+    }
 }).setFps(1);
 
-register("worldUnload", () => {
-    flare = {
-        type: -1,
-        time: 0
-    };
-})
+registerWhen('chat', timeThis('', (id, event) => {
+    hasFlare = false;
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('You are playing on profile: ${id}');
 
+registerWhen('chat', timeThis('', (event) => {
+    hasFlare = false;
+    showAlert('&6&lFlare Gone!');
+    flareAudio.playDefaultSound();
+}), () => getInSkyblock() && World.isLoaded()).setCriteria('Your flare disappeared because you were too far away!');
 
 register('dragged', (dx, dy, x, y) => {
     if (!getInSkyblock() || !World.isLoaded()) return;;
@@ -104,11 +122,7 @@ register('dragged', (dx, dy, x, y) => {
 
 
 registerWhen('renderOverlay', timeThis('registerOverlay show flare timer', () => {
-    if (flareType !== '' && flareTime >= 0) {
-        Renderer.drawStringWithShadow(flareDisplayText, flareTimerDisplay.x, flareTimerDisplay.y);
-    }
-}), () => Settings.flareTimer && flareActive && getInSkyblock() && World.isLoaded());
-
-registerWhen('renderOverlay', timeThis('', () => {
+    if (!hasFlare) return;
+    Renderer.drawStringWithShadow(flareText, flareTimerDisplay.x, flareTimerDisplay.y);
     renderGuiPosition(moveFlareCounter, flareTimerDisplay, flareDraggable);
 }), () => getInSkyblock() && World.isLoaded());

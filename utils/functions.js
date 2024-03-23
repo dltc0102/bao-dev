@@ -572,7 +572,7 @@ export function drawOutlineBeacon(x, y, z, givColor, alpha, seethru) {
 
 export function drawFollowerHitbox(x, y, z, givColor, alpha, seethru) {
     let colorCode = colorToRgb(givColor);
-    RenderLib.drawEspBox(x, y, z, 0.9, 1.3, colorCode.red, colorCode.green, colorCode.blue, alpha, seethru);
+    RenderLib.drawEspBox(x, y+1, z, 1, 1, colorCode.red, colorCode.green, colorCode.blue, alpha, seethru);
 }
 
 export function drawGoldenFishBox(x, y, z, givColor, alpha, seethru) {
